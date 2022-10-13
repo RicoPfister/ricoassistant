@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities'; */
+
+@font-face {
+    font-family: Michroma-Regular;
+    src: url('/storage/font/Michroma-Regular.ttf');
+}
+
+@font-face {
+    font-family: FrancoisOne-Regular;
+    src: url('/storage/font/FrancoisOne-Regular.ttf');
+}
+
+@font-face {
+    font-family: Comfortaa-VariableFont_wght;
+
+    src: url('/storage/font/Comfortaa-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: VarelaRound-Regular;
+    src: url('/storage/font/VarelaRound-Regular.ttf');
+}
+
+tr {
+    line-height: 28px;
+    border-bottom: 1px solid lightgray;
+}
+
+/* tr:nth-child(even) {
+    background: #ecfccb;
+} */
+
+tr:nth-child(5n+6) {
+    border-bottom: 1px solid gray;
+}
+
+tr:first-child, tr:last-child {
+    border: 0;
+    background: 0;
+}
+
+@font-face {
+    font-family: visitor1;
+    src: url('/storage/font/visitor1.ttf');
+}
+
+body{
+    overflow-y: scroll;
+}
+
+
