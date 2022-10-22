@@ -2,7 +2,7 @@
 
     <div class="flex flex-col h-screen">
 
-        <div aria-label="Header" class="flex xl:justify-between xl:items-end mt-2 xl:mt-0 xl:h-16 mx-2 xl:mx-10 mb-8 xl:mb-12">
+        <div aria-label="Header" class="flex items-center xl:justify-between xl:items-end mt-2 xl:mt-0 mx-2 xl:mx-10 mb-8 xl:mb-12">
 
             <div aria-label="Logo" class="xl:w-auto">
                 <Link translate="no" href="/" class="w-fit leading-none p-1 text-2xl text-lime-600 border-b-4 border-lime-600 hidden xl:block xl:mt-3"><span class="text-4xl font-bold">RA</span> | Rico Assistant</Link>
@@ -11,10 +11,46 @@
 
             <div aria-label="Menu Container" class="flex flex-row xl:w-1/2 w-full min-w-0">
 
-                <div aria-label="search box" class="xl:relative xl:w-full flex xl:justify-end w-full">
-                    <div class="flex items-center w-full h-fit">
-                        <input aria-label="Search Field" placeholder="Search" type="text" class="grow min-w-0 border-black focus:ring-0 focus:border-black focus:placeholder-white">
-                        <div aria-label="Menu Icon and Menu Popup Area" class="flex items-center leading-none">
+                <div aria-label="search box" class="xl:relative xl:w-full flex xl:justify-end w-full items-center">
+
+                    <div class="relative flex items-center w-full h-8 xl:h-10 border border-black">
+
+                        <div class="px-1 xl:px-2 h-full flex items-center bg-gray-100 border-r border-gray-300">
+                            <span class="flex items-center h-16">
+
+                                <Button @click="searchEditMenuOpen = !searchEditMenuOpen" class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                                    </svg>
+                                </Button>
+
+                            </span>
+                        </div>
+                        <div class="flex items-center w-full h-full">
+
+                            <input aria-label="Search Field" placeholder="Search" type="text" class="w-full h-full min-w-0 border-none focus:ring-0 focus:border-black focus:placeholder-white">
+
+
+                            <div class="px-1 xl:px-2 h-full flex items-center bg-lime-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                            </div>
+
+                        </div>
+
+                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-96 w-full p-2 z-50 bg-gray-100">
+
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                        <div aria-label="Menu Icon and Menu Popup Area" class="flex items-center leading-none  h-full item">
                             <Link v-if="$page.props.user" aria-label="Dashboard Button" class="hidden xl:flex items-end xl:ml-1" :href="route('dashboard')">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
@@ -37,16 +73,19 @@
                             <div>
 
                             </div>
-                            <button aria-label="Menu Button" class="" @click="addPopupOpenActive = 0; menuPopupOpenActive = !menuPopupOpenActive">
+
+                            <!-- <MenuBox @menu-popup-open-active= "menuPopupOpenActive = !menuPopupOpenActive" v-if="menuPopupOpenActive"/> -->
+                        </div>
+
+
+
+                    <button aria-label="Menu Button" class="" @click="addPopupOpenActive = 0; menuPopupOpenActive = !menuPopupOpenActive">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" color="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 ml-1 2xl:ml-2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                                 </svg>
                             </button>
-                            <!-- <MenuBox @menu-popup-open-active= "menuPopupOpenActive = !menuPopupOpenActive" v-if="menuPopupOpenActive"/> -->
-                        </div>
-                    </div>
 
-                    <div aria-label="quickbar" class="absolute flex left-0 top-14 xl:top-12 xl:gap-6 gap-2 w-full justify-center xl:justify-start text-sm xl:text-lg">
+                    <div aria-label="quickbar" class="absolute flex left-0 top-[53px] xl:top-12 xl:gap-6 gap-2 w-full justify-center xl:justify-start text-sm xl:text-lg">
                         <div class="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
@@ -119,6 +158,7 @@ import Home from '../Pages/Home.vue';
 let menuPopupOpenActive = ref(0);
 let addPopupOpenActive = ref(0);
 let MessagePopUpOpenActive = ref(1);
+let searchEditMenuOpen = ref(0);
 
 </script>
 

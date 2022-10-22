@@ -50,8 +50,3 @@ tr:first-child, tr:last-child {
     src: url('/storage/font/visitor1.ttf');
 }
 
-body{
-    overflow-y: scroll;
-}
-
-

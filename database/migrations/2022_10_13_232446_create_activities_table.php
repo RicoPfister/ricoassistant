@@ -13,14 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contacts', function (Blueprint $table) {
+        Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('f_name');
-            $table->string('l_name');
-            $table->string('email');
-            $table->string('subject');
-            $table->string('message');
+
+            $table->bigInteger('basic_id')->unsigned();
+            $table->foreign('basic_id')->references('id')->on('basics');
+
+            $table->string('activityFrom', 5)->nullable();
+            $table->string('activityTo', 5)->nullable();
+            $table->string('activityReference')->nullable();
+
             $table->tinyText('tracking')->nullable();
+
             $table->timestamps();
         });
     }
@@ -32,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contacts');
+        Schema::dropIfExists('time_trackings');
     }
 };

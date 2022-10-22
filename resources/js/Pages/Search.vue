@@ -56,11 +56,66 @@
 
     <table class="w-full table-fixed">
         <tr class="text-left">
-            <th class="2xl:w-1/3 underline">Title 1-20</th>
-            <th class="underline hidden 2xl:table-cell">Tags</th>
-            <th class="w-60 underline hidden 2xl:table-cell">Trader</th>
-            <th class="w-60 underline hidden 2xl:table-cell">Producer</th>
-            <th class="w-10 hidden 2xl:table-cell">
+
+            <th class="2xl:w-6 text-center">
+
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+<path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122" />
+</svg>
+
+
+
+
+</th>
+
+
+
+<th class="2xl:w-7">
+
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+<path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122" />
+</svg>
+
+
+
+
+</th>
+
+
+
+            <th class="2xl:w-6">
+                <div class="flex justify-center 2xl:w-full">
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
+</svg>
+</div>
+
+
+
+</th>
+
+
+          <th class="2xl:w-9">
+
+            <div class="flex justify-center w-6">
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+</svg>
+
+
+</div>
+          </th>
+
+
+
+          <th class="2xl:w-1/3 underline">Title 1-20</th>
+          <th class="underline hidden 2xl:table-cell">Tags</th>
+          <th class="w-60 underline hidden 2xl:table-cell">Trader</th>
+          <th class="w-60 underline hidden 2xl:table-cell">Producer</th>
+          <th class="w-10 hidden 2xl:table-cell">
 
 <div class="flex justify-center 2xl:w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -86,13 +141,73 @@
             <th class="hidden 2xl:table-cell text-right w-[84px] underline">Acc. Date</th>
         </tr>
         <tr v-for="data in props.list" :key="index" class="">
-            <td class="truncate 2xl:pr-3"><Link :href="route('detail', { id: data['id']})">{{ data.title }}</Link></td>
-            <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.tag }}</td>
-            <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.trader }}</td>
-            <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.producer }}</td>
-            <td class="truncate hidden 2xl:table-cell text-center">-</td>
-            <td class="truncate hidden 2xl:table-cell text-center">-</td>
-            <td class="hidden 2xl:table-cell text-right ">{{ data.ref_date }}</td>
+
+
+            <td class="text-center">
+
+
+<ListIconsCategory :category="data.category" />
+
+
+
+
+
+
+          </td >
+
+
+
+          <td class="text-center">
+
+
+
+<ListIconsSubject :subject="data.subject"/>
+
+
+
+
+
+
+          </td>
+
+
+
+
+            <td class="text-center">
+
+
+
+De
+
+
+
+
+
+
+          </td>
+
+
+          <td class="">
+
+
+<div class="w-6 text-center">
+    99
+</div>
+
+
+
+
+
+
+
+          </td>
+          <td class="truncate 2xl:pr-3"><Link :href="route('detail', { id: data['id']})">{{ data.title }}</Link></td>
+          <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.tag }}</td>
+          <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.trader }}</td>
+          <td class="truncate pr-4 hidden 2xl:table-cell">{{ data.producer }}</td>
+          <td class="truncate hidden 2xl:table-cell text-center">-</td>
+          <td class="truncate hidden 2xl:table-cell text-center">-</td>
+          <td class="hidden 2xl:table-cell text-right ">{{ data.ref_date }}</td>
         </tr>
     </table>
 
@@ -120,12 +235,14 @@
 </template>
 
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head } from '@inertiajs/inertia-vue3';
 import { Link } from "@inertiajs/inertia-vue3";
 import { ref, onMounted, computed  } from 'vue';
 
-import MenuBox from '../Components/Menu.vue'
+import MenuBox from '../Components/Menu.vue';
 import Header from "../Layouts/MainNav.vue";
+import ListIconsSubject from "../Components/ListIconsSubject.vue";
+import ListIconsCategory from "../Components/ListIconsCategory.vue";
 
 const props = defineProps(['list']);
 

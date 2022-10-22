@@ -3,8 +3,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Database\Accounting;
-use App\Http\Controllers\Database\Accounting\AccountingKeyword;
+use App\Http\Controllers\RicoAssistant;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Artisan;
 
@@ -52,11 +51,11 @@ Route::get('/create', function () {
     ]);
 });
 
-Route::post('/store', [Accounting::class, 'store'])->name('store');
-Route::get('/search', [Accounting::class, 'filter'])->name('search');
-Route::get('/detail', [Accounting::class, 'detail'])->name('detail');
-Route::post('/update', [Accounting::class, 'update'])->name('update');
-Route::post('/delete', [Accounting::class, 'delete'])->name('delete');
+Route::post('/store', [RicoAssistant::class, 'store'])->name('store');
+Route::get('/search', [RicoAssistant::class, 'filter'])->name('search');
+Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');
+Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
+Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');

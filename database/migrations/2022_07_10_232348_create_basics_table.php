@@ -13,12 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('basics', function (Blueprint $table) {
             $table->id();
+
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->date('ref_date');
-            $table->string('category');
-            $table->string('producer');
-            $table->string('title');
+            $table->tinyText('subject');
+            $table->tinyText('category');
+            $table->tinyText('author');
+            $table->tinyText('title');
+
+            $table->tinyText('tracking')->nullable();
+            $table->tinyInteger('status')->nullable();
+
             $table->timestamps();
         });
     }
@@ -30,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventories');
+        Schema::dropIfExists('basics');
     }
 };
