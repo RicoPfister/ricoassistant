@@ -1,8 +1,8 @@
 <template>
 
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-full">
 
-        <div aria-label="Header" class="flex items-center xl:justify-between xl:items-end mt-2 xl:mt-0 mx-2 xl:mx-10 mb-8 xl:mb-12">
+        <div aria-label="Header" class="flex items-center xl:justify-between xl:items-end mx-2 xl:mx-10 mb-12">
 
             <div aria-label="Logo" class="xl:w-auto">
                 <Link translate="no" href="/" class="w-fit leading-none p-1 text-2xl text-lime-600 border-b-4 border-lime-600 hidden xl:block xl:mt-3"><span class="text-4xl font-bold">RA</span> | Rico Assistant</Link>

@@ -35,7 +35,7 @@
             </div>
 
             <div aria-label="Drop Down Basics" class="w-full min-w-0">
-                <button type="button" @click="basicOpen = !basicOpen" class="mt-1 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-200 flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="basicOpen = !basicOpen" class="mt-1 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-200 flex justify-between items-center p-2 w-full">
                     <div class="flex">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
@@ -130,7 +130,7 @@
             </div>
 
             <div aria-label="Drop Down Statement" class="">
-                <button type="button" @click="statementOpen = !statementOpen" class="mt-4 bg-gradient-to-r from-green-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="statementOpen = !statementOpen" class="mt-4 bg-gradient-to-r from-green-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
@@ -152,7 +152,7 @@
             </div>
 
             <div aria-label="Drop Down Statement" class="">
-                <button type="button" @click="activityOpen = !activityOpen" class="mt-4 bg-gradient-to-r from-red-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="activityOpen = !activityOpen" class="mt-4 bg-gradient-to-r from-red-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -174,16 +174,15 @@
                         <input class="grow min-w-0 text-sm border-none bg-transparent p-2" id="timeTracking" type="text" :value="form.ref_date" disabled>
                     </div>
 
-                    <div class="flex gap-1 h-6 mt-1" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup="activityKeyPressed($event, n)">
-                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                    <div class="flex gap-1 h-6 mt-1" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
+                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" min="0" max="2400" type="number" maxlength="4" placeholder="To" v-model="form.activityTo[n-1]">
                         <input class="grow min-w-0 text-sm p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
                     </div>
                 </div>
-                {{form.activityTo}}
             </div>
 
             <div aria-label="Drop Down References" class="">
-                <button type="button" @click="referencesOpen = !referencesOpen" class="mt-4 bg-gradient-to-r from-indigo-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="referencesOpen = !referencesOpen" class="mt-4 bg-gradient-to-r from-indigo-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -206,7 +205,7 @@
             </div>
 
             <div aria-label="Drop Down Statement" class="">
-                <button type="button" @click="tagsOpen = !tagsOpen" class="mt-4 bg-gradient-to-r from-slate-400 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="tagsOpen = !tagsOpen" class="mt-4 bg-gradient-to-r from-slate-400 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
@@ -235,7 +234,7 @@
             </div>
 
             <div aria-label="Drop Down Accounting" class="">
-                <button type="button" @click="accountingOpen = !accountingOpen" class="mt-4 bg-gradient-to-r from-yellow-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="accountingOpen = !accountingOpen" class="mt-4 bg-gradient-to-r from-yellow-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
@@ -286,7 +285,7 @@
             </div>
 
             <div aria-label="Drop Down Documents" class="">
-                <button type="button" @click="documentsOpen = !documentsOpen" class="mt-4 bg-gradient-to-r from-purple-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="documentsOpen = !documentsOpen" class="mt-4 bg-gradient-to-r from-purple-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -338,14 +337,14 @@
             <div aria-label="Drop Down Rating" class="">
                 <div class="relative mt-4 bg-gradient-to-r from-orange-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex items-center">
-                        <button type="button" @click="ratingOpen = !ratingOpen" class="flex items-center">
+                        <button type="button" @click.prevent="ratingOpen = !ratingOpen" class="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" />
                         </svg>
                         Rating
                     </button>
 
-                        <div @click="tooltipRatingOpen = !tooltipRatingOpen">
+                        <div @click.prevent="tooltipRatingOpen = !tooltipRatingOpen">
 
                             <!-- tooltip info icon -->
                         <svg  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-1">
@@ -572,7 +571,7 @@
                 <!-- <div>Preset</div>
                 <div>&nbsp;|&nbsp;</div> -->
                 <Button type="reset" class="text-red-600 hover:text-red-800" :disabled="form.processing">Reset Entry</Button>
-                <Button type="button" @click="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">Add Entry</Button>
+                <Button type="button" @click.prevent="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">Add Entry</Button>
             </div>
 
         </div>
@@ -708,18 +707,10 @@ let tooltipRatingOpen = ref(0);
 // actvivity
 let activityTotalRow = ref(1);
 
+// add row
 function activityRowAdd(n) {
 
-    onMounted(() => {
-        document.addEventListener('keydown', function (event) {
-            if (event.key === "Enter") {
-                alert('ok');
-            };
-        });
-    });
-
-    if (form.activityTo[n-1].length == 0) {form.activityTo.splice(n-1, 1); form.activityReference.splice(n-1, 1), activityTotalRow.value--}
-    else if (form.activityTo[n-1].length < 2 && !document.getElementById("activityToRowNumber"+(n))) activityTotalRow.value++;
+    if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4 && form.activityTo[n-1] !='0000') activityTotalRow.value++;
 }
 
 // key events
@@ -749,19 +740,50 @@ function activityKeyPressed(e, n) {
 
     if(e.key == 'ArrowRight'){
         document.getElementById("activityReferenceRowNumber"+(n-1)).focus();
-        // if(n <= activityTotalRow.value-1) document.getElementById("activityToRowNumber"+(n)).focus();
-        // else document.getElementById("activityToRowNumber"+(0)).focus();
     }
 
     if(e.key == 'ArrowLeft'){
         document.getElementById("activityToRowNumber"+(n-1)).focus();
-        // if(n <= activityTotalRow.value-1) document.getElementById("activityToRowNumber"+(n)).focus();
-        // else document.getElementById("activityToRowNumber"+(0)).focus();
     }
 
     if(e.key == 'Enter'){
         form.activityTo.splice(n-1, 1, '', form.activityTo[n-1]);
         activityTotalRow.value++
+    }
+
+    if(e.key == 'Delete'){
+
+        if(activityTotalRow.value > 1) {
+            form.activityTo.splice(n-1, 1);
+            form.activityReference.splice(n-1, 1);
+            activityTotalRow.value--
+        } else {
+            form.activityTo.splice(0, 1, '');
+            form.activityReference.splice(0, 1, '');
+        }
+    }
+}
+
+function activityKeyShUpPressed(e, n) {
+    if(n-1 > 0) {
+        form.activityTo.splice(n-2, 2, form.activityTo[n-1], form.activityTo[n-2]);
+        form.activityReference.splice(n-2, 2, form.activityReference[n-1], form.activityReference[n-2]);
+
+        if(document.activeElement == document.getElementById("activityToRowNumber"+(n-1))) {
+            document.getElementById("activityToRowNumber"+(n-2)).focus();
+        } else document.getElementById("activityReferenceRowNumber"+(n-2)).focus();
+
+    }
+}
+
+function activityKeyShDownPressed(e, n) {
+    if(n-1 < activityTotalRow.value-2) {
+        form.activityTo.splice(n-1, 2, form.activityTo[n], form.activityTo[n-1]);
+        form.activityReference.splice(n-1, 2, form.activityReference[n], form.activityReference[n-1]);
+
+        if(document.activeElement == document.getElementById("activityToRowNumber"+(n-1))) {
+            document.getElementById("activityToRowNumber"+(n)).focus();
+        } document.getElementById("activityReferenceRowNumber"+(n)).focus();
     }
 }
 
