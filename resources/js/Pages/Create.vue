@@ -169,13 +169,48 @@
 
                 <div v-if="activityOpen" class="flex flex-col p-3 border bg-gray-100 text-sm">
 
-                    <div class="flex gap-1 h-6">
-                        <input class="w-12 text-center text-sm border-none bg-transparent p-1" id="timeTracking" type="text" value="0000" disabled>
-                        <input class="grow min-w-0 text-sm border-none bg-transparent p-2" id="timeTracking" type="text" :value="form.ref_date" disabled>
-                    </div>
+                    <div class="flex gap-1 h-8 mt-1" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
 
-                    <div class="flex gap-1 h-6 mt-1" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
-                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" min="0" max="2400" type="number" maxlength="4" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" @keypress="onlyNumbers($event)" type="text" pattern="^[0-9]{4}$" placeholder="To" v-model="form.activityTo[n-1]">
+
+                        <div class="flex flex-row">
+
+                            <!-- button hours -->
+                            <div class="flex flex-col h-full">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-green-100" type="button">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+
+                                </button>
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-red-100" type="button">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                    </svg>
+
+                                </button>
+                            </div>
+
+                            <!-- button minutes -->
+                            <div class="flex flex-col h-full">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-green-100" type="button">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                                </button>
+
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-red-100" type="button">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
                         <input class="grow min-w-0 text-sm p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
                     </div>
                 </div>
@@ -705,18 +740,27 @@ let ratingOpen = ref(0);
 let tooltipRatingOpen = ref(0);
 
 // actvivity
+// **************************************************
 let activityTotalRow = ref(1);
 
-// add row
-function activityRowAdd(n) {
+// only number keys allowed
+function onlyNumbers(e) {
 
-    if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4 && form.activityTo[n-1] !='0000') activityTotalRow.value++;
+    if(!e.key.match(/[0-9]/)) e.preventDefault();
 }
 
-// key events
+
+function activityRowAdd(n) {
+
+    // add row
+    if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
+
+}
+
+// key events - misc
 function activityKeyPressed(e, n) {
 
-    if(e.key == 'ArrowUp'){
+        if(e.key == 'ArrowUp'){
         if (document.activeElement == document.getElementById("activityToRowNumber"+(n-1))) {
             if(n > 1) document.getElementById("activityToRowNumber"+(n-2)).focus();
             else document.getElementById("activityToRowNumber"+(activityTotalRow.value-1)).focus();
@@ -764,6 +808,7 @@ function activityKeyPressed(e, n) {
     }
 }
 
+// key events - shift + arrow up
 function activityKeyShUpPressed(e, n) {
     if(n-1 > 0) {
         form.activityTo.splice(n-2, 2, form.activityTo[n-1], form.activityTo[n-2]);
@@ -776,6 +821,7 @@ function activityKeyShUpPressed(e, n) {
     }
 }
 
+// key events - shift + arrow down
 function activityKeyShDownPressed(e, n) {
     if(n-1 < activityTotalRow.value-2) {
         form.activityTo.splice(n-1, 2, form.activityTo[n], form.activityTo[n-1]);
@@ -788,6 +834,7 @@ function activityKeyShDownPressed(e, n) {
 }
 
 // sendform
+// **************************************************
 
 function sendForm() {
 
