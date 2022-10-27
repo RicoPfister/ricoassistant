@@ -832,8 +832,8 @@ function activityButtonBar(e, n) {
 
             if (form.activityTo[n-1] > 0) {
 
-                if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 15;
-                else form.activityTo[n-1] -= 60;
+                if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 1;
+                else form.activityTo[n-1] -= 41;
             }
         };
 
@@ -842,30 +842,27 @@ function activityButtonBar(e, n) {
 
         // check if stored time was 2400 and go to 0 plus minutes
         if ( toTimeOldValue == 2400 ) {
-            alert('1');
 
             if (e == 'h') { form.activityTo[n-1] = 200 + minutes } else { form.activityTo[n-1] = 15 + toTimeAdditionalMinutes }
         }
 
         // top reached - check if time has passed max of 2400
         else if (form.activityTo[n-1] > 2400) {
-            alert('2');
+
             if (e == 'h') { form.activityTo[n-1] = form.activityTo[n-1] - 2400 } else { form.activityTo[n-1] = form.activityTo[n-1] - 2400};
 
         }
 
         // bottom reached - check if time has passed min value of 0
         if (form.activityTo[n-1] < 0) {
-            alert('3');
+
             // from minus to top
-            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2400 - toTimeAdditionalMinutes }
+            if (e == 'hMinus') { form.activityTo[n-1] = 2300 + toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2300 + toTimeAdditionalMinutes }
         }
 
+        else if ( ((form.activityTo[n-1] < 0 || (toTimeOldValue == 0 && typeof form.activityTo[n-1] !== 'undefined' ))) && ( e == 'hMinus' || e == 'mMinus' ) ) {
 
-
-        else if ( (toTimeOldValue == 0 || typeof form.activityTo[n-1] !== 'undefined' ) && ( e == 'hMinus' || e == 'mMinus' ) ) {
-            alert('4');
-            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - 100 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2400 - 1 - toTimeAdditionalMinutes }
+            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - 100 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2360 - 1 - toTimeAdditionalMinutes }
         }
     }
 }
