@@ -175,6 +175,24 @@
 
                         <div class="flex gap-1 flex-row">
 
+                            <!-- button clear/12h-->
+                            <div class="flex flex-col">
+
+
+
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('midday', n)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                                    </svg>
+
+                                </button>
+
+                                <button class="w-4 h-1/2 flex justify-center bg-gray-200" type="button" @click="activityButtonBar('clear', n)">
+                                    <div class="text-xs flex items-center justify-center h-full">C</div>
+                                </button>
+
+                            </div>
+
                             <!-- button hours -->
                             <div class="flex flex-col h-full">
                                 <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('h', n)">
@@ -204,22 +222,42 @@
                                 </button>
                             </div>
 
-                            <!-- button clear/remove-->
-                            <div class="flex flex-col">
 
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
-                                    <div>c</div>
-                                </button>
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-
-                            </div>
                         </div>
 
                         <input class="grow min-w-0 text-sm p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+
+                        <!-- button delete/duplicate -->
+                        <div class="flex flex-col">
+
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('duplicate', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+</svg>
+
+
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('delete', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- button add row top/bottom -->
+                        <div class="flex flex-col">
+
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                            </button>
+                        </div>
 
                         <!-- button swap -->
                         <div class="flex flex-col">
@@ -235,7 +273,6 @@
                                 </svg>
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -762,7 +799,6 @@ let documentsOpen = ref(0);
 let ratingOpen = ref(0);
 
 let tooltipRatingOpen = ref(0);
-let toTimeFullHour = ref(0);
 let toTimeEndReached = ref(0);
 
 // actvivity
@@ -773,70 +809,81 @@ function activityButtonBar(e, n) {
 
     // toTimeSet
     if (isNaN(form.activityTo[n-1])) form.activityTo[n-1] = 0
-        else form.activityTo[n-1] = parseInt(form.activityTo[n-1]
+    else form.activityTo[n-1] = parseInt(form.activityTo[n-1]
     );
 
     let minutes = parseInt(form.activityTo[n-1].toString().slice(-2));
-    let hours = parseInt(form.activityTo[n-1].toString().slice(0, -2));
 
-    let minutesModulo;
-    let toTimeOld= form.activityTo[n-1];
+    if (e == 'clear') form.activityTo[n-1] = 0;
+    if (e == 'midday') form.activityTo[n-1] = 1200;
 
-    if (e == 'h') form.activityTo[n-1] += 200;
-    if (e == 'hMinus') { if (form.activityTo[n-1] > 0) form.activityTo[n-1] -= 100 };
+    if (e == 'delete') activityRowDelete(n);
+    // if (e == 'duplicate') form.activityTo[n-1] = 1200;
 
-    if (e == 'm') {
+    if (e == 'swapUp') activityKeyShUpPressed(n);
+    if (e == 'SwapDown') activityKeyShDownPressed(n);
 
-        if (isNaN(hours)) hours = 0;
+    if (minutes < 60) {
 
-        if(form.activityTo[n-1] < 2359) {
-            if (minutes < 45) form.activityTo[n-1] += 15
-            else { hours += 1; minutesModulo = (minutes + 15) % 60; minutes = 0; form.activityTo[n-1] = hours * 100 + minutesModulo };
+        let toTimeOldValue = form.activityTo[n-1];
+
+        let hours = parseInt(form.activityTo[n-1].toString().slice(0, -2));
+
+        let toTimeAdditionalMinutes = minutes % 15;
+
+        if (e == 'h') { form.activityTo[n-1] += 200 };
+
+        if (e == 'hMinus') { if (form.activityTo[n-1] > 0) form.activityTo[n-1] -= 100 };
+
+        if (e == 'm') {
+
+            if (isNaN(hours)) hours = 0;
+
+
+                if (minutes < 45) form.activityTo[n-1] += 15
+                else { hours += 1; minutes = 0; form.activityTo[n-1] = hours * 100 + toTimeAdditionalMinutes };
         }
-        // form.activityTo[n-1] = hours * 100 + minutes;
-    }
 
-    else if (e == 'mMinus') {
+        else if (e == 'mMinus') {
 
-        if (form.activityTo[n-1] > 0) {
+            if (form.activityTo[n-1] > 0) {
 
-            if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 15;
-            else form.activityTo[n-1] -= 60;
-        }
-    };
+                if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 15;
+                else form.activityTo[n-1] -= 60;
+            }
+        };
 
         // min and max time adjustments
-    // ****************************************************************
+        // ****************************************************************
 
-    // check if stored time was 2359 and go to 0
-    if (toTimeOld == 2359) {
-        alert('ok');
-        if (toTimeFullHour.value == 1) { if(e == 'h') { form.activityTo[n-1] = 200} else { form.activityTo[n-1] = 15 }; toTimeFullHour.value = 0 }
-        else form.activityTo[n-1] = 123;
+        // check if stored time was 2400 and go to 0 plus minutes
+        if ( toTimeOldValue == 2400 ) {
+            alert('1');
+
+            if (e == 'h') { form.activityTo[n-1] = 200 + minutes } else { form.activityTo[n-1] = 15 + toTimeAdditionalMinutes }
+        }
+
+        // top reached - check if time has passed max of 2400
+        else if (form.activityTo[n-1] > 2400) {
+            alert('2');
+            if (e == 'h') { form.activityTo[n-1] = form.activityTo[n-1] - 2400 } else { form.activityTo[n-1] = form.activityTo[n-1] - 2400};
+
+        }
+
+        // bottom reached - check if time has passed min value of 0
+        if (form.activityTo[n-1] < 0) {
+            alert('3');
+            // from minus to top
+            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2400 - toTimeAdditionalMinutes }
+        }
+
+
+
+        else if ( (toTimeOldValue == 0 || typeof form.activityTo[n-1] !== 'undefined' ) && ( e == 'hMinus' || e == 'mMinus' ) ) {
+            alert('4');
+            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - 100 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2400 - 1 - toTimeAdditionalMinutes }
+        }
     }
-
-    // top reached - check if time has passed max of 2359
-    else if (form.activityTo[n-1] > 2359) {
-
-        // alert(toTimeEndReached.value);
-
-        // from top to 0 plus stored minutes
-        if (toTimeEndReached.value == 1) { form.activityTo[n-1] = 345; toTimeEndReached.value  = 0 }
-
-        // reach 2400 and replaxe it with 2359 plus store full hour state
-        else if (minutes == 0) { form.activityTo[n-1] = 2359; toTimeFullHour.value = 1 }
-
-            // reach 2359 plus stored minutes
-            else { form.activityTo[n-1] = 2300 + minutes; toTimeEndReached.value = 1 };
-
-    }
-
-    // bottom reached - check if time has passed min value of 0
-    if (form.activityTo[n-1] < 0) {
-
-        // from minus to top
-        form.activityTo[n-1] = 2359 - form.activityTo[n-1]
-    };
 }
 
 // only number keys allowed
@@ -849,8 +896,6 @@ function activityRowAdd(n) {
 
     // add row
     if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
-
-    form.activityTo[n-1].padStart(4, 0);
 
 }
 
@@ -894,19 +939,12 @@ function activityKeyPressed(e, n) {
 
     if(e.key == 'Delete'){
 
-        if(activityTotalRow.value > 1) {
-            form.activityTo.splice(n-1, 1);
-            form.activityReference.splice(n-1, 1);
-            activityTotalRow.value--
-        } else {
-            form.activityTo.splice(0, 1, '');
-            form.activityReference.splice(0, 1, '');
-        }
+        activityRowDelete(n);
     }
 }
 
 // key events - shift + arrow up
-function activityKeyShUpPressed(e, n) {
+function activityKeyShUpPressed(n) {
     if(n-1 > 0) {
         form.activityTo.splice(n-2, 2, form.activityTo[n-1], form.activityTo[n-2]);
         form.activityReference.splice(n-2, 2, form.activityReference[n-1], form.activityReference[n-2]);
@@ -919,7 +957,7 @@ function activityKeyShUpPressed(e, n) {
 }
 
 // key events - shift + arrow down
-function activityKeyShDownPressed(e, n) {
+function activityKeyShDownPressed(n) {
     if(n-1 < activityTotalRow.value-2) {
         form.activityTo.splice(n-1, 2, form.activityTo[n], form.activityTo[n-1]);
         form.activityReference.splice(n-1, 2, form.activityReference[n], form.activityReference[n-1]);
@@ -928,6 +966,19 @@ function activityKeyShDownPressed(e, n) {
             document.getElementById("activityToRowNumber"+(n)).focus();
         } document.getElementById("activityReferenceRowNumber"+(n)).focus();
     }
+}
+
+// activity functions
+
+function activityRowDelete(n) {
+    if(activityTotalRow.value > 1) {
+            form.activityTo.splice(n-1, 1);
+            form.activityReference.splice(n-1, 1);
+            activityTotalRow.value--
+        } else {
+            form.activityTo.splice(0, 1, '');
+            form.activityReference.splice(0, 1, '');
+        }
 }
 
 // sendform
