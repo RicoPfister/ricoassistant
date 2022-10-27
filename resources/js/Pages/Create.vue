@@ -167,51 +167,75 @@
                     </div>
                 </button>
 
-                <div v-if="activityOpen" class="flex flex-col p-3 border bg-gray-100 text-sm">
+                <div v-if="activityOpen" class="flex flex-col px-3 pb-1 border bg-gray-100 text-sm">
 
-                    <div class="flex gap-1 h-8 mt-1" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
+                    <div class="flex gap-1 h-8 mt-2" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
 
-                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" @keypress="onlyNumbers($event)" type="text" pattern="^[0-9]{4}$" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
-                        <div class="flex flex-row">
+                        <div class="flex gap-1 flex-row">
 
                             <!-- button hours -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-green-100" type="button">
-
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('h', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
-
                                 </button>
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-red-100" type="button">
-
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('hMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
-
                                 </button>
                             </div>
 
                             <!-- button minutes -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-green-100" type="button">
-
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('m', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
 
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-red-100" type="button">
-
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('mMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
                                 </button>
                             </div>
+
+                            <!-- button clear/remove-->
+                            <div class="flex flex-col">
+
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
+                                    <div>c</div>
+                                </button>
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
+                            </div>
                         </div>
 
                         <input class="grow min-w-0 text-sm p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+
+                        <!-- button swap -->
+                        <div class="flex flex-col">
+
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                </svg>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -738,10 +762,82 @@ let documentsOpen = ref(0);
 let ratingOpen = ref(0);
 
 let tooltipRatingOpen = ref(0);
+let toTimeFullHour = ref(0);
+let toTimeEndReached = ref(0);
 
 // actvivity
 // **************************************************
 let activityTotalRow = ref(1);
+
+function activityButtonBar(e, n) {
+
+    // toTimeSet
+    if (isNaN(form.activityTo[n-1])) form.activityTo[n-1] = 0
+        else form.activityTo[n-1] = parseInt(form.activityTo[n-1]
+    );
+
+    let minutes = parseInt(form.activityTo[n-1].toString().slice(-2));
+    let hours = parseInt(form.activityTo[n-1].toString().slice(0, -2));
+
+    let minutesModulo;
+    let toTimeOld= form.activityTo[n-1];
+
+    if (e == 'h') form.activityTo[n-1] += 200;
+    if (e == 'hMinus') { if (form.activityTo[n-1] > 0) form.activityTo[n-1] -= 100 };
+
+    if (e == 'm') {
+
+        if (isNaN(hours)) hours = 0;
+
+        if(form.activityTo[n-1] < 2359) {
+            if (minutes < 45) form.activityTo[n-1] += 15
+            else { hours += 1; minutesModulo = (minutes + 15) % 60; minutes = 0; form.activityTo[n-1] = hours * 100 + minutesModulo };
+        }
+        // form.activityTo[n-1] = hours * 100 + minutes;
+    }
+
+    else if (e == 'mMinus') {
+
+        if (form.activityTo[n-1] > 0) {
+
+            if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 15;
+            else form.activityTo[n-1] -= 60;
+        }
+    };
+
+        // min and max time adjustments
+    // ****************************************************************
+
+    // check if stored time was 2359 and go to 0
+    if (toTimeOld == 2359) {
+        alert('ok');
+        if (toTimeFullHour.value == 1) { if(e == 'h') { form.activityTo[n-1] = 200} else { form.activityTo[n-1] = 15 }; toTimeFullHour.value = 0 }
+        else form.activityTo[n-1] = 123;
+    }
+
+    // top reached - check if time has passed max of 2359
+    else if (form.activityTo[n-1] > 2359) {
+
+        // alert(toTimeEndReached.value);
+
+        // from top to 0 plus stored minutes
+        if (toTimeEndReached.value == 1) { form.activityTo[n-1] = 345; toTimeEndReached.value  = 0 }
+
+        // reach 2400 and replaxe it with 2359 plus store full hour state
+        else if (minutes == 0) { form.activityTo[n-1] = 2359; toTimeFullHour.value = 1 }
+
+            // reach 2359 plus stored minutes
+            else { form.activityTo[n-1] = 2300 + minutes; toTimeEndReached.value = 1 };
+
+    }
+
+    // bottom reached - check if time has passed min value of 0
+    if (form.activityTo[n-1] < 0) {
+
+        // from minus to top
+        form.activityTo[n-1] = 2359 - form.activityTo[n-1]
+    };
+}
 
 // only number keys allowed
 function onlyNumbers(e) {
@@ -749,15 +845,16 @@ function onlyNumbers(e) {
     if(!e.key.match(/[0-9]/)) e.preventDefault();
 }
 
-
 function activityRowAdd(n) {
 
     // add row
     if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
 
+    form.activityTo[n-1].padStart(4, 0);
+
 }
 
-// key events - misc
+// key events - common
 function activityKeyPressed(e, n) {
 
         if(e.key == 'ArrowUp'){
