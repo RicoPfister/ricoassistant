@@ -169,25 +169,23 @@
 
                 <div v-if="activityOpen" class="flex flex-col px-3 pb-1 border bg-gray-100 text-sm">
 
-                    <div class="flex gap-1 h-8 mt-2" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed($event, n)" @keyup.shift.arrow-down="activityKeyShDownPressed($event, n)">
+                    <div class="flex gap-1 h-8 mt-2" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(n)" @keyup.shift.arrow-down="activityKeyShDownPressed(n)">
 
-                        <input class="w-12 text-center text-sm p-1" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-[58px] text-sm xl:text-lg text-center p-1" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
-                            <!-- button clear/12h-->
+                            <!-- button 12h/clear-->
                             <div class="flex flex-col">
 
-
-
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('midday', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = 1200">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                                     </svg>
 
                                 </button>
 
-                                <button class="w-4 h-1/2 flex justify-center bg-gray-200" type="button" @click="activityButtonBar('clear', n)">
+                                <button class="w-4 h-1/2 flex justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = ''">
                                     <div class="text-xs flex items-center justify-center h-full">C</div>
                                 </button>
 
@@ -195,12 +193,12 @@
 
                             <!-- button hours -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('h', n)">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('h', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('hMinus', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('hMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
@@ -209,35 +207,30 @@
 
                             <!-- button minutes -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('m', n)">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('m', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
 
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('mMinus', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('mMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
                                 </button>
                             </div>
-
-
                         </div>
 
-                        <input class="grow min-w-0 text-sm p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                        <input class="grow min-w-0 text-sm xl:text-lg p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
-                        <!-- button delete/duplicate -->
+                        <!-- button clear reference/ delelte row -->
                         <div class="flex flex-col">
 
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('duplicate', n)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
-</svg>
-
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
+                                <div class="text-xs flex items-center justify-center h-full">C</div>
 
                             </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('delete', n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityRowDelete(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -247,12 +240,12 @@
                         <!-- button add row top/bottom -->
                         <div class="flex flex-col">
 
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('', n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                             </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('', n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
@@ -262,12 +255,12 @@
                         <!-- button swap -->
                         <div class="flex flex-col">
 
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapUp', n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShUpPressed(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                                 </svg>
                             </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200" type="button" @click="activityButtonBar('swapDown', n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShDownPressed(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                 </svg>
@@ -807,23 +800,14 @@ let activityTotalRow = ref(1);
 
 function activityButtonBar(e, n) {
 
-    // toTimeSet
-    if (isNaN(form.activityTo[n-1])) form.activityTo[n-1] = 0
-    else form.activityTo[n-1] = parseInt(form.activityTo[n-1]
-    );
+    if (isNaN(form.activityTo[n-1]) || (form.activityTo[n-1]) == '') form.activityTo[n-1] = 0
+        else form.activityTo[n-1] = parseInt(form.activityTo[n-1]);
 
     let minutes = parseInt(form.activityTo[n-1].toString().slice(-2));
 
-    if (e == 'clear') form.activityTo[n-1] = 0;
-    if (e == 'midday') form.activityTo[n-1] = 1200;
-
-    if (e == 'delete') activityRowDelete(n);
-    // if (e == 'duplicate') form.activityTo[n-1] = 1200;
-
-    if (e == 'swapUp') activityKeyShUpPressed(n);
-    if (e == 'SwapDown') activityKeyShDownPressed(n);
-
     if (minutes < 60) {
+
+        // toTimeSet
 
         let toTimeOldValue = form.activityTo[n-1];
 
@@ -971,7 +955,7 @@ function activityKeyShDownPressed(n) {
 // activity functions
 
 function activityRowDelete(n) {
-    if(activityTotalRow.value > 1) {
+            if(activityTotalRow.value > 1) {
             form.activityTo.splice(n-1, 1);
             form.activityReference.splice(n-1, 1);
             activityTotalRow.value--
