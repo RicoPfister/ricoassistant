@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <div aria-label="Drop Down Statement" class="">
+            <div aria-label="Drop Down Activity" class="">
                 <button type="button" @click.prevent="activityOpen = !activityOpen" class="mt-4 bg-gradient-to-r from-red-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
@@ -167,9 +167,9 @@
                     </div>
                 </button>
 
-                <div v-if="activityOpen" class="flex flex-col px-3 pb-1 border bg-gray-100 text-sm">
+                <div v-if="activityOpen" class="flex flex-col border bg-gray-100 text-sm">
 
-                    <div class="flex gap-1 h-8 mt-2" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
+                    <div class="flex gap-1 h-8 mt-4 px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
                         <input class="w-[58px] text-sm xl:text-lg text-center p-1" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
@@ -192,12 +192,12 @@
 
                             <!-- button hours -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('h', n)">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityButtonBar('h', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('hMinus', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityButtonBar('hMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
@@ -222,14 +222,14 @@
 
                         <input class="grow min-w-0 text-sm xl:text-lg p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
-                        <!-- button clear reference/ delelte row -->
+                        <!-- button clear reference/ delete row -->
                         <div class="flex flex-col">
 
                             <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
                                 <div class="text-xs flex items-center justify-center h-full">C</div>
 
                             </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityRowDelete(n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button" @click="activityRowDelete(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -239,12 +239,12 @@
                         <!-- button add row top/bottom -->
                         <div class="flex flex-col">
 
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityRowAddAbove(n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowAddAbove(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                             </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityRowAddBelow(n)">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowAddBelow(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
@@ -266,6 +266,85 @@
                             </button>
                         </div>
                     </div>
+
+                    <div aria-label="Drop Down Activity Day Overview" class="">
+                <button type="button" @click.prevent="activityOverwievOpen= !activityOverwievOpen" class="mt-4 bg-gradient-to-r from-gray-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                    <div class="flex text-base">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                        </svg>
+                        Overview
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path v-if="activityOverwievOpen == 1" stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                            <path v-if="activityOverwievOpen == 0" stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </div>
+                </button>
+                <div v-if="activityOverwievOpen" class="p-3 flex flex-col justify-center">
+                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600">
+                        <div v-for="i in 1" class="flex flex-row">
+                            <div v-for="n in 360" class="w-[1px] h-full bg-green-300"></div>
+                            <div v-for="n in 360" class="w-[1px] h-full bg-red-300"></div>
+                        </div>
+
+                        <div>
+
+
+                            </div>
+                            <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                                0000
+
+
+                            </div>
+
+
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                                </svg>
+
+                            </div>
+
+                            <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                            2400
+
+                            </div>
+
+
+
+
+
+                    </div>
+                        <div class="flex flex-row gap-5">
+
+                            <div class="mt-3 flex flex-col">
+                            <div class="border-b border-black"><b>Category</b></div>
+                            <div>Sustainability</div>
+                            <div>Development</div>
+                            <div>Influence</div>
+                        </div>
+
+                        <div class="mt-3 flex flex-col">
+                            <div class="border-b border-black"><b>Hours/%</b></div>
+                            <div>3 (23%)</div>
+                            <div>7 (23%)</div>
+                            <div>1 (23%)</div>
+                        </div>
+
+                        <div class="mt-3 flex flex-col">
+                            <div class="border-b border-black"><b>Grade (Intensity/Success/Happiness)</b></div>
+                            <div>1-2-3</div>
+                            <div>1-2-3</div>
+                            <div>1-2-3</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
                 </div>
             </div>
 
@@ -789,6 +868,7 @@ let tagsPickerOpen = ref(0);
 let accountingOpen = ref(0);
 let documentsOpen = ref(0);
 let ratingOpen = ref(0);
+let activityOverwievOpen = ref(1);
 
 let tooltipRatingOpen = ref(0);
 let toTimeEndReached = ref(0);
@@ -805,23 +885,19 @@ function activityButtonBar(e, n) {
     let minutes = parseInt(form.activityTo[n-1].toString().slice(-2));
 
     if (minutes < 60) {
-
         // toTimeSet
 
         let toTimeOldValue = form.activityTo[n-1];
-
         let hours = parseInt(form.activityTo[n-1].toString().slice(0, -2));
-
         let toTimeAdditionalMinutes = minutes % 15;
 
-        if (e == 'h') { form.activityTo[n-1] += 200 };
+        if (e == 'h') { form.activityTo[n-1] += 200 }
 
         if (e == 'hMinus') { if (form.activityTo[n-1] > 0) form.activityTo[n-1] -= 100 };
 
         if (e == 'm') {
 
             if (isNaN(hours)) hours = 0;
-
 
                 if (minutes < 45) form.activityTo[n-1] += 15
                 else { hours += 1; minutes = 0; form.activityTo[n-1] = hours * 100 + toTimeAdditionalMinutes };
@@ -863,10 +939,22 @@ function activityButtonBar(e, n) {
 
             if (e == 'hMinus') { form.activityTo[n-1] = 2400 - 100 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2360 - 1 - toTimeAdditionalMinutes }
         }
+
+        // inherit value from previous time
+        if (typeof form.activityTo[n-2] !== 'undefined') {
+            if (form.activityTo[n-1] <= form.activityTo[n-2] || (toTimeOldValue >= 2400 && e != hMinus || e != mMinus)) {
+                form.activityTo[n-1] = form.activityTo[n-2];
+
+                if (e == 'h' && toTimeOldValue <= 2400) form.activityTo[n-1] += 200;
+                else if (e == 'm' && toTimeOldValue <= 2400) form.activityTo[n-1] += 15;
+            }
+        };
     }
 
-    if (form.activityTo[n-1] > 0 && !document.getElementById("activityToRowNumber"+(n)) ) activityTotalRow.value++;
-    else if (form.activityTo[n-1] == 0 && form.activityReference[n-1] !== 'undefined' ) activityTotalRow.value--;
+    // add/remove row automatically
+    if (form.activityTo[n-1] > 0 && !document.getElementById("activityToRowNumber"+(n)) ) { activityTotalRow.value++}
+    else if ((form.activityTo[n-1] == 0 || form.activityTo[n-1] == 2400) && (typeof form.activityReference[n] == 'undefined' || form.activityReference[n] == '')) activityTotalRow.value--;
+
 }
 
 // only number keys allowed
@@ -956,14 +1044,16 @@ function activityKeyShDownPressed(check, n) {
 // activity functions
 
 function activityRowDelete(n) {
+
     if(activityTotalRow.value > 1) {
         form.activityTo.splice(n-1, 1);
         form.activityReference.splice(n-1, 1);
-        activityTotalRow.value--
+        activityTotalRow.value--;
     } else {
         form.activityTo.splice(0, 1, '');
         form.activityReference.splice(0, 1, '');
     }
+
 }
 
 function activityRowAddAbove(n) {
