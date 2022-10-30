@@ -67,7 +67,7 @@
                             <select id="subject" v-model="form.category">
                                 <option value="Accounting/Fact/Media" disabled>Choose a Category</option>
                                 <option value="medicine">Medicine</option>
-                                <option value="healthiness">Healthiness</option>
+                                <option value="healthiness">Health</option>
                                 <option value="psychology">Psychology</option>
                                 <option value="social">Social</option>
                                 <option value="politics">Politics</option>
@@ -171,21 +171,22 @@
 
                     <div class="flex gap-1 h-8 mt-4 px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
-                        <input class="w-[58px] text-sm xl:text-lg text-center p-1" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-[58px] text-sm xl:text-lg text-center p-1" :id="'activityToRowNumber'+[n-1]" @input="activityToInput(n)" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
-                            <!-- button clear/12h-->
+                            <!-- button 12h/clear-->
                             <div class="flex flex-col">
-
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = ''">
-                                    <div class="text-xs flex items-center justify-center h-full">C</div>
-                                </button>
 
                                 <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = 1200">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                                     </svg>
+                                </button>
+
+
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = ''">
+                                    <div class="text-xs flex items-center justify-center h-full">C</div>
                                 </button>
 
                             </div>
@@ -220,35 +221,74 @@
                             </div>
                         </div>
 
-                        <input class="grow min-w-0 text-sm xl:text-lg p-2" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                        <!-- input reference -->
+                        <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
+                            <input @blur="referencePickerOpen[n-1] = 0" class="w-full h-full min-w-0 p-2 border-none focus:border-current focus:ring-0 pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
-                        <!-- button clear reference/ delete row -->
+                            <!-- input reference menu button -->
+                            <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
+
+                                <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                                    </svg>
+                                </button>
+
+                            </div>
+
+                            <!-- reference picker popup -->
+                            <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+
+                                <div class="flex flex-row items-center z-50">
+
+                                    <div class="text-sm xl:text-base z-50">
+
+                                        <div class="text-sm"><b>Found in Database:</b></div>
+
+                                        <div v-for="item in props.referencesResult" class="flex flex-row items-center">
+
+                                            <button>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                                </svg>
+                                            </button>
+
+                                           <button type="button" @click="form.activityReference[n-1] = item.title; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black">{{ item.title }}</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- button clear reference/ clear rating-->
                         <div class="flex flex-col">
 
                             <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
                                 <div class="text-xs flex items-center justify-center h-full">C</div>
 
                             </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
+                                <div class="text-xs flex items-center justify-center h-full">C</div>
+
+                            </button>
+
+                        </div>
+
+                        <!-- button duplicate row / remove row -->
+                        <div class="flex flex-col">
+
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowDuplicate(n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                            </button>
                             <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button" @click="activityRowDelete(n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                        </div>
 
-                        <!-- button add row top/bottom -->
-                        <div class="flex flex-col">
-
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowAddAbove(n)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                                    </svg>
-                            </button>
-                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowAddBelow(n)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                                    </svg>
-                            </button>
                         </div>
 
                         <!-- button swap -->
@@ -267,6 +307,7 @@
                         </div>
                     </div>
 
+                    <!-- activity day overview -->
                     <div aria-label="Drop Down Activity Day Overview" class="">
                 <button type="button" @click.prevent="activityOverwievOpen= !activityOverwievOpen" class="mt-4 bg-gradient-to-r from-gray-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex text-base">
@@ -282,41 +323,49 @@
                         </svg>
                     </div>
                 </button>
-                <div v-if="activityOverwievOpen" class="p-3 flex flex-col justify-center">
-                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600">
-                        <div v-for="i in 1" class="flex flex-row">
-                            <div v-for="n in 360" class="w-[1px] h-full bg-green-300"></div>
-                            <div v-for="n in 360" class="w-[1px] h-full bg-red-300"></div>
+                <div v-if="activityOverwievOpen" class="p-3 flex flex-col justify-center z-20">
+                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20">
+                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row">
+                            <div class="w-[1px] h-full bg-green-300" :style="{width: (((width - (width % 100)) / 100 * 60) + width % 100)+'px'}"></div>
+
                         </div>
 
-                        <div>
+                        <!-- half day disgram -->
+                        <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                            0
+                        </div>
 
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
 
-                            </div>
-                            <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
-                                0000
+                        </div>
 
-
-                            </div>
-
-
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                                </svg>
-
-                            </div>
-
-                            <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
-                            2400
-
-                            </div>
-
-
-
-
+                        <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                            12
+                        </div>
 
                     </div>
+
+                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1">
+                        <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="activityDayOverviewDiagram1b" class="flex flex-row">
+                            <div class="h-full bg-green-300" :style="{width: (((width - (width % 100)) / 100 * 60) + width % 100)+'px'}" ></div>
+                        </div>
+
+                        <!-- half day disgram -->
+                        <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                            12
+                        </div>
+
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
+
+                        </div>
+
+                        <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                            24
+                        </div>
+                    </div>
+
+                    <div class="">
+
                         <div class="flex flex-row gap-5">
 
                             <div class="mt-3 flex flex-col">
@@ -340,7 +389,7 @@
                             <div>1-2-3</div>
                         </div>
                     </div>
-
+                </div>
                 </div>
 
             </div>
@@ -766,12 +815,7 @@ const year  = dateNow.getFullYear();
 const month = (dateNow.getMonth() + 1).toString().padStart(2, "0");
 const day = dateNow.getDate().toString().padStart(2, "0");
 
-const props = defineProps(['user']);
-
-// const user = computed(() => usePage().props.value.auth.user)
-// usePage().props.user.value;
-
-// alert(user.name);
+const props = defineProps(['user', 'referencesResult', 'misc']);
 
 const form = useForm({
     ref_date: year+'-'+month+'-'+day,
@@ -868,14 +912,25 @@ let tagsPickerOpen = ref(0);
 let accountingOpen = ref(0);
 let documentsOpen = ref(0);
 let ratingOpen = ref(0);
+
 let activityOverwievOpen = ref(1);
+let referencePickerOpen = ref([]);
+referencePickerOpen.value[0] = 0;
 
 let tooltipRatingOpen = ref(0);
 let toTimeEndReached = ref(0);
 
+let activiteTolimitReached = ref(0);
+
+let activityTotalRow = ref(1);
+
+let activityDayOverviewDiagram1a = ref([]);
+let activityDayOverviewDiagram1b = ref([]);
+let activityLimitReached = ref(0);
+
 // actvivity
 // **************************************************
-let activityTotalRow = ref(1);
+
 
 function activityButtonBar(e, n) {
 
@@ -907,53 +962,53 @@ function activityButtonBar(e, n) {
 
             if (form.activityTo[n-1] > 0) {
 
-                if (form.activityTo[n-1].toString().slice(-2) > 0) form.activityTo[n-1] -= 1;
+                if (form.activityTo[n-1].toString().slice(-2) > 0) { form.activityTo[n-1] -= 1; activiteTolimitReached.value = 0 }
                 else form.activityTo[n-1] -= 41;
             }
+
+            activiteTolimitReached.value = 0;
         };
 
         // min and max time adjustments
         // ****************************************************************
 
         // check if stored time was 2400 and go to 0 plus minutes
-        if ( toTimeOldValue == 2400 ) {
+        if ( toTimeOldValue == 2400 && e != 'mMinus' && e != 'hMinus' ) {
 
-            if (e == 'h') { form.activityTo[n-1] = 200 + minutes } else { form.activityTo[n-1] = 15 + toTimeAdditionalMinutes }
+            form.activityTo[n-1] = 2400;
         }
 
         // top reached - check if time has passed max of 2400
-        else if (form.activityTo[n-1] > 2400) {
+        else if (form.activityTo[n-1] >= 2400) {
 
-            if (e == 'h') { form.activityTo[n-1] = form.activityTo[n-1] - 2400 } else { form.activityTo[n-1] = form.activityTo[n-1] - 2400};
+            form.activityTo[n-1] = 2400; activiteTolimitReached.value = 1;
 
         }
 
         // bottom reached - check if time has passed min value of 0
         if (form.activityTo[n-1] < 0) {
-
-            // from minus to top
-            if (e == 'hMinus') { form.activityTo[n-1] = 2300 + toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2300 + toTimeAdditionalMinutes }
-        }
-
-        else if ( ((form.activityTo[n-1] < 0 || (toTimeOldValue == 0 && typeof form.activityTo[n-1] !== 'undefined' ))) && ( e == 'hMinus' || e == 'mMinus' ) ) {
-
-            if (e == 'hMinus') { form.activityTo[n-1] = 2400 - 100 - toTimeAdditionalMinutes } else { form.activityTo[n-1] = 2360 - 1 - toTimeAdditionalMinutes }
+            form.activityTo[n-1] = 0;
         }
 
         // inherit value from previous time
         if (typeof form.activityTo[n-2] !== 'undefined') {
-            if (form.activityTo[n-1] <= form.activityTo[n-2] || (toTimeOldValue >= 2400 && e != hMinus || e != mMinus)) {
+            if (form.activityTo[n-1] <= form.activityTo[n-2] || (toTimeOldValue > 2400 && e == 'hMinus' || e == 'mMinus')) {
                 form.activityTo[n-1] = form.activityTo[n-2];
 
                 if (e == 'h' && toTimeOldValue <= 2400) form.activityTo[n-1] += 200;
                 else if (e == 'm' && toTimeOldValue <= 2400) form.activityTo[n-1] += 15;
             }
+
+            if (form.activityTo[n-1] >= 2400) {
+
+            form.activityTo[n-1] = 2400; activiteTolimitReached.value = 1;
+}
         };
     }
 
-    // add/remove row automatically
-    if (form.activityTo[n-1] > 0 && !document.getElementById("activityToRowNumber"+(n)) ) { activityTotalRow.value++}
-    else if ((form.activityTo[n-1] == 0 || form.activityTo[n-1] == 2400) && (typeof form.activityReference[n] == 'undefined' || form.activityReference[n] == '')) activityTotalRow.value--;
+    // add/remove row
+    if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && form.activityReference[n] == '') {activityTotalRow.value--; activiteTolimitReached.value = 0}
+    else if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) { activityTotalRow.value++; form.activityTo[n] = ''; form.activityReference[n] = ''};
 
 }
 
@@ -967,6 +1022,8 @@ function activityRowAdd(n) {
 
     // add row
     if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
+
+    referencePickerOpen.value[n-1] = 0;
 
 }
 
@@ -1004,7 +1061,7 @@ function activityKeyPressed(e, n) {
     }
 
     if(e.key == 'Enter'){
-        activityRowAddAbove(n)
+        activityRowDuplicate(n)
     }
 
     if(e.key == 'Delete'){
@@ -1043,6 +1100,7 @@ function activityKeyShDownPressed(check, n) {
 
 // activity functions
 
+// delete row
 function activityRowDelete(n) {
 
     if(activityTotalRow.value > 1) {
@@ -1056,19 +1114,58 @@ function activityRowDelete(n) {
 
 }
 
-function activityRowAddAbove(n) {
-    form.activityTo.splice(n-1, 1, form.activityTo[n-1], form.activityTo[n-1]);
+// duplicate row
+function activityRowDuplicate(n) {
+    form.activityTo.splice(n, 0, form.activityTo[n-1] );
+    form.activityReference.splice(n, 0, form.activityReference[n-1] );
     activityTotalRow.value++
 }
 
-function activityRowAddBelow(n) {
-    form.activityTo.splice(n-1, 1, form.activityTo[n-1], form.activityTo[n-1] );
-    activityTotalRow.value++
+// watch for diagram width
+watch(() => form.activityTo ,  (curr, prev) => {
+
+// activityDayOverviewDiagram1a.value = form.activityTo;
+
+let limit = 0;
+let j = 1;
+activityDayOverviewDiagram1a.value = [];
+activityDayOverviewDiagram1b.value = [];
+
+for (let i = 0; i < form.activityTo.length; i++) {
+
+    if (limit > 1200 && activityLimitReached.value == 0) {
+
+        activityDayOverviewDiagram1a.value[i-1] = activityDayOverviewDiagram1a.value[i-1] - (limit - 1200);
+        activityDayOverviewDiagram1b.value[0] = limit - 1200;
+        activityLimitReached.value = 1;
+    }
+
+    else if (limit < 1200) {
+        activityLimitReached.value = 0;
+    }
+
+    if (form.activityTo[i] > 0 && activityLimitReached.value == 0) {
+
+        limit += form.activityTo[i];
+
+        activityDayOverviewDiagram1a.value[i] = form.activityTo[i];
+    }
+
+    else if (activityLimitReached.value == 1) {
+
+        limit += form.activityTo[i];
+        activityDayOverviewDiagram1b.value[j] = form.activityTo[i];
+        j++
+    }
+
 }
 
-// watch(form.activityTo, (newValue, oldValue) => {
-//  alert('change');
-// })
+    alert(activityDayOverviewDiagram1a.value);
+    alert(activityDayOverviewDiagram1b.value);
+
+
+}, {deep: true}, 500
+);
 
 // sendform
 // **************************************************
@@ -1082,6 +1179,36 @@ function sendForm() {
     });
 
     Inertia.post('store', requestObj);
+}
+
+// reference
+// **************************************************
+
+// reference response
+watch(() => props.misc, _.debounce( (curr, prev) => {
+
+    referencePickerOpen.value[props.misc.row-1] = 1;
+
+}, 500)
+);
+
+function referenceChecker(n, le) {
+
+    // alert(n);
+
+    if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
+
+        Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
+    }
+
+    else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
+
+    else if (form.activityReference[0].length > 2) {
+
+        setTimeout(() => {
+            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: true,  preserveState: true, preserveScroll: true});
+        }, 500);
+    }
 }
 
 </script>

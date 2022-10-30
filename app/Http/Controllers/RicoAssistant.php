@@ -228,7 +228,7 @@ class RicoAssistant extends Controller {
 
     public function update(Request $request) {
 
-        // dd($request->id);
+        // dd($request);
 
         foreach($request->all() as $key => $value) {
 
@@ -246,10 +246,56 @@ class RicoAssistant extends Controller {
 
     public function delete(Request $request) {
 
-        DB::table('ricoassistants')->where('id', '=', $request->id)->delete();
+        DB::table('basics')->where('id', '=', $request->id)->delete();
 
         return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
     }
 
+    // reference
+    // **************************************************
 
+    public function reference(Request $request) {
+
+        // dd($request);
+
+        if ($request->activityReference == 'lastUsed') {
+            $referencedIds = DB::table('references')->orderByDesc('created_at')->take(10)->get();
+
+            // dd($referencedIds);
+
+            $i = 0;
+
+            foreach ($referencedIds as $id) {
+
+
+                $referencedIdPart = DB::table('basics')->where('id', '=', $id->reference)->get();
+
+// dd($referencedIdPart[0] );
+
+$referencesResult[$i]['title'] = $referencedIdPart[0]->title;
+
+
+                $i++;
+
+            };
+
+            // dd($referencesResult);
+
+            // dd( $referencedId );
+
+            // $referencesResult = DB::table('basics')->where('id', '=', $referencedId[0]->reference)->get();
+        }
+
+        else {
+            $referencesResult = DB::table('basics')->where('title', '=', $request->activityReference)->get();
+        }
+
+        // dd($request);
+
+        $misc['row'] = $request->row;
+
+        // dd($misc);
+
+        return Inertia::render('Create', ['referencesResult' => $referencesResult, 'misc' => $misc]);
+    }
 }

@@ -15,11 +15,11 @@
 
                     <div class="relative flex items-center w-full h-8 xl:h-10 border border-black">
 
-                        <div class="px-1 xl:px-2 h-full flex items-center bg-gray-100 border-r border-gray-300">
+                        <div class="p-1 h-full flex items-center bg-gray-100 border-r border-gray-300">
                             <span class="flex items-center h-16">
 
                                 <Button @click="searchEditMenuOpen = !searchEditMenuOpen" class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w6 h-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
                                     </svg>
                                 </Button>

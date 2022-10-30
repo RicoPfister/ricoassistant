@@ -56,6 +56,7 @@ Route::get('/search', [RicoAssistant::class, 'filter'])->name('search');
 Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');
 Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
 Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');
+Route::post('/refcheck', [RicoAssistant::class, 'reference'])->name('refcheck');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
@@ -64,3 +65,6 @@ Route::get('/linkstorage', function () {
 Route::get('/migrate', function () {
     Artisan::call('migrate:refresh');
 });
+
+
+
