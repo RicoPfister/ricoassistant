@@ -273,6 +273,7 @@ class RicoAssistant extends Controller {
 // dd($referencedIdPart[0] );
 
 $referencesResult[$i]['title'] = $referencedIdPart[0]->title;
+$referencesResult[$i]['category'] = $referencedIdPart[0]->category;
 
 
                 $i++;
@@ -294,7 +295,7 @@ $referencesResult[$i]['title'] = $referencedIdPart[0]->title;
 
         $misc['row'] = $request->row;
 
-        // dd($misc);
+        // dd($referencesResult);
 
         return Inertia::render('Create', ['referencesResult' => $referencesResult, 'misc' => $misc]);
     }

@@ -253,7 +253,7 @@
                                                 </svg>
                                             </button>
 
-                                           <button type="button" @click="form.activityReference[n-1] = item.title; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black">{{ item.title }}</button>
+                                           <button type="button" @click="form.activityReference[n-1] = item.title; activityDiagramColorCategory[n-1] = item.category; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black">{{ item.title }}</button>
                                         </div>
 
                                     </div>
@@ -326,7 +326,7 @@
                 <div v-if="activityOverwievOpen" class="p-3 flex flex-col justify-center z-20">
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20">
                         <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row">
-                            <div class="w-[1px] h-full bg-green-300" :style="{width: (((width - (width % 100)) / 100 * 60) + width % 100)+'px'}"></div>
+                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width+'px', background: activityDiagramColor(index) }"></div>
 
                         </div>
 
@@ -347,7 +347,7 @@
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1">
                         <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="activityDayOverviewDiagram1b" class="flex flex-row">
-                            <div class="h-full bg-green-300" :style="{width: (((width - (width % 100)) / 100 * 60) + width % 100)+'px'}" ></div>
+                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width+'px', background: activityDiagramColor(index) }"></div>
                         </div>
 
                         <!-- half day disgram -->
@@ -924,13 +924,17 @@ let activiteTolimitReached = ref(0);
 
 let activityTotalRow = ref(1);
 
+let activityDayOverviewDiagram = ref([]);
 let activityDayOverviewDiagram1a = ref([]);
 let activityDayOverviewDiagram1b = ref([]);
+
 let activityLimitReached = ref(0);
+let activityDiagramColorCategory = ref([]);
+
+// let activityDiagramColor = ref(['lightblue', 'green', 'yellow', 'red', 'salmon']);
 
 // actvivity
 // **************************************************
-
 
 function activityButtonBar(e, n) {
 
@@ -1111,7 +1115,6 @@ function activityRowDelete(n) {
         form.activityTo.splice(0, 1, '');
         form.activityReference.splice(0, 1, '');
     }
-
 }
 
 // duplicate row
@@ -1122,50 +1125,76 @@ function activityRowDuplicate(n) {
 }
 
 // watch for diagram width
-watch(() => form.activityTo ,  (curr, prev) => {
+watch(() => form.activityTo, (curr, prev) => {
 
-// activityDayOverviewDiagram1a.value = form.activityTo;
+    // activityDayOverviewDiagram1a.value = form.activityTo;
 
-let limit = 0;
-let j = 1;
-activityDayOverviewDiagram1a.value = [];
-activityDayOverviewDiagram1b.value = [];
+    let minutes = 0;
+    let minuteTotal = 0;
+    let forLoop = 0;
 
-for (let i = 0; i < form.activityTo.length; i++) {
+    activityDayOverviewDiagram.value = [];
+    activityDayOverviewDiagram1a.value = [];
+    activityDayOverviewDiagram1b.value = [];
 
-    if (limit > 1200 && activityLimitReached.value == 0) {
-
-        activityDayOverviewDiagram1a.value[i-1] = activityDayOverviewDiagram1a.value[i-1] - (limit - 1200);
-        activityDayOverviewDiagram1b.value[0] = limit - 1200;
-        activityLimitReached.value = 1;
+    if (typeof form.activityTo[form.activityTo.length-1] == 'number') {
+        forLoop = form.activityTo.length;
+    } else {
+        forLoop = form.activityTo.length-1;
     }
 
-    else if (limit < 1200) {
-        activityLimitReached.value = 0;
+    for (let i = 0; i < forLoop; i++) {
+
+        minutes = (((form.activityTo[i] - (form.activityTo[i] % 100)) / 100 * 60) + form.activityTo[i] % 100) - minuteTotal;
+        activityDayOverviewDiagram.value[i] = minutes;
+        minuteTotal += minutes;
     }
 
-    if (form.activityTo[i] > 0 && activityLimitReached.value == 0) {
+    let k = 0;
+    minuteTotal = 0;
+    let minuteOld = 0;
+    let l = 0;
 
-        limit += form.activityTo[i];
+    for (let j = 0; j < activityDayOverviewDiagram.value.length; j++) {
 
-        activityDayOverviewDiagram1a.value[i] = form.activityTo[i];
+        minuteTotal += activityDayOverviewDiagram.value[j];
+
+        if (minuteTotal <= 720) {
+            activityDayOverviewDiagram1a.value[j] = activityDayOverviewDiagram.value[j]
+            minuteOld = minuteTotal;
+        };
+
+        if (minuteTotal > 720 && l == 1) {
+            activityDayOverviewDiagram1b.value[k] = activityDayOverviewDiagram.value[j];
+            minuteOld = minuteTotal;
+            k++
+        };
+
+        if (minuteTotal > 720 && l == 0) {
+            activityDayOverviewDiagram1a.value[j] = 720 - minuteOld
+            activityDayOverviewDiagram1b.value[k] =  minuteTotal - 720
+            minuteOld = minuteTotal;
+            k++
+            l = 1
+        };
     }
 
-    else if (activityLimitReached.value == 1) {
+    // alert(activityDayOverviewDiagram1a.value);
+    // alert(activityDayOverviewDiagram1b.value);
+    // alert(timeMinutes);
 
-        limit += form.activityTo[i];
-        activityDayOverviewDiagram1b.value[j] = form.activityTo[i];
-        j++
+}, {deep: true}, 500);
+
+// diagram color set
+function activityDiagramColor(i) {
+
+    switch (activityDiagramColorCategory.value[i]) {
+        case 'Health':
+            return 'lightgreen';
+        case 'Psychology':
+            return 'lightblue';
     }
-
 }
-
-    alert(activityDayOverviewDiagram1a.value);
-    alert(activityDayOverviewDiagram1b.value);
-
-
-}, {deep: true}, 500
-);
 
 // sendform
 // **************************************************
