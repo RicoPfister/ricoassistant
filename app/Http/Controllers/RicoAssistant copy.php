@@ -259,7 +259,7 @@ class RicoAssistant extends Controller {
         // dd($request);
 
         if ($request->activityReference == 'lastUsed') {
-            $referencedIds = DB::table('basics')->where('status', '!=', '0')->orderByDesc('updated_at')->take(10)->get();
+            $referencedIds = DB::table('references')->orderByDesc('created_at')->take(10)->get();
 
             // dd($referencedIds);
 
@@ -268,15 +268,12 @@ class RicoAssistant extends Controller {
             foreach ($referencedIds as $id) {
 
 
-                // $referencedIdPart = DB::table('basics')->where('id', '=', $id->reference)->get();
+                $referencedIdPart = DB::table('basics')->where('id', '=', $id->reference)->get();
 
 // dd($referencedIdPart[0] );
 
-    $referencesResult[$i]['title'] = $id->title;
-    $referencesResult[$i]['category'] = $id->category;
-
-
-
+$referencesResult[$i]['title'] = $referencedIdPart[0]->title;
+$referencesResult[$i]['category'] = $referencedIdPart[0]->category;
 
 
                 $i++;

@@ -152,7 +152,7 @@
             </div>
 
             <div aria-label="Drop Down Activity" class="">
-                <button type="button" @click.prevent="activityOpen = !activityOpen" class="mt-4 bg-gradient-to-r from-red-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="activityOpen = !activityOpen" class="mt-2 lg:mt-4 bg-gradient-to-r from-red-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center py-2 lg:p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -167,16 +167,16 @@
                     </div>
                 </button>
 
-                <div v-if="activityOpen" class="flex flex-col border bg-gray-100 text-sm">
+                <div v-if="activityOpen" class="flex flex-col border bg-gray-100 text-sm w-full">
 
-                    <div class="flex gap-1 h-8 mt-4 px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
+                    <div class="flex gap-1 h-6 lg:h-8 mt-2 lg:mt-4 lg:px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
-                        <input class="w-[58px] text-sm xl:text-lg text-center p-1" :id="'activityToRowNumber'+[n-1]" @input="activityToInput(n)" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" @input="activityToInput(n)" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
                             <!-- button 12h/clear-->
-                            <div class="flex flex-col">
+                            <div class="flex-col hidden lg:block">
 
                                 <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = 1200">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
@@ -223,7 +223,7 @@
 
                         <!-- input reference -->
                         <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                            <input @blur="referencePickerOpen[n-1] = 0" class="w-full h-full min-w-0 p-2 border-none focus:border-current focus:ring-0 pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                            <input @blur="referencePickerOpen[n-1] = 0" class="w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
                             <!-- input reference menu button -->
                             <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -241,11 +241,11 @@
 
                                 <div class="flex flex-row items-center z-50">
 
-                                    <div class="text-sm xl:text-base z-50">
+                                    <div class="text-sm xl:text-base z-50 r  w-full">
 
                                         <div class="text-sm"><b>Found in Database:</b></div>
 
-                                        <div v-for="item in props.referencesResult" class="flex flex-row items-center">
+                                        <div v-for="item in props.referencesResult" class="flex flex-row items-center w-full">
 
                                             <button>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -253,7 +253,7 @@
                                                 </svg>
                                             </button>
 
-                                           <button type="button" @click="form.activityReference[n-1] = item.title; activityDiagramColorCategory[n-1] = item.category; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black">{{ item.title }}</button>
+                                           <button type="button" @click="form.activityReference[n-1] = item.title; activityDiagramColorCategory[n-1] = item.category; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
                                         </div>
 
                                     </div>
@@ -262,7 +262,7 @@
                         </div>
 
                         <!-- button clear reference/ clear rating-->
-                        <div class="flex flex-col">
+                        <div class="flex-col hidden lg:block">
 
                             <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
                                 <div class="text-xs flex items-center justify-center h-full">C</div>
@@ -292,7 +292,7 @@
                         </div>
 
                         <!-- button swap -->
-                        <div class="flex flex-col">
+                        <div class="flex-col hidden">
 
                             <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShUpPressed(0, n)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -309,12 +309,12 @@
 
                     <!-- activity day overview -->
                     <div aria-label="Drop Down Activity Day Overview" class="">
-                <button type="button" @click.prevent="activityOverwievOpen= !activityOverwievOpen" class="mt-4 bg-gradient-to-r from-gray-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="activityOverwievOpen= !activityOverwievOpen" class="mt-2 lg:mt-4 bg-gradient-to-r from-gray-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center py-2 lg:p-2 w-full">
                     <div class="flex text-base">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                         </svg>
-                        Overview
+                        Activity Overview
                     </div>
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -323,15 +323,18 @@
                         </svg>
                     </div>
                 </button>
-                <div v-if="activityOverwievOpen" class="p-3 flex flex-col justify-center z-20">
-                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20">
-                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row">
-                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width+'px', background: activityDiagramColor(index) }"></div>
+                <div v-if="activityOverwievOpen" class="py-1 lg:py-4 flex z-20 w-full justify-center whitespace-nowrap overflow-x-auto">
+
+                    <div class="flex flex-col">
+
+                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 bg-gray-200">
+                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row w-full">
+                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
 
                         </div>
 
                         <!-- half day disgram -->
-                        <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                        <div class="absolute top-0 left-0 h-full pl-1">
                             0
                         </div>
 
@@ -339,18 +342,18 @@
 
                         </div>
 
-                        <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                        <div class="absolute top-0 right-0 h-full pr-1">
                             12
                         </div>
 
                     </div>
 
-                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1">
+                    <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1 bg-gray-200">
                         <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="activityDayOverviewDiagram1b" class="flex flex-row">
-                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width+'px', background: activityDiagramColor(index) }"></div>
+                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
                         </div>
 
-                        <!-- half day disgram -->
+                        <!-- half day diagram -->
                         <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
                             12
                         </div>
@@ -364,7 +367,9 @@
                         </div>
                     </div>
 
-                    <div class="">
+                </div>
+
+                    <div class="hidden">
 
                         <div class="flex flex-row gap-5">
 
@@ -398,7 +403,7 @@
             </div>
 
             <div aria-label="Drop Down References" class="">
-                <button type="button" @click.prevent="referencesOpen = !referencesOpen" class="mt-4 bg-gradient-to-r from-indigo-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
+                <button type="button" @click.prevent="referencesOpen = !referencesOpen" class="mt-2 lg:mt-4 bg-gradient-to-r from-indigo-200 via-gray-200 to-gray-200 font-bold flex justify-between items-center p-2 w-full">
                     <div class="flex ">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -443,7 +448,6 @@
                         <input class="grow" id="tags" type="text" v-model="form.tag">
                         <div class="mt-1">Separate Tags with #</div>
                     </div>
-
 
                 </div>
 
@@ -1153,6 +1157,7 @@ watch(() => form.activityTo, (curr, prev) => {
     let k = 0;
     minuteTotal = 0;
     let minuteOld = 0;
+    let row = 0;
     let l = 0;
 
     for (let j = 0; j < activityDayOverviewDiagram.value.length; j++) {
@@ -1160,35 +1165,51 @@ watch(() => form.activityTo, (curr, prev) => {
         minuteTotal += activityDayOverviewDiagram.value[j];
 
         if (minuteTotal <= 720) {
-            activityDayOverviewDiagram1a.value[j] = activityDayOverviewDiagram.value[j]
+            activityDayOverviewDiagram1a.value[j] = {'minute': activityDayOverviewDiagram.value[j], 'row': row};
             minuteOld = minuteTotal;
+            row++;
         };
 
         if (minuteTotal > 720 && l == 1) {
-            activityDayOverviewDiagram1b.value[k] = activityDayOverviewDiagram.value[j];
+            activityDayOverviewDiagram1b.value[k] = {'minute': activityDayOverviewDiagram.value[j], 'row': row};
             minuteOld = minuteTotal;
-            k++
+            k++;
+            row++;
         };
 
         if (minuteTotal > 720 && l == 0) {
-            activityDayOverviewDiagram1a.value[j] = 720 - minuteOld
-            activityDayOverviewDiagram1b.value[k] =  minuteTotal - 720
+            activityDayOverviewDiagram1a.value[j] = {'minute': 720 - minuteOld, 'row': row};
+            activityDayOverviewDiagram1b.value[k] =  {'minute': minuteTotal - 720, 'row': row};
             minuteOld = minuteTotal;
-            k++
-            l = 1
+            k++;
+            row++;
+            l = 1;
         };
     }
 
-    // alert(activityDayOverviewDiagram1a.value);
+    // alert(activityDayOverviewDiagram1a.value[0]['minutes']);
     // alert(activityDayOverviewDiagram1b.value);
     // alert(timeMinutes);
 
 }, {deep: true}, 500);
 
 // diagram color set
-function activityDiagramColor(i) {
+function activityDiagramColor(row) {
 
-    switch (activityDiagramColorCategory.value[i]) {
+    // return activityDiagramColorCategory
+
+    // alert(row);
+
+    // if(part == 1) {
+    //     switch (  activityDiagramColorCategory.value[i]['row']) {
+    //     case 'Health':
+    //         return 'lightgreen';
+    //     case 'Psychology':
+    //         return 'lightblue';
+    // }
+    // }
+
+    switch (activityDiagramColorCategory.value[row]) {
         case 'Health':
             return 'lightgreen';
         case 'Psychology':
