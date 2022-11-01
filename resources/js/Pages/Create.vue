@@ -159,7 +159,8 @@
                         </svg>
                         Activity
                     </div>
-                    <div>
+                    <div class="flex flex-row font-normal items-center text-xs">
+                        <div v-if="typeof form.activityTo[0] == 'number'" class="">{{ '[' + form.activityTo.length +' Entries]' }}</div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path v-if="activityOpen == 1" stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                             <path v-if="activityOpen == 0" stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -329,7 +330,7 @@
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 bg-gray-200">
                         <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row w-full">
-                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
+                            <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
 
                         </div>
 
@@ -350,7 +351,7 @@
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1 bg-gray-200">
                         <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="activityDayOverviewDiagram1b" class="flex flex-row">
-                            <div class="w-[1px] h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
+                            <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
                         </div>
 
                         <!-- half day diagram -->
@@ -1187,27 +1188,13 @@ watch(() => form.activityTo, (curr, prev) => {
         };
     }
 
-    // alert(activityDayOverviewDiagram1a.value[0]['minutes']);
-    // alert(activityDayOverviewDiagram1b.value);
-    // alert(timeMinutes);
+    console.log(activityDayOverviewDiagram1a.value);
+    console.log(activityDayOverviewDiagram1b.value);
 
 }, {deep: true}, 500);
 
 // diagram color set
 function activityDiagramColor(row) {
-
-    // return activityDiagramColorCategory
-
-    // alert(row);
-
-    // if(part == 1) {
-    //     switch (  activityDiagramColorCategory.value[i]['row']) {
-    //     case 'Health':
-    //         return 'lightgreen';
-    //     case 'Psychology':
-    //         return 'lightblue';
-    // }
-    // }
 
     switch (activityDiagramColorCategory.value[row]) {
         case 'Health':
@@ -1243,8 +1230,6 @@ watch(() => props.misc, _.debounce( (curr, prev) => {
 );
 
 function referenceChecker(n, le) {
-
-    // alert(n);
 
     if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
 
