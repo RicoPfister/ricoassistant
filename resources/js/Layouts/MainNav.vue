@@ -28,7 +28,7 @@
                         </div>
                         <div class="flex items-center w-full h-full">
 
-                            <input aria-label="Search Field" placeholder="Search" type="text" class="w-full h-full min-w-0 border-none focus:ring-0 focus:border-black focus:placeholder-white">
+                            <input aria-label="Search Field" placeholder="Search" type="search" class="w-full h-full min-w-0 border-none focus:ring-0 focus:border-black focus:placeholder-white">
 
 
                             <div class="px-1 xl:px-2 h-full flex items-center bg-lime-500">

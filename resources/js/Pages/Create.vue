@@ -42,7 +42,8 @@
                         </svg>
                         <span class="font-bold mr-2 ">Basics</span>
                     </div>
-                    <div>
+                    <div class="flex flex-row font-normal items-center text-xs">
+                        <div v-if="BasicsBarNotification" class="">{{ BasicsBarNotification + (BasicsBarNotification == 1 ? ' Entry' : ' Entries') }}</div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path v-if="basicOpen == 1" stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                             <path v-if="basicOpen == 0" stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -137,7 +138,8 @@
                         </svg>
                         Statement
                     </div>
-                    <div>
+                    <div class="flex flex-row font-normal items-center text-xs">
+                        <div v-if="StatementBarNotification" class="">{{ StatementBarNotification + (StatementBarNotification == 1 ? ' Entry' : ' Entries') }}</div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path v-if="statementOpen == 1" stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                             <path v-if="statementOpen == 0" stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -160,7 +162,7 @@
                         Activity
                     </div>
                     <div class="flex flex-row font-normal items-center text-xs">
-                        <div v-if="typeof form.activityTo[0] == 'number'" class="">{{ '[' + form.activityTo.length +' Entries]' }}</div>
+                        <div v-if="ActivityBarNotification" class="">{{ ActivityBarNotification + ( ActivityBarNotification == 1 ? ' Entry' : ' Entries') }}</div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path v-if="activityOpen == 1" stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                             <path v-if="activityOpen == 0" stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -224,7 +226,7 @@
 
                         <!-- input reference -->
                         <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                            <input @blur="referencePickerOpen[n-1] = 0" class="w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                            <input @blur="referencePickerOpen[n-1] = 0" @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
                             <!-- input reference menu button -->
                             <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -792,7 +794,8 @@
                 <!-- <div>Preset</div>
                 <div>&nbsp;|&nbsp;</div> -->
                 <Button type="reset" class="text-red-600 hover:text-red-800" :disabled="form.processing">Reset Entry</Button>
-                <Button type="button" @click.prevent="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">Add Entry</Button>
+                <Button v-if="TotalBarNotification > 0" type="button" @click.prevent="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">{{ 'Add ' + TotalBarNotification + (TotalBarNotification == 1 ? ' Entry' : ' Entries') }}</Button>
+                <div v-if="TotalBarNotification == 0" class="text-gray-500">Nothing to add</div>
             </div>
 
         </div>
@@ -1233,7 +1236,7 @@ function referenceChecker(n, le) {
 
     if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
 
-        Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
+        // Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
     }
 
     else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
@@ -1241,9 +1244,54 @@ function referenceChecker(n, le) {
     else if (form.activityReference[0].length > 2) {
 
         setTimeout(() => {
-            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: true,  preserveState: true, preserveScroll: true});
+            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: false,  preserveState: true, preserveScroll: false});
         }, 500);
     }
 }
+
+// BarNotification
+
+const BasicsBarNotification = computed(() => {
+
+    let totalRecords = 0;
+    totalRecords += form.ref_date ? 1 : 0;
+    totalRecords += form.author ? 1 : 0;
+    totalRecords += form.category ? 1 : 0;
+    totalRecords += form.subject ? 1 : 0;
+    totalRecords += form.title ? 1 : 0;
+    totalRecords += form.status ? 1 : 0;
+
+    return totalRecords;
+})
+
+const StatementBarNotification = computed(() => {
+
+    let totalRecords = 0;
+    totalRecords += form.statement ? 1 : 0;
+
+    return totalRecords;
+})
+
+const ActivityBarNotification = computed(() => {
+
+let totalRecords = 0;
+totalRecords += form.activityTo.length;
+
+return totalRecords;
+})
+
+const TotalBarNotification = computed(() => {
+
+    let totalRecords = 0;
+    totalRecords += BasicsBarNotification.value;
+    totalRecords += StatementBarNotification.value;
+    totalRecords += ActivityBarNotification.value;
+
+    return totalRecords;
+})
+
+
+
+
 
 </script>

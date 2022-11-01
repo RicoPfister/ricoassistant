@@ -27,14 +27,14 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-        $public = Basic::all()->where('status', 1);
-        if(isset($user)) {$user = Basic::all()->where('user_id', '=', $user->id); $list = $public->merge($user);}
-        else {$list = $public;};
+        $publicAuth = Basic::all()->where('status', '=', 1 AND 'status', '!=', 0);
+        if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->where('status', '!=', 0); $listAuth = $publicAuth->merge($userAuth);}
+        else {$listAuth = $publicAuth;};
 
         // dd($list);
         // $list->all();
 
-        return Inertia::render('Search', ['list' => $list]);
+        return Inertia::render('Search', ['list' => $listAuth]);
     }
 
     public function detail(Request $request) {
@@ -258,8 +258,11 @@ class RicoAssistant extends Controller {
 
         // dd($request);
 
+        $user = Auth::user();
+        $result = [];
+
         if ($request->activityReference == 'lastUsed') {
-            $referencedIds = DB::table('basics')->where('status', '!=', '0')->orderByDesc('updated_at')->take(10)->get();
+            $referencedIds = DB::table('basics')->where('user_id', '=', $user->id)->where('status', '!=', '0')->orderByDesc('updated_at')->take(10)->get();
 
             // dd($referencedIds);
 
@@ -272,12 +275,8 @@ class RicoAssistant extends Controller {
 
 // dd($referencedIdPart[0] );
 
-    $referencesResult[$i]['title'] = $id->title;
-    $referencesResult[$i]['category'] = $id->category;
-
-
-
-
+$result['referencesResult'][$i]['title'] = $id->title;
+$result['referencesResult'][$i]['category'] = $id->category;
 
                 $i++;
 
@@ -288,18 +287,27 @@ class RicoAssistant extends Controller {
             // dd( $referencedId );
 
             // $referencesResult = DB::table('basics')->where('id', '=', $referencedId[0]->reference)->get();
+            $result['misc']['row'] = $request->row;
         }
 
         else {
-            $referencesResult = DB::table('basics')->where('title', '=', $request->activityReference)->get();
+
+            $referencesResultCheck = DB::table('basics')
+                ->where('status', '!=', '0')
+                ->where('user_id', '=', $user->id)
+                ->where('title', '=', $request->activityReference)
+                ->get();
+
+            if (count($referencesResultCheck) == 0) {} else {
+                $result['referencesResult'] = $referencesResultCheck;
+                $result['misc']['row'] = $request->row;
+            }
         }
 
-        // dd($request);
 
-        $misc['row'] = $request->row;
 
-        // dd($referencesResult);
+        // dd($result);
 
-        return Inertia::render('Create', ['referencesResult' => $referencesResult, 'misc' => $misc]);
+        return Inertia::render('Create', $result);
     }
 }
