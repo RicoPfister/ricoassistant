@@ -244,7 +244,7 @@ class RicoAssistant extends Controller {
             $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->orderByDesc('updated_at')->take(1)
+                ->orderByDesc('updated_at')->take(10)
                 ->get();
 
             foreach ($referencedIds as $i=>$id) {

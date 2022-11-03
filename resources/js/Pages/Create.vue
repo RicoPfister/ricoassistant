@@ -159,7 +159,7 @@
                     <div class="flex gap-1 h-6 lg:h-8 mt-2 lg:mt-4 lg:px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
                         <!-- time input -->
-                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="/{0-90-90-90-9}/" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
@@ -171,7 +171,6 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                                     </svg>
                                 </button>
-
 
                                 <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = ''">
                                     <div class="text-xs flex items-center justify-center h-full">C</div>
@@ -317,9 +316,8 @@
                     <div class="flex flex-col">
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 bg-gray-200">
-                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row w-full">
-                            <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
-
+                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row">
+                            <div class="h-full bg-gray-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
                         </div>
 
                         <!-- half day disgram -->
@@ -1234,10 +1232,10 @@ function referenceChecker(n, le) {
 
     else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
 
-    else if (form.activityReference[0].length > 2) {
+    else if (form.activityReference[n-1].length > 2) {
 
         setTimeout(() => {
-            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: false,  preserveState: true, preserveScroll: false});
+            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     }
 }
