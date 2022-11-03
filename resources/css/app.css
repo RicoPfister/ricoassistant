@@ -54,3 +54,11 @@ tr:first-child, tr:last-child {
     src: url('/storage/font/visitor1.ttf');
 }
 
+/* table row colorisation */
+tr:nth-child(even) {
+    background-color: rgba(220, 250, 220);
+}
+tr:nth-child(od) {
+    background-color: #fff;
+}
+

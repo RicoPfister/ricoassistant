@@ -28,7 +28,7 @@
             <div class="flex justify-between flex-wrap">
                 <h1 class="text-xl font-bold">New Entry</h1>
                 <div class="flex gap-1 grow justify-end">
-                    <!-- <Button type="button">Preset</Button> -->
+                    <!-- <button type="button">Preset</button> -->
                     <!-- <div>&nbsp;|&nbsp;</div> -->
                     <div class="text-black-600 opacity-30">Preset</div>
                 </div>
@@ -53,40 +53,32 @@
 
                 <div v-if="basicOpen" class="bg-gray-100 p-3 w-full min-w-0">
                     <div class="flex gap-3 flex-wrap w-full min-w-0">
+
                         <div class="flex flex-col">
                             <label aria-label="Referenced Date Input" for="acc_date">Referenced Date*:</label>
-                            <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="form.ref_date">
+                            <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="form.basic_ref_date">
                         </div>
 
-                        <div class="flex flex-col grow">
-                            <label aria-label="Author Input" for="author">Author*:</label>
-                            <input class="min-w-0" type="text" id="author" v-model="form.author">
-                        </div>
-
-                        <div class="flex flex-col min-w-0 ">
-                            <label aria-label="Category Input" class="w-fit" for="subject">Category*:</label>
-                            <select id="subject" v-model="form.category">
-                                <option value="Accounting/Fact/Media" disabled>Choose a Category</option>
-                                <option value="medicine">Medicine</option>
-                                <option value="healthiness">Health</option>
-                                <option value="psychology">Psychology</option>
-                                <option value="social">Social</option>
-                                <option value="politics">Politics</option>
-                                <option value="computer">Computer</option>
-                                <option value="entertainment">Entertainment</option>
-                                <option value="business">Business</option>
-                                <option value="religion">Religion</option>
-                                <option value="administration">Administration</option>
-                            </select>
+                        <div class="grow">
+                            <div class="flex flex-col grow">
+                                <label class="" aria-label="Category Input" for="title">Title*:</label>
+                                <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.basic_title">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex flex-row mt-3 gap-3">
+                    <div class="gap-3 flex flex-wrap mt-3">
 
-                        <div class="flex flex-col min-w-0">
-                            <label aria-label="Category Input" class="w-fit" for="subject">Subject*:</label>
-                            <select id="subject" v-model="form.subject">
-                                <option value="Accounting/Fact/Media" disabled>Choose a Subject</option>
+                        <div class="flex flex-col min-w-0 grow">
+                            <label aria-label="Author Input" for="author">Author*:</label>
+                            <input class="min-w-0" type="text" id="author" v-model="form.basic_author">
+                        </div>
+
+                        <div class="flex flex-col lg:max-w-fit grow">
+                            <label aria-label="Category Input" class="w-fit" for="medium">Medium*:</label>
+                            <select id="medium" v-model="form.basic_medium">
+                                <option value="null" disabled>Select one:</option>
+                                <option value=""></option>
                                 <optgroup label="Idea:">
                                     <option value="sound">Sound</option>
                                     <option value="picture">Picture</option>
@@ -100,18 +92,10 @@
                                     <option value="self_awareness">Self Awareness</option>
                                     <option value="self_reproduction">Self Reproduction</option>
                                     <option value="external_activation">External Activation</option>
-                                    <option value="passive">External Manipulation</option>
+                                    <option value="External_manipulation">External Manipulation</option>
                                 </optgroup>
                             </select>
                         </div>
-
-                        <div class="grow">
-                            <div class="flex flex-col grow">
-                                <label class="" aria-label="Category Input" for="title">Title*:</label>
-                                <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.title">
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="flex justify-between">
@@ -122,7 +106,7 @@
                         <div class="mt-3" v-else>*Required fields</div>
                         <div class="flex flex-row mt-3 items-center">
                             <label class="mr-1" for="public">Public:</label>
-                            <input type="checkbox" id="public" true-value="1" false-value="" v-model="form.status">
+                            <input type="checkbox" id="public" true-value="2" false-value="" v-model="form.basic_status">
                         </div>
 
                     </div>
@@ -174,7 +158,8 @@
 
                     <div class="flex gap-1 h-6 lg:h-8 mt-2 lg:mt-4 lg:px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
-                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" @input="activityToInput(n)" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <!-- time input -->
+                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="{0-90-90-90-9}" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
@@ -196,12 +181,12 @@
 
                             <!-- button hours -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityButtonBar('h', n)">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activitybuttonBar('h', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityButtonBar('hMinus', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activitybuttonBar('hMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
@@ -210,13 +195,13 @@
 
                             <!-- button minutes -->
                             <div class="flex flex-col h-full">
-                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('m', n)">
+                                <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activitybuttonBar('m', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                     </svg>
                                 </button>
 
-                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityButtonBar('mMinus', n)">
+                                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activitybuttonBar('mMinus', n)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                     </svg>
@@ -226,7 +211,7 @@
 
                         <!-- input reference -->
                         <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                            <input @blur="referencePickerOpen[n-1] = 0" @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                            <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
 
                             <!-- input reference menu button -->
                             <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -256,7 +241,8 @@
                                                 </svg>
                                             </button>
 
-                                           <button type="button" @click="form.activityReference[n-1] = item.title; activityDiagramColorCategory[n-1] = item.category; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                                            <!-- button reference picker -->
+                                           <button type="button" @click.prevent="form.activityReference[n-1] = item.title; activityDiagramColorMedium[n-1] = item.medium; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
                                         </div>
 
                                     </div>
@@ -793,8 +779,8 @@
             <div class="flex gap-1 mt-3 justify-between">
                 <!-- <div>Preset</div>
                 <div>&nbsp;|&nbsp;</div> -->
-                <Button type="reset" class="text-red-600 hover:text-red-800" :disabled="form.processing">Reset Entry</Button>
-                <Button v-if="TotalBarNotification > 0" type="button" @click.prevent="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">{{ 'Add ' + TotalBarNotification + (TotalBarNotification == 1 ? ' Entry' : ' Entries') }}</Button>
+                <button type="reset" class="text-red-600 hover:text-red-800" :disabled="form.processing">Reset Entry</button>
+                <button v-if="TotalBarNotification > 0" type="button" @click.prevent="sendForm" class="text-green-600 hover:text-green-800" :disabled="form.processing">{{ 'Add ' + TotalBarNotification + (TotalBarNotification == 1 ? ' Entry' : ' Entries') }}</button>
                 <div v-if="TotalBarNotification == 0" class="text-gray-500">Nothing to add</div>
             </div>
 
@@ -809,7 +795,7 @@
 <script setup>
 
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-import { ref, onMounted, computed, watch  } from 'vue';
+import { ref, onMounted, computed, watch, onBeforeUnmount } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import Header from "../Layouts/MainNav.vue";
@@ -826,12 +812,11 @@ const day = dateNow.getDate().toString().padStart(2, "0");
 const props = defineProps(['user', 'referencesResult', 'misc']);
 
 const form = useForm({
-    ref_date: year+'-'+month+'-'+day,
-    subject: '',
-    category: '',
-    author: props.user.name,
-    title: '',
-    status: '',
+    basic_ref_date: year+'-'+month+'-'+day,
+    basic_title: '',
+    basic_author: props.user.name,
+    basic_medium: '',
+    basic_status: '',
 
     statement: '',
 
@@ -873,43 +858,57 @@ const form = useForm({
 
 onMounted(() => {
     document.addEventListener('keydown', function (event) {
-    if (event.ctrlKey && event.altKey && event.key === 'y') {
-        form.ref_date = '2022-01-01';
-        form.author = 'Rico Pfister';
-        form.subject = 'video';
-        form.category = 'social';
-        form.title = 'Velofahrt';
+        if (event.ctrlKey && event.altKey && event.key === 'y') {
+            form.ref_date = '2022-01-01';
+            form.author = 'Rico Pfister';
+            form.subject = 'video';
+            form.category = 'social';
+            form.title = 'Velofahrt';
 
-        form.statement = 'Ich war Velofahren.';
+            form.statement = 'Ich war Velofahren.';
 
-        form.activityTo = '17:00';
-        form.activityReference = 'Sport';
+            form.activityTo = '17:00';
+            form.activityReference = 'Sport';
 
-        form.reference = '1';
+            form.reference = '1';
 
-        form.tag = '#Wetter: Sonne';
+            form.tag = '#Wetter: Sonne';
 
-        form.accounting_producer = 'Rico Pfister';
-        form.accounting_trader = 'Amazon';
-        form.accounting_price = '234.50';
-        form.accounting_currency = 'EUR';
-        form.accounting_price_default_currency = '100.75';
+            form.accounting_producer = 'Rico Pfister';
+            form.accounting_trader = 'Amazon';
+            form.accounting_price = '234.50';
+            form.accounting_currency = 'EUR';
+            form.accounting_price_default_currency = '100.75';
 
-        form.rating_comparison = '0',
-        form.rating_happiness = '75';
-        form.rating_sadness = '10',
-        form.rating_quality = '9';
-        form.rating_ingenuity = '8';
-        form.rating_originality = '5';
-        form.rating_complexity = '0';
-        form.rating_simplicity = '1';
-        form.rating_usability = '2';
-        form.rating_versatility = '5'
-        form.rating_developement = '50';
-        form.rating_sustainability = '99';
-    };
+            form.rating_comparison = '0',
+            form.rating_happiness = '75';
+            form.rating_sadness = '10',
+            form.rating_quality = '9';
+            form.rating_ingenuity = '8';
+            form.rating_originality = '5';
+            form.rating_complexity = '0';
+            form.rating_simplicity = '1';
+            form.rating_usability = '2';
+            form.rating_versatility = '5'
+            form.rating_developement = '50';
+            form.rating_sustainability = '99';
+        };
     });
+
+    document.addEventListener('keydown', keyPress);
+
 });
+
+onBeforeUnmount(() => {
+      console.log('unmount');
+      document.removeEventListener('keydown', keyPress)
+})
+
+function keyPress(event) {
+    if (event.ctrlKey && event.altKey && event.key === 'a') {
+            alert(activityDiagramColorMedium.value);
+        };
+}
 
 let basicOpen = ref(1);
 let statementOpen = ref(0);
@@ -937,14 +936,13 @@ let activityDayOverviewDiagram1a = ref([]);
 let activityDayOverviewDiagram1b = ref([]);
 
 let activityLimitReached = ref(0);
-let activityDiagramColorCategory = ref([]);
-
-// let activityDiagramColor = ref(['lightblue', 'green', 'yellow', 'red', 'salmon']);
+let activityDiagramColorMedium = ref([]);
 
 // actvivity
 // **************************************************
 
-function activityButtonBar(e, n) {
+// button functions
+function activitybuttonBar(e, n) {
 
     if (isNaN(form.activityTo[n-1]) || (form.activityTo[n-1]) == '') form.activityTo[n-1] = 0
         else form.activityTo[n-1] = parseInt(form.activityTo[n-1]);
@@ -952,7 +950,6 @@ function activityButtonBar(e, n) {
     let minutes = parseInt(form.activityTo[n-1].toString().slice(-2));
 
     if (minutes < 60) {
-        // toTimeSet
 
         let toTimeOldValue = form.activityTo[n-1];
         let hours = parseInt(form.activityTo[n-1].toString().slice(0, -2));
@@ -982,7 +979,6 @@ function activityButtonBar(e, n) {
         };
 
         // min and max time adjustments
-        // ****************************************************************
 
         // check if stored time was 2400 and go to 0 plus minutes
         if ( toTimeOldValue == 2400 && e != 'mMinus' && e != 'hMinus' ) {
@@ -1110,7 +1106,7 @@ function activityKeyShDownPressed(check, n) {
     }
 }
 
-// activity functions
+// time functions
 
 // delete row
 function activityRowDelete(n) {
@@ -1132,10 +1128,18 @@ function activityRowDuplicate(n) {
     activityTotalRow.value++
 }
 
-// watch for diagram width
+// watch for diagram width adjustments / add title/Medium
 watch(() => form.activityTo, (curr, prev) => {
 
-    // activityDayOverviewDiagram1a.value = form.activityTo;
+    // add auto title
+    if (form.basic_title != 'Activity ' + year+'-'+month+'-'+day) {
+        form.basic_title = 'Activity ' + year+'-'+month+'-'+day;
+    }
+
+    // add auto medium
+    if (form.basic_medium != 'self_awareness') {
+        form.basic_medium = 'self_awareness';
+    }
 
     let minutes = 0;
     let minuteTotal = 0;
@@ -1199,26 +1203,12 @@ watch(() => form.activityTo, (curr, prev) => {
 // diagram color set
 function activityDiagramColor(row) {
 
-    switch (activityDiagramColorCategory.value[row]) {
-        case 'Health':
+    switch (activityDiagramColorMedium.value[row]) {
+        case 'self_awareness':
             return 'lightgreen';
-        case 'Psychology':
+        case 'interactivity':
             return 'lightblue';
     }
-}
-
-// sendform
-// **************************************************
-
-function sendForm() {
-
-    let requestObj = {};
-
-    Object.keys(form).forEach(key => {
-        if (form[key] != '' && form[key] != '0') requestObj[key] = form[key];
-    });
-
-    Inertia.post('store', requestObj);
 }
 
 // reference
@@ -1227,16 +1217,19 @@ function sendForm() {
 // reference response
 watch(() => props.misc, _.debounce( (curr, prev) => {
 
-    referencePickerOpen.value[props.misc.row-1] = 1;
+    if (props.misc.row) {
+        referencePickerOpen.value[props.misc.row-1] = 1;
+    }
 
 }, 500)
 );
 
+// reference checker and sender
 function referenceChecker(n, le) {
 
     if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
 
-        // Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
+        Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
     }
 
     else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
@@ -1250,16 +1243,17 @@ function referenceChecker(n, le) {
 }
 
 // BarNotification
+// **************************************************
 
 const BasicsBarNotification = computed(() => {
 
     let totalRecords = 0;
-    totalRecords += form.ref_date ? 1 : 0;
-    totalRecords += form.author ? 1 : 0;
-    totalRecords += form.category ? 1 : 0;
-    totalRecords += form.subject ? 1 : 0;
-    totalRecords += form.title ? 1 : 0;
-    totalRecords += form.status ? 1 : 0;
+    totalRecords += form.basic_ref_date ? 1 : 0;
+    totalRecords += form.basic_title ? 1 : 0;
+    totalRecords += form.basic_author ? 1 : 0;
+    totalRecords += form.basic_medium ? 1 : 0;
+    totalRecords += form.basic_subject ? 1 : 0;
+    totalRecords += form.basic_status ? 1 : 0;
 
     return totalRecords;
 })
@@ -1290,8 +1284,22 @@ const TotalBarNotification = computed(() => {
     return totalRecords;
 })
 
+// sendform
+// **************************************************
 
+function sendForm() {
 
+let requestObj = {};
 
+Object.keys(form).forEach(key => {
+    if (form[key] != '' && form[key] != '0') requestObj[key] = form[key];
+});
+
+Inertia.post('store', requestObj);
+}
+
+function testlog() {
+    console.log('Testlog');
+}
 
 </script>

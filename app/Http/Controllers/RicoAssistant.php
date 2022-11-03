@@ -27,12 +27,9 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-        $publicAuth = Basic::all()->where('status', '=', 1 AND 'status', '!=', 0);
+        $publicAuth = Basic::all()->where('status', '=', '' AND 'status', '!=', 0);
         if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->where('status', '!=', 0); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
-
-        // dd($list);
-        // $list->all();
 
         return Inertia::render('Search', ['list' => $listAuth]);
     }
@@ -61,15 +58,11 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-        // dd($user->name);
-        // dd($request);
-
         $validated = $request->validate([
-            'ref_date' => 'required',
-            'subject' => 'required',
-            'category' => 'required',
-            'author' => 'required',
-            'title' => 'required',
+            'basic_ref_date' => 'required',
+            'basic_title' => 'required',
+            'basic_author' => 'required',
+            'basic_medium' => 'required',
         ]);
 
         $rating = 0;
@@ -89,18 +82,14 @@ class RicoAssistant extends Controller {
             if(strpos($key, 'accounting') !== false){
                 $accounting = 1;
             }
-
         }
 
-        // dd($request);
-
         $basic = new Basic();
-        $basic->ref_date = $request->ref_date;
-        $basic->author = $request->author;
-        $basic->subject = $request->subject;
-        $basic->category = $request->category;
-        $basic->title = $request->title;
-        $basic->status = $request->status;
+        $basic->ref_date = $request->basic_ref_date;
+        $basic->title = $request->basic_title;
+        $basic->author = $request->basic_author;
+        $basic->medium = $request->basic_medium;
+        $basic->status = $request->basic_status;
         $basic->user_id = $user->id;
         $basic->tracking = $request->ip();
         $basic->save();
@@ -135,8 +124,6 @@ class RicoAssistant extends Controller {
             $rating->save();
 
         }
-
-        // dd($request);
 
         if($activity == 1){
 
@@ -191,8 +178,6 @@ class RicoAssistant extends Controller {
         if(isset($request->documentJPG)) {
             foreach($request->file('documentJPG') as $dataString) {
 
-                // dd($store->id);
-
                 $document = new Document();
                 $document->basic_id = $basic->id;
                 $document->path = $dataString->hashName();
@@ -209,9 +194,6 @@ class RicoAssistant extends Controller {
 
         if(isset($request->document_link)) {
 
-
-                // dd($store->id);
-
                 $document = new Document();
                 $document->basic_id = $basic->id;
                 $document->path = $request->document_link;
@@ -219,16 +201,12 @@ class RicoAssistant extends Controller {
                 $document->size = 0;
                 $document->tracking = $request->ip();
                 $document->save();
-
-
         }
 
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }
 
     public function update(Request $request) {
-
-        // dd($request);
 
         foreach($request->all() as $key => $value) {
 
@@ -256,55 +234,52 @@ class RicoAssistant extends Controller {
 
     public function reference(Request $request) {
 
-        // dd($request);
+        // dd($request->activityReference);
 
         $user = Auth::user();
         $result = [];
 
         if ($request->activityReference == 'lastUsed') {
-            $referencedIds = DB::table('basics')->where('user_id', '=', $user->id)->where('status', '!=', '0')->orderByDesc('updated_at')->take(10)->get();
 
-            // dd($referencedIds);
+            $referencedIds = DB::table('basics')
+                ->where('status', '=', null)
+                ->where('user_id', '=', $user->id)
+                ->orderByDesc('updated_at')->take(1)
+                ->get();
 
-            $i = 0;
+            foreach ($referencedIds as $i=>$id) {
 
-            foreach ($referencedIds as $id) {
-
-
-                // $referencedIdPart = DB::table('basics')->where('id', '=', $id->reference)->get();
-
-// dd($referencedIdPart[0] );
-
-$result['referencesResult'][$i]['title'] = $id->title;
-$result['referencesResult'][$i]['category'] = $id->category;
-
-                $i++;
-
+                $result['referencesResult'][$i]['title'] = $id->title;
+                $result['referencesResult'][$i]['medium'] = $id->medium;
             };
 
-            // dd($referencesResult);
-
-            // dd( $referencedId );
-
-            // $referencesResult = DB::table('basics')->where('id', '=', $referencedId[0]->reference)->get();
             $result['misc']['row'] = $request->row;
+
         }
 
         else {
 
             $referencesResultCheck = DB::table('basics')
-                ->where('status', '!=', '0')
+                ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
                 ->where('title', '=', $request->activityReference)
                 ->get();
 
-            if (count($referencesResultCheck) == 0) {} else {
-                $result['referencesResult'] = $referencesResultCheck;
+            if (count($referencesResultCheck)) {
+
+                foreach ($referencesResultCheck as $i=>$id) {
+
+                    if (count($referencesResultCheck) == 0) {} else {
+                        $result['referencesResult'][$i]['title'] = $id->title;
+                        $result['referencesResult'][$i]['medium'] = $id->medium;
+                    }
+                }
+
                 $result['misc']['row'] = $request->row;
-            }
+            } else {
+                $result['misc']['row'] = 0;
+            };
         }
-
-
 
         // dd($result);
 

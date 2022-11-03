@@ -20,10 +20,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->date('ref_date');
-            $table->tinyText('subject');
-            $table->tinyText('category');
-            $table->tinyText('author');
             $table->tinyText('title');
+            $table->tinyText('author');
+            $table->tinyText('medium');
 
             $table->tinyText('tracking')->nullable();
             $table->tinyInteger('status')->nullable();
