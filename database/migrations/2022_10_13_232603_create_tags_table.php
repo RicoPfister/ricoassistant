@@ -19,7 +19,8 @@ return new class extends Migration
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
 
-            $table->text('tag')->nullable();
+            $table->text('tagcontext')->nullable();
+            $table->text('tagcontent')->nullable();
 
             $table->tinyText('tracking')->nullable();
             $table->tinyInteger('status')->nullable();

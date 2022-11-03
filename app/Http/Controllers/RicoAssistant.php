@@ -251,6 +251,16 @@ class RicoAssistant extends Controller {
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
+
+                $tag = DB::table('tags')
+                ->where('basic_id', '=', $id->id)
+                ->where('tagcontext', '=', 'ActivityDiagramColor')
+                ->get();
+
+                if (count($tag)) {
+                    $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                } else {};
+
             };
 
             $result['misc']['row'] = $request->row;
@@ -262,7 +272,7 @@ class RicoAssistant extends Controller {
             $referencesResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', '=', $request->activityReference)
+                ->where('title', 'LIKE', '%'.$request->activityReference.'%')
                 ->get();
 
             if (count($referencesResultCheck)) {
@@ -271,13 +281,25 @@ class RicoAssistant extends Controller {
 
                     if (count($referencesResultCheck) == 0) {} else {
                         $result['referencesResult'][$i]['title'] = $id->title;
+
+                        $tag = DB::table('tags')
+                            ->where('basic_id', '=', $id->id)
+                            ->where('tagcontext', '=', 'ActivityDiagramColor')
+                            ->get();
+
+                        // dd($tag);
+
+                        if (count($tag)) {
+                            $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                        } else {};
+
                         $result['referencesResult'][$i]['medium'] = $id->medium;
                     }
                 }
 
                 $result['misc']['row'] = $request->row;
             } else {
-                $result['misc']['row'] = 0;
+                $result['misc']['row'] = grey;
             };
         }
 

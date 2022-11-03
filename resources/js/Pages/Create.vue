@@ -92,18 +92,21 @@
                                     <option value="self_awareness">Self Awareness</option>
                                     <option value="self_reproduction">Self Reproduction</option>
                                     <option value="external_activation">External Activation</option>
-                                    <option value="External_manipulation">External Manipulation</option>
+                                    <option value="External_motivation">External Motivation</option>
                                 </optgroup>
                             </select>
                         </div>
                     </div>
 
                     <div class="flex justify-between">
-                        <div class="mt-3 text-red-600" v-if="$page.props.errors.ref_date">*Please fill out all marked fields</div>
-                        <div class="mt-3 text-red-600" v-else-if="$page.props.errors.focus">*Please fill out all marked fields</div>
-                        <div class="mt-3 text-red-600" v-else-if="$page.props.errors.author">*Please fill out all marked fields</div>
-                        <div class="mt-3 text-red-600" v-else-if="$page.props.errors.title">*Please fill out all marked fields</div>
-                        <div class="mt-3" v-else>*Required fields</div>
+                        <div class="flex flex-row">
+                            <div class="mt-3 text-red-600" v-if="$page.props.errors.ref_date">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.focus">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.author">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.title">*Please fill out all marked fields</div>
+                            <div class="mt-3" v-else>*Required fields</div>
+                            <div class="mt-3">&nbsp;| Some fields may filled out automatically</div>
+                        </div>
                         <div class="flex flex-row mt-3 items-center">
                             <label class="mr-1" for="public">Public:</label>
                             <input type="checkbox" id="public" true-value="2" false-value="" v-model="form.basic_status">
@@ -159,7 +162,7 @@
                     <div class="flex gap-1 h-6 lg:h-8 mt-2 lg:mt-4 lg:px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
                         <!-- time input -->
-                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="/{0-90-90-90-9}/" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+                        <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0 placeholder:text-gray-400 focus:placeholder-white" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To" v-model="form.activityTo[n-1]">
 
                         <div class="flex gap-1 flex-row">
 
@@ -210,7 +213,7 @@
 
                         <!-- input reference -->
                         <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                            <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference" v-model="form.activityReference[n-1]">
+                            <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1]">
 
                             <!-- input reference menu button -->
                             <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -228,7 +231,7 @@
 
                                 <div class="flex flex-row items-center z-50">
 
-                                    <div class="text-sm xl:text-base z-50 r  w-full">
+                                    <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
 
                                         <div class="text-sm"><b>Found in Database:</b></div>
 
@@ -241,7 +244,7 @@
                                             </button>
 
                                             <!-- button reference picker -->
-                                           <button type="button" @click.prevent="form.activityReference[n-1] = item.title; activityDiagramColorMedium[n-1] = item.medium; referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                                           <button type="button" @click.prevent="form.activityReference[n-1] = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
                                         </div>
 
                                     </div>
@@ -316,8 +319,8 @@
                     <div class="flex flex-col">
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 bg-gray-200">
-                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="activityDayOverviewDiagram1a" class="flex flex-row">
-                            <div class="h-full bg-gray-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
+                        <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="'A'+index" class="flex flex-row">
+                            <div class="h-full bg-gray-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                         </div>
 
                         <!-- half day disgram -->
@@ -336,8 +339,8 @@
                     </div>
 
                     <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1 bg-gray-200">
-                        <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="activityDayOverviewDiagram1b" class="flex flex-row">
-                            <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColor(width['row']) }"></div>
+                        <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="'B'+index" class="flex flex-row">
+                            <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                         </div>
 
                         <!-- half day diagram -->
@@ -467,11 +470,6 @@
                             <input class="" id="trader" type="text" v-model="form.accounting_trader">
                         </div>
                     </div>
-
-                    <!-- <div class="flex flex-col grow mt-3">
-                            <label class="" aria-label="Source/Location Input" for="location">Source/Location: </label>
-                            <input class="" id="location" type="text" v-model="form.location">
-                        </div> -->
 
                     <div class="flex flex-row mt-3 gap-3 w-full min-w-0">
                         <div class="flex flex-col grow min-w-0">
@@ -679,7 +677,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
                             </svg>
-                            <div>Complexity: {{form.rating_complexity }}</div>
+                            <div>Complexity: {{form.rating_complexity}}</div>
                         </div>
                         <div class="flex items-center w-full">
                             <label class="mr-1 hidden lg:block" for="rating_quality"></label><label class="mr-1 block lg:hidden" for="rating_quality">-</label>
@@ -898,15 +896,8 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-      console.log('unmount');
-      document.removeEventListener('keydown', keyPress)
+    document.removeEventListener('keydown', keyPress)
 })
-
-function keyPress(event) {
-    if (event.ctrlKey && event.altKey && event.key === 'a') {
-            alert(activityDiagramColorMedium.value);
-        };
-}
 
 let basicOpen = ref(1);
 let statementOpen = ref(0);
@@ -934,7 +925,7 @@ let activityDayOverviewDiagram1a = ref([]);
 let activityDayOverviewDiagram1b = ref([]);
 
 let activityLimitReached = ref(0);
-let activityDiagramColorMedium = ref([]);
+let activityDiagramColorTag = ref([]);
 
 // actvivity
 // **************************************************
@@ -955,7 +946,17 @@ function activitybuttonBar(e, n) {
 
         if (e == 'h') { form.activityTo[n-1] += 200 }
 
-        if (e == 'hMinus') { if (form.activityTo[n-1] > 0) form.activityTo[n-1] -= 100 };
+        if (e == 'hMinus') {
+            if (form.activityTo[n-1] > 0) {
+                if (form.activityTo[n-1].toString().slice(-2) > 0) {
+                    form.activityTo[n-1] -= 30;
+                } else {
+
+                form.activityTo[n-1] -= 70;
+                };
+            }
+            activiteTolimitReached.value = 0;
+        };
 
         if (e == 'm') {
 
@@ -968,9 +969,13 @@ function activitybuttonBar(e, n) {
         else if (e == 'mMinus') {
 
             if (form.activityTo[n-1] > 0) {
+                if (form.activityTo[n-1].toString().slice(-2) > 0) {
 
-                if (form.activityTo[n-1].toString().slice(-2) > 0) { form.activityTo[n-1] -= 1; activiteTolimitReached.value = 0 }
-                else form.activityTo[n-1] -= 41;
+                form.activityTo[n-1] -= 1;
+                } else {
+
+                form.activityTo[n-1] -= 41;
+                };
             }
 
             activiteTolimitReached.value = 0;
@@ -998,7 +1003,8 @@ function activitybuttonBar(e, n) {
 
         // inherit value from previous time
         if (typeof form.activityTo[n-2] !== 'undefined') {
-            if (form.activityTo[n-1] <= form.activityTo[n-2] || (toTimeOldValue > 2400 && e == 'hMinus' || e == 'mMinus')) {
+            if (form.activityTo[n-1] <= form.activityTo[n-2] || (toTimeOldValue > 2400 && (e == 'hMinus' || e == 'mMinus'))) {
+
                 form.activityTo[n-1] = form.activityTo[n-2];
 
                 if (e == 'h' && toTimeOldValue <= 2400) form.activityTo[n-1] += 200;
@@ -1013,8 +1019,13 @@ function activitybuttonBar(e, n) {
     }
 
     // add/remove row
-    if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && form.activityReference[n] == '') {activityTotalRow.value--; activiteTolimitReached.value = 0}
-    else if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) { activityTotalRow.value++; form.activityTo[n] = ''; form.activityReference[n] = ''};
+    if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && form.activityReference[n] == '') {
+        activityTotalRow.value--; activiteTolimitReached.value = 0
+    }
+
+    else if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
+        activityTotalRow.value++; form.activityTo[n] = ''; form.activityReference[n] = ''
+    };
 
 }
 
@@ -1171,21 +1182,21 @@ watch(() => form.activityTo, (curr, prev) => {
         minuteTotal += activityDayOverviewDiagram.value[j];
 
         if (minuteTotal <= 720) {
-            activityDayOverviewDiagram1a.value[j] = {'minute': activityDayOverviewDiagram.value[j], 'row': row};
+            activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
             minuteOld = minuteTotal;
             row++;
         };
 
         if (minuteTotal > 720 && l == 1) {
-            activityDayOverviewDiagram1b.value[k] = {'minute': activityDayOverviewDiagram.value[j], 'row': row};
+            activityDayOverviewDiagram1b.value[k] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
             minuteOld = minuteTotal;
             k++;
             row++;
         };
 
         if (minuteTotal > 720 && l == 0) {
-            activityDayOverviewDiagram1a.value[j] = {'minute': 720 - minuteOld, 'row': row};
-            activityDayOverviewDiagram1b.value[k] =  {'minute': minuteTotal - 720, 'row': row};
+            activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': 720 - minuteOld};
+            activityDayOverviewDiagram1b.value[k] =  {'row': row, 'minute': minuteTotal - 720};
             minuteOld = minuteTotal;
             k++;
             row++;
@@ -1193,21 +1204,7 @@ watch(() => form.activityTo, (curr, prev) => {
         };
     }
 
-    console.log(activityDayOverviewDiagram1a.value);
-    console.log(activityDayOverviewDiagram1b.value);
-
 }, {deep: true}, 500);
-
-// diagram color set
-function activityDiagramColor(row) {
-
-    switch (activityDiagramColorMedium.value[row]) {
-        case 'self_awareness':
-            return 'lightgreen';
-        case 'interactivity':
-            return 'lightblue';
-    }
-}
 
 // reference
 // **************************************************
@@ -1296,8 +1293,14 @@ Object.keys(form).forEach(key => {
 Inertia.post('store', requestObj);
 }
 
-function testlog() {
-    console.log('Testlog');
+function cl(log) {
+    console.log('Testlog:' + log);
+}
+
+function keyPress(event) {
+    if (event.ctrlKey && event.altKey && event.key === 'a') {
+        console.log('Testlog:' + log);
+        };
 }
 
 </script>
