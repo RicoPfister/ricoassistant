@@ -29,7 +29,7 @@
             <div class="flex justify-between flex-wrap">
                 <h1 class="text-xl font-bold">Detail View</h1>
                 <div class="flex gap-1 grow justify-end">
-                    <!-- <Button type="button">Preset</Button> -->
+                    <!-- <button type="button">Preset</button> -->
                     <!-- <div>&nbsp;|&nbsp;</div> -->
                     <div class="text-black-600 opacity-30">Edit</div>
                 </div>
@@ -469,7 +469,7 @@
                 <!-- <div>Preset</div>
                 <div>&nbsp;|&nbsp;</div> -->
                 <Link @click="deleteForm(props.detail.id)" type="button" class="text-red-600 hover:text-red-800" >Delete Entry</Link>
-                <Button @click="editForm" type="button" class="text-green-600" hover:text-green-800 :disabled="form.processing">Update Entry</Button>
+                <button @click="editForm" type="button" class="text-green-600" hover:text-green-800 :disabled="form.processing">Update Entry</button>
 
             </div>
 

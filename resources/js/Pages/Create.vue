@@ -1,4 +1,4 @@
-<template>
+ [<template>
 
     <Header>
 
@@ -56,13 +56,13 @@
 
                         <div class="flex flex-col">
                             <label aria-label="Referenced Date Input" for="acc_date">Referenced Date*:</label>
-                            <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="form.basic_ref_date">
+                            <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="form.basic['ref_date']">
                         </div>
 
                         <div class="grow">
                             <div class="flex flex-col grow">
                                 <label class="" aria-label="Category Input" for="title">Title*:</label>
-                                <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.basic_title">
+                                <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.basic['title']">
                             </div>
                         </div>
                     </div>
@@ -71,12 +71,12 @@
 
                         <div class="flex flex-col min-w-0 grow">
                             <label aria-label="Author Input" for="author">Author*:</label>
-                            <input class="min-w-0" type="text" id="author" v-model="form.basic_author">
+                            <input class="min-w-0" type="text" id="author" v-model="form.basic['author']">
                         </div>
 
                         <div class="flex flex-col lg:max-w-fit grow">
                             <label aria-label="Category Input" class="w-fit" for="medium">Medium*:</label>
-                            <select id="medium" v-model="form.basic_medium">
+                            <select id="medium" v-model="form.basic['medium']">
                                 <option value="null" disabled>Select one:</option>
                                 <option value=""></option>
                                 <optgroup label="Idea:">
@@ -100,16 +100,16 @@
 
                     <div class="flex justify-between">
                         <div class="flex flex-row">
-                            <div class="mt-3 text-red-600" v-if="$page.props.errors.ref_date">*Please fill out all marked fields</div>
-                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.focus">*Please fill out all marked fields</div>
-                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.author">*Please fill out all marked fields</div>
-                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors.title">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-if="$page.props.errors['basic.ref_date']">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors['basic.author']">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors['basic.title']">*Please fill out all marked fields</div>
+                            <div class="mt-3 text-red-600" v-else-if="$page.props.errors['basic.medium']">*Please fill out all marked fields</div>
                             <div class="mt-3" v-else>*Required fields</div>
                             <div class="mt-3">&nbsp;| Some fields may filled out automatically</div>
                         </div>
                         <div class="flex flex-row mt-3 items-center">
                             <label class="mr-1" for="public">Public:</label>
-                            <input type="checkbox" id="public" true-value="2" false-value="" v-model="form.basic_status">
+                            <input type="checkbox" id="public" true-value="2" false-value="" v-model="form.basic['status']">
                         </div>
 
                     </div>
@@ -808,11 +808,14 @@ const day = dateNow.getDate().toString().padStart(2, "0");
 const props = defineProps(['user', 'referencesResult', 'misc']);
 
 const form = useForm({
-    basic_ref_date: year+'-'+month+'-'+day,
-    basic_title: '',
-    basic_author: props.user.name,
-    basic_medium: '',
-    basic_status: '',
+
+    basic: {
+        'ref_date': year+'-'+month+'-'+day,
+        'title': '',
+        'author': props.user.name,
+        'medium': '',
+        'status': '',
+    },
 
     statement: '',
 
@@ -1140,15 +1143,9 @@ function activityRowDuplicate(n) {
 // watch for diagram width adjustments / add title/Medium
 watch(() => form.activityTo, (curr, prev) => {
 
-    // add auto title
-    if (form.basic_title != 'Activity ' + year+'-'+month+'-'+day) {
-        form.basic_title = 'Activity ' + year+'-'+month+'-'+day;
-    }
-
     // add auto medium
-    if (form.basic_medium != 'self_awareness') {
-        form.basic_medium = 'self_awareness';
-    }
+    form.basic['title'] = 'Activity ' + year+'-'+month+'-'+day;
+    form.basic['medium'] = 'self_awareness';
 
     let minutes = 0;
     let minuteTotal = 0;
@@ -1243,12 +1240,11 @@ function referenceChecker(n, le) {
 const BasicsBarNotification = computed(() => {
 
     let totalRecords = 0;
-    totalRecords += form.basic_ref_date ? 1 : 0;
-    totalRecords += form.basic_title ? 1 : 0;
-    totalRecords += form.basic_author ? 1 : 0;
-    totalRecords += form.basic_medium ? 1 : 0;
-    totalRecords += form.basic_subject ? 1 : 0;
-    totalRecords += form.basic_status ? 1 : 0;
+    totalRecords += form.basic['ref_date'] ? 1 : 0;
+    totalRecords += form.basic['title'] ? 1 : 0;
+    totalRecords += form.basic['author'] ? 1 : 0;
+    totalRecords += form.basic['medium'] ? 1 : 0;
+    totalRecords += form.basic['status'] ? 1 : 0;
 
     return totalRecords;
 })
@@ -1284,14 +1280,32 @@ const TotalBarNotification = computed(() => {
 
 function sendForm() {
 
+// alert(props.referencesResult[1].id);
+
 let requestObj = {};
 
-Object.keys(form).forEach(key => {
-    if (form[key] != '' && form[key] != '0') requestObj[key] = form[key];
-});
+    requestObj['basic'] = form['basic'];
+    requestObj['activityTo'] = form['activityTo'];
+
+    let referenceArray = [];
+
+    Object.keys(form['activityReference']).forEach((key, i) => {
+
+        referenceArray.push(props.referencesResult[i].id);
+
+    });
+
+    requestObj['activityReference'] = referenceArray;
+
+// Object.keys(form).forEach(key => {
+//     if (form[key] != '' && form[key] != '0') requestObj[key] = form[key];
+// });
 
 Inertia.post('store', requestObj);
 }
+
+// testing
+// **************************************************
 
 function cl(log) {
     console.log('Testlog:' + log);

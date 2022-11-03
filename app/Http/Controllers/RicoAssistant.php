@@ -56,14 +56,18 @@ class RicoAssistant extends Controller {
 
     public function store(Request $request) {
 
+        dd($request);
+
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basic_ref_date' => 'required',
-            'basic_title' => 'required',
-            'basic_author' => 'required',
-            'basic_medium' => 'required',
+            'basic.ref_date' => 'required',
+            'basic.title' => 'required',
+            'basic.author' => 'required',
+            'basic.medium' => 'required',
         ]);
+
+        // dd($request);
 
         $rating = 0;
         $activity = 0;
@@ -85,11 +89,11 @@ class RicoAssistant extends Controller {
         }
 
         $basic = new Basic();
-        $basic->ref_date = $request->basic_ref_date;
-        $basic->title = $request->basic_title;
-        $basic->author = $request->basic_author;
-        $basic->medium = $request->basic_medium;
-        $basic->status = $request->basic_status;
+        $basic->ref_date = $request->basic['ref_date'];;
+        $basic->title = $request->basic['title'];
+        $basic->author = $request->basic['author'];
+        $basic->medium = $request->basic['medium'];
+        $basic->status = $request->basic['status'];
         $basic->user_id = $user->id;
         $basic->tracking = $request->ip();
         $basic->save();
@@ -125,16 +129,34 @@ class RicoAssistant extends Controller {
 
         }
 
-        if($activity == 1){
+        if($request->activityTo){
 
-            $activity = new Activity();
+            // dd($request->activityTo[0]);
 
-            $activity->basic_id = $basic->id;
-            $activity->activityFrom = $request->activityFrom;
-            $activity->activityTo = $request->activityTo;
-            $activity->activityReference = $request->activityReference;
-            $activity->tracking = $request->ip();
-            $activity->save();
+            foreach ($request->activityTo as $i=>$activity) {
+
+                if (is_numeric($request->activityTo[$i])) {
+
+                    $activities[$i] = [
+                        'basic_id' => $basic->id,
+                        'activityTo' => $request->activityTo[$i],
+                        'activityReference' => $request->activityReference[$i],
+                        'tracking' => $request->ip(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+            };
+
+            DB::table('activities')->insert($activities);
+            // $activity = new Activity();
+
+            // $activity->basic_id = $basic->id;
+            // $activity->activityTo = $request->activityTo;
+            // $activity->activityReference = $request->activityReference;
+            // $activity->tracking = $request->ip();
+            // $activity->save();
 
         }
 
@@ -251,6 +273,7 @@ class RicoAssistant extends Controller {
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
+                $result['referencesResult'][$i]['id'] = $id->id;
 
                 $tag = DB::table('tags')
                 ->where('basic_id', '=', $id->id)
@@ -294,12 +317,13 @@ class RicoAssistant extends Controller {
                         } else {};
 
                         $result['referencesResult'][$i]['medium'] = $id->medium;
+                        $result['referencesResult'][$i]['id'] = $id->id;
                     }
                 }
 
                 $result['misc']['row'] = $request->row;
             } else {
-                $result['misc']['row'] = grey;
+                $result['misc']['row'] = 0;
             };
         }
 
