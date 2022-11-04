@@ -66,6 +66,13 @@
                                 <!-- title input -->
                                 <input class="focus:placeholder-white" @input="basicTitleChecker()" id="title" type="text" placeholder="" v-model="form.basic['title']">
 
+                                <!-- warning sign -->
+                                <button type="button" class="absolute top-[33px] right-0 pr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="yellow" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                    </svg>
+                                </button>
+
                                 <!-- titel instant search -->
                                 <div v-if="basicTitelPickerOpen" class="z-50 absolute top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
 
@@ -75,7 +82,7 @@
 
                                             <div class="text-sm"><b>Found in Database:</b></div>
 
-                                            <div v-for="item in props.basicResult" class="flex flex-row items-center w-full">
+                                            <div v-for="(item, index) in props.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
                                                 <button>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -84,8 +91,11 @@
                                                 </button>
 
                                                 <!-- button title picker -->
-                                            <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                                            <div class="flex justify-between w-full">
+                                                <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left"><div class="truncate">{{ item.title }}</div></button>
+                                                <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{  }}</div></button>
                                             </div>
+                                        </div>
 
                                         </div>
                                     </div>
