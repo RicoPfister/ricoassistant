@@ -327,25 +327,85 @@ class RicoAssistant extends Controller {
 
     public function titlecheck(Request $request) {
 
+        // dd($request);
+
+        // user auth
         $user = Auth::user();
         $result = [];
 
+        // create instant search results
         $basicTitleResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->title.'%')
                 ->get();
 
+        // dd($basicTitleResultCheck);
+
+            // isolate collection title and duplicated dates
             if (count($basicTitleResultCheck)) {
+
+                $a = 0;
+                $aa = 0;
 
                 foreach ($basicTitleResultCheck as $i=>$id) {
 
-                    $basicResult['basicResult'][$i]['title'] = $id->title;
+                    // check for date duplicates
+                    if ($id->ref_date == $request->ref_date) {
+
+                        $date[$a]['title'] = $id->title;
+                        $date[$a]['ref_date'] = $id->ref_date;
+                        $date[$a]['warning'] = 2;
+                        $a++;
                     }
+
+                    else {
+                        $title[$aa]['title'] = $id->title;
+                        $title[$aa]['warning'] = 1;
+                        $aa++;
+                    }
+
+                }
+
+                // dd($title);
+                // dd($date);
+
+                // add title to collection
+                if (isset($date[0]['ref_date']) && isset($title[0]['title'])) {
+
+                    $ii = 0;
+
+                    foreach ($date as $i=>$id1) {
+
+                        $basicResult['basicResult'][$ii] = $id1;
+                        $ii++;
+                    };
+
+                    foreach ($title as $a=>$id2) {
+
+                        $basicResult['basicResult'][$ii] = $id2;
+                        $ii++;
+                    };
+
+                    $basicResult['basicResult'][0]['warning'] = '2';
+
+                } elseif ($title) {
+                    $basicResult['basicResult'] = $title;
+                    $basicResult['basicResult'][0]['warning'] = '1';
+                }
+
+                // dd($basicResult);
+
+                // $basicResult['basicResult']['ref_date'][$i] = $id->ref_date;
+                // $basicResult['basicResult']['title'][$i] = $id->title;
+
             } else {
+                // else set title to null
                 $basicResult['basicResult'][0]['title'] = '';
             };
 
+            // dd($basicResult['basicResult']['ref_date']);
+            // dd($basicResult['basicResult']['warning']);
             // dd($basicResult);
 
         return Inertia::render('Create', $basicResult);
