@@ -324,4 +324,30 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Create', $result);
     }
+
+    public function titlecheck(Request $request) {
+
+        $user = Auth::user();
+        $result = [];
+
+        $basicTitleResultCheck = DB::table('basics')
+                ->where('status', '=', null)
+                ->where('user_id', '=', $user->id)
+                ->where('title', 'LIKE', '%'.$request->title.'%')
+                ->get();
+
+            if (count($basicTitleResultCheck)) {
+
+                foreach ($basicTitleResultCheck as $i=>$id) {
+
+                    $basicResult['basicResult'][$i]['title'] = $id->title;
+                    }
+            } else {
+                $basicResult['basicResult'][0]['title'] = '';
+            };
+
+            // dd($basicResult);
+
+        return Inertia::render('Create', $basicResult);
+    }
 }

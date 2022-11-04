@@ -62,7 +62,9 @@
                         <div class="grow">
                             <div class="relative flex flex-col grow">
                                 <label class="" aria-label="Category Input" for="title">Title*:</label>
-                                <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.basic['title']">
+
+                                <!-- title input -->
+                                <input class="focus:placeholder-white" @input="basicTitleChecker()" id="title" type="text" placeholder="" v-model="form.basic['title']">
 
                                 <!-- titel instant search -->
                                 <div v-if="basicTitelPickerOpen" class="z-50 absolute top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
@@ -73,7 +75,7 @@
 
                                             <div class="text-sm"><b>Found in Database:</b></div>
 
-                                            <div v-for="item in props.basicTitleResult" class="flex flex-row items-center w-full">
+                                            <div v-for="item in props.basicResult" class="flex flex-row items-center w-full">
 
                                                 <button>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -830,7 +832,7 @@ const year  = dateNow.getFullYear();
 const month = (dateNow.getMonth() + 1).toString().padStart(2, "0");
 const day = dateNow.getDate().toString().padStart(2, "0");
 
-const props = defineProps(['user', 'referencesResult', 'misc']);
+const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
 
 const form = useForm({
 
@@ -938,7 +940,7 @@ let ratingOpen = ref(0);
 
 let activityOverwievOpen = ref(1);
 let referencePickerOpen = ref([]);
-let basicTitelPickerOpen = ref(1);
+let basicTitelPickerOpen = ref(0);
 referencePickerOpen.value[0] = 0;
 
 let tooltipRatingOpen = ref(0);
@@ -958,15 +960,32 @@ let activityDiagramColorTag = ref([]);
 // basic
 // **************************************************
 
-// title checker
-function basicTitleChecker(n, le) {
+// basic controller
+// ------------------------------------------------
+
+// basic title response
+watch(() => props.basicResult, _.debounce( (curr, prev) => {
+
+    if (props.basicResult[0].title != '') {
+        basicTitelPickerOpen.value = 1;
+    } else {
+        basicTitelPickerOpen.value = 0;
+    }
+
+    }, 500)
+);
+
+// basic title checker
+function basicTitleChecker() {
+
+    basicTitelPickerOpen.value = 0;
 
     if (form.basic.title.length > 2) {
 
         setTimeout(() => {
-            Inertia.post('refcheck', form.basic.title, {replace: false,  preserveState: true, preserveScroll: true});
+            Inertia.post('titlecheck', {title: form.basic.title}, {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
-    }
+    };
 }
 
 // actvivity
@@ -1249,7 +1268,7 @@ watch(() => form.activityTo, (curr, prev) => {
 // activity controller
 // ------------------------------------------------
 
-// reference response
+// activity row response
 watch(() => props.misc, _.debounce( (curr, prev) => {
 
 if (props.misc.row) {
@@ -1259,7 +1278,7 @@ if (props.misc.row) {
 }, 500)
 );
 
-// reference checker
+// activity reference checker
 function referenceChecker(n, le) {
 
     // cl(form.activityReference[n-1].id);
