@@ -60,9 +60,34 @@
                         </div>
 
                         <div class="grow">
-                            <div class="flex flex-col grow">
+                            <div class="relative flex flex-col grow">
                                 <label class="" aria-label="Category Input" for="title">Title*:</label>
                                 <input class="focus:placeholder-white" id="title" type="text" placeholder="" v-model="form.basic['title']">
+
+                                <!-- titel instant search -->
+                                <div v-if="basicTitelPickerOpen" class="z-50 absolute top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+
+                                    <div class="flex flex-row items-center z-50">
+
+                                        <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
+
+                                            <div class="text-sm"><b>Found in Database:</b></div>
+
+                                            <div v-for="item in props.basicTitleResult" class="flex flex-row items-center w-full">
+
+                                                <button>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                                    </svg>
+                                                </button>
+
+                                                <!-- button title picker -->
+                                            <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -913,6 +938,7 @@ let ratingOpen = ref(0);
 
 let activityOverwievOpen = ref(1);
 let referencePickerOpen = ref([]);
+let basicTitelPickerOpen = ref(1);
 referencePickerOpen.value[0] = 0;
 
 let tooltipRatingOpen = ref(0);
@@ -928,6 +954,20 @@ let activityDayOverviewDiagram1b = ref([]);
 
 let activityLimitReached = ref(0);
 let activityDiagramColorTag = ref([]);
+
+// basic
+// **************************************************
+
+// title checker
+function basicTitleChecker(n, le) {
+
+    if (form.basic.title.length > 2) {
+
+        setTimeout(() => {
+            Inertia.post('refcheck', form.basic.title, {replace: false,  preserveState: true, preserveScroll: true});
+        }, 500);
+    }
+}
 
 // actvivity
 // **************************************************
@@ -1206,20 +1246,20 @@ watch(() => form.activityTo, (curr, prev) => {
 
 }, {deep: true}, 500);
 
-// reference
-// **************************************************
+// activity controller
+// ------------------------------------------------
 
 // reference response
 watch(() => props.misc, _.debounce( (curr, prev) => {
 
-    if (props.misc.row) {
-        referencePickerOpen.value[props.misc.row-1] = 1;
-    }
+if (props.misc.row) {
+    referencePickerOpen.value[props.misc.row-1] = 1;
+}
 
 }, 500)
 );
 
-// reference checker and sender
+// reference checker
 function referenceChecker(n, le) {
 
     // cl(form.activityReference[n-1].id);
