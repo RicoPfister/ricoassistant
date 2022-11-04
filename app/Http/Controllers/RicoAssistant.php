@@ -56,7 +56,7 @@ class RicoAssistant extends Controller {
 
     public function store(Request $request) {
 
-        dd($request);
+        // dd($request);
 
         $user = Auth::user();
 
@@ -150,13 +150,6 @@ class RicoAssistant extends Controller {
             };
 
             DB::table('activities')->insert($activities);
-            // $activity = new Activity();
-
-            // $activity->basic_id = $basic->id;
-            // $activity->activityTo = $request->activityTo;
-            // $activity->activityReference = $request->activityReference;
-            // $activity->tracking = $request->ip();
-            // $activity->save();
 
         }
 
@@ -256,7 +249,7 @@ class RicoAssistant extends Controller {
 
     public function reference(Request $request) {
 
-        // dd($request->activityReference);
+        // dd($request);
 
         $user = Auth::user();
         $result = [];

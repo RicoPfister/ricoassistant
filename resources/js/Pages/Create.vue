@@ -213,7 +213,7 @@
 
                         <!-- input reference -->
                         <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                            <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1]">
+                            <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
 
                             <!-- input reference menu button -->
                             <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -244,7 +244,7 @@
                                             </button>
 
                                             <!-- button reference picker -->
-                                           <button type="button" @click.prevent="form.activityReference[n-1] = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                                           <button type="button" @click.prevent="form.activityReference[n-1] = {id: item.id}; form.activityReference[n-1].title = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
                                         </div>
 
                                     </div>
@@ -820,8 +820,7 @@ const form = useForm({
     statement: '',
 
     activityTo: [],
-    activityReference: [],
-
+    activityReference: [{title: '', id: ''}],
     reference: '',
 
     tag: '',
@@ -1022,12 +1021,16 @@ function activitybuttonBar(e, n) {
     }
 
     // add/remove row
-    if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && form.activityReference[n] == '') {
-        activityTotalRow.value--; activiteTolimitReached.value = 0
+
+    if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
+        activityTotalRow.value++;
+        form.activityTo[n] = '';
+        form.activityReference[n] = [{title: '', id: ''}];
     }
 
-    else if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
-        activityTotalRow.value++; form.activityTo[n] = ''; form.activityReference[n] = ''
+    else if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && (typeof form.activityReference[n].title == 'undefined' || form.activityReference[n].title == '')) {
+        activityTotalRow.value--;
+        activiteTolimitReached.value = 0;
     };
 
 }
@@ -1219,6 +1222,8 @@ watch(() => props.misc, _.debounce( (curr, prev) => {
 // reference checker and sender
 function referenceChecker(n, le) {
 
+    // cl(form.activityReference[n-1].id);
+
     if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
 
         Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
@@ -1226,10 +1231,10 @@ function referenceChecker(n, le) {
 
     else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
 
-    else if (form.activityReference[n-1].length > 2) {
+    else if (form.activityReference[n-1].title.length > 2) {
 
         setTimeout(() => {
-            Inertia.post('refcheck', { activityReference: form.activityReference[n-1], row: n}, {replace: false,  preserveState: true, preserveScroll: true});
+            Inertia.post('refcheck', { activityReference: form.activityReference[n-1].title, row: n}, {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     }
 }
@@ -1289,19 +1294,17 @@ let requestObj = {};
 
     let referenceArray = [];
 
+
+
     Object.keys(form['activityReference']).forEach((key, i) => {
 
-        referenceArray.push(props.referencesResult[i].id);
+        referenceArray.push(form['activityReference'][i].id);
 
     });
 
     requestObj['activityReference'] = referenceArray;
 
-// Object.keys(form).forEach(key => {
-//     if (form[key] != '' && form[key] != '0') requestObj[key] = form[key];
-// });
-
-Inertia.post('store', requestObj);
+    Inertia.post('store', requestObj);
 }
 
 // testing
