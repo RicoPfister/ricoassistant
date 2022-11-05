@@ -1,6 +1,6 @@
- [<template>
+ <template>
 
-    <Header>
+<Header>
 
  <!-- navpath-string-tag -->
  <div class="text-sm lg:text-lg" >

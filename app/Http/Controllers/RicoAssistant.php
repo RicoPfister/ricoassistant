@@ -337,7 +337,7 @@ class RicoAssistant extends Controller {
         $basicTitleResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', 'LIKE', '%'.$request->title.'%')
+                ->where('title', '=', $request->title)
                 ->get();
 
         // dd($basicTitleResultCheck);
@@ -364,7 +364,6 @@ class RicoAssistant extends Controller {
                         $title[$aa]['warning'] = 1;
                         $aa++;
                     }
-
                 }
 
                 // dd($title);
@@ -383,16 +382,21 @@ class RicoAssistant extends Controller {
 
                     foreach ($title as $a=>$id2) {
 
-                        $basicResult['basicResult'][$ii] = $id2;
+                        $basicResult['basicResult'][$ii] = $id1;
                         $ii++;
                     };
 
                     $basicResult['basicResult'][0]['warning'] = '2';
 
-                } elseif ($title) {
+                } elseif (isset($date[0]['ref_date'])) {
+
+                    $basicResult['basicResult'] = $date;
+                    $basicResult['basicResult'][0]['warning'] = '2';
+
+                } elseif (isset($title)) {
                     $basicResult['basicResult'] = $title;
                     $basicResult['basicResult'][0]['warning'] = '1';
-                }
+                };
 
                 // dd($basicResult);
 
