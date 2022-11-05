@@ -259,7 +259,8 @@ class RicoAssistant extends Controller {
             $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->orderByDesc('updated_at')->take(10)
+                ->orderByDesc('updated_at')
+                ->take(10)
                 ->get();
 
             foreach ($referencedIds as $i=>$id) {
@@ -361,6 +362,7 @@ class RicoAssistant extends Controller {
 
                     else {
                         $title[$aa]['title'] = $id->title;
+                        $title[$aa]['ref_date'] = $id->ref_date;
                         $title[$aa]['warning'] = 1;
                         $aa++;
                     }
