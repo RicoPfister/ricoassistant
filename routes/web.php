@@ -52,7 +52,7 @@ Route::get('/create', function () {
 });
 
 Route::post('/store', [RicoAssistant::class, 'store'])->name('store');
-Route::get('/search', [RicoAssistant::class, 'filter'])->name('search');
+Route::get('/list', [RicoAssistant::class, 'filter'])->name('list');
 Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');
 Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
 Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');

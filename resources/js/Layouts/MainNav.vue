@@ -132,7 +132,7 @@
 
         <hr class="2xl:mb-[20px] mb-[10px]">
 
-        <div class="absolute top-32 w-full grow xl:px-10 px-2 pb-5">
+        <div class="w-full grow xl:px-10 px-2 pb-5">
             <slot />
         </div>
 
