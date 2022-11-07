@@ -130,7 +130,7 @@
 
         </div>
 
-        <hr class="2xl:mb-[20px] mb-[10px]">
+        <hr class="">
 
         <div class="grow xl:px-10 px-2 pb-5">
             <slot />

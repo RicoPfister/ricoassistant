@@ -1,11 +1,10 @@
 <template>
-<Header>
 
 <!-- container -->
 <div class="lg:w-[755px]">
 
     <!-- tabbar -->
-    <div class="flex flex-row mt-1 border-b border-lime-500 gap-1">
+    <div class="flex flex-row border-b border-lime-500 gap-1">
 
         <!-- featured -->
         <div class="bg-lime-700 text-lime-200 font-bold rounded-t-xl w-fit px-3 flex items-center">Featured
@@ -15,16 +14,23 @@
         </div>
 
         <!-- new -->
-        <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-3 flex items-center">New
+        <!-- <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-3 flex items-center">New
             <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-        </div>
+        </div> -->
 
         <!-- random -->
-        <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-3 flex items-center">Ricomizer
+        <!-- <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-3 flex items-center">Ricomizer
             <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div> -->
+
+        <!-- add entry -->
+        <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
             </svg>
         </div>
 
@@ -32,13 +38,6 @@
         <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
-        </div>
-
-        <!-- add entry -->
-        <div class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
             </svg>
         </div>
     </div>
@@ -122,7 +121,7 @@
         </tr>
 
         <!-- table content rows -->
-        <tr v-for="data in props.list" :key="index" class="">
+        <tr v-for="data in props.data" :key="index" class="">
 
             <!-- symbol medium -->
             <td class="text-center">
@@ -141,22 +140,24 @@
     </table>
 </div>
 
-</Header>
 </template>
 
-    <script setup>
-    import { Head } from '@inertiajs/inertia-vue3';
-    import { Link } from "@inertiajs/inertia-vue3";
-    import { ref, onMounted, computed  } from 'vue';
+<script setup>
 
-    import MenuBox from '../Components/Menu.vue';
-    import Header from "../Layouts/MainNav.vue";
-    import ListIconsSubject from "../Components/ListIconsSubject.vue";
-    import ListIconsMedium from "../Components/ListIconsMedium.vue";
+import { Head } from '@inertiajs/inertia-vue3';
+import { Link } from "@inertiajs/inertia-vue3";
+import { ref, onMounted, computed  } from 'vue';
 
-    const props = defineProps(['list']);
+import MenuBox from '../Components/Menu.vue';
+import ListIconsMedium from "../Components/ListIconsMedium.vue";
 
-    let menuboxOpenActive = ref(0);
+const props = defineProps(['data']);
 
-    </script>
+let menuboxOpenActive = ref(0);
+
+// Inertia.get('filter', {title: form.basic.title, ref_date: form.basic.ref_date}, {replace: false,  preserveState: true, preserveScroll: true});
+
+let test123 = props.data + 100;
+
+</script>
 

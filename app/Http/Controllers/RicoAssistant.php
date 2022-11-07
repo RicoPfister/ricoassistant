@@ -31,7 +31,7 @@ class RicoAssistant extends Controller {
         if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
-        return Inertia::render('List', ['list' => $listAuth]);
+        return Inertia::render('TabManager', ['list' => $listAuth]);
     }
 
     public function detail(Request $request) {

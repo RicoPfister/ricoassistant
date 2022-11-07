@@ -242,7 +242,7 @@ import { ref, onMounted, computed  } from 'vue';
 import MenuBox from '../Components/Menu.vue';
 import Header from "../Layouts/MainNav.vue";
 import ListIconsSubject from "../Components/ListIconsSubject.vue";
-import ListIconsCategory from "../Components/ListIconsCategory.vue";
+import ListIconsCategory from "../Components/ListIconsMedium.vue";
 
 const props = defineProps(['list']);
 
