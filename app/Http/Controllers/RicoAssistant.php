@@ -27,11 +27,11 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-        $publicAuth = Basic::all()->where('status', '=', '' AND 'status', '!=', 0);
-        if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->where('status', '!=', 0); $listAuth = $publicAuth->merge($userAuth);}
+        $publicAuth = Basic::all()->where('status', '=', '');
+        if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
-        return Inertia::render('Search', ['list' => $listAuth]);
+        return Inertia::render('List', ['list' => $listAuth]);
     }
 
     public function detail(Request $request) {

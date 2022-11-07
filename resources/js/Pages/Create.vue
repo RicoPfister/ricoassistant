@@ -112,6 +112,30 @@
                             <input class="min-w-0" type="text" id="author" v-model="form.basic['author']">
                         </div>
 
+                        <!-- <div class="flex flex-col lg:max-w-fit grow">
+                            <label aria-label="Category Input" class="w-fit" for="medium">Category*:</label>
+                            <select id="medium" v-model="form.basic['catgegory']">
+                                <option value="null" disabled>Select one:</option>
+                                <option value=""></option>
+                                <optgroup label="Intern:">
+                                    <option value="sound">Administration</option>
+                                    <option value="picture">Pureness</option>
+                                    <option value="video">Kitchen</option>
+                                    <option value="book">Sport</option>
+                                    <option value="interactivity">Break</option>
+                                    <option value="interactivity">Sleep</option>
+                                    <option value="interactivity">Intern Mix</option>
+                                </optgroup>
+                                <optgroup label="Extern:">
+                                    <option value="system">Facts</option>
+                                    <option value="location">Opinion</option>
+                                    <option value="location">Production</option>
+                                    <option value="self_awareness">Social</option>
+                                    <option value="self_reproduction">Extern Mix</option>
+                                </optgroup>
+                            </select>
+                        </div> -->
+
                         <div class="flex flex-col lg:max-w-fit grow">
                             <label aria-label="Category Input" class="w-fit" for="medium">Medium*:</label>
                             <select id="medium" v-model="form.basic['medium']">
