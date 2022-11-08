@@ -31,27 +31,28 @@ class RicoAssistant extends Controller {
         if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
-        return Inertia::render('TabManager', ['list' => $listAuth]);
+        return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
 
     public function detail(Request $request) {
 
+        // dd($request->basic_id);
+
         $user = Auth::user();
 
-        if(Basic::find($request->id)->status == '1' || Basic::find($request->id)->id == $user->id ) {
+            $basic = Basic::find($request->basic_id);
+            // $statement = Statement::find($request->id);
+            // $activity = Activity::find($request->id);
+            // $reference = Reference::find($request->id);
+            // $tag = Tag::find($request->id);
+            // $accounting = Accounting::find($request->id);
+            // $documents = DB::table('documents')->where('documents.basic_id', '=', $request->id)->get();
+            // $rating = Rating::find($request->id);
 
-            $basic = Basic::find($request->id);
-            $statement = Statement::find($request->id);
-            $activity = Activity::find($request->id);
-            $reference = Reference::find($request->id);
-            $tag = Tag::find($request->id);
-            $accounting = Accounting::find($request->id);
-            $documents = DB::table('documents')->where('documents.basic_id', '=', $request->id)->get();
-            $rating = Rating::find($request->id);
+            // return Inertia::render('TabManager', ['basic' => $basic, 'statement' => $statement, 'accounting' => $accounting, 'activity' => $activity, 'reference' => $reference, 'tag' => $tag, 'rating' => $rating, 'documents' => $documents]);
+            // dd($basic->title);
 
-            return Inertia::render('Detail', ['basic' => $basic, 'statement' => $statement, 'accounting' => $accounting, 'activity' => $activity, 'reference' => $reference, 'tag' => $tag, 'rating' => $rating, 'documents' => $documents]);
-        }
-        dd('nien');
+            return Inertia::render('TabManager/TabManager', ['detail' => $basic]);
     }
 
     public function store(Request $request) {
