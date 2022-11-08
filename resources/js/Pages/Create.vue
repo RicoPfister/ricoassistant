@@ -1489,8 +1489,6 @@ function transmissionToLeft() {
 
         // tabPositionLeftNow.value = 40;
         TabPositionNow.value = "left:"+tabPositionLeftNow.value+"px";
-
-
     }
 }
 

@@ -32,21 +32,21 @@
     </tr>
 
     <!-- table content rows -->
-    <tr v-for="data in props.data" :key="index" class="">
+    <tr v-for="(item, index) in data" :key="index" class="">
 
         <!-- symbol medium -->
         <td class="text-center">
-            <ListIconsMedium :medium="data.medium" />
+            <ListIconsMedium :medium="item.medium" />
         </td >
 
         <!-- title -->
-        <td class="truncate"><button @click.prevent="$emit('addTab'); detailOpen(data.id)" type="button">{{ data.title }}</button></td>
+        <td class="truncate"><button @click.prevent="$emit('addTab'); detailOpen(item.id)" type="button">{{ item.title }}</button></td>
 
         <!-- rating -->
         <td class="hidden lg:table-cell text-center">999</td>
 
         <!-- ref date -->
-        <td class="hidden lg:table-cell text-right">{{ data.ref_date }}</td>
+        <td class="hidden lg:table-cell text-right">{{ item.ref_date }}</td>
     </tr>
 </table>
 
@@ -56,13 +56,13 @@
 
 import { Head } from '@inertiajs/inertia-vue3';
 import { Link } from "@inertiajs/inertia-vue3";
-import { ref, onMounted, computed  } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuBox from '../Components/Menu.vue';
 import ListIconsMedium from "../Components/ListIconsMedium.vue";
 
-const props = defineProps(['data', 'detail']);
+const props = defineProps(['list', 'detail']);
 
 let menuboxOpenActive = ref(0);
 
@@ -74,6 +74,20 @@ function detailOpen(n) {
     // alert(n);
     Inertia.get('detail', {basic_id: n}, {replace: false,  preserveState: true, preserveScroll: true});
 }
+
+let data = ref([]);
+
+// watch(() => props.list, _.debounce( (curr, prev) => {
+
+//     alert('ok');
+//     data.value = props.list;
+
+// }, 500)
+// );
+
+onMounted(() => {
+    data.value = props.list;
+});
 
 </script>
 

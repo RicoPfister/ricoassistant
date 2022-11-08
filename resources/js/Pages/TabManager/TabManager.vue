@@ -3,7 +3,7 @@
 
 <div class="flex flex-row w-full gap-32 justify-center">
 
-    <div v-for="(item, index) in tabContainerAmount" class="lg:w-[755px]">
+    <div v-for="(item, componentIndex) in tabContainerAmount" class="lg:w-[755px]">
 
         <!-- container -->
         <div class="">
@@ -12,14 +12,14 @@
             <div class="flex flex-row border-b border-lime-500 gap-1 mt-5">
 
                 <!-- generate tab(s) -->
-                <div v-for="(item, index) in tabs" :key="tabs" :style="{background: currentTab != index+1 ? '#84cc16' : '#4d7c0f'}" class="text-lime-200 font-bold rounded-t-xl w-fit px-3 flex items-center">
+                <div v-for="(item, tabIndex) in tabs[componentIndex]" :key="tabs[componentIndex]" :style="{background: currentTab[componentIndex] != tabIndex+1 ? '#84cc16' : '#4d7c0f'}" class="text-lime-200 font-bold rounded-t-xl w-fit px-3 flex items-center">
 
-                    <button @click="currentTab = index+1" type="button">
+                    <button @click="currentTab[componentIndex] = tabIndex+1" type="button">
                         {{ item }}
                     </button>
 
-                    <!-- remove tab -->
-                    <button @click="tabs.splice(index, 1); currentTab--; componentSet.splice(index, 1)" type="button">
+                    <!-- remove tab symbol-->
+                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1)" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -41,7 +41,7 @@
                 </div> -->
 
                 <!-- add entry -->
-                <button @click="tabs.push('Tab ' + (lastTab + 1) ); currentTab = tabs.length; lastTab++; componentSet.push(0); componentSet[tabs.length-1] = 0" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
+                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0); componentSet[tabs[componentIndex].length-1] = 0" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                     </svg>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="pt-2">
-                <Component :is="component[componentSet[currentTab-1]]" :key="componentSet" @add-tab="tabContainerAmount = 2" :data="props.list" :detail="props.detail"/>
+                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :detail="props.detail"/>
             </div>
         </div>
     </div>
@@ -127,10 +127,10 @@ let data1 = 123;
 let data2 = "";
 
 let component = [Blank, List, Detail]
-let componentSet = ref([1]);
-let tabs = ref(['Featured Posts']);
-let currentTab = ref(1);
-let lastTab = ref(0);
+let componentSet = ref([[1], [2]]);
+let tabs = ref([['Featured Posts'], ['Details']]);
+let currentTab = ref([[1], [1]]);
+let lastTab = ref([[0], [0]]);
 let tabContainerAmount = ref(1);
 // let listData = ref([props.list]);
 
