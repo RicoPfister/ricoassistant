@@ -12,14 +12,14 @@
             <div class="flex flex-row border-b border-lime-500 gap-1 mt-5">
 
                 <!-- generate tab(s) -->
-                <div v-for="(item, tabIndex) in tabs[componentIndex]" :key="tabs[componentIndex]" :style="{background: currentTab[componentIndex] != tabIndex+1 ? '#84cc16' : '#4d7c0f'}" class="text-lime-200 font-bold rounded-t-xl w-fit px-3 flex items-center">
+                <div v-for="(item, tabIndex) in tabs[componentIndex]" :key="tabs[componentIndex]" :style="{background: currentTab[componentIndex] != tabIndex+1 ? '#84cc16' : '#4d7c0f'}" class="text-lime-200 font-bold rounded-t-xl w-fit px-3 flex items-center h-6">
 
                     <button @click="currentTab[componentIndex] = tabIndex+1" type="button">
                         {{ item }}
                     </button>
 
                     <!-- remove tab symbol-->
-                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1)" type="button">
+                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1); details.splice(tabIndex, 1)" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -41,7 +41,7 @@
                 </div> -->
 
                 <!-- add entry -->
-                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0)" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
+                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0)" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center h-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                     </svg>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="pt-2">
-                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :tabid="currentTab[1]" :detail="props.detail"/>
+                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :tabid="currentTab[1]" :detail="detailShow"/>
             </div>
         </div>
     </div>
@@ -136,6 +136,11 @@ let lastTabDetails = ref([0, 0]);
 let tabContainerAmount = ref(1);
 // let listData = ref([props.list]);
 
+// add detail tab
+
+let details = ref([[]]);
+let detailShow = ref([]);
+
 watch(() => props.detail, _.debounce( (curr, prev) => {
 
     if (tabs.value[1].length != 1) {
@@ -148,6 +153,24 @@ watch(() => props.detail, _.debounce( (curr, prev) => {
     lastTab.value[1]++;
     currentTab.value[1] = tabs.value[1].length;
 
+    // fill detail arrays
+    details.value[currentTab.value[1]-1] = props.detail;
+    detailShow.value = details.value[currentTab.value[1]-1];
+
+}, 500)
+);
+
+// tab changed
+watch(() => currentTab.value[1], _.debounce( (curr, prev) => {
+    // alert('ok');
+    // check if tab is already stored
+    if (details.value[currentTab.value[1]-1]) {
+        detailShow.value = details.value[currentTab.value[1]-1];
+    }
+
+    if (currentTab.value[1]) {
+
+    }
 
 }, 500)
 );
