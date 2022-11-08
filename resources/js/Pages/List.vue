@@ -77,14 +77,6 @@ function detailOpen(n) {
 
 let data = ref([]);
 
-// watch(() => props.list, _.debounce( (curr, prev) => {
-
-//     alert('ok');
-//     data.value = props.list;
-
-// }, 500)
-// );
-
 onMounted(() => {
     data.value = props.list;
 });

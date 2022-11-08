@@ -41,7 +41,7 @@
                 </div> -->
 
                 <!-- add entry -->
-                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0); componentSet[tabs[componentIndex].length-1] = 0" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
+                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0)" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                     </svg>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="pt-2">
-                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :detail="props.detail"/>
+                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :tabid="currentTab[1]" :detail="props.detail"/>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
 <script setup>
 
 import { Link } from "@inertiajs/inertia-vue3";
-import { ref, onMounted, computed  } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 
 import Header from "../../Layouts/MainNav.vue";
 import List from "../List.vue";
@@ -125,14 +125,32 @@ const props = defineProps(['list', 'detail']);
 
 let data1 = 123;
 let data2 = "";
+let detailsTabsCounter = ref(1);
 
 let component = [Blank, List, Detail]
 let componentSet = ref([[1], [2]]);
-let tabs = ref([['Featured Posts'], ['Details']]);
-let currentTab = ref([[1], [1]]);
-let lastTab = ref([[0], [0]]);
+let tabs = ref([['Featured Posts'], []]);
+let currentTab = ref([1, 1]);
+let lastTab = ref([0, 0]);
+let lastTabDetails = ref([0, 0]);
 let tabContainerAmount = ref(1);
 // let listData = ref([props.list]);
+
+watch(() => props.detail, _.debounce( (curr, prev) => {
+
+    if (tabs.value[1].length != 1) {
+        componentSet.value[1].push(2);
+    }
+
+    lastTabDetails.value[1]++;
+
+    tabs.value[1].push('Details '+ (lastTabDetails.value[1]));
+    lastTab.value[1]++;
+    currentTab.value[1] = tabs.value[1].length;
+
+
+}, 500)
+);
 
 </script>
 

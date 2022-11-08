@@ -1,6 +1,6 @@
 <template>
 
-    {{ details.title }}
+    {{ detailShow.title }}
 
 </template>
 
@@ -8,14 +8,24 @@
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 
-const props = defineProps(['detail']);
+const props = defineProps(['detail', 'tabid']);
 
-let details = ref('');
+let details = ref([[]]);
+let detailShow = ref(['']);
 
-// basic title response
 watch(() => props.detail, _.debounce( (curr, prev) => {
 
-    details.value = props.detail;
+    details.value[props.tabid-1] = props.detail;
+    detailShow.value = details.value[props.tabid-1];
+
+}, 500)
+);
+
+watch(() => props.tabid, _.debounce( (curr, prev) => {
+
+if (details.value[props.tabid-1]) {
+    detailShow.value = details.value[props.tabid-1];
+}
 
 }, 500)
 );
