@@ -12,9 +12,9 @@ const props = defineProps(['detail']);
 
 let detailData = ref(['']);
 
-// onMounted(() => {
-//     detailData.value = props.detail;
-// });
+onMounted(() => {
+    detailData.value = props.detail;
+});
 
 watch(() => props.detail, _.debounce( (curr, prev) => {
     detailData.value = props.detail;

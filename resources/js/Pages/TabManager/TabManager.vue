@@ -41,7 +41,7 @@
                 </div> -->
 
                 <!-- add entry -->
-                <button @click="tabs[componentIndex].push('Tab ' + (lastTab[componentIndex] + 1) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0)" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center h-6">
+                <button @click="totalTab[componentIndex]++; tabs[componentIndex].push('Tab ' + (totalTab[componentIndex]) ); currentTab[componentIndex] = tabs[componentIndex].length; lastTab[componentIndex]++; componentSet[componentIndex].push(0)" class="bg-lime-500 text-lime-100 font-bold rounded-t-xl w-fit px-2 flex items-center h-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                     </svg>
@@ -131,6 +131,7 @@ let component = [Blank, List, Detail]
 let componentSet = ref([[1], [2]]);
 let tabs = ref([['Featured Posts'], []]);
 let currentTab = ref([1, 1]);
+let totalTab = ref([0, 0]);
 let lastTab = ref([0, 0]);
 let lastTabDetails = ref([0, 0]);
 let tabContainerAmount = ref(1);
@@ -143,9 +144,11 @@ let detailShow = ref([]);
 
 watch(() => props.detail, _.debounce( (curr, prev) => {
 
-    if (tabs.value[1].length != 1) {
-        componentSet.value[1].push(2);
-    }
+    // if (tabs.value[1].length != 0) {
+    //     componentSet.value[1].push(2);
+    // }
+
+    componentSet.value[1].push(2);
 
     lastTabDetails.value[1]++;
 
@@ -162,16 +165,12 @@ watch(() => props.detail, _.debounce( (curr, prev) => {
 
 // tab changed
 watch(() => currentTab.value[1], _.debounce( (curr, prev) => {
-    // alert('ok');
+    // alert('ok1');
     // check if tab is already stored
     if (details.value[currentTab.value[1]-1]) {
+        // alert('ok2');
         detailShow.value = details.value[currentTab.value[1]-1];
     }
-
-    if (currentTab.value[1]) {
-
-    }
-
 }, 500)
 );
 
