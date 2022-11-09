@@ -19,7 +19,7 @@
                     </button>
 
                     <!-- remove tab symbol-->
-                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1); details.splice(tabIndex, 1)" type="button">
+                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1); details.splice(tabIndex, 1); details.length == 0 ? tabContainerAmount-- : ''" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -57,9 +57,9 @@
 
             <!-- navpathbar -->
 
-            <div class="lg:text-base text-md flex items-center border-l border-r border-b border-lime-500 px-3 pt-2 rounded-b-xl leading-none bg-lime-100" >
+            <div class="lg:text-base text-md h-10 flex items-center border-l border-r border-b border-lime-500 px-3 pt-2 rounded-b-xl leading-none bg-lime-100" >
 
-                <div class="flex flex-wrap items-center">
+                <div v-if="tabs[componentIndex][currentTab[componentIndex]-1] == 'Featured Posts'" class="flex flex-wrap items-center">
 
                     <div class="flex flex-row mb-2 items-center">
 
@@ -75,26 +75,26 @@
 
                         <div class="flex items-center"><span class="underline">Search</span>&nbsp;>&nbsp;</div>
                             <div class="flex flex-row">
-                                <div class="mr-2">42 results found.</div>
+                                <div class="mr-2">20 results found.</div>
                             </div>
                     </div>
 
                     <div class="flex flex-wrap mb-2 items-center gap-2">
 
                         <!-- tag -->
-                        <div class="flex flex-row items-center w-fit bg-white rounded-xl px-3 leading-none">
-                            <div class="flex items-center">Title: Maniac Mansion</div>
+                        <div class="flex flex-row items-center w-fit bg-lime-200 rounded-xl px-3 leading-none">
+                            <div class="flex items-center">#Collection:Featured</div>
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" color="black" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-5 h-5 pl-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" color="black" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5 pl-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </div>
                         </div>
 
                         <!-- tag -->
-                        <div class="flex flex-row items-center w-fit bg-white rounded-xl px-3 leading-none">
-                            <div class="flex items-center">#Condition: Very Good</div>
-                            <svg xmlns="http://www.w3.org/2000/svg" color="black" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-5 h-5 pl-1">
+                        <div class="flex flex-row items-center w-fit bg-lime-200 rounded-xl px-3 leading-none">
+                            <div class="flex items-center">#Category:Mixed</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" color="black" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-5 h-5 pl-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </div>
@@ -118,7 +118,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 
 import Header from "../../Layouts/MainNav.vue";
 import List from "../List.vue";
-import Blank from "./Blank.vue"
+import NewTab from "./NewTab.vue"
 import Detail from "../Detail.vue"
 
 const props = defineProps(['list', 'detail']);
@@ -127,7 +127,7 @@ let data1 = 123;
 let data2 = "";
 let detailsTabsCounter = ref(1);
 
-let component = [Blank, List, Detail]
+let component = [NewTab, List, Detail]
 let componentSet = ref([[1], [2]]);
 let tabs = ref([['Featured Posts'], []]);
 let currentTab = ref([1, 1]);

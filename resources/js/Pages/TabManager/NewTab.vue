@@ -1,5 +1,5 @@
 <template>
 
-Blank Page.
+New Tab.
 
 </template>
