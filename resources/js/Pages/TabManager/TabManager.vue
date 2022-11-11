@@ -19,7 +19,8 @@
                     </button>
 
                     <!-- remove tab symbol-->
-                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1); details.splice(tabIndex, 1); details.length == 0 ? tabContainerAmount-- : ''" type="button">
+                    <button @click="tabs[componentIndex].splice(tabIndex, 1); currentTab[componentIndex] > 1 ? currentTab[componentIndex]-- : ''; componentSet[componentIndex].splice(tabIndex, 1); details.splice(tabIndex, 1); details.length == 0 ? tabContainerAmount-- : ''
+                        " type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" color="white" fill="none" viewBox="0 0 24 24" stroke-width="5" stroke="currentColor" class="w-4 h-4 pl-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -102,7 +103,10 @@
                 </div>
             </div>
             <div class="pt-2">
-                <Component :is="component[componentSet[componentIndex][currentTab[componentIndex]-1]]" :key="componentSet[componentIndex]" @add-tab="tabContainerAmount = 2" :list="props.list" :tabid="currentTab[1]" :detail="detailShow"/>
+                <!-- <Component :is="" /> -->
+                <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" :key="componentSet[componentIndex]" @addtab="tabContainerAmount = 2" :list="props.list" />
+                <Detail v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'Detail'" :detail="detailShow"/>
+                <NewTab v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'NewTab'" />            
             </div>
         </div>
     </div>
@@ -127,7 +131,7 @@ let data1 = 123;
 let data2 = "";
 let detailsTabsCounter = ref(1);
 
-let component = [NewTab, List, Detail]
+let component = ['NewTab', 'List', 'Detail'];
 let componentSet = ref([[1], [2]]);
 let tabs = ref([['Featured Posts'], []]);
 let currentTab = ref([1, 1]);

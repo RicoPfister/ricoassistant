@@ -11,11 +11,11 @@
     <div>Index</div>
 
     <!-- heading loop-->
-    <div v-for="(item, index) in headings" class="flex flex-row">
+    <div v-for="(item, index) in headings[0]" :style="{'margin-top': headings[1][index] == undefined ? '10px' : '', 'font-weight': headings[1][index] == undefined ? 'bold' : '', 'font-size': textSizeHeading(index)}" class="flex flex-row">
         <!-- main heading number -->
-        <div class="justify-end w-6 h-[16px] flex items-center">{{ index + 1}}</div>
-        <div class="h-[16px] w-7 flex items-center"></div>
-        <button class="h-[16px] flex items-center" type="button">{{ item[0] }}</button>
+        <div class="justify-end w-6 h-[16px] flex items-center">{{ headings[0][index] }}</div>
+        <div class="h-[16px] w-7 flex items-center">{{ headings[1][index] }}</div>
+        <button type="button" :style="{'font-weight': fontWeightHeading}" class="pl-2 w-fit h-[16px] flex items-center">{{ headings[2][index] }}</button>
         <div class="relative grow mx-1 h-[16px] flex items-center">
             <div class="absolute -top-[2px] border-b-2 border-black border-dotted h-[16px] w-full"></div>
         </div>
@@ -39,28 +39,14 @@ const props = defineProps(['detail']);
 
 let detailData = ref(['']);
 
-let headings = ref([]);
-headings.value[0] = ['Arrangement'];
-headings.value[0][1] = [];
-headings.value[0][1][0] = 'Idea';
-headings.value[0][1][1] = 'Resource';
-// headings[0][1] = 'Idea';
-// headings[1] = 'Realisation';
-headings.value[1] = ['Realisation'];
-headings.value[2] = ['Impact'];
-headings.value[3] = ['Source'];
-headings.value[4] = ['Source'];
-headings.value[5] = ['Source'];
-headings.value[6] = ['Source'];
-headings.value[7] = ['Source'];
-headings.value[8] = ['Source'];
-headings.value[9] = ['Source'];
-headings.value[10] = ['Source'];
-// headings[2] = 'Impact';
-// headings[3] = 'Source';
-// headings[3][0] = 'Impressions';
-
-// console.log(headings.value);
+let headings = ref('');
+headings[0] = 'Arrangement';
+headings[0][0] = 'Idea';
+headings[0][1] = 'Resource';
+headings[1] = 'Realisation';
+headings[2] = 'Impact';
+headings[3] = 'Source';
+headings[3][0] = 'Impressions';
 
 onMounted(() => {
     detailData.value = props.detail;

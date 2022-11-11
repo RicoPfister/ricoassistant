@@ -40,7 +40,7 @@
         </td >
 
         <!-- title -->
-        <td class="truncate"><button @click.prevent="$emit('addTab'); detailOpen(item.id)" type="button">{{ item.title }}</button></td>
+        <td class="truncate"><button @click.prevent="addtab(); detailOpen(item.id)" type="button">{{ item.title }}</button></td>
 
         <!-- rating -->
         <td class="hidden lg:table-cell text-center">999</td>
@@ -54,8 +54,7 @@
 
 <script setup>
 
-import { Head } from '@inertiajs/inertia-vue3';
-import { Link } from "@inertiajs/inertia-vue3";
+import { Head,defineEmits, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
@@ -63,6 +62,8 @@ import MenuBox from '../Components/Menu.vue';
 import ListIconsMedium from "../Components/ListIconsMedium.vue";
 
 const props = defineProps(['list', 'detail']);
+
+let emit = defineEmits(['addtab']);
 
 let menuboxOpenActive = ref(0);
 
@@ -80,6 +81,10 @@ let data = ref([]);
 onMounted(() => {
     data.value = props.list;
 });
+
+function addtab() {
+    emit('addtab');
+}
 
 </script>
 
