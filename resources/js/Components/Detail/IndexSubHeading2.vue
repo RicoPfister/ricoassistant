@@ -1,12 +1,12 @@
 <template>
 
     <!-- heading loop-->
-    <div v-for="(item, index1) in props.data[index][1]" class="mt-1 flex flex-col">
+    <div v-for="(item, index1) in props.data[index][1][1]" class="flex flex-col">
         <div class="flex flex-row">
             <!-- main heading number -->
-            <div class="justify-end w-5 h-[16px] flex items-center">{{ index+1 }}</div>
-            <div class="h-[16px] w-5 flex items-center">{{ '.'+(index1+1) }}</div>
-            <button @click.prevent="IndexSubHeadingOpen[props.index] = !IndexSubHeadingOpen[props.index]" class="h-[16px] flex items-center hover:text-lime-600" type="button">{{ props.data[index][1][index1][0] }}</button>
+            <div class="justify-end w-10 h-[16px] flex items-center">{{ index + 1}}</div>
+        <div class="h-[16px] w-10 flex items-center">{{ '.' + (props.index + 1) + '.' + (index1 + 1) }}</div>
+            <button @click.prevent="IndexSubHeadingOpen[props.index] = !IndexSubHeadingOpen[props.index]" class="h-[16px] flex items-center hover:text-lime-600 text-sm ml-2" type="button">Level 3</button>
 
             <div class="relative grow mx-1 h-[16px] flex items-center">
                 <div class="absolute -top-[2px] border-b-2 border-black border-dotted h-[16px] w-full"></div>

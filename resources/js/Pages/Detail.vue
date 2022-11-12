@@ -46,8 +46,8 @@
     <div v-if="IndexShowOpen" v-for="(item, index) in headings" class="mb-3 mt-2 flex flex-col">
         <div class="flex flex-row">
             <!-- main heading number -->
-            <div class="justify-end w-5 h-[16px] flex items-center">{{ index + 1}}</div>
-            <div class="h-[16px] w-5 flex items-center"></div>
+            <div class="justify-end w-10 h-[16px] flex items-center">{{ index + 1}}</div>
+            <div class="h-[16px] w-10 flex items-center"></div>
             <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0" class="flex flex-row h-[16px]">
                 <button @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
                     {{ item[0] }}
@@ -99,6 +99,9 @@ headings.value[0][1] = [];
 headings.value[0][1][0] = ['Idea'];
 headings.value[0][1][1] = ['Resource'];
 headings.value[0][1][2] = ['Intention'];
+// headings.value[0][1][0] = [];
+// headings.value[0][1][0][1] = ['Level 3-1'];
+// // headings.value[0][1][0][1] = ['Level 3-2'];
 
 headings.value[1] = ['Realisation'];
 headings.value[1][1] = [];
@@ -113,6 +116,15 @@ headings.value[2][1][0] = ['Rewiews'];
 headings.value[2][1][1] = ['Wealth'];
 headings.value[2][1][2] = ['Successor'];
 headings.value[2][1][3] = ['Test'];
+
+headings.value[3] = ['Impact'];
+headings.value[4] = ['Impact'];
+headings.value[5] = ['Impact'];
+headings.value[6] = ['Impact'];
+headings.value[7] = ['Impact'];
+headings.value[8] = ['Impact'];
+headings.value[9] = ['Impact'];
+headings.value[10] = ['Impact'];
 
 onMounted(() => {
     detailData.value = props.detail;
