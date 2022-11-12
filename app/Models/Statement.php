@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ricoassistant extends Model
+class Statement extends Model
 {
     use HasFactory;
 }

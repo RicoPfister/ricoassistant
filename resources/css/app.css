@@ -6,6 +6,10 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities'; */
 
+body {
+    overflow: scroll; /* Show scrollbars */
+  }
+
 @font-face {
     font-family: Michroma-Regular;
     src: url('/storage/font/Michroma-Regular.ttf');
@@ -50,8 +54,11 @@ tr:first-child, tr:last-child {
     src: url('/storage/font/visitor1.ttf');
 }
 
-body{
-    overflow-y: scroll;
+/* table row colorisation */
+tr:nth-child(even) {
+    background-color: rgba(220, 250, 220);
 }
-
+tr:nth-child(od) {
+    background-color: #fff;
+}
 
