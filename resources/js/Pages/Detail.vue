@@ -8,10 +8,11 @@
 
 <!-- index container -->
 <div class="">
-    <!-- index title box -->
+
+    <!-- index -->
     <div @mouseover="indexMenuOpen = 1" @mouseleave="indexMenuOpen = 0" class="flex flex-row gap-1 items-center">
 
-        <!-- title area -->
+        <!-- title -->
         <button @click="IndexCollapsState('switch')" class="flex flex-row items-center gap-1 hover:text-lime-600">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -20,7 +21,7 @@
             <div>Index</div>
         </button>
 
-        <!-- menu area -->
+        <!-- title menu -->
         <div v-show="indexMenuOpen" class="flex flex-row border">
             <button @click="IndexCollapsState(1)" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 leading-none hover:stroke-lime-600">
@@ -42,37 +43,54 @@
         </div>
     </div>
 
-    <!-- heading loop-->
-    <div v-if="IndexShowOpen" v-for="(item, index) in headings" class="mb-3 mt-2 flex flex-col">
+    <!-- heading -->
+    <div v-if="IndexShowOpen" v-for="(item, index) in headings" class="mb-1 flex flex-col">
         <div class="flex flex-row">
+
             <!-- main heading number -->
             <div class="justify-end w-10 h-[16px] flex items-center">{{ index + 1}}</div>
-            <div class="h-[16px] w-10 flex items-center"></div>
+            <div class="h-[16px] w-8 flex items-center"></div>
+
             <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0" class="flex flex-row h-[16px]">
-                <button @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
+
+                <!-- heading text button -->
+                <button v-if="typeof item[1] != 'undefined'" @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
                     {{ item[0] }}
                 </button>
 
+                <!-- heading text button -->
+                <div v-else class="h-[16px] flex items-center font-bold cursor-default">
+                    {{ item[0] }}
+                </div>
+
                 <!-- link button -->
                 <button v-show="indexLink[index]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1 hover:stroke-lime-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 hover:stroke-lime-600">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
                 </button>
             </div>
 
-            <div class="relative grow mx-1 h-[16px] flex items-center">
-                <div class="absolute -top-[2px] border-b-2 border-black border-dotted h-[16px] w-full"></div>
-            </div>
-            <div class="text-xs w-fit h-[16px] flex items-center">
-                <div class="">{{ typeof headings[index][1] != 'undefined' ? headings[index][1].length : '' }}</div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                </svg>
+            <!-- ending part -->
+            <div v-if="typeof item[1] != 'undefined'" class="flex flex-row grow">
+
+                <!-- leading dots -->
+                <div class="relative grow mx-1 h-[16px] flex items-center">
+                    <div class="absolute -top-[2px] border-b border-black h-[16px] w-full"></div>
+                </div>
+
+                <!-- infos / collaps icon -->
+                <div class="w-fit h-[16px] flex items-center">
+                    <div class="">
+                        {{ item[1].length }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                    </svg>
+                </div>
             </div>
         </div>
 
-        <IndexSubHeading1 v-if="IndexSubHeadingOpen[index]" :index="index" :data="headings"/>
+        <IndexSubHeading1 v-if="IndexSubHeadingOpen[index]" :data="headings" :index="index"/>
     </div>
 </div>
 
@@ -99,9 +117,9 @@ headings.value[0][1] = [];
 headings.value[0][1][0] = ['Idea'];
 headings.value[0][1][1] = ['Resource'];
 headings.value[0][1][2] = ['Intention'];
-// headings.value[0][1][0] = [];
-// headings.value[0][1][0][1] = ['Level 3-1'];
-// // headings.value[0][1][0][1] = ['Level 3-2'];
+headings.value[0][1][0][1] = [];
+headings.value[0][1][0][1][0] = ['H1 Level 3-1'];
+headings.value[0][1][0][1][1] = ['H2 Level 3-2'];
 
 headings.value[1] = ['Realisation'];
 headings.value[1][1] = [];
@@ -109,22 +127,38 @@ headings.value[1][1][0] = ['Story'];
 headings.value[1][1][1] = ['Programming'];
 headings.value[1][1][2] = ['Graphic'];
 headings.value[1][1][3] = ['Sound'];
+headings.value[1][1][0][1] = [];
+headings.value[1][1][0][1][0] = ['H2 Level 3-1'];
+headings.value[1][1][0][1][1] = ['H2 Level 3-2'];
+headings.value[1][1][0][1][2] = ['H2 Level 3-3'];
 
 headings.value[2] = ['Impact'];
 headings.value[2][1] = [];
 headings.value[2][1][0] = ['Rewiews'];
 headings.value[2][1][1] = ['Wealth'];
 headings.value[2][1][2] = ['Successor'];
-headings.value[2][1][3] = ['Test'];
+headings.value[2][1][0][1] = [];
+headings.value[2][1][0][1][0] = ['Level 3-1'];
+headings.value[2][1][0][1][1] = ['Level 3-2'];
 
-headings.value[3] = ['Impact'];
-headings.value[4] = ['Impact'];
-headings.value[5] = ['Impact'];
-headings.value[6] = ['Impact'];
-headings.value[7] = ['Impact'];
-headings.value[8] = ['Impact'];
-headings.value[9] = ['Impact'];
-headings.value[10] = ['Impact'];
+headings.value[3] = ['Register'];
+headings.value[4] = ['Register'];
+headings.value[5] = ['Register'];
+headings.value[6] = ['Register'];
+headings.value[7] = ['Register'];
+headings.value[8] = ['Register'];
+headings.value[9] = ['Register'];
+
+headings.value[10] = ['Register'];
+headings.value[10][1] = [];
+headings.value[10][1][0] = ['Idea'];
+headings.value[10][1][1] = ['Resource'];
+headings.value[10][1][2] = ['Intention'];
+headings.value[10][1][3] = ['Intention'];
+headings.value[10][1][4] = ['Intention'];
+headings.value[10][1][4][1] = [];
+headings.value[10][1][4][1][0] = ['H1 Level 3-1'];
+headings.value[10][1][4][1][1] = ['H2 Level 3-2'];
 
 onMounted(() => {
     detailData.value = props.detail;
