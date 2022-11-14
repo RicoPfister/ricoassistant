@@ -5,8 +5,8 @@
     <div class="flex flex-row">
 
         <!-- heading number -->
-        <div class="justify-end w-10 h-[16px] flex items-center text-sm">{{ props.index + 1 }}</div>
-        <div class="h-[16px] w-8 flex items-center text-sm">{{ '.'+(index1 + 1) }}</div>
+        <div class="justify-end h-[16px] w-[18px] flex items-center text-sm">{{ props.index + 1 }}</div>
+        <div class="h-[16px] w-[35px] flex items-center text-sm">{{ '.'+(index1 + 1 ) }}</div>
         <div @mouseover="indexLink1[index1] = 1" @mouseleave="indexLink1[index1] = 0"
             class="flex flex-row h-[16px]">
 
@@ -66,6 +66,8 @@ const props = defineProps(['index', 'data']);
 
 let IndexSubHeadingOpen = ref([]);
 let indexLink1 = ref([0]);
+let headingWidthArray = ref();
+let headingWidth = ref();
 
 Object.keys(props.data[props.index]).forEach((key, i) => {
 

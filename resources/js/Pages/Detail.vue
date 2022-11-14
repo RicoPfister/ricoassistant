@@ -48,10 +48,11 @@
         <div class="flex flex-row">
 
             <!-- main heading number -->
-            <div class="justify-end w-10 h-[16px] flex items-center">{{ index + 1}}</div>
-            <div class="h-[16px] w-8 flex items-center"></div>
+            <div class="justify-end h-[16px] w-[18px] flex items-center">{{ index + 1}}</div>
+            <div class="h-[16px] w-[35px] flex items-center"></div>
 
-            <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0" class="flex flex-row h-[16px]">
+            <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0"
+            class="flex flex-row h-[16px]">
 
                 <!-- heading text button -->
                 <button v-if="typeof item[1] != 'undefined'" @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
