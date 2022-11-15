@@ -342,7 +342,7 @@ class RicoAssistant extends Controller {
         $basicTitleResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', '=', $request->title)
+                ->where('title', '=', $request->basicTitle)
                 ->get();
 
         // dd($basicTitleResultCheck);
@@ -356,7 +356,7 @@ class RicoAssistant extends Controller {
                 foreach ($basicTitleResultCheck as $i=>$id) {
 
                     // check for date duplicates
-                    if ($id->ref_date == $request->ref_date) {
+                    if ($id->ref_date == $request->basicRefDate) {
 
                         $date[$a]['title'] = $id->title;
                         $date[$a]['ref_date'] = $id->ref_date;

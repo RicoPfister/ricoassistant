@@ -37,7 +37,7 @@
 
             <!-- leading dots -->
             <div class="relative grow mx-1 h-[16px] flex items-center">
-                <div class="absolute -top-[2px] border-b border-black border-dotted h-[16px] w-full"></div>
+                <div class="absolute -top-[3px] border-b border-black border-dotted h-[16px] w-full"></div>
             </div>
 
             <!-- infos / collaps icon -->
