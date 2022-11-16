@@ -16,8 +16,8 @@
 
         <!-- warnings -->
         <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[33px] right-0 pr-1 flex flex-row items-center">
-            <div class="text-xs text-gray-500">{{ props.dataParent.referenceParent.length }}</div>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+            <div class="text-xs text-gray-500"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-yellow-400': props.dataParent.basicTitleData[0].warning == 2, 'text-black': props.dataParent.basicTitleData[0].warning == 2}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
         </button>
@@ -31,7 +31,7 @@
 
                     <div class="text-sm"><b>Found in Database:</b></div>
 
-                    <div v-for="(item, index) in 0" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
+                    <div v-for="(item, index) in props.dataParent.basicTitleData" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
                         <button>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -41,8 +41,8 @@
 
                         <!-- button title picker -->
                     <div class="flex justify-between w-full">
-                        <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left" ><div class="truncate">{{ }}</div></button>
-                        <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" ><div class="truncate">{{  }}</div></button>
+                        <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left" :class="{'text-red-500': props.dataParent.basicTitleData[0].warning == 2, 'hover:text-red-800': props.dataParent.basicTitleData[0].warning  == 2}" ><div class="truncate">{{ item.title }}</div></button>
+                        <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.dataParent.basicTitleData[0].warning == 2, 'hover:text-red-800': props.dataParent.basicTitleData[0].warning == 2}" ><div class="truncate">{{ item.ref_date }}</div></button>
                     </div>
                 </div>
 
@@ -86,8 +86,11 @@ watch(() => dataChild, (curr, prev) => {
 // processing parent props
 watch(() => props.dataParent, (curr, prev) => {
 
-    cl(props.dataParent.basicTitleData[0].warning);
+    // cl(props.dataParent.basicTitleData[0].warning);
 
+    if (props.dataParent.basicTitleData[0].warning > 0) {
+        basicTitleWarning.value = 1;
+    }
     basicTitelPickerOpen.value = props.dataParent.basicTitelPickerOpen;
     // basicTitleWarning.value =
 

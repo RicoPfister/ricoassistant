@@ -2,8 +2,7 @@
 
 <!-- preset heading -->
 <div>
-    <div>Hi. I am Rico AI and I'll help you create a new entry. Lets start!</div>
-    <h2 class="my-2">What do you want to <b>create</b>? Or <b>edit</b> an existing entry:</h2>
+    <h2 class="text-lg mb-4">What kind of content do you want to work on?</h2>
 </div>
 
 <!-- choose preset-->

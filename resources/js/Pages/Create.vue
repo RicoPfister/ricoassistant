@@ -6,19 +6,29 @@
 <form aria-label="New Entry Container"  class="absolute mb-10 min-w-0">
 
     <!-- content container -->
-    <div class="lg:w-[755px]">
+    <div class="lg:w-[755px] mt-10 ">
 
-        <h1 class="text-xl font-bold">New Entry</h1>
+        <TabBar />
 
-        <div class="bg-gray-100 p-3 w-full min-w-0 border border-gray-300 shadow-xl mt-3 flex flex-col">
+        <div class="bg-gray-100 w-full min-w-0 border border-gray-300 shadow-xl flex flex-col">
 
-        <!-- component generator -->
-        <div v-for="(item, index) in 1">
-            <Component :is="componentCollection[componentSet]" @data-child="dataChild" :data-parent="dataParent"/>
+            <div class="p-3">
+
+                <!-- component generator -->
+                <div v-for="(item, index) in 1">
+                    <Component :is="componentCollection[componentSet]" @data-child="dataChild" :data-parent="dataParent"/>
+                </div>
+
+            </div>
+
+            <CreateFooter />
+
         </div>
+
+
+
     </div>
 
-</div>
 </form>
 
 </Header>
@@ -34,6 +44,8 @@ import Header from "../Layouts/MainNav.vue";
 import Choose from "../Components/Create/Choose.vue";
 import Statement from "../Components/Create/Statement.vue";
 import Basic from "../Components/Create/Basic.vue";
+import TabBar from "../Components/TabManager/TabBar.vue";
+import CreateFooter from "../Components/Create/Footer.vue";
 
 let props = defineProps(['dataChild', 'basicResult']);
 let emit = defineEmits(['dataParent']);
