@@ -6,17 +6,17 @@
 <form aria-label="New Entry Container"  class="absolute mb-10 min-w-0">
 
     <!-- content container -->
-    <div class="lg:w-[755px] mt-10 ">
+    <div class="lg:w-[755px] mt-10">
 
         <TabBar />
 
-        <div class="bg-gray-100 w-full min-w-0 border border-gray-300 shadow-xl flex flex-col">
+        <div class="w-full min-w-0 border border-gray-300 shadow-xl flex flex-col rounded-b-xl">
 
-            <div class="p-3">
+            <div class="p-4 gap-y-4 flex flex-col bg-green-50">
 
                 <!-- component generator -->
-                <div v-for="(item, index) in 1">
-                    <Component :is="componentCollection[componentSet]" @data-child="dataChild" :data-parent="dataParent"/>
+                <div v-for="(item, index) in componentCollection">
+                    <Component :is="componentSource[componentCollection[index]]" @data-child="dataChild" :data-parent="dataParent"/>
                 </div>
 
             </div>
@@ -24,9 +24,6 @@
             <CreateFooter />
 
         </div>
-
-
-
     </div>
 
 </form>
@@ -43,7 +40,8 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import Header from "../Layouts/MainNav.vue";
 import Choose from "../Components/Create/Choose.vue";
 import Statement from "../Components/Create/Statement.vue";
-import Basic from "../Components/Create/Basic.vue";
+import MediumTitle from "../Components/Create/MediumTitle.vue";
+import DateAuthor from "../Components/Create/DateAuthor.vue";
 import TabBar from "../Components/TabManager/TabBar.vue";
 import CreateFooter from "../Components/Create/Footer.vue";
 
@@ -53,13 +51,13 @@ let emit = defineEmits(['dataParent']);
 let form = ref({});
 let dataParent = ref({});
 
-const componentCollection = [Choose, Statement, Basic];
-let componentSet = ref(0);
+const componentSource = [Choose, MediumTitle, DateAuthor, Statement];
+let componentCollection = ref([0]);
 
 function dataChild(data) {
 
     if (data['formComponent'] == 0) {
-        componentSet.value = 2;
+        componentCollection.value = [1, 3, 2];
     };
 
     if (data['formData']) {

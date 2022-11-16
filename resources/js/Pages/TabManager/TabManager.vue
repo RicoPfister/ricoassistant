@@ -8,7 +8,7 @@
         <!-- container -->
         <div class="">
 
-            <!-- tabbar -->
+            <!-- tab-bar -->
             <div class="flex flex-row border-b border-lime-500 gap-1 mt-5">
 
                 <!-- generate tab(s) -->
@@ -106,7 +106,7 @@
                 <!-- <Component :is="" /> -->
                 <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" :key="componentSet[componentIndex]" @addtab="tabContainerAmount = 2" :list="props.list" />
                 <Detail v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'Detail'" :detail="detailShow"/>
-                <NewTab v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'NewTab'" />            
+                <NewTab v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'NewTab'" />
             </div>
         </div>
     </div>

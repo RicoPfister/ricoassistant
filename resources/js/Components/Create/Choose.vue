@@ -2,7 +2,7 @@
 
 <!-- preset heading -->
 <div>
-    <h2 class="text-lg mb-4">What kind of content do you want to work on?</h2>
+    <div class="text-lg mb-3 leading-none">What kind of content do you want to work on?</div>
 </div>
 
 <!-- choose preset-->
