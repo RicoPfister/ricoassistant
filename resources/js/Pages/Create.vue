@@ -10,9 +10,9 @@
 
         <TabBar />
 
-        <div class="w-full min-w-0 border border-gray-300 shadow-xl flex flex-col rounded-b-xl">
+        <div class="w-full min-w-0 border-2 border-black flex flex-col">
 
-            <div class="p-4 gap-y-4 flex flex-col bg-green-50">
+            <div class="p-4 gap-y-4 flex flex-col bg-gray-100">
 
                 <!-- component generator -->
                 <div v-for="(item, index) in componentCollection">
@@ -20,10 +20,10 @@
                 </div>
 
             </div>
-
-            <CreateFooter />
-
         </div>
+
+        <Footer @data-child="dataChild"/>
+
     </div>
 
 </form>
@@ -40,10 +40,10 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import Header from "../Layouts/MainNav.vue";
 import Choose from "../Components/Create/Choose.vue";
 import Statement from "../Components/Create/Statement.vue";
-import MediumTitle from "../Components/Create/MediumTitle.vue";
-import DateAuthor from "../Components/Create/DateAuthor.vue";
+import Basic from "../Components/Create/Basic.vue";
+import Administration from "../Components/Create/Administration.vue";
 import TabBar from "../Components/TabManager/TabBar.vue";
-import CreateFooter from "../Components/Create/Footer.vue";
+import Footer from "../Components/Create/Footer.vue";
 
 let props = defineProps(['dataChild', 'basicResult']);
 let emit = defineEmits(['dataParent']);
@@ -51,18 +51,25 @@ let emit = defineEmits(['dataParent']);
 let form = ref({});
 let dataParent = ref({});
 
-const componentSource = [Choose, MediumTitle, DateAuthor, Statement];
+const componentSource = [Choose, Basic, Statement];
 let componentCollection = ref([0]);
 
+// analyse received child data
 function dataChild(data) {
 
+    // console.log(form.value);
+
     if (data['formComponent'] == 0) {
-        componentCollection.value = [1, 3, 2];
+        componentCollection.value = [1, 2];
     };
 
     if (data['formData']) {
-        form.value = {...data.formData, ...form.value}
-        // console.log(form.value);
+        form.value = {...form.value, ...data.formData}
+    }
+
+    // sendform
+    if (data.submit == 1) {
+        Inertia.post('store', form.value);
     }
 }
 
@@ -72,28 +79,12 @@ watch(() => props.basicResult, _.debounce( (curr, prev) => {
     dataParent.value.basicTitleData = props.basicResult;
 
     if (props.basicResult[0].warning == 2) {
-        // cl('ok');
         dataParent.value.basicTitelPickerOpen = 1;
     } else {
         dataParent.value.basicTitelPickerOpen = 0;
     }
 
 }, 500));
-
-// testing
-// **************************************************
-
-function cl(log) {
-    // alert(log)
-    if (typeof log == 'undefined') console.log('Testlog');
-    else console.log('Testlog: ' + log);
-}
-
-function keyPress(event) {
-    if (event.ctrlKey && event.altKey && event.key === 'a') {
-        console.log('Testlog: ' + log);
-        };
-}
 
 </script>
 

@@ -1,74 +1,73 @@
 
 <template>
 
-<div class="border-t border-gray-300 h-[35px] flex flex-row items-center justify-between text-lg">
+<div class="border-b border-l border-r border-gray-400 h-[35px] flex flex-row items-center justify-between text-lg rounded-b-xl shadow-xl">
 
-    <div class="px-3 flex items-center bg-red-100 h-full rounded-bl-xl border-gray-300 border-r">
+    <button class="border-r px-3 border-gray-400 rounded-bl-xl bg-gray-300 h-full flex items-center">
         <div class="flex flex-row items-center">
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
-            </div>
-
-            <div>Reset</div>
-        </div>
-    </div>
-
-    <div class="border-r px-3 border-gray-300 bg-gray-200 h-full flex items-center">
-        <div class="flex flex-row items-center">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                <svg xmlns="http://www.w3.org/2000/svg" color="red" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 9l-3 3m0 0l3 3m-3-3h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
             <div>Back</div>
         </div>
-    </div>
+    </button>
 
-    <div class="border-r px-3 border-gray-300 bg-gray-200 h-full flex items-center">
+    <button class="border-r px-3 border-gray-400 bg-gray-300 h-full flex items-center">
         <div class="flex flex-row items-center">
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 11.25l-3-3m0 0l-3 3m3-3v7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
             <div>Top</div>
         </div>
-    </div>
+    </button>
 
-    <div class="border-r px-3 border-gray-300 bg-blue-200 h-full flex items-center">
+    <button class="border-r px-3 border-gray-400 bg-gray-300 h-full flex items-center">
         <div class="flex flex-row items-center">
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
             <div>Add Field</div>
         </div>
+    </button>
+
+    <div class="border-r px-3 border-gray-400 h-full grow flex items-center justify-start">
+
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <input class="outline-0 focus:ring-0 focus:placeholder-transparent" placeholder="Total data to add: 12">
     </div>
 
-    <div class="text-base border-r px-3 border-gray-300 h-full grow flex items-center justify-center">
-        <div class="">Total data: 12</div>
-    </div>
-
-    <div class="px-3 flex items-center bg-green-200 h-full rounded-br-xl">
+    <button @click="submit" class="px-3 flex items-center bg-gray-300 h-full rounded-br-xl" type="button" >
         <div class="flex flex-row items-center">
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
 
-            <div>Send</div>
+            <div>Next</div>
         </div>
-    </div>
+    </button>
 </div>
 
 </template>
 
 <script setup>
 
+let emit = defineEmits(['dataChild']);
+
+function submit() {
+    emit('dataChild', {'submit': 1});
+}
 
 </script>
 

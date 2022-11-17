@@ -2,10 +2,33 @@
 
 <div class="flex gap-3 flex-wrap w-full min-w-0">
 
-<div class="flex flex-col">
-    <label aria-label="Referenced Date Input" for="acc_date">Date*:</label>
-    <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="dataChild['basicRefDate']">
-</div>
+    <div class="flex flex-col">
+        <label aria-label="Referenced Date Input" for="acc_date">Date*:</label>
+        <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="dataChild['basicRefDate']">
+    </div>
+
+    <div class="flex flex-col lg:max-w-fit w-52">
+                            <label aria-label="Category Input" class="" for="medium">Medium*:</label>
+                            <select id="medium" v-model="dataChild['basicMedium']">
+                                <option value="null" disabled>Select one:</option>
+                                <option value=""></option>
+                                <optgroup label="Idea:">
+                                    <option value="sound">Sound</option>
+                                    <option value="picture">Picture</option>
+                                    <option value="video">Video</option>
+                                    <option value="book">Letter</option>
+                                    <option value="interactivity">Interactivity</option>
+                                </optgroup>
+                                <optgroup label="Identity:">
+                                    <option value="system">System</option>
+                                    <option value="location">Location</option>
+                                    <option value="self_awareness">Self Awareness</option>
+                                    <option value="self_reproduction">Self Reproduction</option>
+                                    <option value="external_activation">External Activation</option>
+                                    <option value="External_motivation">External Motivation</option>
+                                </optgroup>
+                            </select>
+                        </div>
 
 <div class="grow">
     <div class="relative flex flex-col grow">
@@ -23,7 +46,7 @@
         </button>
 
         <!-- titel instant search popup -->
-        <div v-if="basicTitelPickerOpen" class="z-50 absolute top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+        <div v-if="basicTitelPickerOpen" class="z-50 absolute bg-yellow-50top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
 
             <div class="flex flex-row items-center z-50">
 
@@ -71,7 +94,7 @@ const dateNow = year+'-'+month+'-'+day;
 let basicTitelPickerOpen = ref(0);
 let basicTitleWarning = ref(0);
 
-let dataChild = ref({'basicRefDate': dateNow, 'basicTitle': ''});
+let dataChild = ref({'basicMedium': '', 'basicTitle': '', 'basicRefDate': dateNow});
 
 const props = defineProps(['dataParent']);
 let emit = defineEmits(['dataChild']);
@@ -105,7 +128,8 @@ function basicTitleChecker() {
     if (dataChild.value.basicTitle.length > 2) {
 
         setTimeout(() => {
-            Inertia.post('titlecheck', {basicRefDate: dataChild.value.basicRefDate, basicTitle: dataChild.value.basicTitle}, {replace: false,  preserveState: true, preserveScroll: true});
+            Inertia.post('titlecheck', {basicRefDate: dataChild.value.basicRefDate, basicTitle: dataChild.value.basicTitle},
+            {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     };
 }

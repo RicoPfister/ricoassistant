@@ -39,6 +39,8 @@ class RicoAssistant extends Controller {
 
     public function detail(Request $request) {
 
+        dd($request);
+
         // dd($request->basic_id);
 
         $user = Auth::user();
@@ -65,10 +67,9 @@ class RicoAssistant extends Controller {
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basic.ref_date' => 'required',
-            'basic.title' => 'required',
-            'basic.author' => 'required',
-            'basic.medium' => 'required',
+            'basicRefDate' => 'required',
+            'basicMedium' => 'required',
+            'basicTitle' => 'required',
         ]);
 
         // dd($request);
@@ -93,11 +94,10 @@ class RicoAssistant extends Controller {
         }
 
         $basic = new Basic();
-        $basic->ref_date = $request->basic['ref_date'];;
-        $basic->title = $request->basic['title'];
-        $basic->author = $request->basic['author'];
-        $basic->medium = $request->basic['medium'];
-        $basic->status = $request->basic['status'];
+        $basic->ref_date = $request->basicRefDate;
+        $basic->title = $request->basicTitle;
+        $basic->medium = $request->basicMedium;
+        // $basic->status = $request->basic['status'];
         $basic->user_id = $user->id;
         $basic->tracking = $request->ip();
         $basic->save();
@@ -221,6 +221,8 @@ class RicoAssistant extends Controller {
                 $document->tracking = $request->ip();
                 $document->save();
         }
+
+        // dd($request);
 
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }

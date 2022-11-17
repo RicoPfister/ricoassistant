@@ -21,7 +21,6 @@ return new class extends Migration
 
             $table->date('ref_date');
             $table->tinyText('title');
-            $table->tinyText('author');
             $table->tinyText('medium');
 
             $table->tinyText('tracking')->nullable();
