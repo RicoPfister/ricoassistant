@@ -48,27 +48,6 @@
             </button>
         </div>
     </div>
-
-    <!-- tabmanager menu container -->
-    <div class="flex flex-row">
-
-        <!-- menu tabs -->
-        <div class="h-[30px] border-l border-t border-r border-gray-400 rounded-t-xl flex items-center w-fit bg-gray-300 hover:font-bold z-[99]">
-
-            <!-- menu button -->
-            <button @mouseleave="tabMenuOpen[0] = 0" class="relative flex items-center h-full px-2 ">
-                <div @click.prevent="tabMenuOpen[0] = !tabMenuOpen[0]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
-                    </svg>
-                </div>
-
-                <div v-if="tabMenuOpen[0]" class="absolute top-[29px] -left-[0px]">
-                    <TabMenu />
-                </div>
-            </button>
-        </div>
-    </div>
 </div>
 
 </template>
