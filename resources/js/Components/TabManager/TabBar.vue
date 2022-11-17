@@ -6,7 +6,7 @@
     <div class="flex flex-row">
 
         <!-- first tab -->
-        <div class="h-[30px] border-l border-t border-r border-gray-400 rounded-t-xl flex items-center w-fit bg-gray-300 hover:font-bold z-[100]">
+        <div class="h-[28px] border-l border-t border-r border-gray-400 rounded-t-xl flex items-center w-fit bg-gray-300 z-[100]">
 
             <!-- menu area -->
             <div @mouseleave="tabMenuOpen[1] = 0" class="relative flex items-center h-full pl-2">
@@ -22,14 +22,14 @@
             </div>
 
             <!-- text area -->
-            <div @click.prevent="" class="text-lg flex items-center pl-1 pr-2 font-bold cursor-default">
+            <div @click.prevent="" class="text-sm flex items-center pl-1 pr-2 cursor-default">
                 <div>New Entry</div>
             </div>
 
         </div>
 
         <!-- following tabs -->
-        <div v-for="(item, index) in 4" :style="{'z-index': 100-(index+1)}" class="h-[30px] border-l border-t border-r border-gray-400 rounded-t-xl flex items-center w-fit bg-gray-200 -ml-2">
+        <div v-for="(item, index) in 4" :style="{'z-index': 100-(index+1)}" class="h-[28px] border-l border-t border-r border-gray-400 rounded-t-xl flex items-center w-fit bg-gray-200 -ml-2">
 
             <div @mouseleave="tabMenuOpen[index+2] = 0" class="relative flex items-center h-full pl-4">
                 <button @click.prevent="tabMenuOpen[index+2] = !tabMenuOpen[index+2]">
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <button class="text-lg flex items-center pl-1 pr-2 font-bold">
+            <button class="text-sm flex items-center pl-1 pr-2">
                 <div>{{ index+1 }}</div>
             </button>
         </div>

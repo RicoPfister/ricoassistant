@@ -3,26 +3,26 @@
 <Header>
 
 <!-- form container -->
-<form aria-label="New Entry Container"  class="absolute mb-10 min-w-0">
+<form aria-label="New Entry Container" class="absolute mb-10 min-w-0">
 
     <!-- content container -->
-    <div class="lg:w-[755px] mt-10">
+    <div class="lg:w-[755px] mt-10 h-full">
 
         <TabBar />
 
-        <div class="w-full min-w-0 border-2 border-black flex flex-col">
+        <div class="w-full min-w-0 border-2 border-black flex flex-nowrap">
 
-            <div class="p-4 gap-y-4 flex flex-col bg-gray-100">
+            <div class="p-4 gap-y-4 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100">
 
                 <!-- component generator -->
-                <div v-for="(item, index) in componentCollection">
+                <div v-for="(item, index) in componentCollection" class="">
                     <Component :is="componentSource[componentCollection[index]]" @data-child="dataChild" :data-parent="dataParent"/>
                 </div>
 
             </div>
         </div>
 
-        <Footer @data-child="dataChild"/>
+    <Footer @data-child="dataChild"/>
 
     </div>
 
