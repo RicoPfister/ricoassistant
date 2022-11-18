@@ -68,3 +68,5 @@ html {
     user-select: none; /* Standard syntax */
 }
 
+/* html,body { height:100%; } */
+

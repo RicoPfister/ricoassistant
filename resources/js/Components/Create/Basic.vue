@@ -4,12 +4,12 @@
 
     <div class="flex flex-col">
         <label aria-label="Referenced Date Input" for="acc_date">Date*:</label>
-        <input class="w-[141px]" id="acc_date" placeholder="Search" type="date" v-model="dataChild['basicRefDate']">
+        <input class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0" id="acc_date" placeholder="Search" type="date" v-model="dataChild['basicRefDate']">
     </div>
 
     <div class="flex flex-col lg:max-w-fit w-52">
                             <label aria-label="Category Input" class="" for="medium">Medium*:</label>
-                            <select id="medium" v-model="dataChild['basicMedium']">
+                            <select class="border border-black outline-0 focus:border-black focus:ring-0" id="medium" v-model="dataChild['basicMedium']">
                                 <option value="null" disabled>Select one:</option>
                                 <option value=""></option>
                                 <optgroup label="Idea:">
@@ -35,7 +35,7 @@
         <label class="" aria-label="Category Input" for="title">Title*:</label>
 
         <!-- title input -->
-        <input class="focus:placeholder-white" @input="basicTitleChecker()" id="title" type="text" v-model="dataChild['basicTitle']">
+        <input class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0" @input="basicTitleChecker()" id="title" type="text" v-model="dataChild['basicTitle']">
 
         <!-- warnings -->
         <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[33px] right-0 pr-1 flex flex-row items-center">

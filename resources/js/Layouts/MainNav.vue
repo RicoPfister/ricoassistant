@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col">
 
         <div aria-label="Header" class="flex items-center xl:justify-between xl:items-end mx-2 xl:mx-10 mb-12">
 

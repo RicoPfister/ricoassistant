@@ -3,27 +3,29 @@
 <Header>
 
 <!-- form container -->
-<form aria-label="New Entry Container" class="absolute mb-10 min-w-0">
+<form aria-label="New Entry Container" class="absolute mb-10">
 
     <!-- content container -->
-    <div class="lg:w-[755px] mt-10 h-full">
+    <div class="lg:w-[755px] mt-10">
 
         <TabBar />
 
-        <div class="w-full min-w-0 border-2 border-black flex flex-nowrap">
+        <div class="w-full min-w-0 border border-gray-400 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
 
-            <div class="p-4 gap-y-4 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100">
+            <div class="p-4 gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100">
 
                 <!-- component generator -->
                 <div v-for="(item, index) in componentCollection" class="">
                     <Component :is="componentSource[componentCollection[index]]" @data-child="dataChild" :data-parent="dataParent"/>
                 </div>
 
+                <div class="mt-2">
+                    <Footer @data-child="dataChild"/>
+                </div>
+
             </div>
+
         </div>
-
-    <Footer @data-child="dataChild"/>
-
     </div>
 
 </form>
@@ -44,6 +46,8 @@ import Basic from "../Components/Create/Basic.vue";
 import Administration from "../Components/Create/Administration.vue";
 import TabBar from "../Components/TabManager/TabBar.vue";
 import Footer from "../Components/Create/Footer.vue";
+import Tag from "../Components/Create/Tag.vue";
+import Reference from "../Components/Create/Reference.vue";
 
 let props = defineProps(['dataChild', 'basicResult']);
 let emit = defineEmits(['dataParent']);
@@ -51,7 +55,7 @@ let emit = defineEmits(['dataParent']);
 let form = ref({});
 let dataParent = ref({});
 
-const componentSource = [Choose, Basic, Statement];
+const componentSource = [Choose, Basic, Statement, Tag, Reference];
 let componentCollection = ref([0]);
 
 // analyse received child data
@@ -60,7 +64,7 @@ function dataChild(data) {
     // console.log(form.value);
 
     if (data['formComponent'] == 0) {
-        componentCollection.value = [1, 2];
+        componentCollection.value = [1, 2, 3, 4];
     };
 
     if (data['formData']) {
