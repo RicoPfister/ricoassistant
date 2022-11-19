@@ -87,12 +87,12 @@
 
         <!-- main -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox />
+            <contentBox :dataParent="tagContentList"/>
         </div>
 
 
         <div class="absolute top-[35px] left-0">
-            <categoryPopup v-if="categoryPopupOpen" />
+            <categoryPopup v-if="categoryPopupOpen" @dataChild="dataChild"/>
         </div>
     </div>
 </div>
@@ -107,7 +107,17 @@ import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"
 
+let props = defineProps(['dataChild']);
+let tagContentList = ref();
+let emit = defineEmits(['dataParent']);
+
 let categoryPopupOpen = ref(0);
+
+function dataChild(data) {
+    // alert(1);
+    emit('dataParent');
+    tagContentList.value = data;
+}
 
 </script>
 
