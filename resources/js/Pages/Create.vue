@@ -10,7 +10,7 @@
 
         <TabBar />
 
-        <div class="w-full min-w-0 border border-gray-400 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
+        <div class="relative w-full min-w-0 border-2 border-gray-500 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
 
             <div class="p-4 gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100">
 
@@ -46,7 +46,7 @@ import Basic from "../Components/Create/Basic.vue";
 import Administration from "../Components/Create/Administration.vue";
 import TabBar from "../Components/TabManager/TabBar.vue";
 import Footer from "../Components/Create/Footer.vue";
-import Tag from "../Components/Create/Tag.vue";
+import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 
 let props = defineProps(['dataChild', 'basicResult']);

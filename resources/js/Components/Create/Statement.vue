@@ -24,7 +24,7 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import MenuEntry from "./MenuEntry.vue";
+import MenuEntry from "../Create/MenuEntry.vue";
 
 let dataChild = ref({'statement': ''});
 
