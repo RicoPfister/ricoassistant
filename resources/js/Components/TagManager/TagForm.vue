@@ -5,7 +5,7 @@
 
             <button class="flex flex-row justify-between items-center" type="button">
 
-                <label class="" aria-label="Statement Input" for="statement">Tag: </label>
+                <label class="" aria-label="Statement Input" for="statement">Tags:</label>
 
                 <MenuEntry />
 

@@ -85,11 +85,10 @@
             </div>
         </div>
 
-        <!-- main -->
+        <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
             <contentBox :dataParent="tagContentList"/>
         </div>
-
 
         <div class="absolute top-[35px] left-0">
             <categoryPopup v-if="categoryPopupOpen" @dataChild="dataChild"/>
@@ -103,6 +102,7 @@
 
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
+
 import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"

@@ -8,16 +8,16 @@
 </div>
 
 <div class="h-auto flex flex-row bg-gray-100">
-        <div class="px-3 flex items-center border-r border-b border-gray-400 w-[200px]">Tags for Entry:</div>
-        <div class="px-3 flex items-center border-r border-b border-gray-400 grow"></div>
+        <div class="px-3 flex items-center w-full border-b border-r border-gray-400">Tags for Entry:</div>
     </div>
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
     <div class="h-auto flex flex-row">
-        <div class="px-3 flex items-center border-r border-b border-gray-400 w-[200px]">{{ item }}</div>
-        <div class="px-3 flex items-center border-r border-b border-gray-400 w-[150px]"></div>
-        <div class="flex flex-row justify-between pl-3 pr-1 items-center border-r border-b border-gray-400 grow">
-            <div class=""></div>
+        <input class="px-3 flex items-center border-r border-b border-gray-400 w-[200px]" :value="item">
+        <input class="px-3 flex items-center border-r border-b border-gray-400 w-[150px]" placeholder="Value">
+
+        <div class="flex flex-row justify-between pr-1 items-center border-r border-b border-gray-400 w-full grow">
+            <input class="grow pl-3 truncate" placeholder="Comment">
 
             <!-- remove button -->
             <button @click="removeTagFromList(index)" class="" type="button">
@@ -26,7 +26,6 @@
                 </svg>
             </button>
         </div>
-
     </div>
 </div>
 
@@ -39,7 +38,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
 
 let props = defineProps(['dataParent']);
-let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
+let tagCollection = ref([['Presets', ['Test A1', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let tagArray = ref([]);
 
 // basic title response

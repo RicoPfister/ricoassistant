@@ -6,7 +6,7 @@
 
         <div class="flex flex-row justify-between items-center" type="button">
 
-            <label class="" aria-label="Statement Input" for="statement">Statement*: </label>
+            <label class="" aria-label="Statement Input" for="statement">Activity*: </label>
 
             <MenuEntry @data-child="dataChildMenuEntry"/>
 
@@ -26,9 +26,9 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
 
-let dataChild = ref({});
+let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm']);
+const props = defineProps(['dataParent', 'dataChild']);
 let emit = defineEmits(['dataChild']);
 
 // emit form
@@ -42,19 +42,6 @@ function dataChildMenuEntry(n) {
     // alert(n['formDataEdit']);
     emit('dataChild', {'formDataEdit': n['formDataEdit']});
 }
-
-// watch(() => props.dataForm, _.debounce( (curr, prev) => {
-
-// console.log(props.dataForm.statement);
-
-// }, 500));
-
-onMounted(() => {
-    if (props.dataForm.statement) {
-        console.log(props.dataForm.statement);
-        dataChild.value['statement'] = props.dataForm.statement;
-    }
-  })
 
 </script>
 
