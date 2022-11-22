@@ -94,8 +94,15 @@ function dataChild(data) {
     };
 
     if (data.formDataEdit) {
-        // alert(data.formDataEdit);
-        componentCollection.value = [0];
+
+        if (data.formDataEdit == 1) {
+
+            // alert(data.formDataEdit);
+
+            emit('dataParent' , 'test123');
+            componentCollection.value = [0]};
+
+        if (data.formDataEdit == 2) componentCollection.value.splice(1,1);
     }
 }
 

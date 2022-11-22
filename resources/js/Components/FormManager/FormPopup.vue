@@ -97,5 +97,11 @@ let svgData = ref([
 
 let componentSelected = ref({});
 
+watch(() => props.dataParent, _.debounce( (curr, prev) => {
+
+    lert('okday');
+
+}, 500));
+
 </script>
 

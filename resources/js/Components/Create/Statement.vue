@@ -40,7 +40,8 @@ watch(() => dataChild, (curr, prev) => {
 
 function dataChildMenuEntry(n) {
     // alert(n['formDataEdit']);
-    emit('dataChild', {'formDataEdit': n['formDataEdit']});
+    if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
+    if (n['formDataEdit'] == 2) emit('dataChild', {'formDataEdit': 2, 'delete': 'statement'});
 }
 
 // watch(() => props.dataForm, _.debounce( (curr, prev) => {
