@@ -28,7 +28,7 @@ import MenuEntry from "../Create/MenuEntry.vue";
 
 let dataChild = ref({});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId']);
 let emit = defineEmits(['dataChild']);
 
 // emit form
@@ -40,8 +40,9 @@ watch(() => dataChild, (curr, prev) => {
 
 function dataChildMenuEntry(n) {
     // alert(n['formDataEdit']);
+    // alert(props.componentId);
     if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
-    if (n['formDataEdit'] == 2) emit('dataChild', {'formDataEdit': 2, 'delete': 'statement'});
+    if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
 
 // watch(() => props.dataForm, _.debounce( (curr, prev) => {
@@ -52,7 +53,7 @@ function dataChildMenuEntry(n) {
 
 onMounted(() => {
     if (props.dataForm.statement) {
-        console.log(props.dataForm.statement);
+        // console.log(props.dataForm.statement);
         dataChild.value['statement'] = props.dataForm.statement;
     }
   })

@@ -16,11 +16,11 @@
 
                 <!-- component generator -->
 
-                <div v-for="(item, index) in componentCollection" class="">
-                    <component :is="componentSource[componentCollection[index]]" @data-child="dataChild" :data-parent="dataParent" :data-form="form"/>
+                <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index">
+                    <component :is="componentSource[item]" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1"/>
                 </div>
 
-                <div v-if="componentCollection[0] != 0" class="mt-2">
+                <div v-if="componentCollection[0] != FormManager" class="mt-2">
                     <Footer @data-child="dataChild"/>
                 </div>
 
@@ -37,7 +37,7 @@
 <script setup>
 
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-import { ref, shallowRef, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+import { ref, markRaw, shallowRef, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import Header from "../Layouts/MainNav.vue";
@@ -60,18 +60,19 @@ let form = ref({});
 let dataParent = ref({});
 
 const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
-let componentCollection = ref([0]);
+let componentCollection = [0];
+let componentCollectionUpdate = ref(0);
 
 // analyse received child data
 function dataChild(data) {
 
     // console.log(form.value);
 
-    if (data['formComponent'] == 0) {
-        componentCollection.value = [1, 2, 3, 4];
-    };
+    // if (data['formComponent'] == 0) {
+    //     componentCollection = [Basic, Statement, Tag, Reference];
+    // };
 
-    if (data['formData']) {
+    if (data.formData) {
         form.value = {...form.value, ...data.formData}
     };
 
@@ -80,29 +81,57 @@ function dataChild(data) {
         Inertia.post('store', form.value);
     };
 
+    // replace component collection
     if (data.componentSelected) {
 
-        console.log(data.componentSelected);
+        // console.log(data.componentSelected);
 
-        componentCollection.value = [1];
+        componentCollection.splice(0, 1, 1);
+
+        dataParent.value['sectionSelected'] = [];
 
         for (const [key, value] of Object.entries(data.componentSelected)) {
-        componentCollection.value.push(parseInt(key)+4);
+            // console.log(componentSource[4]);
+            componentCollection.push(parseInt(key)+4);
+            dataParent.value['sectionSelected'][key] = 1;
         }
-        componentCollection.value.push(2);
-        componentCollection.value.push(3);
+        componentCollection.push(2);
+        componentCollection.push(3);
+
+        // dataParent.value['sectionSelected'] = [1];
+
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
     };
 
     if (data.formDataEdit) {
 
+        // open form manager
         if (data.formDataEdit == 1) {
 
+            // componentCollectionPreserved = componentCollection;
+
             // alert(data.formDataEdit);
+            // emit('dataParent' , 'test123');
 
-            emit('dataParent' , 'test123');
-            componentCollection.value = [0]};
+            // emit('dataForm', {'sectionSelected': 12345});
 
-        if (data.formDataEdit == 2) componentCollection.value.splice(1,1);
+            // componentCollectionPreserved.value = [componentCollection];
+            // console.log(componentCollection);
+
+            // componentCollection.splice(0, 1, 0);
+            componentCollection.splice(0, componentCollection.length, 0);
+
+            // console.log(componentCollectionPreserved.value);
+        };
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
+
+    }
+
+    if (data.delete) {
+        // alert(data.delete);
+        componentCollection.splice(data.delete, 1);
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
 }
 
@@ -120,11 +149,18 @@ watch(() => props.basicResult, _.debounce( (curr, prev) => {
 }, 500));
 
 watch(() => form, (curr, prev) => {
-
-// alert('form');
-emit('dataForm', form);
-
+    // alert('form');
+    emit('dataForm', {'dataForm': form});
 }, {deep: true}, 500);
+
+// const headcount = computed(() => {
+
+// })
+
+onMounted(() => {
+
+})
+
 
 </script>
 

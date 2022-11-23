@@ -1,7 +1,7 @@
 <template>
 
     <!-- page darkening -->
-    <div @click="$emit('menuPopupOpenActive')" class="absolute w-full h-full bg-white top-0 sm:top-0 left-0 opacity-90"></div>
+    <div @click.prevent="dataEmit" class="absolute w-full h-full bg-white top-0 sm:top-0 left-0 opacity-90"></div>
 
     <div class="absolute top-3 right-3 border-t-2 border-black h-fit w-40 text-lg flex flex-col justify-end">
 
@@ -26,7 +26,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-2.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                 </svg>
                 <Link v-if="!$page.props.user" :href="route('login')" class="underline">Login</Link>
-                <Button v-else @click="logout" class="underline">Logout</Button>
+                <button v-else @click="logout" class="underline">Logout</button>
             </div>
 
             <div v-if="!$page.props.user" class="flex items-center gap-1 mt-1">
@@ -146,10 +146,6 @@
 
 </div>
 
-
-
-
-
 </template>
 
 <script setup>
@@ -157,8 +153,14 @@
 import { Link } from "@inertiajs/inertia-vue3";
 import { Inertia } from '@inertiajs/inertia';
 
+let emit = defineEmits(['menuPopupOpenActive']);
+
 const logout = () => {
     Inertia.post(route('logout'));
 };
+
+function dataEmit() {
+    emit('menuPopupOpenActive');
+}
 
 </script>

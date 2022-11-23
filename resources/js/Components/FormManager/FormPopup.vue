@@ -49,7 +49,7 @@
                     </div>
 
                     <!-- form button -->
-                    <button @click="componentSelectedEdit(index)" :class="item[4], componentSelected[index] ? item[3] : ''" class="bg-gray-100 border p-1 ml-1 px-2 rounded-xl w-fit flex flew-row items-center" type="button">
+                    <button @click.prevent="componentSelectedEdit(index)" :class="item[4], componentSelected[index] ? item[3] : ''" class="bg-gray-100 border p-1 ml-1 px-2 rounded-xl w-fit flex flew-row items-center" type="button">
                         <!-- subject icon -->
                         <svg :class="item[2]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" :d="item[5]" />
@@ -71,7 +71,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-const props = defineProps(['dataParent']);
+const props = defineProps(['dataParent', 'dataForm']);
 let emit = defineEmits(['dataChild']);
 
 function componentSelectedEdit(index) {
@@ -97,11 +97,20 @@ let svgData = ref([
 
 let componentSelected = ref({});
 
-watch(() => props.dataParent, _.debounce( (curr, prev) => {
+// watch(() => props.dataParent, _.debounce( (curr, prev) => {
 
-    lert('okday');
+//     lert('okday');
 
-}, 500));
+// }, 500));
+
+onMounted(() => {
+    // console.log(props.dataParent.sectionSelected[0])
+    if (props.dataParent.sectionSelected) {
+        // console.log(props.dataParent.sectionSelected)
+
+        componentSelected.value = props.dataParent.sectionSelected;
+    }
+})
 
 </script>
 
