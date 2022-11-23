@@ -7,7 +7,7 @@
 
                 <label class="" aria-label="Statement Input" for="statement">Tags:</label>
 
-                <MenuEntry />
+                <!-- <MenuEntry /> -->
 
             </button>
 
@@ -42,7 +42,7 @@
     import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
     import { Inertia, Method } from "@inertiajs/inertia";
 
-    import MenuEntry from "../Create/MenuEntry.vue";
+    // import MenuEntry from "../Create/MenuEntry.vue";
     import TagPopup from "../TagManager/TagPopup.vue";
 
     let tagPopupOpen = ref(0);

@@ -7,7 +7,7 @@
 
             <label class="" aria-label="Statement Input" for="statement">Reference: </label>
 
-            <MenuEntry />
+            <!-- <MenuEntry /> -->
 
         </button>
 
@@ -35,7 +35,7 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import MenuEntry from "./MenuEntry.vue";
+// import MenuEntry from "./MenuEntry.vue";
 
 </script>
 
