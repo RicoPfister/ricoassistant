@@ -94,7 +94,7 @@ import MenuEntry from "../Create/MenuEntry.vue";
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm']);
 let emit = defineEmits(['dataChild']);
 
 let uniqueKey = 1;
@@ -139,6 +139,22 @@ function FileChange(event, index) {
     // InputData.value[index]['filename'] = event.target.files[0].name;
 
 }
+
+// emit form
+watch(() => InputData, (curr, prev) => {
+
+emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
+
+}, {deep: true}, 500);
+
+// fill in already extisting data
+onMounted(() => {
+    if (props.dataForm.filelist) {
+        // console.log(props.dataForm.statement);
+        InputData.value = props.dataForm.filelist;
+        preview.value = props.dataForm.previewlist;
+    }
+  })
 
 </script>
 
