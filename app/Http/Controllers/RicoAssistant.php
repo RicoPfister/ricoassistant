@@ -62,7 +62,7 @@ class RicoAssistant extends Controller {
 
     public function store(Request $request) {
 
-        // dd($request);
+        // dd($request->filelist);
 
         $user = Auth::user();
 
@@ -110,6 +110,8 @@ class RicoAssistant extends Controller {
             $statement->tracking = $request->ip();
             $statement->save();
         }
+
+        // dd($request);
 
         if($rating == 1){
 
@@ -194,8 +196,29 @@ class RicoAssistant extends Controller {
 
         }
 
+        // dd($request);
+
+        if(isset($request->filelist)) {
+            foreach($request->file('filelist') as $dataString) {
+
+                // dd($dataString['file']->hashName());
+
+                $document = new Document();
+                $document->basic_id = $basic->id;
+                $document->path = $dataString['file']->hashName();
+                $document->extension = $dataString['file']->extension();
+                $document->size = $dataString['file']->getSize();
+                $document->tracking = $request->ip();
+                $document->save();
+            }
+
+            foreach($request->file('filelist') as $dataString2) {
+                Storage::disk('local')->put('public/images/inventory/', $dataString2['file']);
+            }
+        }
+
         if(isset($request->documentJPG)) {
-            foreach($request->file('documentJPG') as $dataString) {
+            foreach($request->file('filelist') as $dataString) {
 
                 $document = new Document();
                 $document->basic_id = $basic->id;

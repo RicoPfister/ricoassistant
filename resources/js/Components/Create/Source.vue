@@ -2,6 +2,7 @@
 <template>
 
 <div>
+    <!-- source container -->
     <div class="flex flex-col">
 
         <div class="flex flex-row justify-between items-center" type="button">
@@ -13,10 +14,10 @@
         </div>
 
         <!-- upload content box -->
-        <div class="border border-black p-3">
+        <div class="bg-blue-50 border border-black p-3">
             <div class="flex flex-row">
                 <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                <label class="bg-gray-200 rounded-xl cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300" for="fileinput">Upload files</label>
+                <label class="bg-gray-300 rounded-xl cursor-pointer px-2 hover:bg-blue-300 font-bold border border-gray-300" for="fileinput">Upload files</label>
                 <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
             </div>
 

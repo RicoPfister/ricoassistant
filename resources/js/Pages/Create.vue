@@ -12,7 +12,7 @@
 
         <div class="relative w-full min-w-0 border-2 border-gray-500 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
 
-            <div class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-5 py-3">
+            <div ref="scrollArea" class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-5 py-3">
 
                 <!-- component generator -->
 
@@ -62,9 +62,15 @@ let dataParent = ref({});
 const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
+let scrollArea = ref();
 
 // analyse received child data
 function dataChild(data) {
+
+    // scroll to top
+    if (data.scrollToTop) {
+        scrollArea.value.scrollTo({top: 0, behavior: 'smooth'})
+    };
 
     // console.log(form.value);
 
@@ -74,6 +80,24 @@ function dataChild(data) {
 
     if (data.formData) {
         form.value = {...form.value, ...data.formData}
+    };
+
+    if (data.deleteSections) {
+
+        // for (const key in form.value) {
+        //     delete form.value[key];
+        // }
+
+        // console.log('ok');
+
+        componentCollection.splice(0, componentCollection.length);
+        componentCollection.push(0);
+
+        dataParent.value.sectionSelected.splice(0, dataParent.value.sectionSelected.length);
+
+        form.value = ({});
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
     };
 
     // sendform
@@ -160,7 +184,6 @@ watch(() => form, (curr, prev) => {
 onMounted(() => {
 
 })
-
 
 </script>
 
