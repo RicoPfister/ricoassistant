@@ -68,11 +68,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <div>Canel</div>
+                        <div>Cancel</div>
                     </div>
                 </button>
 
-                <button @click="$emit('tagPopupOpen')" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
+                <button @click="emitData" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
                     <div class="flex flex-row items-center">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
@@ -87,7 +87,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :dataParent="tagContentList"/>
+            <contentBox :dataTagContent="props.dataParent" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
@@ -107,17 +107,45 @@ import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild']);
-let tagContentList = ref();
-let emit = defineEmits(['dataParent']);
+let props = defineProps(['dataChild', 'dataParent', 'dataForm']);
+let emit = defineEmits(['dataParent', 'dataChild']);
 
 let categoryPopupOpen = ref(0);
+let tagContentList = ref();
+let tagCollection = ref();
 
+// emit tag data to TagContent.vue
 function dataChild(data) {
-    // alert(1);
-    emit('dataParent');
-    tagContentList.value = data;
+    if (data.tagSelect) tagContentList.value = data.tagSelect;
+    if (data.tagCollection) tagCollection.value = data.tagCollection;
+    // emit('dataParent');
+    // emit('dataChild', {'tagCollection': tagContentList.value});
 }
+
+// watch(() => props.dataForm.basicTitle, _.debounce( (curr, prev) => {
+
+//     // emit('formData', props.dataForm.basicTitle);
+
+//     // dataParent.value.basicTitleData = props.basicResult;
+
+//     console.log(props.dataForm.basicTitle);
+
+// }, 500));
+
+// save submit
+function emitData() {
+    // console.log('ok');
+    emit('dataChild', {'tagCollection': tagCollection.value});
+};
+
+onMounted(() => {
+    // console.log(props.dataForm.basicTitle);
+
+    if (props.dataParent) {
+        // console.log(props.dataForm.statement);
+        // console.log(props.dataParent);
+    }
+})
 
 </script>
 

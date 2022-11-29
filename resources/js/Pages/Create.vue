@@ -67,6 +67,8 @@ let scrollArea = ref();
 // analyse received child data
 function dataChild(data) {
 
+    // console.log(data);
+
     // scroll to top
     if (data.scrollToTop) {
         scrollArea.value.scrollTo({top: 0, behavior: 'smooth'})
