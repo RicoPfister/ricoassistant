@@ -68,33 +68,61 @@ onMounted(() => {
     // check if tag content is available
     if (props.dataTagContent) {
         // tagArray.value = props.dataTagContent[0].split(0);
-        // console.log(props.dataTagContent);
-        let tagCollectionSplitMain2 = props.dataTagContent.split(/[ @]/);
-        let tagCollectionSplitFilter2 = tagCollectionSplitMain2.filter(element => element);
-        console.log(tagCollectionSplitFilter2);
+        console.log(props.dataTagContent);
 
-        let tagCollectionSplitMain= props.dataTagContent.split(/[@]/);
-        let tagCollectionSplitFilter = tagCollectionSplitMain.filter(element => element);
+        let tagCollectionSplitInGroup = props.dataTagContent.split(/[\s@]/);
+        let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
 
-        let tagGroupSplitComment = tagCollectionSplitFilter[0].split(/[(%)]/);
-        let tagGroupSplitFilter = tagGroupSplitComment.filter(element => element != ' ');
+        let tagGroupSplitComment = [];
+        let tagGroupSplitFilter = [];
+        let tagGroupSplitmain = [];
+        let tagGroupSplitmainFilter = [];
 
-        let tagGroupSplitmain = tagGroupSplitFilter[0].split(/[:]/);
-        let tagGroupSplitmainFilter = tagGroupSplitmain.filter(element => element != ' ');
+        tagCollectionSplitInGroupFilter.forEach(tagCollectionEdit);
 
-        if (tagGroupSplitmainFilter[0]) tagArray.value[0] = [];
+        function tagCollectionEdit(item, index) {
 
-        for (let i = 0; i < 3; i++) {
+            if (tagCollectionSplitInGroupFilter.length > 1) tagArray.value[index] = [];
 
-            if (tagGroupSplitmainFilter[i]) {
-                tagArray.value[0][i] = [tagGroupSplitmainFilter[i]];
-            } else tagArray.value[0].push('');
+            // console.log(tagCollectionSplitInGroupFilter);
+            // console.log(item);
+
+            // split comment
+            tagGroupSplitComment[index] = item.split(/[(%)]/);
+            tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != ' ');
+
+            // console.log(tagGroupSplitFilter);
+            // console.log(tagGroupSplitFilter[0]);
+
+            tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
+            tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != ' ');
+
+            // console.log(tagGroupSplitmainFilter);
+
+            // reset tag array
+            // if (tagGroupSplitmainFilter[0][0]) tagArray.value[0] = [];
+
+            console.log(tagGroupSplitmainFilter);
+            console.log(tagArray);
+
+            // add content tags
+            for (let i = 0; i < 3; i++) {
+                if (tagGroupSplitmainFilter[index][i]) {
+                    console.log(index, i);
+                    tagArray.value[index].push(tagGroupSplitmainFilter[index][i]);
+                    console.log(tagArray.value);
+                } else tagArray.value[index].push('');
+            }
+
+            console.log(tagArray);
+
+            // add comment tag
+            if (tagGroupSplitmainFilter[index][1]) {
+               tagArray.value[index].push(tagGroupSplitFilter[index][1]);
+            } else tagArray.value[index].push('');
         }
 
-        if (tagGroupSplitmainFilter[1]) tagArray.value[0].push(tagGroupSplitFilter[1]);
-
         // console.log(tagGroupSplitmainFilter);
-
     }
 })
 

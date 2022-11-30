@@ -189,7 +189,7 @@ function dataChildFunction(data) {
 
     if (data.tagCollection) {
 
-        // console.log(data.tagCollection);
+        console.log(data.tagCollection);
 
         tagCollectionInputFormat.value = '';
 
@@ -207,19 +207,21 @@ function dataChildFunction(data) {
 
                 // console.log(item2);
 
-                let item2Trimmed = item2.toString().trim();
+                if (item2 != null) {
+                    let item2Trimmed = item2.toString().trim();
 
-                switch (index2) {
-                    case 0:
-                        tagCollectionInputFormat.value += '@'+item2Trimmed;
-                        break;
+                    switch (index2) {
+                        case 0:
+                            tagCollectionInputFormat.value += '@'+item2Trimmed;
+                            break;
 
-                    case 3:
-                        tagCollectionInputFormat.value += '('+item2Trimmed+')';
-                        break;
+                        case 3:
+                            tagCollectionInputFormat.value += '('+item2Trimmed+')';
+                            break;
 
-                    default:
-                        if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
+                        default:
+                            if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
+                    }
                 }
             }
             // no space at the end when reaching last entry
