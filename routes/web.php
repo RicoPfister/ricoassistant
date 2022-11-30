@@ -58,6 +58,7 @@ Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
 Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');
 Route::post('/refcheck', [RicoAssistant::class, 'reference'])->name('refcheck');
 Route::post('/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
+Route::post('/tag', [RicoAssistant::class, 'tag'])->name('tag');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');

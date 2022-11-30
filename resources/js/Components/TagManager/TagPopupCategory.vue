@@ -39,11 +39,14 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import SubCategory from "./TagPopupSubCategory.vue";
 
 let SubCategoryOpen = ref([]);
+let tagCollection = ref([]);
 
-let props = defineProps(['dataParent', 'dataChild']);
+let props = defineProps(['dataParent', 'dataChild', 'dataCommon']);
 let emit = defineEmits(['dataParent', 'idParent', 'dataChild']);
 
-let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
+
+
+// let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let categoryActiveTotal = ref([]);
 
 // get TagPopupSubCategory.vue data and emit tag data to TagPopup.vue
@@ -53,6 +56,14 @@ function dataChild(data){
     // collect tag data and emit
     emit('dataChild', {'tagSelect': [tagCollection.value[data[0]][0], data[1]]});
 }
+
+// watch(() => props.dataCommon, (curr, prev) => {
+//     tagCollection.value = props.dataCommon.tagCollection;
+// }, {deep: true}, 500);
+
+onMounted(() => {
+    tagCollection.value = props.dataCommon.tagCollection;
+})
 
 </script>
 

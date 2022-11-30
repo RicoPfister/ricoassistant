@@ -22,7 +22,7 @@
 
                 <!-- open popup -->
                 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
-                    <TagPopup @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @data-child="dataChild"/>
+                    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @data-child="dataChild"/>
                 </div>
 
                 <!-- tag input -->
@@ -45,7 +45,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 // import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 
-let props = defineProps(['dataForm']);
+let props = defineProps(['dataForm', 'dataCommon']);
 // let emit = defineEmits(['dataForm']);
 
 let tagPopupOpen = ref(0);

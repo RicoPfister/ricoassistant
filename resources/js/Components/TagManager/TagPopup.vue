@@ -91,7 +91,7 @@
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <categoryPopup v-if="categoryPopupOpen" @dataChild="dataChild"/>
+            <CategoryPopup v-if="categoryPopupOpen" :data-common="props.dataCommon" @dataChild="dataChild"/>
         </div>
     </div>
 </div>
@@ -107,7 +107,7 @@ import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild', 'dataParent', 'dataForm']);
+let props = defineProps(['dataChild', 'dataParent', 'dataForm', 'dataCommon']);
 let emit = defineEmits(['dataParent', 'dataChild']);
 
 let categoryPopupOpen = ref(0);
@@ -146,6 +146,8 @@ onMounted(() => {
         // console.log(props.dataParent);
     }
 })
+
+Inertia.post('tag');
 
 </script>
 

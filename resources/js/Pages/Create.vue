@@ -17,7 +17,7 @@
                 <!-- component generator -->
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index">
-                    <component :is="componentSource[item]" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1"/>
+                    <component :is="componentSource[item]" :data-common="props.dataCommon" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -53,7 +53,7 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon']);
 let emit = defineEmits(['dataParent', 'dataForm']);
 
 let form = ref({});
@@ -178,6 +178,7 @@ watch(() => form, (curr, prev) => {
     // alert('form');
     emit('dataForm', {'dataForm': form});
 }, {deep: true}, 500);
+
 
 // const headcount = computed(() => {
 
