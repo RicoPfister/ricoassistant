@@ -23,7 +23,7 @@
                 </div>
 
                 <!-- clear list -->
-                <button @click="InputData.splice(0, InputData.length); preview.splice(0, InputData.length); uniqueKey = 1" class="flex flex-row items-center group hover:text-red-500" type="button">
+                <button v-if="InputData != ''" @click.prevent="InputData.splice(0, InputData.length); preview.splice(0, InputData.length); uniqueKey = 1" class="flex flex-row items-center group hover:text-red-500" type="button">
                     <div class="">Reset List</div>
                     <svg xmlns="http://www.w3.org/2000/svg" color="none" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 group-hover:stroke-red-500">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -37,7 +37,7 @@
                 <!-- source list -->
                 <!-- ------------------------------------------------------ -->
                 <div class="">
-                    <div class="flex justify-between border-b border-black bg-black text-white">
+                    <div class="flex justify-between border-b-2 border-black">
                         <div class="font-bold">Source List</div>
                     </div>
 
@@ -74,17 +74,23 @@
 
                 <!-- source tags -->
                 <!-- ------------------------------------------------------ -->
-                <div class="border-b border-black font-bold bg-black text-white">Tags</div>
+                <div class="border-b-2 border-black font-bold">Tags</div>
                 <div class="py-1">
-                    <div v-for="(item, index) in InputData" class="flex flex-row w-full py-[3px] h-[24px]">
+                    <div v-for="(item, index) in InputData" class="flex flex-row w-full py-[3px] h-[24px] items-center">
                         <div class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</div>
-                        <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)">
+                        <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat">
+                        <div>
+                            <button @click.prevent="tagPopupOpenData" class="flex items-center" type="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- source preview-->
-
-                <div class="border-b border-black font-bold bg-black text-white">Source Preview (if available)</div>
+                <div class="border-black border-b-2 font-bold">Source Preview (if available)</div>
                 <div class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
                         <div v-if="item.type.split('/')[0] == 'image'" class="py-1">
@@ -100,6 +106,11 @@
     </div>
 </div>
 
+<!-- open popup -->
+<div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
+    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @data-child="dataChildFunction"/>
+</div>
+
 </template>
 
 <script setup>
@@ -108,11 +119,13 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
+import TagPopup from "../TagManager/TagPopup.vue";
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId']);
 let emit = defineEmits(['dataChild']);
+let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);
 let InputData = ref([]);
@@ -155,5 +168,72 @@ onMounted(() => {
         preview.value = props.dataForm.previewlist;
     }
   })
+
+//   tag popup
+// ---------------------------------------------------------
+
+// let emit = defineEmits(['dataForm']);
+
+let tagCollectionInputFormat = ref('');
+
+// onMounted(() => {
+//     console.log(props.dataForm.basicTitle);
+
+//     if (typeof props.dataParent.title != 'undefined') {
+//         // console.log(props.dataForm.statement);
+//         title = props.dataParent.title;
+//     } else title = 'No title found';
+// })
+
+function dataChildFunction(data) {
+
+    if (data.tagCollection) {
+
+        // console.log(data.tagCollection);
+
+        tagCollectionInputFormat.value = '';
+
+        data.tagCollection.forEach(createTagInputGroup);
+
+        function createTagInputGroup(item, index1) {
+
+            // console.log(item.length-1);
+
+            item.forEach(createTagInputString);
+
+            // tagCollectionInputFormat.value[0] = [];
+
+            function createTagInputString(item2, index2) {
+
+                // console.log(item2);
+
+                let item2Trimmed = item2.toString().trim();
+
+                switch (index2) {
+                    case 0:
+                        tagCollectionInputFormat.value += '@'+item2Trimmed;
+                        break;
+
+                    case 3:
+                        tagCollectionInputFormat.value += '('+item2Trimmed+')';
+                        break;
+
+                    default:
+                        if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
+                }
+            }
+            // no space at the end when reaching last entry
+            // console.log(index1, data.tagCollection.length);
+            if (index1 != data.tagCollection.length-1) tagCollectionInputFormat.value += ' ';
+        }
+
+        // tagCollectionInputFormat.value = data.tagCollection;
+        tagPopupOpen.value = 0;
+    }
+}
+
+function tagPopupOpenData() {
+    tagPopupOpen.value = 1;
+}
 
 </script>

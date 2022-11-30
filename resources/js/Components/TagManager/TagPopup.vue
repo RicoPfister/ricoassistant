@@ -108,7 +108,7 @@ import contentBox from "./TagContent.vue";
 import CategoryPopup from "./TagPopupCategory.vue"
 
 let props = defineProps(['dataChild', 'dataParent', 'dataForm', 'dataCommon']);
-let emit = defineEmits(['dataParent', 'dataChild']);
+let emit = defineEmits(['dataParent', 'dataChild', 'tagPopupOpen']);
 
 let categoryPopupOpen = ref(0);
 let tagContentList = ref();

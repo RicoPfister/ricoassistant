@@ -99,21 +99,28 @@ function dataChild(data) {
     // build form based on selected component
     if (data.componentSelected) {
 
+        // reset collection
         componentCollection.splice(0, 1, 1);
-
         dataParent.value['sectionSelected'] = [];
 
         for (const [key, value] of Object.entries(data.componentSelected)) {
             componentCollection.push(parseInt(key)+4);
             dataParent.value['sectionSelected'][key] = 1;
+
+            // console.log(key);
+
+            // add tag collection
+            // if(parseInt(key)+4 != 8) componentCollection.push(2);
         }
-        componentCollection.push(2);
+
+        // add reference section
         componentCollection.push(3);
 
+        //? v-for trigger
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     };
 
-    // select selections
+    // build collection: form manager
     if (data.formDataEdit) {
 
         if (data.formDataEdit == 1) {

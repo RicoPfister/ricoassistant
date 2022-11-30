@@ -69,6 +69,10 @@ onMounted(() => {
     if (props.dataTagContent) {
         // tagArray.value = props.dataTagContent[0].split(0);
         // console.log(props.dataTagContent);
+        let tagCollectionSplitMain2 = props.dataTagContent.split(/[ @]/);
+        let tagCollectionSplitFilter2 = tagCollectionSplitMain2.filter(element => element);
+        console.log(tagCollectionSplitFilter2);
+
         let tagCollectionSplitMain= props.dataTagContent.split(/[@]/);
         let tagCollectionSplitFilter = tagCollectionSplitMain.filter(element => element);
 

@@ -75,14 +75,11 @@ const props = defineProps(['dataParent', 'dataForm']);
 let emit = defineEmits(['dataChild']);
 
 function componentSelectedEdit(index) {
-    // alert();
-    // alert(componentSelected.value[index][1]);
     if (componentSelected.value[index] == 1) delete componentSelected.value[index];
     else componentSelected.value[index] = 1;
 }
 
 function emitData() {
-    // alert(componentSelected.value);
     emit('dataChild', {'componentSelected': componentSelected.value});
 };
 
@@ -97,17 +94,8 @@ let svgData = ref([
 
 let componentSelected = ref({});
 
-// watch(() => props.dataParent, _.debounce( (curr, prev) => {
-
-//     lert('okday');
-
-// }, 500));
-
 onMounted(() => {
-    // console.log(props.dataParent.sectionSelected[0])
     if (props.dataParent.sectionSelected) {
-        // console.log(props.dataParent.sectionSelected)
-
         componentSelected.value = props.dataParent.sectionSelected;
     }
 })
