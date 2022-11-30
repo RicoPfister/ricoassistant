@@ -64,7 +64,7 @@ let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
 
-// analyse received child data
+// process received child data
 function dataChild(data) {
 
     // console.log(data);
@@ -74,23 +74,13 @@ function dataChild(data) {
         scrollArea.value.scrollTo({top: 0, behavior: 'smooth'})
     };
 
-    // console.log(form.value);
-
-    // if (data['formComponent'] == 0) {
-    //     componentCollection = [Basic, Statement, Tag, Reference];
-    // };
-
+    // add form data to form collection
     if (data.formData) {
         form.value = {...form.value, ...data.formData}
     };
 
+    // rebuild form based on deleted sections
     if (data.deleteSections) {
-
-        // for (const key in form.value) {
-        //     delete form.value[key];
-        // }
-
-        // console.log('ok');
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(0);
@@ -99,59 +89,38 @@ function dataChild(data) {
 
         form.value = ({});
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
-
     };
 
-    // sendform
+    // store form
     if (data.submit == 1) {
         Inertia.post('store', form.value);
     };
 
-    // replace component collection
+    // build form based on selected component
     if (data.componentSelected) {
-
-        // console.log(data.componentSelected);
 
         componentCollection.splice(0, 1, 1);
 
         dataParent.value['sectionSelected'] = [];
 
         for (const [key, value] of Object.entries(data.componentSelected)) {
-            // console.log(componentSource[4]);
             componentCollection.push(parseInt(key)+4);
             dataParent.value['sectionSelected'][key] = 1;
         }
         componentCollection.push(2);
         componentCollection.push(3);
 
-        // dataParent.value['sectionSelected'] = [1];
-
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     };
 
+    // select selections
     if (data.formDataEdit) {
 
-        // open form manager
         if (data.formDataEdit == 1) {
-
-            // componentCollectionPreserved = componentCollection;
-
-            // alert(data.formDataEdit);
-            // emit('dataParent' , 'test123');
-
-            // emit('dataForm', {'sectionSelected': 12345});
-
-            // componentCollectionPreserved.value = [componentCollection];
-            // console.log(componentCollection);
-
-            // componentCollection.splice(0, 1, 0);
             componentCollection.splice(0, componentCollection.length, 0);
-
-            // console.log(componentCollectionPreserved.value);
         };
+
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
-
-
     }
 
     if (data.delete) {
