@@ -118,36 +118,21 @@ let tagCollection = ref();
 function dataChild(data) {
     if (data.tagSelect) tagContentList.value = data.tagSelect;
     if (data.tagCollection) tagCollection.value = data.tagCollection;
-    // emit('dataParent');
-    // emit('dataChild', {'tagCollection': tagContentList.value});
 }
 
-// watch(() => props.dataForm.basicTitle, _.debounce( (curr, prev) => {
-
-//     // emit('formData', props.dataForm.basicTitle);
-
-//     // dataParent.value.basicTitleData = props.basicResult;
-
-//     console.log(props.dataForm.basicTitle);
-
-// }, 500));
-
-// save submit
+// save submit back to source
 function emitData() {
-    // console.log('ok');
     emit('dataChild', {'tagCollection': tagCollection.value});
 };
 
-onMounted(() => {
-    // console.log(props.dataForm.basicTitle);
+Inertia.post('tag');
 
+onMounted(() => {
     if (props.dataParent) {
         // console.log(props.dataForm.statement);
-        // console.log(props.dataParent);
+        console.log('ok');
     }
-})
-
-Inertia.post('tag');
+  })
 
 </script>
 

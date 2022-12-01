@@ -78,9 +78,9 @@
                 <div class="py-1">
                     <div v-for="(item, index) in InputData" class="flex flex-row w-full py-[3px] h-[24px] items-center">
                         <div class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</div>
-                        <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat">
+                        <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[index]">
                         <div>
-                            <button @click.prevent="tagPopupOpenData" class="flex items-center" type="button">
+                            <button @click.prevent="tagPopupOpenData(index)" class="flex items-center" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
@@ -108,7 +108,7 @@
 
 <!-- open popup -->
 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
-    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @data-child="dataChildFunction"/>
+    <TagPopup :data-parent="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @data-child="dataChildFunction"/>
 </div>
 
 </template>
@@ -124,7 +124,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 let dataChild = ref({'statement': ''});
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId']);
-let emit = defineEmits(['dataChild']);
+let emit = defineEmits(['dataChild', 'dataParent']);
 let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);
@@ -174,7 +174,8 @@ onMounted(() => {
 
 // let emit = defineEmits(['dataForm']);
 
-let tagCollectionInputFormat = ref('');
+let tagCollectionInputFormat = ref([]);
+let tagCollectionInputIndex = ref();
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -189,9 +190,9 @@ function dataChildFunction(data) {
 
     if (data.tagCollection) {
 
-        console.log(data.tagCollection);
+        // console.log(data.tagCollection);
 
-        tagCollectionInputFormat.value = '';
+        tagCollectionInputFormat.value[tagCollectionInputIndex.value] = '';
 
         data.tagCollection.forEach(createTagInputGroup);
 
@@ -201,7 +202,7 @@ function dataChildFunction(data) {
 
             item.forEach(createTagInputString);
 
-            // tagCollectionInputFormat.value[0] = [];
+            // tagCollectionInputFormat[index].value[0] = [];
 
             function createTagInputString(item2, index2) {
 
@@ -212,29 +213,31 @@ function dataChildFunction(data) {
 
                     switch (index2) {
                         case 0:
-                            tagCollectionInputFormat.value += '@'+item2Trimmed;
+                            tagCollectionInputFormat.value[tagCollectionInputIndex.value] += '@'+item2Trimmed;
                             break;
 
                         case 3:
-                            tagCollectionInputFormat.value += '('+item2Trimmed+')';
+                            tagCollectionInputFormat.value[tagCollectionInputIndex.value] += '('+item2Trimmed+')';
                             break;
 
                         default:
-                            if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
+                            if (item2Trimmed) tagCollectionInputFormat.value[tagCollectionInputIndex.value] += ':'+item2Trimmed;
                     }
                 }
             }
             // no space at the end when reaching last entry
             // console.log(index1, data.tagCollection.length);
-            if (index1 != data.tagCollection.length-1) tagCollectionInputFormat.value += ' ';
+            if (index1 != data.tagCollection.length-1) tagCollectionInputFormat.value[tagCollectionInputIndex.value]  += ' ';
         }
 
-        // tagCollectionInputFormat.value = data.tagCollection;
+        // tagCollectionInputFormat[index].value = data.tagCollection;
         tagPopupOpen.value = 0;
     }
 }
 
-function tagPopupOpenData() {
+function tagPopupOpenData(index) {
+
+    tagCollectionInputIndex.value = index;
     tagPopupOpen.value = 1;
 }
 

@@ -47,6 +47,8 @@ let title = ref('');
 // basic title response
 watch(() => props.dataParent, _.debounce( (curr, prev) => {
 
+    console.log(props.dataParent);
+
     tagArray.value.push(props.dataParent);
     // console.log(tagArray.value);
 
@@ -82,10 +84,14 @@ onMounted(() => {
 
         function tagCollectionEdit(item, index) {
 
-            if (tagCollectionSplitInGroupFilter.length > 1) tagArray.value[index] = [];
+            console.log(tagCollectionSplitInGroupFilter.length);
+            console.log(index);
+
+            //? set nested value
+            if (tagCollectionSplitInGroupFilter.length > 0) tagArray.value[index] = [];
 
             // console.log(tagCollectionSplitInGroupFilter);
-            // console.log(item);
+            console.log(item);
 
             // split comment
             tagGroupSplitComment[index] = item.split(/[(%)]/);
