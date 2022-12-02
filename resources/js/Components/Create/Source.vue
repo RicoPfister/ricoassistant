@@ -108,7 +108,7 @@
 
 <!-- open popup -->
 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
-    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :fromParentTagId="tagCollectionInputIndex" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent"/>
+    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent"/>
 </div>
 
 </template>
@@ -196,7 +196,7 @@ function dataToParent(data) {
 
     if (data.tagCollection) {
 
-        tagCollectionInputFormat.value = data.tagCollection;
+        tagCollectionInputFormat.value[tagCollectionInputIndex] = data.tagCollection;
         tagPopupOpen.value = 0;
     }
 }

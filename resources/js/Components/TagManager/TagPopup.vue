@@ -107,7 +107,7 @@ import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild', 'fromParentTagString', 'fromParentTagId', 'dataForm', 'dataCommon']);
+let props = defineProps(['dataChild', 'fromParentTagString', 'dataForm', 'dataCommon']);
 let emit = defineEmits(['fromParentTagString', 'dataChild', 'tagPopupOpen', 'dataToParent']);
 
 let categoryPopupOpen = ref(0);
@@ -127,7 +127,7 @@ function dataChild(data) {
 
 Inertia.post('tag');
 
-let tagCollectionInputFormat = ref([]);
+let tagCollectionInputFormat = ref();
 
 onMounted(() => {
     if (props.fromParentTagString) {
@@ -140,9 +140,7 @@ onMounted(() => {
 
 function emitParent() {
 
-    tagCollectionInputFormat.value = [];
-
-    tagCollectionInputFormat.value[props.fromParentTagId] = '';
+    tagCollectionInputFormat.value = '';
 
     tagCollection.value.forEach(createTagInputGroup);
 
@@ -157,20 +155,20 @@ function emitParent() {
 
                 switch (index2) {
                     case 0:
-                        tagCollectionInputFormat.value[props.fromParentTagId] += '@'+item2Trimmed;
+                        tagCollectionInputFormat.value += '@'+item2Trimmed;
                         break;
 
                     case 3:
-                        tagCollectionInputFormat.value[props.fromParentTagId] += '('+item2Trimmed+')';
+                        tagCollectionInputFormat.value+= '('+item2Trimmed+')';
                         break;
 
                     default:
-                        if (item2Trimmed) tagCollectionInputFormat.value[props.fromParentTagId] += ':'+item2Trimmed;
+                        if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
                 }
             }
         }
         // no space at the end when reaching last entry
-        if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value[props.fromParentTagId]  += ' ';
+        if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
 
         emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value});
