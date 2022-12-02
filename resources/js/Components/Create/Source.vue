@@ -78,7 +78,7 @@
                 <div class="py-1">
                     <div v-for="(item, index) in InputData" class="flex flex-row w-full py-[3px] h-[24px] items-center">
                         <div class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</div>
-                        <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[index]">
+                        <input @input="toParentTagDataGroup(index)" class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[index]">
                         <div>
                             <button @click.prevent="tagPopupOpenData(index)" class="flex items-center" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -120,11 +120,12 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
+import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
 let dataChild = ref({'statement': ''});
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent']);
-let emit = defineEmits(['dataChild', 'dataParent']);
+let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent']);
 let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);
@@ -161,6 +162,8 @@ emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': prev
 
 }, {deep: true}, 500);
 
+
+
 // fill in already extisting data
 onMounted(() => {
     if (props.dataForm.filelist) {
@@ -192,11 +195,13 @@ let tagCollectionInputIndex = ref('');
 
 function dataToParent(data) {
 
-    console.log(data);
+    // console.log(data);
 
     if (data.tagCollection) {
 
-        tagCollectionInputFormat.value[tagCollectionInputIndex] = data.tagCollection;
+        // console.log(data.tagCollection);
+
+        tagCollectionInputFormat.value[tagCollectionInputIndex.value] = data.tagCollection;
         tagPopupOpen.value = 0;
     }
 }
@@ -208,6 +213,16 @@ function tagPopupOpenData(index) {
     tagPopupOpen.value = 1;
 
     // console.log(tagCollectionInputIndex.value);
+}
+
+
+function toParentTagDataGroup(index) {
+
+    tagCollectionInputIndex.value = index;
+
+    ;
+    emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value, 'tagId': tagCollectionInputIndex});
+
 }
 
 </script>

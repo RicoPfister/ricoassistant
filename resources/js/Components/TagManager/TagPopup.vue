@@ -116,6 +116,7 @@ let tagCollection = ref();
 
 // emit tag data to TagContent.vue
 function dataChild(data) {
+    // console.log(data);
     if (data.tagSelect) tagContentList.value = data.tagSelect;
     if (data.tagCollection) tagCollection.value = data.tagCollection;
 }
@@ -170,10 +171,10 @@ function emitParent() {
         // no space at the end when reaching last entry
         if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
-
+        // console.log(tagCollectionInputFormat.value);
         emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value});
 
-        // console.log(tagCollectionInputFormat.value);
+
     }
 
 </script>

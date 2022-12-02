@@ -62,6 +62,8 @@ class RicoAssistant extends Controller {
 
     public function store(Request $request) {
 
+
+        dd($request);
         // dd($request->filelist);
 
         $user = Auth::user();
@@ -170,12 +172,16 @@ class RicoAssistant extends Controller {
 
         }
 
-        if($request->tag){
+        if($request->tagData){
 
             $tag = new Tag();
 
             $tag->basic_id = $basic->id;
-            $tag->tag = $request->tag;
+
+            $tag->tag_category =
+            $tag->tag_context =
+            $tag->tag_content =
+
             $tag->tracking = $request->ip();
             $tag->save();
 

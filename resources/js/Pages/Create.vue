@@ -17,7 +17,7 @@
                 <!-- component generator -->
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index">
-                    <component :is="componentSource[item]" :data-common="props.dataCommon" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1"/>
+                    <component :is="componentSource[item]" :data-common="props.dataCommon" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1" @dataToParent="dataToParent"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -53,7 +53,7 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent']);
 let emit = defineEmits(['dataParent', 'dataForm']);
 
 let form = ref({});
@@ -92,6 +92,7 @@ function dataChild(data) {
     };
 
     // store form
+    //------------------------------------------------
     if (data.submit == 1) {
         Inertia.post('store', form.value);
     };
@@ -150,11 +151,20 @@ watch(() => props.basicResult, _.debounce( (curr, prev) => {
 
 }, 500));
 
+// listen to form changes and emit them
 watch(() => form, (curr, prev) => {
     // alert('form');
     emit('dataForm', {'dataForm': form});
 }, {deep: true}, 500);
 
+// process component data
+function dataToParent(data) {
+    if (data.tagCollection) {
+        console.log(data);
+        // form.value['tagData'] = [];
+        form.value['tagData'] = data.tagCollection;
+    }
+}
 
 // const headcount = computed(() => {
 

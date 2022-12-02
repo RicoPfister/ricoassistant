@@ -60,17 +60,13 @@ function removeTagFromList(index) {
 
 // get child data
 onMounted(() => {
-    // console.log(props.dataForm.basicTitle);
 
     if (props.dataForm.basicTitle) {
-        // console.log(props.dataForm.statement);
         title.value = props.dataForm.basicTitle;
     } else title.value = '- (No title set)';
 
-    // check if tag content is available
+    // check if tag string can be convertet to tag select
     if (props.fromParentTagString) {
-        // tagArray.value = props.dataTagContent[0].split(0);
-        // console.log(props.fromParentTagString);
 
         let tagCollectionSplitInGroup = props.fromParentTagString.split(/[\s@]/);
         let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
@@ -84,55 +80,32 @@ onMounted(() => {
 
         function tagCollectionEdit(item, index) {
 
-            // console.log(tagCollectionSplitInGroupFilter.length);
-            // console.log(index);
-
             //? set nested value
             if (tagCollectionSplitInGroupFilter.length > 0) tagArray.value[index] = [];
-
-            // console.log(tagCollectionSplitInGroupFilter);
-            // console.log(item);
 
             // split comment
             tagGroupSplitComment[index] = item.split(/[(%)]/);
             tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != ' ');
 
-            // console.log(tagGroupSplitFilter);
-            // console.log(tagGroupSplitFilter[0]);
-
             tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
             tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != ' ');
-
-            // console.log(tagGroupSplitmainFilter);
-
-            // reset tag array
-            // if (tagGroupSplitmainFilter[0][0]) tagArray.value[0] = [];
-
-            // console.log(tagGroupSplitmainFilter);
-            // console.log(tagArray);
 
             // add content tags
             for (let i = 0; i < 3; i++) {
                 if (tagGroupSplitmainFilter[index][i]) {
-                    // console.log(index, i);
                     tagArray.value[index].push(tagGroupSplitmainFilter[index][i]);
-                    // console.log(tagArray.value);
                 } else tagArray.value[index].push('');
             }
-
-            // console.log(tagArray);
 
             // add comment tag
             if (tagGroupSplitmainFilter[index][1]) {
                tagArray.value[index].push(tagGroupSplitFilter[index][1]);
             } else tagArray.value[index].push('');
         }
-
-        // console.log(tagGroupSplitmainFilter);
     }
 })
 
-// listen to tag collection and emit to TagPopUp.vue
+// listen to tag collection changes and emit to tagPopup.vue
 watch(() => tagArray.value, (curr, prev) => {
     // console.log('ok');
     emit('dataChild', {'tagCollection': tagArray.value});
