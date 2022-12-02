@@ -22,7 +22,7 @@
 
                 <!-- open popup -->
                 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
-                    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @data-child="dataChild"/>
+                    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm"/>
                 </div>
 
                 <!-- tag input -->
@@ -45,7 +45,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 // import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 
-let props = defineProps(['dataForm', 'dataCommon']);
+let props = defineProps(['dataForm', 'dataCommon', 'emitToParent']);
 // let emit = defineEmits(['dataForm']);
 
 let tagPopupOpen = ref(0);
@@ -60,49 +60,12 @@ let tagCollectionInputFormat = ref('');
 //     } else title = 'No title found';
 // })
 
-function dataChild(data) {
+function emitToParent() {
 
-    if (data.tagCollection) {
+    console.log('test');
 
-        // console.log(data.tagCollection);
-
-        tagCollectionInputFormat.value = '';
-
-        data.tagCollection.forEach(createTagInputGroup);
-
-        function createTagInputGroup(item, index1) {
-
-            // console.log(item.length-1);
-
-            item.forEach(createTagInputString);
-
-            // tagCollectionInputFormat.value[0] = [];
-
-            function createTagInputString(item2, index2) {
-
-                // console.log(item2);
-
-                let item2Trimmed = item2.toString().trim();
-
-                switch (index2) {
-                    case 0:
-                        tagCollectionInputFormat.value += '@'+item2Trimmed;
-                        break;
-
-                    case 3:
-                        tagCollectionInputFormat.value += '('+item2Trimmed+')';
-                        break;
-
-                    default:
-                        if (item2Trimmed) tagCollectionInputFormat.value += ':'+item2Trimmed;
-                }
-            }
-            // no space at the end when reaching last entry
-            // console.log(index1, data.tagCollection.length);
-            if (index1 != data.tagCollection.length-1) tagCollectionInputFormat.value += ' ';
-        }
-
-        // tagCollectionInputFormat.value = data.tagCollection;
+    if(data.tagCollectionString) {
+        tagCollectionInputFormat.value = data;
         tagPopupOpen.value = 0;
     }
 }

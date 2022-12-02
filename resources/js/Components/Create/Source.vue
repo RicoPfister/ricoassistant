@@ -108,7 +108,7 @@
 
 <!-- open popup -->
 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
-    <TagPopup :data-parent="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @data-child="dataChildFunction"/>
+    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :fromParentTagId="tagCollectionInputIndex" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent"/>
 </div>
 
 </template>
@@ -123,7 +123,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent']);
 let emit = defineEmits(['dataChild', 'dataParent']);
 let tagPopupOpen = ref();
 
@@ -174,8 +174,8 @@ onMounted(() => {
 
 // let emit = defineEmits(['dataForm']);
 
-let tagCollectionInputFormat = ref([]);
-let tagCollectionInputIndex = ref();
+
+
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -186,51 +186,17 @@ let tagCollectionInputIndex = ref();
 //     } else title = 'No title found';
 // })
 
-function dataChildFunction(data) {
+// send tag string to tag popup
+let tagCollectionInputFormat = ref([]);
+let tagCollectionInputIndex = ref('');
+
+function dataToParent(data) {
+
+    console.log(data);
 
     if (data.tagCollection) {
 
-        // console.log(data.tagCollection);
-
-        tagCollectionInputFormat.value[tagCollectionInputIndex.value] = '';
-
-        data.tagCollection.forEach(createTagInputGroup);
-
-        function createTagInputGroup(item, index1) {
-
-            // console.log(item.length-1);
-
-            item.forEach(createTagInputString);
-
-            // tagCollectionInputFormat[index].value[0] = [];
-
-            function createTagInputString(item2, index2) {
-
-                // console.log(item2);
-
-                if (item2 != null) {
-                    let item2Trimmed = item2.toString().trim();
-
-                    switch (index2) {
-                        case 0:
-                            tagCollectionInputFormat.value[tagCollectionInputIndex.value] += '@'+item2Trimmed;
-                            break;
-
-                        case 3:
-                            tagCollectionInputFormat.value[tagCollectionInputIndex.value] += '('+item2Trimmed+')';
-                            break;
-
-                        default:
-                            if (item2Trimmed) tagCollectionInputFormat.value[tagCollectionInputIndex.value] += ':'+item2Trimmed;
-                    }
-                }
-            }
-            // no space at the end when reaching last entry
-            // console.log(index1, data.tagCollection.length);
-            if (index1 != data.tagCollection.length-1) tagCollectionInputFormat.value[tagCollectionInputIndex.value]  += ' ';
-        }
-
-        // tagCollectionInputFormat[index].value = data.tagCollection;
+        tagCollectionInputFormat.value = data.tagCollection;
         tagPopupOpen.value = 0;
     }
 }
@@ -238,7 +204,10 @@ function dataChildFunction(data) {
 function tagPopupOpenData(index) {
 
     tagCollectionInputIndex.value = index;
+
     tagPopupOpen.value = 1;
+
+    // console.log(tagCollectionInputIndex.value);
 }
 
 </script>

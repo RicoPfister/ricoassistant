@@ -38,7 +38,7 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
 
-let props = defineProps(['dataParent', 'dataForm', 'dataTagContent']);
+let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString']);
 let emit = defineEmits(['dataChild']);
 
 let tagArray = ref([]);
@@ -47,7 +47,7 @@ let title = ref('');
 // basic title response
 watch(() => props.dataParent, _.debounce( (curr, prev) => {
 
-    console.log(props.dataParent);
+    // console.log(props.dataParent);
 
     tagArray.value.push(props.dataParent);
     // console.log(tagArray.value);
@@ -68,11 +68,11 @@ onMounted(() => {
     } else title.value = '- (No title set)';
 
     // check if tag content is available
-    if (props.dataTagContent) {
+    if (props.fromParentTagString) {
         // tagArray.value = props.dataTagContent[0].split(0);
-        console.log(props.dataTagContent);
+        // console.log(props.fromParentTagString);
 
-        let tagCollectionSplitInGroup = props.dataTagContent.split(/[\s@]/);
+        let tagCollectionSplitInGroup = props.fromParentTagString.split(/[\s@]/);
         let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
 
         let tagGroupSplitComment = [];
@@ -84,14 +84,14 @@ onMounted(() => {
 
         function tagCollectionEdit(item, index) {
 
-            console.log(tagCollectionSplitInGroupFilter.length);
-            console.log(index);
+            // console.log(tagCollectionSplitInGroupFilter.length);
+            // console.log(index);
 
             //? set nested value
             if (tagCollectionSplitInGroupFilter.length > 0) tagArray.value[index] = [];
 
             // console.log(tagCollectionSplitInGroupFilter);
-            console.log(item);
+            // console.log(item);
 
             // split comment
             tagGroupSplitComment[index] = item.split(/[(%)]/);
@@ -108,19 +108,19 @@ onMounted(() => {
             // reset tag array
             // if (tagGroupSplitmainFilter[0][0]) tagArray.value[0] = [];
 
-            console.log(tagGroupSplitmainFilter);
-            console.log(tagArray);
+            // console.log(tagGroupSplitmainFilter);
+            // console.log(tagArray);
 
             // add content tags
             for (let i = 0; i < 3; i++) {
                 if (tagGroupSplitmainFilter[index][i]) {
-                    console.log(index, i);
+                    // console.log(index, i);
                     tagArray.value[index].push(tagGroupSplitmainFilter[index][i]);
-                    console.log(tagArray.value);
+                    // console.log(tagArray.value);
                 } else tagArray.value[index].push('');
             }
 
-            console.log(tagArray);
+            // console.log(tagArray);
 
             // add comment tag
             if (tagGroupSplitmainFilter[index][1]) {

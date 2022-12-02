@@ -72,7 +72,7 @@
                     </div>
                 </button>
 
-                <button @click="emitData" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
+                <button @click="emitParent" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
                     <div class="flex flex-row items-center">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
@@ -87,7 +87,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :dataTagContent="props.dataParent" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
+            <contentBox :fromParentTagString="props.fromParentTagString" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
@@ -107,8 +107,8 @@ import contentBox from "./TagContent.vue";
 
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild', 'dataParent', 'dataForm', 'dataCommon']);
-let emit = defineEmits(['dataParent', 'dataChild', 'tagPopupOpen']);
+let props = defineProps(['dataChild', 'fromParentTagString', 'fromParentTagId', 'dataForm', 'dataCommon']);
+let emit = defineEmits(['fromParentTagString', 'dataChild', 'tagPopupOpen', 'dataToParent']);
 
 let categoryPopupOpen = ref(0);
 let tagContentList = ref();
@@ -121,18 +121,62 @@ function dataChild(data) {
 }
 
 // save submit back to source
-function emitData() {
-    emit('dataChild', {'tagCollection': tagCollection.value});
-};
+// function emitData() {
+//     emit('dataChild', {'tagCollection': tagCollection.value});
+// };
 
 Inertia.post('tag');
 
+let tagCollectionInputFormat = ref([]);
+
 onMounted(() => {
-    if (props.dataParent) {
-        // console.log(props.dataForm.statement);
-        console.log('ok');
+    if (props.fromParentTagString) {
+        // console.log(props.fromParentTagString);
+        tagCollectionInputFormat.value = props.fromParentTagString;
     }
   })
+
+//   transcript tag select to tag input format
+
+function emitParent() {
+
+    tagCollectionInputFormat.value = [];
+
+    tagCollectionInputFormat.value[props.fromParentTagId] = '';
+
+    tagCollection.value.forEach(createTagInputGroup);
+
+    function createTagInputGroup(item, index1) {
+
+        item.forEach(createTagInputString);
+
+        function createTagInputString(item2, index2) {
+
+            if (item2 != null) {
+                let item2Trimmed = item2.toString().trim();
+
+                switch (index2) {
+                    case 0:
+                        tagCollectionInputFormat.value[props.fromParentTagId] += '@'+item2Trimmed;
+                        break;
+
+                    case 3:
+                        tagCollectionInputFormat.value[props.fromParentTagId] += '('+item2Trimmed+')';
+                        break;
+
+                    default:
+                        if (item2Trimmed) tagCollectionInputFormat.value[props.fromParentTagId] += ':'+item2Trimmed;
+                }
+            }
+        }
+        // no space at the end when reaching last entry
+        if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value[props.fromParentTagId]  += ' ';
+    }
+
+        emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value});
+
+        // console.log(tagCollectionInputFormat.value);
+    }
 
 </script>
 
