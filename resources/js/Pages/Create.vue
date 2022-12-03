@@ -54,7 +54,7 @@ import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent']);
-let emit = defineEmits(['dataParent', 'dataForm']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent']);
 
 let form = ref({});
 let dataParent = ref({});

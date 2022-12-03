@@ -12,10 +12,11 @@
 
         </div>
 
-        <textarea class="border border-black outline-0 focus:border-black focus:ring-0" v-model="dataChild['statement']" rows="10" id="statement" type="text"></textarea>
+        <textarea class="border border-black outline-0 focus:border-black focus:ring-0 bg-green-50" v-model="dataChild['statement']" rows="10" id="statement" type="text"></textarea>
 
     </div>
 </div>
+<TagForm :from-parent="'titleNo'" />
 
 </template>
 
@@ -25,11 +26,12 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
+import TagForm from "../TagManager/TagForm.vue";
 
 let dataChild = ref({});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId']);
-let emit = defineEmits(['dataChild']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent']);
 
 // emit form
 watch(() => dataChild, (curr, prev) => {
@@ -56,7 +58,9 @@ onMounted(() => {
         // console.log(props.dataForm.statement);
         dataChild.value['statement'] = props.dataForm.statement;
     }
-  })
+})
+
+
 
 </script>
 

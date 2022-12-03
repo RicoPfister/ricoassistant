@@ -78,7 +78,7 @@
                 <div class="py-1">
                     <div v-for="(item, index) in InputData" class="flex flex-row w-full py-[3px] h-[24px] items-center">
                         <div class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</div>
-                        <input @input="toParentTagDataGroup(index)" class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[index]">
+                        <input @input="toParentTagDataGroup(index)" class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent grow leading-none p-1 bg-stone-50" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[index]">
                         <div>
                             <button @click.prevent="tagPopupOpenData(index)" class="flex items-center" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -220,7 +220,7 @@ function toParentTagDataGroup(index) {
     // form.value['tagData']['tagSource'] = [];
     form.value['tagData']['tagSource'][index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
 
-    console.log(form.value);
+    // console.log(form.value);
 
     // send formData
     emit('dataChild', {'formData': form.value});

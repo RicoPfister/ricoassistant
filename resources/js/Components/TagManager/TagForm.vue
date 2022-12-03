@@ -5,13 +5,13 @@
 
             <button class="flex flex-row justify-between items-center" type="button">
 
-                <label class="" aria-label="Statement Input" for="statement">Tags:</label>
+                <label v-if="titleOpen" class="" aria-label="Statement Input" for="statement">Tags:</label>
 
                 <!-- <MenuEntry /> -->
 
             </button>
 
-            <div class="flex flex-row items-center h-[42px] border border-black">
+            <div :class="({'border-t': titleOpen})" class="flex flex-row items-center h-[42px] border-l border-b border-r border-black">
 
                 <!-- add button -->
                 <button @click.prevent="tagPopupOpenData" class="w-[42px] flex justify-center h-full items-center bg-gray-100 border-r border-gray-300" type="button">
@@ -27,7 +27,7 @@
 
                 <!-- tag input -->
                 <div class="grow">
-                    <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full" type="text" placeholder="" v-model="tagCollectionInputFormat">
+                    <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full bg-stone-50" type="text" placeholder="@Category:Context:Content(Comment)" v-model="tagCollectionInputFormat">
                 </div>
 
             </div>
@@ -45,11 +45,12 @@ import { Inertia, Method } from "@inertiajs/inertia";
 // import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 
-let props = defineProps(['dataForm', 'dataCommon', 'emitToParent']);
-// let emit = defineEmits(['dataForm']);
+let props = defineProps(['dataForm', 'dataCommon', 'emitToParent', 'fromParent', 'dataToParent']);
+let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent']);
 
 let tagPopupOpen = ref(0);
 let tagCollectionInputFormat = ref('');
+let titleOpen = ref(1);
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -73,6 +74,11 @@ function emitToParent() {
 function tagPopupOpenData() {
     tagPopupOpen.value = 1;
 }
+
+onMounted(() => {
+    titleOpen.value = !titleOpen.value;
+});
+
 
 </script>
 

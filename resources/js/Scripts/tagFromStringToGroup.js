@@ -2,7 +2,7 @@ export function tagFromStringToGroup(tagData) {
 
     let tagArray = [];
 
-    console.log(tagData);
+    // console.log(tagData);
     let tagCollectionSplitInGroup = tagData.split(/[\s@]/);
     let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
 
