@@ -162,8 +162,6 @@ emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': prev
 
 }, {deep: true}, 500);
 
-
-
 // fill in already extisting data
 onMounted(() => {
     if (props.dataForm.filelist) {
@@ -176,9 +174,6 @@ onMounted(() => {
 // ---------------------------------------------------------
 
 // let emit = defineEmits(['dataForm']);
-
-
-
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -200,7 +195,6 @@ function dataToParent(data) {
     if (data.tagCollection) {
 
         // console.log(data.tagCollection);
-
         tagCollectionInputFormat.value[tagCollectionInputIndex.value] = data.tagCollection;
         tagPopupOpen.value = 0;
     }
@@ -209,19 +203,16 @@ function dataToParent(data) {
 function tagPopupOpenData(index) {
 
     tagCollectionInputIndex.value = index;
-
     tagPopupOpen.value = 1;
-
     // console.log(tagCollectionInputIndex.value);
 }
-
 
 function toParentTagDataGroup(index) {
 
     tagCollectionInputIndex.value = index;
+    console.log(TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]));
 
-    ;
-    emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value, 'tagId': tagCollectionInputIndex});
+    emit('dataToParent', {'tagSource': {'tagCollection': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]),'tagId': tagCollectionInputIndex.value, 'dbId': 2}});
 
 }
 

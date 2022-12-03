@@ -159,10 +159,19 @@ watch(() => form, (curr, prev) => {
 
 // process component data
 function dataToParent(data) {
-    if (data.tagCollection) {
-        console.log(data);
+    if (data.tagSource) {
+
         // form.value['tagData'] = [];
-        form.value['tagData'] = data.tagCollection;
+        // $console.log(typeof form.value['tagData']['tagCollection']);
+        if (typeof form.value['tagData'] == 'undefined') form.value['tagData'] = {};
+        // console.log(typeof form.value['tagData']);
+        if (typeof form.value['tagData']['tagCollection'] == 'undefined') form.value['tagData']['tagCollection'] = [];
+        // console.log(typeof form.value['tagData']['tagCollection']);
+        // console.log(form.value['tagData']['tagCollection']);
+        form.value['tagData']['dbId'] = data.tagSource.dbId;
+        form.value['tagData'][data.tagSource.tagId] = [];
+        // console.log(data.tagSource);
+        form.value['tagData']['tagCollection'][data.tagSource.tagId] = data.tagSource.tagCollection;
     }
 }
 

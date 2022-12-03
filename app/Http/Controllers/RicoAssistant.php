@@ -13,7 +13,7 @@ use App\Models\Statement;
 use App\Models\Accounting;
 use App\Models\User;
 use App\Models\Contact;
-use App\Models\Document;
+use App\Models\Source;
 use App\Models\Activity;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -39,7 +39,7 @@ class RicoAssistant extends Controller {
 
     public function detail(Request $request) {
 
-        dd($request);
+        // dd($request);
 
         // dd($request->basic_id);
 
@@ -62,8 +62,7 @@ class RicoAssistant extends Controller {
 
     public function store(Request $request) {
 
-
-        dd($request);
+        // dd($request);
         // dd($request->filelist);
 
         $user = Auth::user();
@@ -95,19 +94,19 @@ class RicoAssistant extends Controller {
             }
         }
 
-        $basic = new Basic();
-        $basic->ref_date = $request->basicRefDate;
-        $basic->title = $request->basicTitle;
-        $basic->medium = $request->basicMedium;
+        $basics = new Basic();
+        $basics->ref_date = $request->basicRefDate;
+        $basics->title = $request->basicTitle;
+        $basics->medium = $request->basicMedium;
         // $basic->status = $request->basic['status'];
-        $basic->user_id = $user->id;
-        $basic->tracking = $request->ip();
-        $basic->save();
+        $basics->user_id = $user->id;
+        $basics->tracking = $request->ip();
+        $basics->save();
 
         if(isset($request->statement)){
 
             $statement = new Statement();
-            $statement->basic_id = $basic->id;
+            $statement->basics_id = $basics->id;
             $statement->statement = $request->statement;
             $statement->tracking = $request->ip();
             $statement->save();
@@ -172,21 +171,6 @@ class RicoAssistant extends Controller {
 
         }
 
-        if($request->tagData){
-
-            $tag = new Tag();
-
-            $tag->basic_id = $basic->id;
-
-            $tag->tag_category =
-            $tag->tag_context =
-            $tag->tag_content =
-
-            $tag->tracking = $request->ip();
-            $tag->save();
-
-        }
-
         if($accounting == 1){
 
             $accounting = new Accounting();
@@ -202,53 +186,93 @@ class RicoAssistant extends Controller {
 
         }
 
-        // dd($request);
+        // store files
+        //----------------------------------------------------
 
         if(isset($request->filelist)) {
+
+            // dd($request);
+
+            // store file meta data
             foreach($request->file('filelist') as $dataString) {
 
                 // dd($dataString['file']->hashName());
 
-                $document = new Document();
-                $document->basic_id = $basic->id;
-                $document->path = $dataString['file']->hashName();
-                $document->extension = $dataString['file']->extension();
-                $document->size = $dataString['file']->getSize();
-                $document->tracking = $request->ip();
-                $document->save();
+                $source = new Source();
+                $source->basics_id = $basics->id;
+                $source->path = $dataString['file']->hashName();
+                $source->extension = $dataString['file']->extension();
+                $source->size = $dataString['file']->getSize();
+                $source->tracking = $request->ip();
+                $source->save();
             }
 
+            // store file content data
             foreach($request->file('filelist') as $dataString2) {
                 Storage::disk('local')->put('public/images/inventory/', $dataString2['file']);
             }
         }
 
-        if(isset($request->documentJPG)) {
-            foreach($request->file('filelist') as $dataString) {
+        // if(isset($request->documentJPG)) {
+        //     foreach($request->file('filelist') as $dataString) {
 
-                $document = new Document();
-                $document->basic_id = $basic->id;
-                $document->path = $dataString->hashName();
-                $document->extension = $dataString->extension();
-                $document->size = $dataString->getSize();
-                $document->tracking = $request->ip();
-                $document->save();
+        //         $document = new Document();
+        //         $document->basic_id = $basic->id;
+        //         $document->path = $dataString->hashName();
+        //         $document->extension = $dataString->extension();
+        //         $document->size = $dataString->getSize();
+        //         $document->tracking = $request->ip();
+        //         $document->save();
+        //     }
+
+        //     foreach($request->file('documentJPG') as $dataString2) {
+        //         Storage::disk('local')->put('public/images/inventory/', $dataString2);
+        //     }
+        // }
+
+        // if(isset($request->document_link)) {
+
+        //         $document = new Document();
+        //         $document->basic_id = $basic->id;
+        //         $document->path = $request->document_link;
+        //         $document->extension = 'www';
+        //         $document->size = 0;
+        //         $document->tracking = $request->ip();
+        //         $document->save();
+        // }
+
+        // dd($request);
+
+        if($request->tagData){
+
+            // dd(count($request->tagData['tagCollection']));
+
+            foreach($request->tagData['tagCollection'] as $key => $value) {
+
+                switch($request->tagData['dbId']) {
+
+                    // set id for source database
+                    case 2:
+                        // dd($key);
+                            // dd($value2);
+                            $tag = new Tag();
+                            $tag->basics_id = $basics->id;
+                            $tag->db_name = $request->tagData['dbId'];
+                            // $tag->db_id = $source->basics_id;
+                            if (isset ($value[0])) $tag->tag_category = $value[0];
+                            if (isset ($value[1])) $tag->tag_context = $value[1];
+                            if (isset ($value[2])) $tag->tag_content = $value[2];
+                            if (isset ($value[3])) $tag->tag_comment = $value[3];
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+
+                    break;
+                }
+
+                // dd($key)
+
             }
 
-            foreach($request->file('documentJPG') as $dataString2) {
-                Storage::disk('local')->put('public/images/inventory/', $dataString2);
-            }
-        }
-
-        if(isset($request->document_link)) {
-
-                $document = new Document();
-                $document->basic_id = $basic->id;
-                $document->path = $request->document_link;
-                $document->extension = 'www';
-                $document->size = 0;
-                $document->tracking = $request->ip();
-                $document->save();
         }
 
         // dd($request);
