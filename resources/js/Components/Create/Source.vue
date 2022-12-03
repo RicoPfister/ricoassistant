@@ -207,13 +207,23 @@ function tagPopupOpenData(index) {
     // console.log(tagCollectionInputIndex.value);
 }
 
+// emit formData
+let form = ref({});
 function toParentTagDataGroup(index) {
-
     tagCollectionInputIndex.value = index;
-    console.log(TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]));
 
-    emit('dataToParent', {'tagSource': {'tagCollection': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]),'tagId': tagCollectionInputIndex.value, 'dbId': 2}});
+    // create formData
+    if (typeof form.value['tagData'] == 'undefined') form.value['tagData'] = {};
+    if (typeof form.value['tagData']['tagSource'] == 'undefined') form.value['tagData']['tagSource'] = [];
+    // if (typeof form.value['tagData']['tagSource']['tagCollection'] == 'undefined') form.value['tagData']['tagSource']['tagCollection'] = [];
+    // form.value['tagData']['tagSource']['dbId'] = 2;
+    // form.value['tagData']['tagSource'] = [];
+    form.value['tagData']['tagSource'][index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
 
+    console.log(form.value);
+
+    // send formData
+    emit('dataChild', {'formData': form.value});
 }
 
 </script>

@@ -244,38 +244,21 @@ class RicoAssistant extends Controller {
         // dd($request);
 
         if($request->tagData){
-
-            // dd(count($request->tagData['tagCollection']));
-
-            foreach($request->tagData['tagCollection'] as $key => $value) {
-
-                switch($request->tagData['dbId']) {
-
-                    // set id for source database
-                    case 2:
-                        // dd($key);
-                            // dd($value2);
-                            $tag = new Tag();
-                            $tag->basics_id = $basics->id;
-                            $tag->db_name = $request->tagData['dbId'];
-                            // $tag->db_id = $source->basics_id;
-                            if (isset ($value[0])) $tag->tag_category = $value[0];
-                            if (isset ($value[1])) $tag->tag_context = $value[1];
-                            if (isset ($value[2])) $tag->tag_content = $value[2];
-                            if (isset ($value[3])) $tag->tag_comment = $value[3];
-                            $tag->tracking = $request->ip();
-                            $tag->save();
-
-                    break;
+            if ($request->tagData['tagSource']) {
+                foreach($request->tagData['tagSource'] as $key => $value) {;
+                    $tag = new Tag();
+                    $tag->basics_id = $basics->id;
+                    $tag->db_name = 2;
+                    // $tag->db_id = $source->basics_id;
+                    if (isset ($value[0])) $tag->tag_category = $value[0];
+                    if (isset ($value[1])) $tag->tag_context = $value[1];
+                    if (isset ($value[2])) $tag->tag_content = $value[2];
+                    if (isset ($value[3])) $tag->tag_comment = $value[3];
+                    $tag->tracking = $request->ip();
+                    $tag->save();
                 }
-
-                // dd($key)
-
             }
-
         }
-
-        // dd($request);
 
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }

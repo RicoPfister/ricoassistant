@@ -91,7 +91,7 @@ function dataChild(data) {
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     };
 
-    // store form
+    //? store form
     //------------------------------------------------
     if (data.submit == 1) {
         Inertia.post('store', form.value);
@@ -153,7 +153,6 @@ watch(() => props.basicResult, _.debounce( (curr, prev) => {
 
 // listen to form changes and emit them
 watch(() => form, (curr, prev) => {
-    // alert('form');
     emit('dataForm', {'dataForm': form});
 }, {deep: true}, 500);
 
@@ -161,27 +160,8 @@ watch(() => form, (curr, prev) => {
 function dataToParent(data) {
     if (data.tagSource) {
 
-        // form.value['tagData'] = [];
-        // $console.log(typeof form.value['tagData']['tagCollection']);
-        if (typeof form.value['tagData'] == 'undefined') form.value['tagData'] = {};
-        // console.log(typeof form.value['tagData']);
-        if (typeof form.value['tagData']['tagCollection'] == 'undefined') form.value['tagData']['tagCollection'] = [];
-        // console.log(typeof form.value['tagData']['tagCollection']);
-        // console.log(form.value['tagData']['tagCollection']);
-        form.value['tagData']['dbId'] = data.tagSource.dbId;
-        form.value['tagData'][data.tagSource.tagId] = [];
-        // console.log(data.tagSource);
-        form.value['tagData']['tagCollection'][data.tagSource.tagId] = data.tagSource.tagCollection;
     }
 }
-
-// const headcount = computed(() => {
-
-// })
-
-onMounted(() => {
-
-})
 
 </script>
 
