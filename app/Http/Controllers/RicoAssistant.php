@@ -94,6 +94,27 @@ class RicoAssistant extends Controller {
             }
         }
 
+        // create tag
+        function tagData($request, $id, $index, $basics, $sources) {
+
+            switch ($id) {
+
+                case 2:
+                    if (isset ($request->tagData['tagSource'][$index])) {
+                        $tag = new Tag();
+                        $tag->db_name = 2;
+                        $tag->db_id = $sources->id;
+                        if (isset ($request->tagData['tagSource'][$index][0])) $tag->tag_category = $request->tagData['tagSource'][$index][0];
+                        if (isset ($request->tagData['tagSource'][$index][1])) $tag->tag_context = $request->tagData['tagSource'][$index][1];
+                        if (isset ($request->tagData['tagSource'][$index][2])) $tag->tag_content = $request->tagData['tagSource'][$index][2];
+                        if (isset ($request->tagData['tagSource'][$index][3])) $tag->tag_comment = $request->tagData['tagSource'][$index][3];
+                        $tag->tracking = $request->ip();
+                        $tag->save();
+                    }
+                break;
+            }
+        }
+
         $basics = new Basic();
         $basics->ref_date = $request->basicRefDate;
         $basics->title = $request->basicTitle;
@@ -153,7 +174,6 @@ class RicoAssistant extends Controller {
                         'updated_at' => now(),
                     ];
                 }
-
             };
 
             DB::table('activities')->insert($activities);
@@ -168,7 +188,6 @@ class RicoAssistant extends Controller {
             $activity->reference = $request->reference;
             $activity->tracking = $request->ip();
             $activity->save();
-
         }
 
         if($accounting == 1){
@@ -183,7 +202,6 @@ class RicoAssistant extends Controller {
             $accounting->accounting_price_default_currency = $request->accounting_price_default_currency;
             $accounting->tracking = $request->ip();
             $accounting->save();
-
         }
 
         // store files
@@ -194,17 +212,19 @@ class RicoAssistant extends Controller {
             // dd($request);
 
             // store file meta data
-            foreach($request->file('filelist') as $dataString) {
+            foreach($request->file('filelist') as $index => $dataString) {
 
                 // dd($dataString['file']->hashName());
 
-                $source = new Source();
-                $source->basics_id = $basics->id;
-                $source->path = $dataString['file']->hashName();
-                $source->extension = $dataString['file']->extension();
-                $source->size = $dataString['file']->getSize();
-                $source->tracking = $request->ip();
-                $source->save();
+                $sources = new Source();
+                $sources->basics_id = $basics->id;
+                $sources->path = $dataString['file']->hashName();
+                $sources->extension = $dataString['file']->extension();
+                $sources->size = $dataString['file']->getSize();
+                $sources->tracking = $request->ip();
+                $sources->save();
+
+                if ($request->tagData['tagSource']) tagData($request, 2, $index, $basics, $sources);
             }
 
             // store file content data
@@ -243,23 +263,6 @@ class RicoAssistant extends Controller {
 
         // dd($request);
 
-        if($request->tagData){
-            if ($request->tagData['tagSource']) {
-                foreach($request->tagData['tagSource'] as $key => $value) {;
-                    $tag = new Tag();
-                    $tag->basics_id = $basics->id;
-                    $tag->db_name = 2;
-                    // $tag->db_id = $source->basics_id;
-                    if (isset ($value[0])) $tag->tag_category = $value[0];
-                    if (isset ($value[1])) $tag->tag_context = $value[1];
-                    if (isset ($value[2])) $tag->tag_content = $value[2];
-                    if (isset ($value[3])) $tag->tag_comment = $value[3];
-                    $tag->tracking = $request->ip();
-                    $tag->save();
-                }
-            }
-        }
-
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }
 
@@ -268,11 +271,9 @@ class RicoAssistant extends Controller {
         foreach($request->all() as $key => $value) {
 
             if($key != 'id'){
-
                 $update = DB::table('ricoassistants')
                 ->where('id', $request->id)
                 ->update([$key => $value]);
-
             }
 
         }
