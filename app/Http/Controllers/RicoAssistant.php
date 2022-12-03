@@ -13,7 +13,7 @@ use App\Models\Statement;
 use App\Models\Accounting;
 use App\Models\User;
 use App\Models\Contact;
-use App\Models\Document;
+use App\Models\Source;
 use App\Models\Activity;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -39,6 +39,8 @@ class RicoAssistant extends Controller {
 
     public function detail(Request $request) {
 
+        // dd($request);
+
         // dd($request->basic_id);
 
         $user = Auth::user();
@@ -61,14 +63,14 @@ class RicoAssistant extends Controller {
     public function store(Request $request) {
 
         // dd($request);
+        // dd($request->filelist);
 
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basic.ref_date' => 'required',
-            'basic.title' => 'required',
-            'basic.author' => 'required',
-            'basic.medium' => 'required',
+            'basicRefDate' => 'required',
+            'basicMedium' => 'required',
+            'basicTitle' => 'required',
         ]);
 
         // dd($request);
@@ -92,24 +94,25 @@ class RicoAssistant extends Controller {
             }
         }
 
-        $basic = new Basic();
-        $basic->ref_date = $request->basic['ref_date'];;
-        $basic->title = $request->basic['title'];
-        $basic->author = $request->basic['author'];
-        $basic->medium = $request->basic['medium'];
-        $basic->status = $request->basic['status'];
-        $basic->user_id = $user->id;
-        $basic->tracking = $request->ip();
-        $basic->save();
+        $basics = new Basic();
+        $basics->ref_date = $request->basicRefDate;
+        $basics->title = $request->basicTitle;
+        $basics->medium = $request->basicMedium;
+        // $basic->status = $request->basic['status'];
+        $basics->user_id = $user->id;
+        $basics->tracking = $request->ip();
+        $basics->save();
 
         if(isset($request->statement)){
 
             $statement = new Statement();
-            $statement->basic_id = $basic->id;
+            $statement->basics_id = $basics->id;
             $statement->statement = $request->statement;
             $statement->tracking = $request->ip();
             $statement->save();
         }
+
+        // dd($request);
 
         if($rating == 1){
 
@@ -168,17 +171,6 @@ class RicoAssistant extends Controller {
 
         }
 
-        if($request->tag){
-
-            $tag = new Tag();
-
-            $tag->basic_id = $basic->id;
-            $tag->tag = $request->tag;
-            $tag->tracking = $request->ip();
-            $tag->save();
-
-        }
-
         if($accounting == 1){
 
             $accounting = new Accounting();
@@ -194,32 +186,78 @@ class RicoAssistant extends Controller {
 
         }
 
-        if(isset($request->documentJPG)) {
-            foreach($request->file('documentJPG') as $dataString) {
+        // store files
+        //----------------------------------------------------
 
-                $document = new Document();
-                $document->basic_id = $basic->id;
-                $document->path = $dataString->hashName();
-                $document->extension = $dataString->extension();
-                $document->size = $dataString->getSize();
-                $document->tracking = $request->ip();
-                $document->save();
+        if(isset($request->filelist)) {
+
+            // dd($request);
+
+            // store file meta data
+            foreach($request->file('filelist') as $dataString) {
+
+                // dd($dataString['file']->hashName());
+
+                $source = new Source();
+                $source->basics_id = $basics->id;
+                $source->path = $dataString['file']->hashName();
+                $source->extension = $dataString['file']->extension();
+                $source->size = $dataString['file']->getSize();
+                $source->tracking = $request->ip();
+                $source->save();
             }
 
-            foreach($request->file('documentJPG') as $dataString2) {
-                Storage::disk('local')->put('public/images/inventory/', $dataString2);
+            // store file content data
+            foreach($request->file('filelist') as $dataString2) {
+                Storage::disk('local')->put('public/images/inventory/', $dataString2['file']);
             }
         }
 
-        if(isset($request->document_link)) {
+        // if(isset($request->documentJPG)) {
+        //     foreach($request->file('filelist') as $dataString) {
 
-                $document = new Document();
-                $document->basic_id = $basic->id;
-                $document->path = $request->document_link;
-                $document->extension = 'www';
-                $document->size = 0;
-                $document->tracking = $request->ip();
-                $document->save();
+        //         $document = new Document();
+        //         $document->basic_id = $basic->id;
+        //         $document->path = $dataString->hashName();
+        //         $document->extension = $dataString->extension();
+        //         $document->size = $dataString->getSize();
+        //         $document->tracking = $request->ip();
+        //         $document->save();
+        //     }
+
+        //     foreach($request->file('documentJPG') as $dataString2) {
+        //         Storage::disk('local')->put('public/images/inventory/', $dataString2);
+        //     }
+        // }
+
+        // if(isset($request->document_link)) {
+
+        //         $document = new Document();
+        //         $document->basic_id = $basic->id;
+        //         $document->path = $request->document_link;
+        //         $document->extension = 'www';
+        //         $document->size = 0;
+        //         $document->tracking = $request->ip();
+        //         $document->save();
+        // }
+
+        // dd($request);
+
+        if($request->tagData){
+            if ($request->tagData['tagSource']) {
+                foreach($request->tagData['tagSource'] as $key => $value) {;
+                    $tag = new Tag();
+                    $tag->basics_id = $basics->id;
+                    $tag->db_name = 2;
+                    // $tag->db_id = $source->basics_id;
+                    if (isset ($value[0])) $tag->tag_category = $value[0];
+                    if (isset ($value[1])) $tag->tag_context = $value[1];
+                    if (isset ($value[2])) $tag->tag_content = $value[2];
+                    if (isset ($value[3])) $tag->tag_comment = $value[3];
+                    $tag->tracking = $request->ip();
+                    $tag->save();
+                }
+            }
         }
 
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
@@ -342,7 +380,7 @@ class RicoAssistant extends Controller {
         $basicTitleResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', '=', $request->title)
+                ->where('title', '=', $request->basicTitle)
                 ->get();
 
         // dd($basicTitleResultCheck);
@@ -356,7 +394,7 @@ class RicoAssistant extends Controller {
                 foreach ($basicTitleResultCheck as $i=>$id) {
 
                     // check for date duplicates
-                    if ($id->ref_date == $request->ref_date) {
+                    if ($id->ref_date == $request->basicRefDate) {
 
                         $date[$a]['title'] = $id->title;
                         $date[$a]['ref_date'] = $id->ref_date;
@@ -419,5 +457,20 @@ class RicoAssistant extends Controller {
             // dd($basicResult);
 
         return Inertia::render('Create', $basicResult);
+    }
+
+    public function tag(Request $request) {
+
+        $tagCollectionRaw = DB::table('tags')->get();
+
+        foreach($tagCollectionRaw as $key => $value) {
+
+            $tagCollectionSelection['tagCollection'][$key][0] = $value->tag_category;
+            $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
+        }
+
+        // dd($tagCollectionSelection);
+
+        return Inertia::render('Create', ['dataCommon' => $tagCollectionSelection]);
     }
 }

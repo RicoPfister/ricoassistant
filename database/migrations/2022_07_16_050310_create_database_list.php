@@ -16,15 +16,12 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id('id');
 
-            $table->foreignID('basic_id')->references('id')->on('basics');
-
-            $table->string('path', 2048);
-            $table->string('extension');
-            $table->integer('size');
-            $table->timestamps();
+            $table->tinyText('name')->nullable();
 
             $table->tinyText('tracking')->nullable();
             $table->tinyInteger('status')->nullable();
+
+            $table->timestamps();
         });
     }
 

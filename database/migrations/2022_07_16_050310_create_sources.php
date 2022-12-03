@@ -13,20 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('basics', function (Blueprint $table) {
-            $table->id();
+        Schema::create('sources', function (Blueprint $table) {
+            $table->id('id');
 
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignID('basic_id')->references('id')->on('basics');
 
-            $table->date('ref_date');
-            $table->tinyText('title');
-            $table->tinyText('medium');
+            $table->string('path', 2048);
+            $table->string('extension');
+            $table->integer('size');
+            $table->timestamps();
 
             $table->tinyText('tracking')->nullable();
             $table->tinyInteger('status')->nullable();
-
-            $table->timestamps();
         });
     }
 
@@ -37,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('basics');
+        Schema::dropIfExists('documents');
     }
 };
