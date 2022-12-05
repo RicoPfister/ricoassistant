@@ -85,17 +85,12 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-// Date now
-const dateData = new Date();
-const year  = dateData.getFullYear();
-const month = (dateData.getMonth() + 1).toString().padStart(2, "0");
-const day = dateData.getDate().toString().padStart(2, "0");
-const dateNow = year+'-'+month+'-'+day;
+import * as Date from "../../Scripts/date.js"
 
 let basicTitelPickerOpen = ref(0);
 let basicTitleWarning = ref(0);
 
-let dataChild = ref({'basicMedium': '', 'basicTitle': '', 'basicRefDate': dateNow});
+let dataChild = ref({'basicMedium': '', 'basicTitle': '', 'basicRefDate': Date.dateNow()});
 
 const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer']);
 let emit = defineEmits(['dataChild']);

@@ -157,6 +157,7 @@ let transfer = ref();
 function toParent(data) {
     // console.log(data);
     transfer.value = data;
+    form.value = {...form.value, ...{'activityTo': data.activityTo}, ...{'activityReference': data.activityReference}}
 }
 
 </script>

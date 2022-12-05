@@ -124,8 +124,8 @@ import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent']);
-let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent']);
+let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent']);
 let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);

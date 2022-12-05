@@ -6,18 +6,7 @@
 <div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-white text-sm
 w-full pt-4 gap-2 mt-[12px] pb-3">
 
-    <!-- container border title -->
-    <div class="absolute -top-[12px] flex items-center -left-[1px] w-[calc(100%+2px)]">
-        <div class="flex items-center grow">
-            <span class="border-t border-gray-400 w-1"></span>
-            <h2 class="text-black font-bold text-base rounded-3xl px-1">Activity*<span class="font-normal"></span></h2>
-            <span class="border-t border-gray-400 flex-1"></span>
-        </div>
-        <div class="flex items-center justify-end w-fit px-1">
-            <MenuEntry @data-child="dataChildMenuEntry"/>
-        </div>
-        <span class="border-t border-gray-400 w-1"></span>
-    </div>
+    <SectionTitle :Id="2"/>
 
     <!-- time schedule box-->
     <!-- ------------------------------------------------ -->
@@ -143,7 +132,6 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
 
                 <!-- button duplicate row / remove row -->
                 <div class="flex flex-col">
-
                     <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowDuplicate(n)">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
@@ -154,7 +142,6 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
-
                 </div>
 
                 <!-- button swap -->
@@ -259,16 +246,10 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import MenuEntry from "../Create/MenuEntry.vue";
+import * as Date from "../../Scripts/date.js"
+import SectionTitle from "../FormManager/SectionTitle.vue"
 
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
-
-const data = new FormData();
-
-const dateNow = new Date();
-const year  = dateNow.getFullYear();
-const month = (dateNow.getMonth() + 1).toString().padStart(2, "0");
-const day = dateNow.getDate().toString().padStart(2, "0");
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
 const props = defineProps(['fromParent', 'fromController']);
@@ -497,12 +478,19 @@ function activityRowDuplicate(n) {
     activityTotalRow.value++
 }
 
+// send form changes to Create.vue
+watch(() => form, (curr, prev) => {
+
+emit('toParent', form);
+
+}, {deep: true}, 500);
+
 //! watch for diagram width adjustments and add title/medium in basics.vue
 watch(() => form.activityTo, (curr, prev) => {
 
     // set basic title and medium
 
-    emit('toParent', {'basicTitle': 'Activity ' + year+'-'+month+'-'+day, 'basicMedium': 'self_awareness'});
+    emit('toParent', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
     // console.log('ok');
 
     let minutes = 0;
