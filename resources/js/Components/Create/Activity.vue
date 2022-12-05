@@ -79,17 +79,36 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
 
             <!-- reference box -->
             <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black">
+
+                <!-- reference input -->
                 <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
 
-                <!-- input reference menu button -->
+                <!-- reference input menu button -->
                 <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
-
                     <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
                         </svg>
                     </button>
+                </div>
 
+                <!-- reference input menu button -->
+                <div class="absolute top-0 right-0 h-full flex items-center bg-gray-200">
+                    <div class="border-l border-gray-400 p-1 w-auto h-full">
+                        <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-full hover:stroke-blue-600">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="border-l border-gray-400 p-1 w-auto h-full">
+                        <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-full hover:stroke-yellow-600">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- reference picker popup -->
@@ -144,9 +163,8 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </button>
                 </div>
 
-                <!-- button swap -->
+                <!-- button swap [hidden] -->
                 <div class="flex-col hidden">
-
                     <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShUpPressed(0, n)">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
@@ -546,38 +564,18 @@ watch(() => form.activityTo, (curr, prev) => {
             l = 1;
         };
     }
-
 }, {deep: true}, 500);
-
-// listening fromController
-// watch(() => props.fromController, (curr, prev) => {
-
-//     if (props.fromController.referencesResult) {
-//         console.log(props.fromController.referencesResult);
-//     }
-
-// }, {deep: true}, 500);
-
-// activity controller
-// ------------------------------------------------
 
 // activity row response
 watch(() => props.fromController, _.debounce( (curr, prev) => {
-
-if (props.fromController.misc) {
-    referencePickerOpen.value[props.fromController.misc.row-1] = 1;
-}
-
-}, 500)
+        if (props.fromController.misc) {
+            referencePickerOpen.value[props.fromController.misc.row-1] = 1;
+        }
+    }, 500)
 );
-
-
-
 
 // activity reference checker
 function referenceChecker(n, le) {
-
-    // cl(form.activityReference[n-1].id);
 
     if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
 
@@ -585,7 +583,6 @@ function referenceChecker(n, le) {
     }
 
     else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
-
     else if (form.activityReference[n-1].title.length > 2) {
 
         setTimeout(() => {
@@ -594,12 +591,4 @@ function referenceChecker(n, le) {
     }
 }
 
-function dataChildMenuEntry(n) {
-    // alert(n['formDataEdit']);
-    // alert(props.componentId);
-    if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
-    if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
-}
-
 </script>
-
