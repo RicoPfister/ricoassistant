@@ -3,17 +3,10 @@
 
 <div>
     <div class="flex flex-col">
-
         <div class="flex flex-row justify-between items-center" type="button">
-
-            <label class="" aria-label="Statement Input" for="statement">Statement*: </label>
-
             <MenuEntry @data-child="dataChildMenuEntry"/>
-
         </div>
-
-        <textarea class="border border-black outline-0 focus:border-black focus:ring-0 bg-green-50" v-model="dataChild['statement']" rows="10" id="statement" type="text"></textarea>
-
+        <textarea class="border border-black outline-0 focus:border-black focus:ring-0" v-model="dataChild['statement']" rows="10" id="statement" type="text"></textarea>
     </div>
 </div>
 <TagForm :from-parent="'titleNo'" />
@@ -30,8 +23,8 @@ import TagForm from "../TagManager/TagForm.vue";
 
 let dataChild = ref({});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent']);
-let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent']);
 
 // emit form
 watch(() => dataChild, (curr, prev) => {
@@ -53,9 +46,10 @@ function dataChildMenuEntry(n) {
 
 // }, 500));
 
+// console.log(typeof props.dataForm.statement);
+
 onMounted(() => {
-    if (props.dataForm.statement) {
-        // console.log(props.dataForm.statement);
+    if (typeof props.dataForm.statement != 'undefined') {
         dataChild.value['statement'] = props.dataForm.statement;
     }
 })

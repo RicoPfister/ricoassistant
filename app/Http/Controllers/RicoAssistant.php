@@ -8,7 +8,7 @@ use Illuminate\Http\Post;
 use App\Models\Tag;
 use App\Models\Basic;
 use App\Models\Rating;
-use App\Models\Reference;
+use App\Models\Ref;
 use App\Models\Statement;
 use App\Models\Accounting;
 use App\Models\User;
@@ -37,6 +37,8 @@ class RicoAssistant extends Controller {
         return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
 
+    // detail
+    // -------------------------------------------------------
     public function detail(Request $request) {
 
         // dd($request);
@@ -60,6 +62,8 @@ class RicoAssistant extends Controller {
             return Inertia::render('TabManager/TabManager', ['detail' => $basic]);
     }
 
+    // store
+    // -------------------------------------------------------
     public function store(Request $request) {
 
         // dd($request);
@@ -127,7 +131,7 @@ class RicoAssistant extends Controller {
         if(isset($request->statement)){
 
             $statement = new Statement();
-            $statement->basics_id = $basics->id;
+            $statement->basic_id = $basics->id;
             $statement->statement = $request->statement;
             $statement->tracking = $request->ip();
             $statement->save();
@@ -177,13 +181,20 @@ class RicoAssistant extends Controller {
             };
 
             DB::table('activities')->insert($activities);
+        }
 
+        if(!isset($request->reference)){
+            dd($request);
+            $ref = new Ref();
+            $ref->basic_id = $basic->id;
+            // $ref->ref_db_id =
+            // $ref->ref_db_index =
+            $ref->tracking = $request->ip();
+            $ref->save();
         }
 
         if($request->reference){
-
             $activity = new Reference();
-
             $activity->basic_id = $basic->id;
             $activity->reference = $request->reference;
             $activity->tracking = $request->ip();
@@ -205,8 +216,6 @@ class RicoAssistant extends Controller {
         }
 
         // store files
-        //----------------------------------------------------
-
         if(isset($request->filelist)) {
 
             // dd($request);
@@ -217,7 +226,7 @@ class RicoAssistant extends Controller {
                 // dd($dataString['file']->hashName());
 
                 $sources = new Source();
-                $sources->basics_id = $basics->id;
+                $sources->basic_id = $basics->id;
                 $sources->path = $dataString['file']->hashName();
                 $sources->extension = $dataString['file']->extension();
                 $sources->size = $dataString['file']->getSize();
@@ -266,6 +275,8 @@ class RicoAssistant extends Controller {
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }
 
+    // update
+    // -------------------------------------------------------
     public function update(Request $request) {
 
         foreach($request->all() as $key => $value) {
@@ -288,8 +299,7 @@ class RicoAssistant extends Controller {
     }
 
     // reference
-    // **************************************************
-
+    // -------------------------------------------------------
     public function reference(Request $request) {
 
         // dd($request);
@@ -314,11 +324,11 @@ class RicoAssistant extends Controller {
 
                 $tag = DB::table('tags')
                 ->where('basic_id', '=', $id->id)
-                ->where('tagcontext', '=', 'ActivityDiagramColor')
+                ->where('tag_context', '=', 'ActivityDiagramColor')
                 ->get();
 
                 if (count($tag)) {
-                    $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                    $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                 } else {};
 
             };
@@ -344,13 +354,13 @@ class RicoAssistant extends Controller {
 
                         $tag = DB::table('tags')
                             ->where('basic_id', '=', $id->id)
-                            ->where('tagcontext', '=', 'ActivityDiagramColor')
+                            ->where('tag_context', '=', 'ActivityDiagramColor')
                             ->get();
 
                         // dd($tag);
 
                         if (count($tag)) {
-                            $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                            $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                         } else {};
 
                         $result['referencesResult'][$i]['medium'] = $id->medium;
@@ -366,9 +376,11 @@ class RicoAssistant extends Controller {
 
         // dd($result);
 
-        return Inertia::render('Create', $result);
+        return Inertia::render('Create', ['fromController' => $result]);
     }
 
+    // titlecheck
+    // -------------------------------------------------------
     public function titlecheck(Request $request) {
 
         // dd($request);
@@ -460,6 +472,8 @@ class RicoAssistant extends Controller {
         return Inertia::render('Create', $basicResult);
     }
 
+    // tag
+    // -------------------------------------------------------
     public function tag(Request $request) {
 
         $tagCollectionRaw = DB::table('tags')->get();

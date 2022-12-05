@@ -6,29 +6,27 @@
 <form aria-label="New Entry Container" class="absolute mb-10">
 
     <!-- content container -->
-    <div class="lg:w-[755px] mt-10">
+    <div class="lg:w-[780px] mt-10">
 
         <TabBar />
 
         <div class="relative w-full min-w-0 border-2 border-gray-500 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
 
-            <div ref="scrollArea" class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-5 py-3">
+            <div ref="scrollArea" class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-3 pb-3 pt-2">
 
                 <!-- component generator -->
 
-                <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index">
-                    <component :is="componentSource[item]" :data-common="props.dataCommon" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1" @dataToParent="dataToParent"/>
+                <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
+                    <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent"
+                    :from-controller="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transfer="transfer"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
                     <Footer @data-child="dataChild"/>
                 </div>
-
             </div>
-
         </div>
     </div>
-
 </form>
 
 </Header>
@@ -53,8 +51,8 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transfer']);
 
 let form = ref({});
 let dataParent = ref({});
@@ -66,8 +64,6 @@ let scrollArea = ref();
 
 // process received child data
 function dataChild(data) {
-
-    // console.log(data);
 
     // scroll to top
     if (data.scrollToTop) {
@@ -107,11 +103,6 @@ function dataChild(data) {
         for (const [key, value] of Object.entries(data.componentSelected)) {
             componentCollection.push(parseInt(key)+4);
             dataParent.value['sectionSelected'][key] = 1;
-
-            // console.log(key);
-
-            // add tag collection
-            // if(parseInt(key)+4 != 8) componentCollection.push(2);
         }
 
         // add reference section
@@ -157,11 +148,15 @@ watch(() => form, (curr, prev) => {
 }, {deep: true}, 500);
 
 // process component data
-function dataToParent(data) {
+function dataToParent() {
     if (data.tagSource) {
-
     }
 }
 
-</script>
+let transfer = ref();
+function toParent(data) {
+    // console.log(data);
+    transfer.value = data;
+}
 
+</script>

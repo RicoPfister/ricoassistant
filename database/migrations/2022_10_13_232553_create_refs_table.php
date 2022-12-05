@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('references', function (Blueprint $table) {
+        Schema::create('refs', function (Blueprint $table) {
             $table->id();
 
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
 
-            $table->tinyInteger('reference')->nullable();
+            $table->tinyInteger('ref_db_id')->nullable();
+            $table->tinyInteger('ref_db_index')->nullable();
 
             $table->tinyText('tracking')->nullable();
             $table->tinyInteger('status')->nullable();

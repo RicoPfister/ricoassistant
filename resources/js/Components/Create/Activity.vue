@@ -1,41 +1,71 @@
 
 <template>
 
-<div aria-label="Drop Down Activity" class="">
+<!-- activity container -->
+<!-- ------------------------------------------------ -->
+<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-white text-sm
+w-full pt-4 gap-2 mt-[12px] pb-3">
 
+    <!-- container border title -->
+    <div class="absolute -top-[12px] flex items-center -left-[1px] w-[calc(100%+2px)]">
+        <div class="flex items-center grow">
+            <span class="border-t border-gray-400 w-1"></span>
+            <h2 class="text-black font-bold text-base rounded-3xl px-1">Activity*<span class="font-normal"></span></h2>
+            <span class="border-t border-gray-400 flex-1"></span>
+        </div>
+        <div class="flex items-center justify-end w-fit px-1">
+            <MenuEntry @data-child="dataChildMenuEntry"/>
+        </div>
+        <span class="border-t border-gray-400 w-1"></span>
+    </div>
 
-    <div v-if="activityOpen" class="flex flex-col border bg-gray-100 text-sm w-full">
+    <!-- time schedule box-->
+    <!-- ------------------------------------------------ -->
+    <div class="flex flex-col items-center gap-1 w-full mt-1">
 
-        <div class="flex gap-1 h-6 lg:h-8 mt-2 lg:mt-4 lg:px-3" v-for="n in activityTotalRow" @input="activityRowAdd(n)" @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)" @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
+        <!-- time schedule list builder -->
+        <div class="flex flex-row lg:h-8 w-[722px]" v-for="n in activityTotalRow" @input="activityRowAdd(n)"
+        @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)"
+        @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
-            <!-- time input -->
-            <input class="w-[42px] lg:w-[58px] text-sm xl:text-lg text-center lg:p-1 p-0 placeholder:text-gray-400 focus:placeholder-white" :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To" v-model="form.activityTo[n-1]">
+            <!-- input time -->
+            <input class="w-[41px] lg:w-[61px] text-sm lg:text-base text-center placeholder:text-black-400 focus:placeholder-white leading-none"
+            :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To"
+            v-model="form.activityTo[n-1]">
 
-            <div class="flex gap-1 flex-row">
+            <!-- button box -->
+            <div class="flex flex-row mx-1">
 
                 <!-- button 12h/clear-->
                 <div class="flex-col hidden lg:block">
 
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = 1200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                    @click="form.activityTo[n-1] = 1200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                        class="w-3 h-3">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591
+                            1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                         </svg>
                     </button>
 
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityTo[n-1] = ''">
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                    @click="form.activityTo[n-1] = ''">
                         <div class="text-xs flex items-center justify-center h-full">C</div>
                     </button>
-
                 </div>
 
                 <!-- button hours -->
                 <div class="flex flex-col h-full">
-                    <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activitybuttonBar('h', n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                    <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
+                    @click="activitybuttonBar('h', n)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                        class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                         </svg>
                     </button>
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activitybuttonBar('hMinus', n)">
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
+                    @click="activitybuttonBar('hMinus', n)">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                         </svg>
@@ -58,9 +88,9 @@
                 </div>
             </div>
 
-            <!-- input reference -->
-            <div class="relative grow min-w-0 text-sm xl:text-lg h-full border border-black">
-                <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full h-full min-w-0 lg:p-2 leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
+            <!-- reference box -->
+            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black">
+                <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
 
                 <!-- input reference menu button -->
                 <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
@@ -74,7 +104,7 @@
                 </div>
 
                 <!-- reference picker popup -->
-                <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+                <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
 
                     <div class="flex flex-row items-center z-50">
 
@@ -82,7 +112,7 @@
 
                             <div class="text-sm"><b>Found in Database:</b></div>
 
-                            <div v-for="item in props.referencesResult" class="flex flex-row items-center w-full">
+                            <div v-for="item in props.fromController.referencesResult" class="flex flex-row items-center w-full">
 
                                 <button>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -99,66 +129,68 @@
                 </div>
             </div>
 
-            <!-- button clear reference/ clear rating-->
-            <div class="flex-col hidden lg:block">
+            <!-- edit button box -->
+            <div class="flex flex-row ml-1">
+                <!-- button clear reference/ clear rating-->
+                <div class="flex-col hidden lg:block">
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
+                        <div class="text-xs flex items-center justify-center h-full">C</div>
+                    </button>
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
+                        <div class="text-xs flex items-center justify-center h-full">C</div>
+                    </button>
+                </div>
 
-                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
-                    <div class="text-xs flex items-center justify-center h-full">C</div>
-
-                </button>
-                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="form.activityReference[n-1] = ''">
-                    <div class="text-xs flex items-center justify-center h-full">C</div>
-
-                </button>
-
-            </div>
-
-            <!-- button duplicate row / remove row -->
-            <div class="flex flex-col">
-
-                <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowDuplicate(n)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                        </svg>
-                </button>
-                <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button" @click="activityRowDelete(n)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-            </div>
-
-            <!-- button swap -->
-            <div class="flex-col hidden">
-
-                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShUpPressed(0, n)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                    </svg>
-                </button>
-                <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShDownPressed(0, n)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- activity day overview -->
-        <div aria-label="Drop Down Activity Day Overview" class="">
-
-            <div v-if="activityOverwievOpen" class="py-1 lg:py-4 flex z-20 w-full justify-center whitespace-nowrap overflow-x-auto">
-
+                <!-- button duplicate row / remove row -->
                 <div class="flex flex-col">
 
-                <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 bg-gray-200">
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button" @click="activityRowDuplicate(n)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                            </svg>
+                    </button>
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button" @click="activityRowDelete(n)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                </div>
+
+                <!-- button swap -->
+                <div class="flex-col hidden">
+
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShUpPressed(0, n)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                        </svg>
+                    </button>
+                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button" @click="activityKeyShDownPressed(0, n)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- day overview box -->
+    <!-- ------------------------------------------------ -->
+    <div aria-label="Drop Down Activity Day Overview" class="">
+
+        <div class="flex z-20 w-full justify-center whitespace-nowrap overflow-x-auto">
+
+            <!-- diagram box -->
+            <div class="flex flex-col">
+
+                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 z-20 bg-white">
                     <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="'A'+index" class="flex flex-row">
-                        <div class="h-full bg-gray-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
+                        <div class="h-full bg-stone-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                     </div>
 
-                    <!-- half day disgram -->
-                    <div class="absolute top-0 left-0 h-full pl-1">
+                    <!--0-12 disgram -->
+                    <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
                         0
                     </div>
 
@@ -166,18 +198,18 @@
 
                     </div>
 
-                    <div class="absolute top-0 right-0 h-full pr-1">
+                    <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
                         12
                     </div>
 
                 </div>
 
-                <div class="relative w-[722px] border border-gray-500 h-5 flex flex-row text-gray-600 z-20 mt-1 bg-gray-200">
+                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 z-20 mt-1 bg-white">
                     <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="'B'+index" class="flex flex-row">
-                        <div class="h-full bg-gray-300" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
+                        <div class="h-full bg-stone-300" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                     </div>
 
-                    <!-- half day diagram -->
+                    <!-- 12-24 day diagram -->
                     <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
                         12
                     </div>
@@ -190,8 +222,9 @@
                         24
                     </div>
                 </div>
-
             </div>
+
+            <!-- day activity statistic -->
             <div class="hidden">
                 <div class="flex flex-row gap-5">
                     <div class="mt-3 flex flex-col">
@@ -215,9 +248,8 @@
                 </div>
             </div>
         </div>
-        </div>
-        </div>
-        </div>
+    </div>
+</div>
 
 </template>
 
@@ -227,7 +259,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import Header from "../../Layouts/MainNav.vue";
+import MenuEntry from "../Create/MenuEntry.vue";
 
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
@@ -239,23 +271,17 @@ const month = (dateNow.getMonth() + 1).toString().padStart(2, "0");
 const day = dateNow.getDate().toString().padStart(2, "0");
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
-const props = defineProps(['fromParent']);
-const emit = defineEmits(['toParent']);
+const props = defineProps(['fromParent', 'fromController']);
+const emit = defineEmits(['toParent', 'dataChild']);
 
 const form = useForm({
-
     activityTo: [],
     activityReference: [{title: '', id: ''}],
     reference: '',
-
     tag: '',
 });
 
-let activityOpen = ref(0);
-let activityOverwievOpen = ref(1);
 let referencePickerOpen = ref([]);
-let basicTitelPickerOpen = ref(0);
-// let referencePickerOpen.value[0] = 0;
 let activiteTolimitReached = ref(0);
 let activityTotalRow = ref(1);
 let activityDayOverviewDiagram = ref([]);
@@ -362,13 +388,11 @@ function activitybuttonBar(e, n) {
     else if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && (typeof form.activityReference[n].title == 'undefined' || form.activityReference[n].title == '')) {
         activityTotalRow.value--;
         activiteTolimitReached.value = 0;
-    };
-
+    }
 }
 
 // only number keys allowed
 function onlyNumbers(e) {
-
     if(!e.key.match(/[0-9]/)) e.preventDefault();
 }
 
@@ -378,7 +402,6 @@ function activityRowAdd(n) {
     if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
 
     referencePickerOpen.value[n-1] = 0;
-
 }
 
 // key events - common
@@ -475,11 +498,12 @@ function activityRowDuplicate(n) {
 }
 
 //! watch for diagram width adjustments and add title/medium in basics.vue
-watch(() => form.activityTo999999999, (curr, prev) => {
+watch(() => form.activityTo, (curr, prev) => {
 
-    // add auto medium
-    form.basic['title'] = 'Activity ' + year+'-'+month+'-'+day;
-    form.basic['medium'] = 'self_awareness';
+    // set basic title and medium
+
+    emit('toParent', {'basicTitle': 'Activity ' + year+'-'+month+'-'+day, 'basicMedium': 'self_awareness'});
+    // console.log('ok');
 
     let minutes = 0;
     let minuteTotal = 0;
@@ -537,18 +561,30 @@ watch(() => form.activityTo999999999, (curr, prev) => {
 
 }, {deep: true}, 500);
 
+// listening fromController
+// watch(() => props.fromController, (curr, prev) => {
+
+//     if (props.fromController.referencesResult) {
+//         console.log(props.fromController.referencesResult);
+//     }
+
+// }, {deep: true}, 500);
+
 // activity controller
 // ------------------------------------------------
 
 // activity row response
-watch(() => props.misc, _.debounce( (curr, prev) => {
+watch(() => props.fromController, _.debounce( (curr, prev) => {
 
-if (props.misc.row) {
-    referencePickerOpen.value[props.misc.row-1] = 1;
+if (props.fromController.misc) {
+    referencePickerOpen.value[props.fromController.misc.row-1] = 1;
 }
 
 }, 500)
 );
+
+
+
 
 // activity reference checker
 function referenceChecker(n, le) {
@@ -568,6 +604,13 @@ function referenceChecker(n, le) {
             Inertia.post('refcheck', { activityReference: form.activityReference[n-1].title, row: n}, {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     }
+}
+
+function dataChildMenuEntry(n) {
+    // alert(n['formDataEdit']);
+    // alert(props.componentId);
+    if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
+    if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
 
 </script>
