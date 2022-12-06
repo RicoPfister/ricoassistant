@@ -8,7 +8,7 @@
 </div>
 
 <div class="h-auto flex flex-row bg-gray-100">
-        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags for Entry:&nbsp;<span>{{ title }}</span></div>
+        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags related to entry:&nbsp;<span>{{ title }}</span></div>
     </div>
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
@@ -63,7 +63,8 @@ onMounted(() => {
 
     if (props.dataForm.basicTitle) {
         title.value = props.dataForm.basicTitle;
-    } else title.value = '- (No title set)';
+        // alternate title text
+    } else title.value = '';
 
     // check if tag string can be convertet to tag select
     if (props.fromParentTagString) {

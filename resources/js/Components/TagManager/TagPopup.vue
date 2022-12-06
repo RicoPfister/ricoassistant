@@ -142,7 +142,6 @@ onMounted(() => {
 function emitParent() {
 
     tagCollectionInputFormat.value = '';
-
     tagCollection.value.forEach(createTagInputGroup);
 
     function createTagInputGroup(item, index1) {
@@ -173,8 +172,6 @@ function emitParent() {
     }
         // console.log(tagCollectionInputFormat.value);
         emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value});
-
-
     }
 
 </script>
