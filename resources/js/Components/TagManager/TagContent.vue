@@ -69,6 +69,8 @@ onMounted(() => {
     // check if tag string can be convertet to tag select
     if (props.fromParentTagString) {
 
+        // console.log(props.fromParentTagString);
+
         let tagCollectionSplitInGroup = props.fromParentTagString.split(/[\s@]/);
         let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
 

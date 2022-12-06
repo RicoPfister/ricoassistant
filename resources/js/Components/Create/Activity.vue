@@ -86,24 +86,17 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                 <!-- reference input menu button -->
                 <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
                     <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
                         </svg>
                     </button>
                 </div>
 
-                <!-- link and tag buttons -->
+                <!-- tag buttons -->
                 <div class="absolute top-0 right-0 h-full flex items-center bg-gray-200">
-                    <div class="border-l border-gray-400 p-1 w-auto h-full">
-                        <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-full hover:stroke-blue-600">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                            </svg>
-                        </button>
-                    </div>
                     <div class="border-l border-gray-400 p-1 w-auto h-full" @mouseover="tagTooltipShow(index)" @mouseleave="tagTooltipShow(index, 1)">
-                        <button type="button" @click="tagPopupOpenActive(index)" class="w-auto h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" :class="{'stroke-yellow-600': tagCollectionInputFormat != ''}" class="w-auto h-full hover:stroke-yellow-600">
+                        <button type="button" @click.prevent="tagPopupOpenActive(index)" class="w-auto h-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-yellow-600': form.activityTag[index]}" class="w-auto h-full hover:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
                             </svg>
@@ -178,7 +171,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                 </div>
             </div>
             <!-- tag tool tip -->
-            <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-50 border border-black z-50">{{ tagCollectionInputFormat[index] ? tagCollectionInputFormat[index] : 'no tags set' }}</div>
+            <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-50 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div>
         </div>
 
     </div>
@@ -261,7 +254,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
 
 <!-- open popup -->
 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent"/>
+    <TagPopup :fromParentTagString="form.activityTag[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent" @from-controller="fromController"/>
 </div>
 
 </template>
@@ -269,7 +262,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
 <script setup>
 
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted, toRef } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import * as Date from "../../Scripts/date.js"
@@ -285,8 +278,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent']);
 const form = useForm({
     activityTo: [],
     activityReference: [{title: '', id: ''}],
-    reference: '',
-    tag: '',
+    activityTag: [],
 });
 
 let referencePickerOpen = ref([]);
@@ -301,9 +293,10 @@ let tagPopupOpen = ref(0);
 let tagTooltipOpen = ref([]);
 let tagTooltipOpenCheck = [];
 
-let tagCollectionInputFormat = ref([]);
 let tagCollectionInputIndex = ref('');
 let tagTooltipShowTimer = '';
+
+let fromController = ref(0);
 
 // button functions
 function activitybuttonBar(e, n) {
@@ -516,6 +509,7 @@ function activityRowDuplicate(n) {
 // send form changes to Create.vue
 watch(() => form, (curr, prev) => {
 
+// console.log(form);
 emit('toParent', form);
 
 }, {deep: true}, 500);
@@ -584,11 +578,15 @@ watch(() => form.activityTo, (curr, prev) => {
 }, {deep: true}, 500);
 
 // activity row response
-watch(() => props.fromController, _.debounce( (curr, prev) => {
-        if (props.fromController.misc) {
+watch(() => props.fromController,  (curr, prev) => {
+
+    fromController.value = props.fromController;
+
+        if (fromController.value) {
             referencePickerOpen.value[props.fromController.misc.row-1] = 1;
         }
-    }, 500)
+
+    }, {'deep': true}
 );
 
 // activity reference checker
@@ -609,6 +607,7 @@ function referenceChecker(n, le) {
 }
 
 function tagPopupOpenActive(data) {
+    // console.log(data);
     tagCollectionInputIndex.value = data;
     tagPopupOpen.value = !tagPopupOpen.value;
 }
@@ -619,8 +618,8 @@ function dataToParent(data) {
 
 if (data.tagCollection) {
 
-    console.log(data.tagCollection);
-    tagCollectionInputFormat.value[tagCollectionInputIndex.value] = data.tagCollection;
+    form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
+    // console.log(form);
     tagPopupOpen.value = 0;
 }
 }
@@ -641,7 +640,6 @@ function tagTooltipShow(index, data) {
 
         tagTooltipShowTimer = setTimeout(() => {
             if (!tagTooltipOpenCheck[index]) {
-
                 tagTooltipOpen.value[index] = 1;
             }
 
