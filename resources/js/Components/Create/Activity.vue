@@ -3,7 +3,7 @@
 
 <!-- activity container -->
 <!-- ------------------------------------------------ -->
-<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-white text-sm
+<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm
 w-full pt-4 gap-2 mt-[12px] pb-3">
 
     <SectionTitle :Id="2"/>
@@ -104,17 +104,30 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </div>
                 </div>
 
-                <!-- reference picker popup -->
-                <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+                <!-- reference picker popup container -->
+                <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 px-2 flex flex-col">
 
-                    <div class="flex flex-row items-center z-50">
+                    <!-- reference picker box -->
+                    <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full ">
 
-                        <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
+                        <!-- selected reference -->
+                        <div class="">
+                            <div class=""><b>Input:</b></div>
+                            <div v-for="item in form.activityReference" class="flex flex-row items-center w-full">
+                                <button>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                    </svg>
+                                </button>
+                                <!-- button reference picker -->
+                                <button type="button" @click.prevent="form.activityReference[n-1] = {id: item.id}; form.activityReference[n-1].title = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                            </div>
+                        </div>
 
-                            <div class="text-sm"><b>Found in Database:</b></div>
-
+                        <!-- found in database -->
+                        <div class="">
+                            <div class=""><b>Found in Database:</b></div>
                             <div v-for="item in props.fromController.referencesResult" class="flex flex-row items-center w-full">
-
                                 <button>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -124,7 +137,6 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                                 <!-- button reference picker -->
                                 <button type="button" @click.prevent="form.activityReference[n-1] = {id: item.id}; form.activityReference[n-1].title = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -278,7 +290,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent']);
 const form = useForm({
     activityTo: [],
     activityReference: [{title: '', id: ''}],
-    activityTag: [],
+    activityTag: {},
 });
 
 let referencePickerOpen = ref([]);
@@ -396,6 +408,8 @@ function activitybuttonBar(e, n) {
 
     else if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && (typeof form.activityReference[n].title == 'undefined' || form.activityReference[n].title == '')) {
         activityTotalRow.value--;
+        form.activityTo.splice(-1);
+        form.activityReference.splice(-1)
         activiteTolimitReached.value = 0;
     }
 }

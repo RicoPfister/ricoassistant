@@ -37,6 +37,7 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
+import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
 let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString']);
 let emit = defineEmits(['dataChild']);
@@ -50,11 +51,10 @@ watch(() => props.dataParent, _.debounce( (curr, prev) => {
     // console.log(props.dataParent);
 
     tagArray.value.push(props.dataParent);
-    // console.log(tagArray.value);
 
 }, 500));
 
-function removeTagFromList(index) {
+function removeTagFromList(index) {tagArray.value.push(props.dataParent);
     tagArray.value.splice(index, 1);
 }
 
@@ -70,41 +70,8 @@ onMounted(() => {
     if (props.fromParentTagString) {
 
         // console.log(props.fromParentTagString);
-
-        let tagCollectionSplitInGroup = props.fromParentTagString.split(/[\s@]/);
-        let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
-
-        let tagGroupSplitComment = [];
-        let tagGroupSplitFilter = [];
-        let tagGroupSplitmain = [];
-        let tagGroupSplitmainFilter = [];
-
-        tagCollectionSplitInGroupFilter.forEach(tagCollectionEdit);
-
-        function tagCollectionEdit(item, index) {
-
-            //? set nested value
-            if (tagCollectionSplitInGroupFilter.length > 0) tagArray.value[index] = [];
-
-            // split comment
-            tagGroupSplitComment[index] = item.split(/[(%)]/);
-            tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != ' ');
-
-            tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
-            tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != ' ');
-
-            // add content tags
-            for (let i = 0; i < 3; i++) {
-                if (tagGroupSplitmainFilter[index][i]) {
-                    tagArray.value[index].push(tagGroupSplitmainFilter[index][i]);
-                } else tagArray.value[index].push('');
-            }
-
-            // add comment tag
-            if (tagGroupSplitmainFilter[index][1]) {
-               tagArray.value[index].push(tagGroupSplitFilter[index][1]);
-            } else tagArray.value[index].push('');
-        }
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.fromParentTagString);
+        // console.log(tagArray.value);
     }
 })
 

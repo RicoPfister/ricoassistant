@@ -107,7 +107,7 @@
 </div>
 
 <!-- open popup -->
-<div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0">
+<div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
     <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent"/>
 </div>
 
@@ -212,18 +212,12 @@ let form = ref({});
 function toParentTagDataGroup(index) {
     tagCollectionInputIndex.value = index;
 
-    // create formData
-    if (typeof form.value['tagData'] == 'undefined') form.value['tagData'] = {};
-    if (typeof form.value['tagData']['tagSource'] == 'undefined') form.value['tagData']['tagSource'] = [];
-    // if (typeof form.value['tagData']['tagSource']['tagCollection'] == 'undefined') form.value['tagData']['tagSource']['tagCollection'] = [];
-    // form.value['tagData']['tagSource']['dbId'] = 2;
-    // form.value['tagData']['tagSource'] = [];
-    form.value['tagData']['tagSource'][index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
+    form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
 
     // console.log(form.value);
 
     // send formData
-    emit('dataChild', {'formData': form.value});
+    emit('toParent', {'sourceTag': form.value});
 }
 
 </script>

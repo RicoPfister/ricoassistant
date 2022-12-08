@@ -44,8 +44,6 @@ let tagCollection = ref([]);
 let props = defineProps(['dataParent', 'dataChild', 'dataCommon']);
 let emit = defineEmits(['dataParent', 'idParent', 'dataChild']);
 
-
-
 // let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let categoryActiveTotal = ref([]);
 

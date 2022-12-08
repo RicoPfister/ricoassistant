@@ -54,7 +54,7 @@ import FormManager from "../Components/FormManager/FormPopup.vue";
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transfer']);
 
-let form = ref({});
+let form = ref({'tagData': {}});
 let dataParent = ref({});
 
 const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
@@ -157,7 +157,24 @@ let transfer = ref();
 function toParent(data) {
     // console.log(data);
     transfer.value = data;
-    form.value = {...form.value, ...{'activityTo': data.activityTo}, ...{'activityReference': data.activityReference}, ...{'activityTag': data.activityTag}}
+
+    if (data.activityTo) {
+        form.value['activityTo'] = data.activityTo;
+    }
+
+    if (data.activityReference) {
+        form.value['activityReference'] = data.activityReference;
+    }
+
+    if (data.activityTag) {
+        form.value['tagData']['activityTag'] = [];
+        form.value['tagData']['activityTag'] = data.activityTag;
+    }
+
+    if (data.sourceTag) {
+        form.value['tagData']['sourceTag'] = [];
+        form.value['tagData']['sourceTag'] = data.sourceTag;
+    }
 }
 
 </script>
