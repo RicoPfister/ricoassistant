@@ -81,11 +81,11 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
             <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black">
 
                 <!-- reference input -->
-                <input @input="referenceChecker(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
+                <input @input="referenceCheckerFunction(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
 
                 <!-- reference input menu button -->
                 <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
-                    <button type="button" @click="referenceChecker(n, 'lastUsed')" class="w-auto h-full">
+                    <button type="button" @click="referenceCheckerFunction(n, 'lastUsed')" class="w-auto h-full">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
                         </svg>
@@ -104,42 +104,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </div>
                 </div>
 
-                <!-- reference picker popup container -->
-                <div v-if="referencePickerOpen[n-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 px-2 flex flex-col">
-
-                    <!-- reference picker box -->
-                    <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full ">
-
-                        <!-- selected reference -->
-                        <div class="">
-                            <div class=""><b>Input:</b></div>
-                            <div v-for="item in form.activityReference" class="flex flex-row items-center w-full">
-                                <button>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                    </svg>
-                                </button>
-                                <!-- button reference picker -->
-                                <button type="button" @click.prevent="form.activityReference[n-1] = {id: item.id}; form.activityReference[n-1].title = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
-                            </div>
-                        </div>
-
-                        <!-- found in database -->
-                        <div class="">
-                            <div class=""><b>Found in Database:</b></div>
-                            <div v-for="item in props.fromController.referencesResult" class="flex flex-row items-center w-full">
-                                <button>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                    </svg>
-                                </button>
-
-                                <!-- button reference picker -->
-                                <button type="button" @click.prevent="form.activityReference[n-1] = {id: item.id}; form.activityReference[n-1].title = item.title; activityDiagramColorTag[n-1] = item.color, referencePickerOpen[n-1] = !referencePickerOpen[n-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ReferencePopup :fromParent="form" :referencePickerOpen="referencePickerOpen" :index="index" @fromChild="fromChild" :key="form.id"/>
             </div>
 
             <!-- edit button box -->
@@ -266,7 +231,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
 
 <!-- open popup -->
 <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-    <TagPopup :fromParentTagString="form.activityTag[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent" @from-controller="fromController"/>
+    <TagPopup :fromParentTagString="form.activityTag[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent" @from-controller="fromController" @from-child="fromChild"/>
 </div>
 
 </template>
@@ -279,21 +244,23 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import * as Date from "../../Scripts/date.js"
 import SectionTitle from "../FormManager/SectionTitle.vue"
+import ReferencePopup from "../ReferenceManager/ReferencePopup.vue"
 import TagPopup from "../TagManager/TagPopup.vue";
 
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent']);
-let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent']);
+let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index']);
 
 const form = useForm({
     activityTo: [],
-    activityReference: [{title: '', id: ''}],
+    activityReference: [{title: '', medium: '', color: ''}],
     activityTag: {},
+    referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
+    fromController: {},
 });
 
-let referencePickerOpen = ref([]);
 let activiteTolimitReached = ref(0);
 let activityTotalRow = ref(1);
 let activityDayOverviewDiagram = ref([]);
@@ -309,6 +276,8 @@ let tagCollectionInputIndex = ref('');
 let tagTooltipShowTimer = '';
 
 let fromController = ref(0);
+let referencePickerOpen = ref([]);
+let referenceChecker = ref({});
 
 // button functions
 function activitybuttonBar(e, n) {
@@ -591,35 +560,6 @@ watch(() => form.activityTo, (curr, prev) => {
     }
 }, {deep: true}, 500);
 
-// activity row response
-watch(() => props.fromController,  (curr, prev) => {
-
-    fromController.value = props.fromController;
-
-        if (fromController.value) {
-            referencePickerOpen.value[props.fromController.misc.row-1] = 1;
-        }
-
-    }, {'deep': true}
-);
-
-// activity reference checker
-function referenceChecker(n, le) {
-
-    if (le == 'lastUsed' && ( referencePickerOpen.value[n-1] == 0 || typeof referencePickerOpen.value[n-1] == 'undefined' )) {
-
-        Inertia.post('refcheck', { activityReference: le, row: n }, {replace: true,  preserveState: true, preserveScroll: true});
-    }
-
-    else if (referencePickerOpen.value[n-1] == 1) referencePickerOpen.value[n-1] = 0;
-    else if (form.activityReference[n-1].title.length > 2) {
-
-        setTimeout(() => {
-            Inertia.post('refcheck', { activityReference: form.activityReference[n-1].title, row: n}, {replace: false,  preserveState: true, preserveScroll: true});
-        }, 500);
-    }
-}
-
 function tagPopupOpenActive(data) {
     // console.log(data);
     tagCollectionInputIndex.value = data;
@@ -660,5 +600,36 @@ function tagTooltipShow(index, data) {
         }, 1000);
     }
 }
+
+// let referenceUpdate = ref(0);
+function referenceCheckerFunction(index, data) {
+    // referenceUpdate.value++;
+    form.referenceChecker['rowIndex'] = index;
+    form.referenceChecker['check'] = data;
+    // form.referenceChecker['id'] = referenceUpdate;
+    // console.log(form.referenceChecker.check);
+    // console.log(form);
+}
+
+function fromChild(data) {
+    // console.log(data.activityReference);
+    // form.activityReference[data.activityReference];
+    console.log(data);
+    form.activityReference[data.rowIndex] = {'title': data.referenceTitle};
+    form.referenceChecker['check'] = '';
+    console.log(form);
+}
+
+// save fromController data in form
+watch(() => props.fromController, (curr, prev) => {
+
+
+    form['fromController'] = props.fromController;
+    form.referenceChecker.check = 'fromController';
+    // form.val
+
+
+
+}, {deep: true}, 500);
 
 </script>

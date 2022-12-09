@@ -28,9 +28,17 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
+let referencePickerOpen = ref([]);
+
 const props = defineProps(['fromController', 'toParent']);
 
 // import MenuEntry from "./MenuEntry.vue";
+
+watch(() => props.referenceChecker, (curr, prev) => {
+
+console.log('ok');
+
+}, {deep: true}, 500);
 
 </script>
 
