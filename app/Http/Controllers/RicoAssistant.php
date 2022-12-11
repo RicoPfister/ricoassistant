@@ -219,7 +219,7 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function reference(Request $request) {
 
-        // dd($request);
+        // dd($request->parentId);
 
         $user = Auth::user();
         $result = [];
@@ -291,7 +291,9 @@ class RicoAssistant extends Controller {
             };
         }
 
-        dd($result);
+        $result['misc']['parentId'] = $request->parentId;
+
+        // dd($result);
 
         return Inertia::render('Create', ['fromController' => $result]);
     }

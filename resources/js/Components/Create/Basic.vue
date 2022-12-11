@@ -35,10 +35,10 @@
                 <label class="font-bold" aria-label="Category Input" for="title">Title*:</label>
 
                 <!-- title input -->
-                <input class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-8" @input="basicTitleChecker()" id="title" type="text" v-model="dataChild['basicTitle']">
+                <input @input="basicTitleChecker()" class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-8" id="title" type="text" v-model="dataChild['basicTitle']">
 
                 <!-- warnings -->
-                <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[33px] right-0 pr-1 flex flex-row items-center">
+                <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[29px] right-0 pr-1 flex flex-row items-center">
                     <div class="text-xs text-gray-500"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-yellow-400': props.dataParent.basicTitleData[0].warning == 2, 'text-black': props.dataParent.basicTitleData[0].warning == 2}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
@@ -46,7 +46,7 @@
                 </button>
 
                 <!-- titel instant search popup -->
-                <div v-if="basicTitelPickerOpen" class="z-50 absolute bg-yellow-50top-0 left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+                <div v-if="basicTitelPickerOpen" class="absolute z-50 -top-[10px] left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
 
                     <div class="flex flex-row items-center z-50">
 

@@ -166,6 +166,10 @@ function toParent(data) {
         form.value['activityReference'] = data.activityReference;
     };
 
+    if (data.referenceReference) {
+        form.value['referenceReference'] = data.referenceReference;
+    };
+
     if (data.activityTag) {
         form.value['tagData']['activityTag'] = [];
         form.value['tagData']['activityTag'] = data.activityTag;

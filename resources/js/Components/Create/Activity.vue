@@ -260,6 +260,7 @@ const form = useForm({
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
     fromController: {},
     referencePickerOpen: [0],
+    parentId: 1
 });
 
 let activiteTolimitReached = ref(0);
@@ -605,14 +606,18 @@ function referenceCheckerFunction(index, data) {
 
 // save received ReferencePopup data to form
 function fromChild(data) {
-    form.activityReference[data.rowIndex-1] = {'title': data.referenceTitle};
-    form.referenceChecker['check'] = '';
+    if (props.fromController.misc.parentId == 1) {
+        form.activityReference[data.rowIndex-1] = {'title': data.referenceTitle};
+        form.referenceChecker['check'] = '';
+    }
 }
 
 // save fromController data in form
 watch(() => props.fromController, (curr, prev) => {
-    form['fromController'] = props.fromController;
-    form.referenceChecker.check = 'fromController';
+    if (props.fromController.misc.parentId == 1) {
+        form['fromController'] = props.fromController;
+        form.referenceChecker.check = 'fromController';
+    }
 }, {deep: true}, 500);
 
 // listen to form and send changes to Create.vue
