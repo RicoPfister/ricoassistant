@@ -83,7 +83,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                 <!-- reference input -->
                 <input @input="referenceCheckerFunction(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
 
-                <!-- reference input menu button -->
+                <!-- reference popup button -->
                 <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
                     <button type="button" @click="referenceCheckerFunction(n, 'lastUsed')" class="w-auto h-full">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
@@ -104,7 +104,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </div>
                 </div>
 
-                <ReferencePopup :fromParent="form" :referencePickerOpen="referencePickerOpen" :index="index" @fromChild="fromChild" :key="form.id"/>
+                <ReferencePopup :toChild="form" @fromChild="fromChild" :index="n"/>
             </div>
 
             <!-- edit button box -->
@@ -259,6 +259,7 @@ const form = useForm({
     activityTag: {},
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
     fromController: {},
+    referencePickerOpen: [0],
 });
 
 let activiteTolimitReached = ref(0);
@@ -276,8 +277,6 @@ let tagCollectionInputIndex = ref('');
 let tagTooltipShowTimer = '';
 
 let fromController = ref(0);
-let referencePickerOpen = ref([]);
-let referenceChecker = ref({});
 
 // button functions
 function activitybuttonBar(e, n) {
@@ -393,7 +392,7 @@ function activityRowAdd(n) {
     // add row
     if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
 
-    referencePickerOpen.value[n-1] = 0;
+    form.referencePickerOpen[n-1] = 0;
 }
 
 // key events - common
@@ -603,32 +602,37 @@ function tagTooltipShow(index, data) {
 
 // let referenceUpdate = ref(0);
 function referenceCheckerFunction(index, data) {
+
+    // console.log(index);
+
     // referenceUpdate.value++;
-    form.referenceChecker['rowIndex'] = index;
-    form.referenceChecker['check'] = data;
+    if (form.referencePickerOpen[index-1] != 1) {
+        form.referenceChecker['rowIndex'] = index;
+        form.referenceChecker['check'] = data;
+    }
+    else {
+        form.referenceChecker['check'] = '';
+        form.referencePickerOpen[index-1] = 0;
+    }
     // form.referenceChecker['id'] = referenceUpdate;
     // console.log(form.referenceChecker.check);
-    // console.log(form);
 }
 
 function fromChild(data) {
     // console.log(data.activityReference);
     // form.activityReference[data.activityReference];
-    console.log(data);
-    form.activityReference[data.rowIndex] = {'title': data.referenceTitle};
+    // console.log(data);
+    form.activityReference[data.rowIndex-1] = {'title': data.referenceTitle};
     form.referenceChecker['check'] = '';
-    console.log(form);
+    // console.log(form);
 }
 
 // save fromController data in form
 watch(() => props.fromController, (curr, prev) => {
 
-
     form['fromController'] = props.fromController;
     form.referenceChecker.check = 'fromController';
-    // form.val
-
-
+    // console.log(form);
 
 }, {deep: true}, 500);
 

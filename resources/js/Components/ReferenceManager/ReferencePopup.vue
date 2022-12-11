@@ -1,32 +1,32 @@
 <template>
 
 <!-- reference picker popup container -->
-<div v-if="referencePickerOpen[0]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 px-2 flex flex-col">
+<div v-if="props.toChild.referencePickerOpen[props.index-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 px-2 flex flex-col">
 
     <!-- reference picker box -->
     <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full ">
 
         <!-- selected reference -->
-        <div class="">
+        <div v-if="(props.toChild.activityReference[props.toChild.referenceChecker.rowIndex-1].title && props.toChild.referenceChecker.check != 'fromController')" class="">
             <div class=""><b>Input:</b></div>
-            <div v-for="item in form.activityReference" class="flex flex-row items-center w-full">
+            <div class="flex flex-row items-center w-full">
                 <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-black">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
                 </button>
                 <!-- button reference picker -->
-                <button type="button" @click.prevent="form.activityReference[props.index-1] = {id: item.id}; form.value.activityReference[props.index-1].title = item.title; activityDiagramColorTag[props.index-1] = item.color, referencePickerOpen[props.index-1] = !props.referencePickerOpen[props.index-1]" class="ml-1 text-gray-500 hover:text-black truncate"><div class="truncate">{{ item.title }}</div></button>
+                <div class="ml-1 text-gray-500 truncate"><div class="truncate">{{ props.toChild.activityReference[props.toChild.referenceChecker.rowIndex-1].title }}</div></div>
             </div>
         </div>
 
         <!-- found in database -->
         <div class="">
             <div class=""><b>Found in Database:</b></div>
-            <div v-for="(item, index) in form.fromController.referencesResult" class="flex flex-row items-center w-full">
+            <div v-for="(item, index) in props.toChild.fromController.referencesResult" class="flex flex-row items-center w-full">
                 <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-black">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
                 </button>
 
@@ -41,53 +41,59 @@
 
 <script setup>
 
+// needed data: title, rowIndex
+
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted, toRef } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'transfer', 'toParent', 'referencePickerOpen', 'fromParent', 'index']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'transfer', 'toParent', 'toChild', 'index']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'fromChild']);
 
-let referencePickerOpen = ref({});
-let fromController = ref({});
-let form = ref();
+// let form = ref();
 
-onMounted(() => {
-    form.value = props.fromParent;
-})
+// onMounted(() => {
+//     props.toChild = props.toChild.referenceChecker.rowIndex;
+// })
 
 // 1.1 data received from parent
 //---------------------------------
-// watch(() => form.value, (curr, prev) => {
+// watch(() => props.toChild, (curr, prev) => {
 
 // }, {deep: true}, 500);
 
 // 1) receive data from parent
 // 2) send data to controller
 //---------------------------------
-watch(() => props.fromParent, (curr, prev) => {
+watch(() => props.toChild, (curr, prev) => {
 
-    form.value = props.fromParent;
+    // console.log(props.toChild.activityReference[1]);
 
-    if (form.value.referenceChecker.check == 'fromController') {
-        console.log(props.fromParent);
-        if (fromController.value) {
-            console.log(referencePickerOpen.value[form.value.fromController.misc.row-1]);
-            referencePickerOpen.value[form.value.fromController.misc.row-1] = 1;
-            console.log('controller ok');
-        }
+    // props.toChild = props.toChild.referenceChecker.rowIndex;
+
+    // check and receive data from controller
+    if (props.toChild.referenceChecker.check == 'fromController') {
+        // console.log(props.toChild.referenceChecker.rowIndex);
+
+        // console.log(props.toChild.referencePickerOpen[props.toChild.fromController.misc.row-1]);
+        props.toChild.referencePickerOpen[props.toChild.fromController.misc.row-1] = 1;
+        // console.log('controller ok');
     }
 
-    if (form.value.referenceChecker.check == 'lastUsed' && ( referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] == 0 || typeof referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] == 'undefined' )) {
-        Inertia.post('refcheck', { activityReference: form.value.referenceChecker.check, row: form.value.referenceChecker.rowIndex }, {replace: true,  preserveState: true, preserveScroll: true});
+    // check if reference popup has been fired and send request to controller
+    else if (props.toChild.referenceChecker.check == 'lastUsed' && ( props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 0 || typeof props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 'undefined' )) {
+        // console.log('ok');
+        Inertia.post('refcheck', { activityReference: props.toChild.referenceChecker.check, row: props.toChild.referenceChecker.rowIndex }, {replace: true,  preserveState: true, preserveScroll: true});
     }
 
-    // else if (referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] == 1) referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] = 0;
-    else if (form.value.referenceChecker.check == 'inputCheck' && ( referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] == 0 || typeof referencePickerOpen.value[form.value.referenceChecker.rowIndex-1] == 'undefined' ) && form.value.activityReference[form.value.referenceChecker.rowIndex-1].title.length > 2) {
+    // check if reference input has been and send request to controller
+    else if (props.toChild.referenceChecker.check == 'inputCheck' && ( props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 0 || typeof props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 'undefined' ) && props.toChild.activityReference[props.toChild.referenceChecker.rowIndex-1].title.length > 2) {
         setTimeout(() => {
-            Inertia.post('refcheck', { activityReference: form.value.activityReference[form.value.referenceChecker.rowIndex-1].title, row: form.value.referenceChecker.rowIndex}, {replace: false,  preserveState: true, preserveScroll: true});
+            Inertia.post('refcheck', { activityReference: props.toChild.activityReference[props.toChild.referenceChecker.rowIndex-1].title, row: props.toChild.referenceChecker.rowIndex}, {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     }
+
+    // else if (props.toChild.referenceChecker.check == 'closePopup') props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
 
 }, {deep: true}, 500);
 
@@ -95,14 +101,20 @@ watch(() => props.fromParent, (curr, prev) => {
 //---------------------------------
 function referencePopupSelect(rowIndex) {
 
-    // console.log(props.index-1);
+    // console.log(props.toChild.referenceChecker.rowIndex-1);
 
-    emit('fromChild', {'rowIndex': props.index, 'referenceTitle': form.value.fromController.referencesResult[rowIndex].title});
-    referencePickerOpen.value[props.index] = 0;
+    emit('fromChild', {'rowIndex': props.toChild.referenceChecker.rowIndex, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title});
+    props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
 
-    // console.log(form.value.fromController.referencesResult[rowIndex].title);
+    // console.log(props.toChild.fromController.referencesResult[rowIndex].title);
 }
 
-// console.log(form.value);
+// console.log(props.toChild);
+
+// onMounted(() => {
+//     if (typeof props.dataForm.statement != 'undefined') {
+//         dataChild.value['statement'] = props.dataForm.statement;
+//     }
+// })
 
 </script>

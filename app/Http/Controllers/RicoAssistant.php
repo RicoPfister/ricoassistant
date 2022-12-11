@@ -379,7 +379,7 @@ class RicoAssistant extends Controller {
         return Inertia::render('Create', ['fromController' => $result]);
     }
 
-    // titlecheck
+    // basic titlecheck
     // -------------------------------------------------------
     public function titlecheck(Request $request) {
 
