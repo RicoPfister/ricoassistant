@@ -17,7 +17,7 @@
                 <!-- component generator -->
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
-                    <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent"
+                    <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent" :to-child="form"
                     :from-controller="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transfer="transfer"/>
                 </div>
 

@@ -15,7 +15,7 @@
                 </svg>
             </button>
             <div class="grow">
-                <input class="outline-0 focus:ring-0 border-none focus:placeholder-transparent w-full leading-none h-8" type="text" placeholder="">
+                <input class="outline-0 focus:ring-0 border-none focus:placeholder-transparent w-full leading-none h-8" type="text" placeholder="" ref="referenceDOM" v-model="reference">
             </div>
         </div>
     </div>
@@ -28,9 +28,10 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-let referencePickerOpen = ref([]);
+let reference = ref('');
+let referenceDOM = ref('');
 
-const props = defineProps(['fromController', 'toParent']);
+const props = defineProps(['fromController', 'toParent', 'toChild']);
 
 // import MenuEntry from "./MenuEntry.vue";
 
@@ -39,6 +40,12 @@ watch(() => props.referenceChecker, (curr, prev) => {
 console.log('ok');
 
 }, {deep: true}, 500);
+
+watch(() => props.toChild.basicTitle, _.debounce( (curr, prev) => {
+
+if (!reference.value) referenceDOM.value.placeholder = props.toChild.basicTitle;
+
+}, 500));
 
 </script>
 

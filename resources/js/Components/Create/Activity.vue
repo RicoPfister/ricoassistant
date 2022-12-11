@@ -250,7 +250,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent', 'toChild']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index']);
 
 const form = useForm({
@@ -467,7 +467,6 @@ function activityKeyShDownPressed(check, n) {
 }
 
 // time functions
-
 // delete row
 function activityRowDelete(n) {
 
@@ -500,9 +499,7 @@ emit('toParent', form);
 watch(() => form.activityTo, (curr, prev) => {
 
     // set basic title and medium
-
     emit('toParent', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
-    // console.log('ok');
 
     let minutes = 0;
     let minuteTotal = 0;
@@ -560,19 +557,14 @@ watch(() => form.activityTo, (curr, prev) => {
 }, {deep: true}, 500);
 
 function tagPopupOpenActive(data) {
-    // console.log(data);
     tagCollectionInputIndex.value = data;
     tagPopupOpen.value = !tagPopupOpen.value;
 }
 
 function dataToParent(data) {
 
-// console.log(data);
-
 if (data.tagCollection) {
-
     form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
-    // console.log(form);
     tagPopupOpen.value = 0;
 }
 }
@@ -580,22 +572,18 @@ if (data.tagCollection) {
 // show tag tool tip
 function tagTooltipShow(index, data) {
 
-    // console.log(data);
-
     if(data == 1) {
         tagTooltipOpenCheck[index] = 1;
         tagTooltipOpen.value[index] = 0;
     }
 
     else {
-
         tagTooltipOpenCheck[index] = 0;
 
         tagTooltipShowTimer = setTimeout(() => {
             if (!tagTooltipOpenCheck[index]) {
                 tagTooltipOpen.value[index] = 1;
             }
-
         }, 1000);
     }
 }
@@ -605,7 +593,6 @@ function referenceCheckerFunction(index, data) {
 
     // referenceUpdate.value++;
     if (form.referencePickerOpen[index-1] != 1) {
-        // console.log(index);
         form.referenceChecker['rowIndex'] = index;
         form.referenceChecker['check'] = data;
         form.referenceChecker['id']++;
@@ -614,43 +601,23 @@ function referenceCheckerFunction(index, data) {
         form.referenceChecker['check'] = '';
         form.referencePickerOpen[index-1] = 0;
     }
-    // form.referenceChecker['id'] = referenceUpdate;
-    // console.log(form.referenceChecker.check);
 }
 
+// save received ReferencePopup data to form
 function fromChild(data) {
-    // console.log(data.activityReference);
-    // form.activityReference[data.activityReference];
-    // console.log(data);
     form.activityReference[data.rowIndex-1] = {'title': data.referenceTitle};
     form.referenceChecker['check'] = '';
-    // console.log(form);
 }
 
 // save fromController data in form
 watch(() => props.fromController, (curr, prev) => {
-
     form['fromController'] = props.fromController;
     form.referenceChecker.check = 'fromController';
-    // console.log(form);
-
 }, {deep: true}, 500);
 
-// listen to form and changes send to Create.vue
+// listen to form and send changes to Create.vue
 watch(() => form, (curr, prev) => {
-
     emit('toParent', {'activityReference': form});
-
 }, {deep: true}, 500);
-
-
-
-
-
-
-
-
-
-
 
 </script>

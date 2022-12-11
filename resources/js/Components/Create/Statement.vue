@@ -23,7 +23,7 @@ import TagForm from "../TagManager/TagForm.vue";
 
 let dataChild = ref({});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent']);
 
 // emit form

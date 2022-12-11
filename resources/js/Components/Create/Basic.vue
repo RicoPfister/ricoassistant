@@ -92,7 +92,7 @@ let basicTitleWarning = ref(0);
 
 let dataChild = ref({'basicMedium': '', 'basicTitle': '', 'basicRefDate': Date.dateNow()});
 
-const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer']);
+const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild']);
 let emit = defineEmits(['dataChild']);
 
 // emit form
@@ -140,13 +140,6 @@ watch(() => props.transfer, (curr, prev) => {
     }
 
 }, {deep: true}, 500);
-
-// watch(() => props.transfer, _.debounce( (curr, prev) => {
-
-// console.log('ok');
-
-// }, 500)
-// );
 
 // testing
 // **************************************************

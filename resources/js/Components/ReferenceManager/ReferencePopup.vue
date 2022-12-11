@@ -50,41 +50,21 @@ import { Inertia, Method } from "@inertiajs/inertia";
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'transfer', 'toParent', 'toChild', 'index']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'fromChild']);
 
-// let form = ref();
-
-// onMounted(() => {
-//     props.toChild = props.toChild.referenceChecker.rowIndex;
-// })
-
-// 1.1 data received from parent
-//---------------------------------
-// watch(() => props.toChild, (curr, prev) => {
-
-// }, {deep: true}, 500);
-
 // 1) receive data from parent
 // 2) send data to controller
 //---------------------------------
 watch(() => props.toChild, (curr, prev) => {
 
-    // console.log(props.toChild);
-
-    // console.log(props.toChild.activityReference[1]);
-
-    // props.toChild = props.toChild.referenceChecker.rowIndex;
+    console.log(props.toChild);
 
     // check and receive data from controller
     if (props.toChild.referenceChecker.check == 'fromController') {
-        // console.log(props.toChild.referenceChecker.rowIndex);
 
-        // console.log(props.toChild.referencePickerOpen[props.toChild.fromController.misc.row-1]);
         props.toChild.referencePickerOpen[props.toChild.fromController.misc.row-1] = 1;
-        // console.log('controller ok');
     }
 
     // check if reference popup has been fired and send request to controller
     else if (props.toChild.referenceChecker.check == 'lastUsed' && ( props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 0 || typeof props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] == 'undefined' )) {
-        // console.log('ok');
         Inertia.post('refcheck', { activityReference: props.toChild.referenceChecker.check, row: props.toChild.referenceChecker.rowIndex }, {replace: true,  preserveState: true, preserveScroll: true});
     }
 
@@ -95,28 +75,14 @@ watch(() => props.toChild, (curr, prev) => {
         }, 500);
     }
 
-    // else if (props.toChild.referenceChecker.check == 'closePopup') props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
-
 }, {deep: true}, 500);
 
 // 4) send data to parent
 //---------------------------------
 function referencePopupSelect(rowIndex) {
 
-    // console.log(props.toChild.referenceChecker.rowIndex-1);
-
     emit('fromChild', {'rowIndex': props.toChild.referenceChecker.rowIndex, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title});
     props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
-
-    // console.log(props.toChild.fromController.referencesResult[rowIndex].title);
 }
-
-// console.log(props.toChild);
-
-// onMounted(() => {
-//     if (typeof props.dataForm.statement != 'undefined') {
-//         dataChild.value['statement'] = props.dataForm.statement;
-//     }
-// })
 
 </script>
