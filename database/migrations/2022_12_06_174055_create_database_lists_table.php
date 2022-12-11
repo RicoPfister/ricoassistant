@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('database_lists', function (Blueprint $table) {
             $table->id('id');
 
-            $table->tinyText('name')->nullable();
+            $table->bigInteger('db_id');
+            $table->tinyText('db_name');
 
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

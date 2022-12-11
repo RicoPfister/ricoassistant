@@ -98,7 +98,7 @@ let emit = defineEmits(['dataChild']);
 // emit form
 watch(() => dataChild, (curr, prev) => {
 
-    emit('dataChild', {'formData': dataChild.value});
+    emit('dataChild', {'formData': {'basic': dataChild.value}});
 
 }, {deep: true}, 500);
 

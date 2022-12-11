@@ -20,28 +20,28 @@ class DatabaseSeeder extends Seeder
 
         DB::table('users')->insert([
             'name' => 'Test Account',
-            'email' => 'test.@test.com',
-            'password' => '12345678',
+            'email' => 'test@test.com',
+            'password' => '$2y$10$w/7zSu8/iNA2tHYJlMmHOee4iYDAvzGw3b4Tmnx0E1ChgeI0Tq8Ly',
         ]);
 
         DB::table('database_lists')->insert([
-            'id' => 0,
-            'name' => 'basics',
+            'db_id' => 0,
+            'db_name' => 'basics',
         ]);
 
         DB::table('database_lists')->insert([
-            'id' => 1,
-            'name' => 'statement',
+            'db_id' => 1,
+            'db_name' => 'statement',
         ]);
 
         DB::table('database_lists')->insert([
-            'id' => 2,
-            'name' => 'sources',
+            'db_id' => 2,
+            'db_name' => 'sources',
         ]);
 
         DB::table('database_lists')->insert([
-            'id' => 3,
-            'name' => 'activity',
+            'db_id' => 3,
+            'db_name' => 'activity',
         ]);
     }
 }

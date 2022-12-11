@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('activityTo', 5)->nullable();
             $table->string('activityReference')->nullable();
 
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
 
             $table->timestamps();
         });

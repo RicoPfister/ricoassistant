@@ -56,15 +56,15 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        // dd($request);
+        // dd($request->basic);
         // dd($request->filelist);
 
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basicRefDate' => 'required',
-            'basicMedium' => 'required',
-            'basicTitle' => 'required',
+            'basic.basicRefDate' => 'required',
+            'basic.basicMedium' => 'required',
+            'basic.basicTitle' => 'required',
         ]);
 
         // create tag
@@ -89,9 +89,9 @@ class RicoAssistant extends Controller {
         }
 
         $basics = new Basic();
-        $basics->ref_date = $request->basicRefDate;
-        $basics->title = $request->basicTitle;
-        $basics->medium = $request->basicMedium;
+        $basics->ref_date = $request->basic['basicRefDate'];
+        $basics->title = $request->basic['basicTitle'];
+        $basics->medium = $request->basic['basicMedium'];
         // $basic->status = $request->basic['status'];
         $basics->user_id = $user->id;
         $basics->tracking = $request->ip();
@@ -104,6 +104,16 @@ class RicoAssistant extends Controller {
             $statement->statement = $request->statement;
             $statement->tracking = $request->ip();
             $statement->save();
+
+            if(!isset($request->statement->reference)){
+                // dd($request);
+                $ref = new Ref();
+                $ref->basic_id = $basics->id;
+                $ref->ref_db_id = 1;
+                $ref->ref_db_index = 1;
+                $ref->tracking = $request->ip();
+                $ref->save();
+            }
         }
 
         if($request->activityTo){
@@ -128,15 +138,7 @@ class RicoAssistant extends Controller {
             DB::table('activities')->insert($activities);
         }
 
-        if(!isset($request->reference)){
-            // dd($request);
-            $ref = new Ref();
-            $ref->basic_id = $basics->id;
-            // $ref->ref_db_id =
-            // $ref->ref_db_index =
-            $ref->tracking = $request->ip();
-            $ref->save();
-        }
+
 
         if($request->reference){
             $activity = new Reference();

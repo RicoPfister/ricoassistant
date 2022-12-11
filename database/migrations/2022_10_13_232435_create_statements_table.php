@@ -19,9 +19,9 @@ return new class extends Migration
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
 
-            $table->text('statement')->nullable();
+            $table->text('statement');
 
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

@@ -19,10 +19,11 @@ return new class extends Migration
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
 
-            $table->tinyInteger('ref_db_id')->nullable();
+            $table->tinyInteger('ref_db_id');
             $table->tinyInteger('ref_db_index')->nullable();
+            $table->tinyInteger('ref_db_heading')->nullable();
 
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
