@@ -603,12 +603,12 @@ function tagTooltipShow(index, data) {
 // let referenceUpdate = ref(0);
 function referenceCheckerFunction(index, data) {
 
-    // console.log(index);
-
     // referenceUpdate.value++;
     if (form.referencePickerOpen[index-1] != 1) {
+        // console.log(index);
         form.referenceChecker['rowIndex'] = index;
         form.referenceChecker['check'] = data;
+        form.referenceChecker['id']++;
     }
     else {
         form.referenceChecker['check'] = '';
@@ -635,5 +635,22 @@ watch(() => props.fromController, (curr, prev) => {
     // console.log(form);
 
 }, {deep: true}, 500);
+
+// listen to form and changes send to Create.vue
+watch(() => form, (curr, prev) => {
+
+    emit('toParent', {'activityReference': form});
+
+}, {deep: true}, 500);
+
+
+
+
+
+
+
+
+
+
 
 </script>

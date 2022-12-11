@@ -156,25 +156,25 @@ function dataToParent() {
 let transfer = ref();
 function toParent(data) {
     // console.log(data);
-    transfer.value = data;
+    if (data.basicTitle) transfer.value = data;
 
     if (data.activityTo) {
         form.value['activityTo'] = data.activityTo;
-    }
+    };
 
     if (data.activityReference) {
         form.value['activityReference'] = data.activityReference;
-    }
+    };
 
     if (data.activityTag) {
         form.value['tagData']['activityTag'] = [];
         form.value['tagData']['activityTag'] = data.activityTag;
-    }
+    };
 
     if (data.sourceTag) {
         form.value['tagData']['sourceTag'] = [];
         form.value['tagData']['sourceTag'] = data.sourceTag;
-    }
+    };
 }
 
 </script>

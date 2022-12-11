@@ -130,6 +130,7 @@ function basicTitleChecker() {
     };
 }
 
+// listen if medium/title is auto set
 watch(() => props.transfer, (curr, prev) => {
 
     // console.log(props.transfer);
@@ -137,7 +138,6 @@ watch(() => props.transfer, (curr, prev) => {
         dataChild.value['basicTitle'] = props.transfer.basicTitle;
         dataChild.value['basicMedium'] = props.transfer.basicMedium;
     }
-
 
 }, {deep: true}, 500);
 
