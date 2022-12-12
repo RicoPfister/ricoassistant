@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('basic_id')->references('id')->on('basics');
             $table->bigInteger('basic_ref');
 
-            // $table->tinyInteger('ref_db_id')->nullable();
+            $table->tinyInteger('ref_db_id')->nullable();
             $table->tinyInteger('ref_db_index')->nullable();
             // $table->tinyInteger('ref_db_heading')->nullable();
 

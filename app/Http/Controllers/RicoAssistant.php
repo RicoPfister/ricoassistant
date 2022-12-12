@@ -42,7 +42,7 @@ class RicoAssistant extends Controller {
     public function detail(Request $request) {
 
         // dd($request);
-
+        dd($request->activityReference);
         // dd($request->basic_id);
 
         $user = Auth::user();
@@ -56,8 +56,9 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        // dd($request->referenceReference['fromController']['referencesResult']);
         // dd($request);
+        // dd($request->referenceReference['fromController']['referencesResult']);
+        // dd($request->activityReference['activityReference']);
         // dd($request->basic);
         // dd($request->filelist);
 
@@ -117,9 +118,9 @@ class RicoAssistant extends Controller {
                 if (is_numeric($request->activityTo[$i])) {
 
                     $activities[$i] = [
-                        'basic_id' => $basic->id,
+                        'basic_id' => $basics->id,
                         'activityTo' => $request->activityTo[$i],
-                        'activityReference' => $request->activityReference[$i],
+                        // 'activityReference' => $request->activityReference[$i],
                         'tracking' => $request->ip(),
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -130,14 +131,16 @@ class RicoAssistant extends Controller {
             DB::table('activities')->insert($activities);
         }
 
+        // dd($request);
 
-
+        // store reference reference
+        // ------------------------------
         if (!isset($request->referenceReference)){
-            // dd($request);
+
             $ref = new Ref();
             $ref->basic_id = $basics->id;
             $ref->basic_ref = $basics->id;
-            // $ref->ref_db_id = 1;
+            $ref->ref_db_id = 1;
             $ref->ref_db_index = 1;
             $ref->tracking = $request->ip();
             $ref->save();
@@ -147,10 +150,36 @@ class RicoAssistant extends Controller {
             $ref = new Ref();
             $ref->basic_id = $basics->id;
             $ref->basic_ref = $request['referenceReference']['activityReference'][0]['basic_id'];
-            // $ref->ref_db_id = 1;
+            $ref->ref_db_id = 1;
             $ref->ref_db_index = 1;
             $ref->tracking = $request->ip();
             $ref->save();
+        }
+
+        // // store activity reference
+        // //-------------------------------
+        // if (!isset($request->activityReference)){
+        //     // dd($request);
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $basics->id;
+        //     // $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
+
+        if (isset($request->activityReference)){
+
+            foreach($request->activityReference['activityReference'] as $index => $data) {
+                $ref = new Ref();
+                $ref->basic_id = $basics->id;
+                $ref->basic_ref = $request['activityReference']['activityReference'][$index]['basic_id'];
+                // $ref->ref_db_id = 1;
+                $ref->ref_db_index = 1;
+                $ref->tracking = $request->ip();
+                $ref->save();
+            }
         }
 
         // if($accounting == 1){
@@ -185,7 +214,10 @@ class RicoAssistant extends Controller {
                 $sources->tracking = $request->ip();
                 $sources->save();
 
-                if ($request->tagData['tagSource']) tagData($request, 2, $index, $basics, $sources);
+                // dd($request);
+
+                // isset tagData: execute tagData function
+                if (isset ($request->tagData['tagSource'])) tagData($request, 2, $index, $basics, $sources);
             }
 
             // store file content data
@@ -423,4 +455,5 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Create', ['dataCommon' => $tagCollectionSelection]);
     }
+
 }

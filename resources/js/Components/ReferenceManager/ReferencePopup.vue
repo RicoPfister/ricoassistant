@@ -81,9 +81,12 @@ watch(() => props.toChild, (curr, prev) => {
 //---------------------------------
 function referencePopupSelect(rowIndex) {
 
+    console.log(props.toChild.fromController.referencesResult[rowIndex].title);
+    console.log(rowIndex);
+
     // console.log(props.toChild.fromController.referencesResult[rowIndex].basic_id);
 
-    emit('fromChild', {'rowIndex': props.toChild.referenceChecker.rowIndex, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title, 'basic_id': props.toChild.fromController.referencesResult[rowIndex].basic_id});
+    emit('fromChild', {'index': props.index, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title, 'basic_id': props.toChild.fromController.referencesResult[rowIndex].basic_id});
     props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
 }
 

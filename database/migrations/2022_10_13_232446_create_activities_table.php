@@ -19,9 +19,7 @@ return new class extends Migration
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
 
-            $table->string('activityFrom', 5)->nullable();
             $table->string('activityTo', 5)->nullable();
-            $table->string('activityReference')->nullable();
 
             $table->tinyText('tracking');
 

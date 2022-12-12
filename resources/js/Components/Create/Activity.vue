@@ -257,7 +257,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 
 const form = useForm({
     activityTo: [],
-    activityReference: [{title: '', medium: '', color: ''}],
+    activityReference: [{title: '', medium: '', color: '', basic_id: ''}],
     activityTag: {},
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
     fromController: {},
@@ -374,7 +374,7 @@ function activitybuttonBar(e, n) {
     if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
         activityTotalRow.value++;
         form.activityTo[n] = '';
-        form.activityReference[n] = [{title: '', id: ''}];
+        form.activityReference[n] = {title: '', id: ''};
     }
 
     else if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && (typeof form.activityReference[n].title == 'undefined' || form.activityReference[n].title == '')) {
@@ -591,6 +591,9 @@ function tagTooltipShow(index, data) {
     }
 }
 
+// reference
+//-------------------------------------------------
+
 // let referenceUpdate = ref(0);
 function referenceCheckerFunction(index, data) {
 
@@ -608,10 +611,15 @@ function referenceCheckerFunction(index, data) {
 
 // save received ReferencePopup data to form
 function fromChild(data) {
+    console.log(data);
+
     if (props.fromController.misc.parentId == 1) {
-        form.activityReference[data.rowIndex-1] = {'title': data.referenceTitle};
+        form.activityReference[data.index-1]['title'] = data.referenceTitle;
+        form.activityReference[data.index-1]['basic_id'] = data.basic_id;
         form.referenceChecker['check'] = '';
     }
+
+    console.log(form);
 }
 
 // save fromController data in form
