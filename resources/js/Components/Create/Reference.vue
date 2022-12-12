@@ -1,25 +1,27 @@
 <template>
 
-<div>
-    <div class="flex flex-col">
+<div class="z-30">
+    <div class="flex flex-col z-30">
         <button class="flex flex-row justify-between items-center" type="button">
             <label class="font-bold" aria-label="Statement Input" for="statement">Reference
             </label>
             <!-- <MenuEntry /> -->
         </button>
 
-        <div class="flex flex-row items-center border border-black h-fit">
-            <button class="w-8 flex justify-center items-center bg-gray-100 border-r border-gray-300 h-fit" type="button">
+        <div class="flex flex-row items-center border border-black z-30">
+            <button @click.prevent="referenceCheckerFunction('lastUsed')" class="w-8 bg-gray-100 border-r border-gray-300" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-fit h-fit p-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
             </button>
-            <div class="relative grow">
+            <div class="relative grow z-20">
                 <!-- reference popup -->
-                <ReferencePopup :toChild="form" @fromChild="fromChild" :index="1"/>
+                <div class="absolute z-10 top-[28px] -left-[33px] w-[calc(100%+34px)]">
+                    <ReferencePopup :toChild="form" @fromChild="fromChild" :index="1"/>
+                </div>
 
                 <!-- reference input -->
-                <input @input="referenceCheckerFunction('inputCheck')" class="outline-0 focus:ring-0 border-none focus:placeholder-transparent w-full leading-none h-8" type="text" placeholder="" ref="referenceDOM" v-model="form.activityReference[0].title">
+                <input @input="referenceCheckerFunction('inputCheck')" class="outline-0 focus:ring-0 border-none focus:placeholder-transparent w-full leading-none h-6" type="text" placeholder="" ref="referenceDOM" v-model="form.activityReference[0].title">
             </div>
         </div>
     </div>
@@ -53,30 +55,33 @@ const form = useForm({
 function referenceCheckerFunction(data) {
         // referenceUpdate.value++;
     if (form.referencePickerOpen[0] != 1) {
+        // console.log('ok');
         form.referenceChecker['rowIndex'] = 1;
         form.referenceChecker['check'] = data;
         form.referenceChecker['id']++;
     }
     else {
+        // console.log('ok');
         form.referenceChecker['check'] = '';
         form.referencePickerOpen[0] = 0;
     }
 }
 
-watch(() => props.referenceChecker, (curr, prev) => {
-    console.log('ok');
-}, {deep: true}, 500);
+// watch(() => props.referenceChecker, (curr, prev) => {
+//     console.log('ok');
+// }, {deep: true}, 500);
 
-// listen to reference placeholder auto set
-watch(() => props.toChild.basicTitle, _.debounce( (curr, prev) => {
-    if (!reference.value) referenceDOM.value.placeholder = props.toChild.basicTitle;
+// listen to title placeholder auto set
+watch(() => props.toChild.basic.basicTitle, _.debounce( (curr, prev) => {
+    if (!form.activityReference.title) referenceDOM.value.placeholder = props.toChild.basic.basicTitle;
 }, 500));
 
 // save received ReferencePopup data to form
 function fromChild(data) {
     // console.log(data);
     if (props.fromController.misc.parentId == 2) {
-    form.activityReference[0] = {'title': data.referenceTitle};
+    form.activityReference[0] = {'title': data.referenceTitle, 'basic_id': data.basic_id};
+    // form.activityReference[0] = {'basic_id': data.fromController.referenceResult};
     form.referenceChecker['check'] = '';
     }
 }

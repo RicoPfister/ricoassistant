@@ -1,10 +1,10 @@
 <template>
 
 <!-- reference picker popup container -->
-<div v-if="props.toChild.referencePickerOpen[props.index-1]" class="z-50 absolute top-0 left-0 mt-8 h-fit w-full bg-white border-r border-b border-l border-gray-400 px-2 flex flex-col">
+<div v-if="props.toChild.referencePickerOpen[props.index-1]" class="h-fit w-full px-2 flex flex-col bg-white border-r border-b border-l border-black">
 
     <!-- reference picker box -->
-    <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full ">
+    <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full">
 
         <!-- popup: found in database -->
         <div class="">
@@ -81,7 +81,9 @@ watch(() => props.toChild, (curr, prev) => {
 //---------------------------------
 function referencePopupSelect(rowIndex) {
 
-    emit('fromChild', {'rowIndex': props.toChild.referenceChecker.rowIndex, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title});
+    // console.log(props.toChild.fromController.referencesResult[rowIndex].basic_id);
+
+    emit('fromChild', {'rowIndex': props.toChild.referenceChecker.rowIndex, 'referenceTitle': props.toChild.fromController.referencesResult[rowIndex].title, 'basic_id': props.toChild.fromController.referencesResult[rowIndex].basic_id});
     props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1] = 0;
 }
 

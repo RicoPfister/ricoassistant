@@ -104,7 +104,9 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </div>
                 </div>
 
-                <ReferencePopup :toChild="form" @fromChild="fromChild" :index="n"/>
+                <div class="z-40 absolute -top-[1px] -left-[9px] mt-8 h-fit w-[calc(100%+18px)] px-2 flex flex-col">
+                    <ReferencePopup :toChild="form" @fromChild="fromChild" :index="n"/>
+                </div>
             </div>
 
             <!-- edit button box -->
@@ -614,6 +616,9 @@ function fromChild(data) {
 
 // save fromController data in form
 watch(() => props.fromController, (curr, prev) => {
+
+    // console.log(props.fromController);
+
     if (props.fromController.misc.parentId == 1) {
         form['fromController'] = props.fromController;
         form.referenceChecker.check = 'fromController';

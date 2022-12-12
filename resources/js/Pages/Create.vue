@@ -54,7 +54,13 @@ import FormManager from "../Components/FormManager/FormPopup.vue";
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transfer']);
 
-let form = ref({'tagData': {}});
+let form = ref({
+    'tagData': {},
+    'basic': {
+        'basicTitle': '',
+    }
+});
+
 let dataParent = ref({});
 
 const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
@@ -130,17 +136,19 @@ function dataChild(data) {
 }
 
 // basic title response
-watch(() => props.basicResult, _.debounce( (curr, prev) => {
+// watch(() => props.basicResult, _.debounce( (curr, prev) => {
 
-    dataParent.value.basicTitleData = props.basicResult;
+//     dataParent.value.basicTitleData = props.basicResult;
 
-    if (props.basicResult[0].warning == 2) {
-        dataParent.value.basicTitelPickerOpen = 1;
-    } else {
-        dataParent.value.basicTitelPickerOpen = 0;
-    }
+//     // console.log(props.basicResult);
 
-}, 500));
+//     if (props.basicResult[0].warning == 2) {
+//         dataParent.value.basicTitelPickerOpen = 1;
+//     } else {
+//         dataParent.value.basicTitelPickerOpen = 0;
+//     }
+
+// }, {'deep': true}, 500));
 
 // listen to form changes and emit them
 watch(() => form, (curr, prev) => {

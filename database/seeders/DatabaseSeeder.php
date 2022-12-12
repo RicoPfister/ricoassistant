@@ -27,21 +27,25 @@ class DatabaseSeeder extends Seeder
         DB::table('database_lists')->insert([
             'db_id' => 0,
             'db_name' => 'basics',
+            'tracking' => '127.0.0.1',
         ]);
 
         DB::table('database_lists')->insert([
             'db_id' => 1,
             'db_name' => 'statement',
+            'tracking' => '127.0.0.1',
         ]);
 
         DB::table('database_lists')->insert([
             'db_id' => 2,
             'db_name' => 'sources',
+            'tracking' => '127.0.0.1',
         ]);
 
         DB::table('database_lists')->insert([
             'db_id' => 3,
             'db_name' => 'activity',
+            'tracking' => '127.0.0.1',
         ]);
     }
 }
