@@ -42,7 +42,7 @@ class RicoAssistant extends Controller {
     public function detail(Request $request) {
 
         // dd($request);
-        dd($request->activityReference);
+        dd($request->reference);
         // dd($request->basic_id);
 
         $user = Auth::user();
@@ -56,19 +56,21 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        // dd($request);
+
         // dd($request->referenceReference['fromController']['referencesResult']);
-        // dd($request->activityReference['activityReference']);
+        // dd($request->reference['reference']);
         // dd($request->basic);
         // dd($request->filelist);
 
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basic.basicRefDate' => 'required',
-            'basic.basicMedium' => 'required',
-            'basic.basicTitle' => 'required',
+            'basicData.basicRefDate' => 'required',
+            'basicData.basicMedium' => 'required',
+            'basicData.basicTitle' => 'required',
         ]);
+
+        // dd($request);
 
         // create tag
         function tagData($request, $id, $index, $basics, $sources) {
@@ -92,19 +94,18 @@ class RicoAssistant extends Controller {
         }
 
         $basics = new Basic();
-        $basics->ref_date = $request->basic['basicRefDate'];
-        $basics->title = $request->basic['basicTitle'];
-        $basics->medium = $request->basic['basicMedium'];
-        // $basic->status = $request->basic['status'];
+        $basics->ref_date = $request->basicData['basicRefDate'];
+        $basics->title = $request->basicData['basicTitle'];
+        $basics->medium = $request->basicData['basicMedium'];
+        // $basic->status = $request->basicData['status'];
         $basics->user_id = $user->id;
         $basics->tracking = $request->ip();
         $basics->save();
 
-        if(isset($request->statement)){
-
+        if(isset($request->statementData)){
             $statement = new Statement();
             $statement->basic_id = $basics->id;
-            $statement->statement = $request->statement;
+            $statement->statement = $request->statementData['statement'];
             $statement->tracking = $request->ip();
             $statement->save();
         }
@@ -120,7 +121,7 @@ class RicoAssistant extends Controller {
                     $activities[$i] = [
                         'basic_id' => $basics->id,
                         'activityTo' => $request->activityTo[$i],
-                        // 'activityReference' => $request->activityReference[$i],
+                        // 'reference' => $request->reference[$i],
                         'tracking' => $request->ip(),
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -149,7 +150,7 @@ class RicoAssistant extends Controller {
         else if (isset($request->referenceReference)){
             $ref = new Ref();
             $ref->basic_id = $basics->id;
-            $ref->basic_ref = $request['referenceReference']['activityReference'][0]['basic_id'];
+            $ref->basic_ref = $request['referenceReference']['reference'][0]['basic_id'];
             $ref->ref_db_id = 1;
             $ref->ref_db_index = 1;
             $ref->tracking = $request->ip();
@@ -158,7 +159,7 @@ class RicoAssistant extends Controller {
 
         // // store activity reference
         // //-------------------------------
-        // if (!isset($request->activityReference)){
+        // if (!isset($request->reference)){
         //     // dd($request);
         //     $ref = new Ref();
         //     $ref->basic_id = $basics->id;
@@ -169,12 +170,12 @@ class RicoAssistant extends Controller {
         //     $ref->save();
         // }
 
-        if (isset($request->activityReference)){
+        if (isset($request->reference)){
 
-            foreach($request->activityReference['activityReference'] as $index => $data) {
+            foreach($request->reference['reference'] as $index => $data) {
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
-                $ref->basic_ref = $request['activityReference']['activityReference'][$index]['basic_id'];
+                $ref->basic_ref = $request['reference']['reference'][$index]['basic_id'];
                 // $ref->ref_db_id = 1;
                 $ref->ref_db_index = 1;
                 $ref->tracking = $request->ip();
@@ -266,7 +267,7 @@ class RicoAssistant extends Controller {
         // dd($db_id[0]);
 
         // check if "last used" was selected
-        if ($request->activityReference == 'lastUsed') {
+        if ($request->reference == 'lastUsed') {
 
             $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
@@ -289,11 +290,11 @@ class RicoAssistant extends Controller {
                 if (count($tag)) {
                     $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                 } else {};
+
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
             };
 
             $result['misc']['row'] = $request->row;
-
         }
 
         // 'reference input' was set
@@ -302,7 +303,7 @@ class RicoAssistant extends Controller {
             $referencesResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', 'LIKE', '%'.$request->activityReference.'%')
+                ->where('title', 'LIKE', '%'.$request->reference.'%')
                 ->get();
 
             if (count($referencesResultCheck)) {
@@ -335,8 +336,6 @@ class RicoAssistant extends Controller {
                 $result['misc']['row'] = 0;
 
             };
-
-
         }
 
         $result['misc']['parentId'] = $request->parentId;
@@ -436,7 +435,7 @@ class RicoAssistant extends Controller {
             // dd($basicResult['basicResult']['warning']);
             // dd($basicResult);
 
-        return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => 3], $basicResult]]);
+        return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
     }
 
     // tag

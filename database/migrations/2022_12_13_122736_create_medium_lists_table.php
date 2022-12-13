@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('database_lists', function (Blueprint $table) {
+        Schema::create('medium_lists', function (Blueprint $table) {
             $table->id('id');
 
-            $table->tinyText('db_name');
+            $table->tinyText('medium_name');
 
             $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('database_lists');
+        Schema::dropIfExists('medium_lists');
     }
 };

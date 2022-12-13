@@ -17,8 +17,8 @@
                 <!-- component generator -->
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
-                    <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent" :to-child="form"
-                    :from-controller="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transfer="transfer"/>
+                    <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
+                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transfer="transfer" @fromChild="fromChild"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -51,15 +51,10 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transfer']);
 
-let form = ref({
-    'tagData': {},
-    'basic': {
-        'basicTitle': '',
-    }
-});
+let form = ref({});
 
 let dataParent = ref({});
 
@@ -70,6 +65,7 @@ let scrollArea = ref();
 
 // process received child data
 function dataChild(data) {
+    // console.log('ok');
 
     // scroll to top
     if (data.scrollToTop) {
@@ -77,6 +73,7 @@ function dataChild(data) {
     };
 
     // add form data to form collection
+//obsolete. clear and remove.
     if (data.formData) {
         form.value = {...form.value, ...data.formData}
     };
@@ -112,7 +109,7 @@ function dataChild(data) {
         }
 
         // add reference section
-        componentCollection.push(3);
+        // componentCollection.push(3);
 
         //? v-for trigger
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
@@ -163,6 +160,7 @@ function dataToParent() {
 
 let transfer = ref();
 function toParent(data) {
+    console.log('ok');
     // console.log(data);
     if (data.basicTitle) transfer.value = data;
 
@@ -187,6 +185,16 @@ function toParent(data) {
         form.value['tagData']['sourceTag'] = [];
         form.value['tagData']['sourceTag'] = data.sourceTag;
     };
+}
+
+function fromChild(data) {
+    // console.log(form.value);
+    if (data.form) {
+        form.value = {...form.value, ...data.form};
+    }
+    // console.log(form.value);
+    // componentCollectionUpdate.value = !componentCollectionUpdate.value;
+    // componentCollectionUpdate.value = !componentCollectionUpdate.value;
 }
 
 </script>

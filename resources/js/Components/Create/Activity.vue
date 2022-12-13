@@ -609,7 +609,7 @@ function referenceCheckerFunction(index, data) {
     }
 }
 
-// save received ReferencePopup data to form
+// save received Reference.vue data to form
 function fromChild(data) {
     console.log(data);
 
