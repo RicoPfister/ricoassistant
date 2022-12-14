@@ -3,8 +3,7 @@
 
 <!-- activity container -->
 <!-- ------------------------------------------------ -->
-<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm
-w-full pt-4 gap-2 mt-[12px] pb-3">
+<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px] pb-3">
 
     <SectionTitle :Id="2"/>
 
@@ -13,7 +12,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
     <div class="flex flex-col items-center gap-1 w-full mt-1">
 
         <!-- time schedule list builder -->
-        <div class="flex flex-row lg:h-8 w-[722px]" v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
+        <div class="flex flex-row lg:h-7 w-[722px]" v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
         @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)"
         @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
@@ -78,19 +77,9 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
             </div>
 
             <!-- reference box -->
-            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black">
+            <div class="relative w-full min-w-0 text-sm lg:text-lg h-fit border border-black">
 
-                <!-- reference input -->
-                <input @input="referenceCheckerFunction(n, 'inputCheck')" class="cursor-text w-full min-w-0 grow leading-none border-none placeholder:text-gray-400 focus:placeholder-white focus:border-current focus:ring-0 pr-1 lg:pr-2 pl-7 lg:pl-10 h-full" :id="'activityReferenceRowNumber'+[n-1]" type="text" placeholder="Reference (e.g. Title)" v-model="form.activityReference[n-1].title">
-
-                <!-- reference popup button -->
-                <div class="absolute top-0 left-0 w-fit h-full flex items-center bg-gray-200 border-r border-gray-400 p-1">
-                    <button type="button" @click="referenceCheckerFunction(n, 'lastUsed')" class="w-auto h-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-auto h-full hover:stroke-green-600">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
-                        </svg>
-                    </button>
-                </div>
+                <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
 
                 <!-- tag buttons -->
                 <div class="absolute top-0 right-0 h-full flex items-center bg-gray-200">
@@ -104,9 +93,6 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                     </div>
                 </div>
 
-                <div class="z-40 absolute -top-[1px] -left-[9px] mt-8 h-fit w-[calc(100%+18px)] px-2 flex flex-col">
-                    <Reference @fromChild="fromChild" :fromController="typeof props.fromController !== 'undefined' ? props.fromController.misc.parentId == 2 ? props.fromController : '' : ''" :toChild="{'parentId': 2, 'parentIndex': 1}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''"/>
-                </div>
             </div>
 
             <!-- edit button box -->
@@ -246,14 +232,14 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import * as Date from "../../Scripts/date.js"
 import SectionTitle from "../FormManager/SectionTitle.vue"
-import ReferencePopup from "../ReferenceManager/ReferencePopup.vue"
+import ReferenceActivity from "./Reference.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent', 'toChild']);
-let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent', 'toChild', 'fromChild']);
+let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'transfer', 'fromController', 'toChild', 'fromChild']);
 
 const form = useForm({
     activityTo: [],
@@ -594,48 +580,25 @@ function tagTooltipShow(index, data) {
 // reference
 //-------------------------------------------------
 
-// let referenceUpdate = ref(0);
-function referenceCheckerFunction(index, data) {
+// send changes to parent
+//-----------------------------------------
 
-    // referenceUpdate.value++;
-    if (form.referencePickerOpen[index-1] != 1) {
-        form.referenceChecker['rowIndex'] = index;
-        form.referenceChecker['check'] = data;
-        form.referenceChecker['id']++;
-    }
-    else {
-        form.referenceChecker['check'] = '';
-        form.referencePickerOpen[index-1] = 0;
-    }
-}
+// send to parent: statement input data
+// function InputData() {
+//     console.log('ok');
+//     emit('fromChild', {'section':'activityData', 'subSection': 'statement', 'form': form.statement});
+// }
 
-// save received Reference.vue data to form
+// send to parent: reference selection
 function fromChild(data) {
     console.log(data);
-
-    if (props.fromController.misc.parentId == 1) {
-        form.activityReference[data.index-1]['title'] = data.referenceTitle;
-        form.activityReference[data.index-1]['basic_id'] = data.basic_id;
-        form.referenceChecker['check'] = '';
-    }
-
-    console.log(form);
+    emit('fromChild', {'section':'activityData', 'subSection':'reference', 'form': data.reference.reference});
 }
 
-// save fromController data in form
-watch(() => props.fromController, (curr, prev) => {
-
-    // console.log(props.fromController);
-
-    if (props.fromController.misc.parentId == 1) {
-        form['fromController'] = props.fromController;
-        form.referenceChecker.check = 'fromController';
-    }
-}, {deep: true}, 500);
-
-// listen to form and send changes to Create.vue
-watch(() => form, (curr, prev) => {
-    emit('toParent', {'activityReference': form});
-}, {deep: true}, 500);
+//  send to parent: edit menu selection
+function dataChildMenuEntry(n) {
+    if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
+    if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
+}
 
 </script>

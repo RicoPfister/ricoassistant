@@ -11,7 +11,7 @@
 </div>
 <TagForm :from-parent="'titleNo'" />
 <div class="border-l border-r border-b border-black">
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController.misc.parentId == 2 ? props.fromController : '' : ''" :toChild="{'parentId': 2, 'parentIndex': 1}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+    <ReferenceStatement :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
 </div>
 
 </template>
@@ -24,7 +24,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
-import Reference from "./Reference.vue";
+import ReferenceStatement from "./Reference.vue";
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild']);
@@ -37,13 +37,13 @@ let form = useForm({
 // send changes to parent
 //-----------------------------------------
 
-// send to parent: form data
+// send to parent: statement input data
 function InputData() {
     console.log('ok');
     emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
 }
 
-// send to parent: reference
+// send to parent: reference selection
 function fromChild(data) {
     emit('fromChild', {'section':'statementData', 'subSection':'reference', 'form': data.reference.reference});
 }
