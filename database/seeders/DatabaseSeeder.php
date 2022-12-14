@@ -18,7 +18,11 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-
+        DB::table('users')->insert([
+            'name' => 'Test Account',
+            'email' => 'test@test.com',
+            'password' => '$2y$10$w/7zSu8/iNA2tHYJlMmHOee4iYDAvzGw3b4Tmnx0E1ChgeI0Tq8Ly',
+        ]);
 
         DB::table('database_lists')->insert([
             'db_name' => 'basics',

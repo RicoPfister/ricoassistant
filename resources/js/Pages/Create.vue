@@ -188,9 +188,9 @@ function toParent(data) {
 }
 
 function fromChild(data) {
-    // console.log(form.value);
-    if (data.form) {
-        form.value = {...form.value, ...data.form};
+    console.log(form.value);
+    if (data.reference) {
+        form.value = {...form.value, ...data.reference};
     }
     // console.log(form.value);
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;
