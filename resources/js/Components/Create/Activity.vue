@@ -105,7 +105,7 @@ w-full pt-4 gap-2 mt-[12px] pb-3">
                 </div>
 
                 <div class="z-40 absolute -top-[1px] -left-[9px] mt-8 h-fit w-[calc(100%+18px)] px-2 flex flex-col">
-                    <ReferencePopup :toChild="form" @fromChild="fromChild" :index="n"/>
+                    <Reference @fromChild="fromChild" :fromController="typeof props.fromController !== 'undefined' ? props.fromController.misc.parentId == 2 ? props.fromController : '' : ''" :toChild="{'parentId': 2, 'parentIndex': 1}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''"/>
                 </div>
             </div>
 

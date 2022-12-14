@@ -6,12 +6,12 @@
         <div class="flex flex-row justify-between items-center" type="button">
             <MenuEntry @data-child="dataChildMenuEntry"/>
         </div>
-        <textarea @change="toChildInput" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="statement"></textarea>
+        <textarea @change="InputData" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
     </div>
 </div>
 <TagForm :from-parent="'titleNo'" />
 <div class="border-l border-r border-b border-black">
-    <Reference @fromChild="fromChild" :fromController="typeof props.fromController !== 'undefined' ? props.fromController.misc.parentId == 2 ? props.fromController : '' : ''" :toChild="{'parentId': 2, 'parentIndex': 1}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController.misc.parentId == 2 ? props.fromController : '' : ''" :toChild="{'parentId': 2, 'parentIndex': 1}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
 </div>
 
 </template>
@@ -29,24 +29,23 @@ import Reference from "./Reference.vue";
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild']);
 
-let statement = ref();
+// let statement = ref();
 let form = useForm({
     statement:'',
-    tag: {},
-    reference: '',
-    fromController: {'misc': {'parentId': ''}},
-    parentId: '',
-    key: 1,
 });
 
 // send changes to parent
 //-----------------------------------------
 
 // send to parent: form data
-function toChildInput() {
-    form = {...form, 'statement': statement.value, 'parentId': 2, 'parentIndex': 1}
-    emit('fromChild', {'form': {'statementData': form}});
-    console.log(form)
+function InputData() {
+    console.log('ok');
+    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
+}
+
+// send to parent: reference
+function fromChild(data) {
+    emit('fromChild', {'section':'statementData', 'subSection':'reference', 'form': data.reference.reference});
 }
 
 //  send to parent: edit menu selection

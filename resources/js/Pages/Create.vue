@@ -187,10 +187,15 @@ function toParent(data) {
     };
 }
 
+let test123 = 'test123456'
+
 function fromChild(data) {
-    console.log(form.value);
-    if (data.reference) {
-        form.value = {...form.value, ...data.reference};
+    console.log(data);
+    if (data.form) {
+        // form.value = {...data.form, ...form.value};
+        if (!form.value[data.section]) form.value[data.section] = {};
+        form.value[data.section][data.subSection] = data.form;
+        // form.value[test123] = data.form;
     }
     // console.log(form.value);
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;

@@ -51,11 +51,14 @@ let form = useForm({
     key: 1,
 });
 
-// set rowIndex and check value
+// check database Sreference
 function referenceCheckerFunction(index, id, check) {
-    // console.log('ok');
+    console.log(index);
+    console.log(id);
+    console.log(check);
 
     if (form.referencePickerOpen[index-1] != 1) {
+        console.log('ok');
         // form.referenceChecker['rowIndex'] = index;
         // form.referenceChecker['parentId'] = id;
         // form.referenceChecker['check'] = check;
@@ -68,10 +71,10 @@ function referenceCheckerFunction(index, id, check) {
 
         // check if reference form ***input*** has been and send request to controller
         else if (check == 'inputCheck' && ( form.referencePickerOpen[index-1] == 0 || typeof form.referencePickerOpen[index-1] == 'undefined' ) &&
-        form.reference[index-1].title.length > 2) {
-            // console.log('ok');
+        form.reference[index-1].referenceTitle.length > 2) {
+            console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference[index-1].title, row: index, parentId: id}, {replace: false,  preserveState: true, preserveScroll: true});
+                Inertia.post('refcheck', { reference: form.reference[index-1].referenceTitle, row: index, parentId: id}, {replace: false,  preserveState: true, preserveScroll: true});
             }, 500);
         }
     }
@@ -89,8 +92,8 @@ function referenceCheckerFunction(index, id, check) {
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
     // console.log(data.formData.index);
-    form.reference[data.formData.index-1] = data.formData;
-    // emit('fromChild', {'reference': form, 'parentId': data.parentId});
+    form.reference[data.referenceData.index-1] = data.referenceData;
+    emit('fromChild', {'reference': form, 'parentId': data.parentId});
 }
 
 // listen to title placeholder auto set
