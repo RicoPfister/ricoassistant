@@ -12,7 +12,7 @@
     <div class="flex flex-col items-center gap-1 w-full mt-1">
 
         <!-- time schedule list builder -->
-        <div class="flex flex-row lg:h-7 w-[722px]" v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
+        <div class="flex flex-row lg:h-8 w-[722px]" v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
         @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)"
         @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
@@ -77,12 +77,14 @@
             </div>
 
             <!-- reference box -->
-            <div class="relative w-full min-w-0 text-sm lg:text-lg h-fit border border-black">
+            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
 
-                <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                <div class="w-full h-[30px]">
+                    <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                </div>
 
                 <!-- tag buttons -->
-                <div class="absolute top-0 right-0 h-full flex items-center bg-gray-200">
+                <div class="h-full flex items-center bg-gray-200 w-fit">
                     <div class="border-l border-gray-400 p-1 w-auto h-full" @mouseover="tagTooltipShow(index)" @mouseleave="tagTooltipShow(index, 1)">
                         <button type="button" @click.prevent="tagPopupOpenActive(index)" class="w-auto h-full">
                             <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-yellow-600': form.activityTag[index]}" class="w-auto h-full hover:stroke-black">
@@ -136,7 +138,7 @@
                 </div>
             </div>
             <!-- tag tool tip -->
-            <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-50 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div>
+            <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-200 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div>
         </div>
 
     </div>
@@ -238,8 +240,8 @@ import TagPopup from "../TagManager/TagPopup.vue";
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent', 'toChild', 'fromChild']);
-let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'transfer', 'fromController', 'toChild', 'fromChild']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer', 'toParent', 'toChild', 'fromChild', 'transferCreate']);
+let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'transfer', 'fromController', 'toChild', 'fromChild', 'transferCreate']);
 
 const form = useForm({
     activityTo: [],
@@ -268,6 +270,9 @@ let tagTooltipShowTimer = '';
 let fromController = ref(0);
 
 // button functions
+//----------------------------------------
+
+// hour/minutes button
 function activitybuttonBar(e, n) {
 
     if (isNaN(form.activityTo[n-1]) || (form.activityTo[n-1]) == '') form.activityTo[n-1] = 0

@@ -18,7 +18,7 @@
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
                     <component @data-child="dataChild" :is="componentSource[item]" :data-common="props.dataCommon" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
-                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transfer="transfer" @fromChild="fromChild"/>
+                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -51,8 +51,8 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transfer']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
 
 let form = ref({});
 
@@ -158,9 +158,9 @@ function dataToParent() {
     }
 }
 
-let transfer = ref();
+
 function toParent(data) {
-    console.log('ok');
+    // console.log('ok');
     // console.log(data);
     if (data.basicTitle) transfer.value = data;
 
@@ -168,13 +168,13 @@ function toParent(data) {
         form.value['activityTo'] = data.activityTo;
     };
 
-    if (data.activityReference) {
-        form.value['activityReference'] = data.activityReference;
-    };
+    // if (data.activityReference) {
+    //     form.value['activityReference'] = data.activityReference;
+    // };
 
-    if (data.referenceReference) {
-        form.value['referenceReference'] = data.referenceReference;
-    };
+    // if (data.referenceReference) {
+    //     form.value['referenceReference'] = data.referenceReference;
+    // };
 
     if (data.activityTag) {
         form.value['tagData']['activityTag'] = [];
@@ -187,10 +187,11 @@ function toParent(data) {
     };
 }
 
-let test123 = 'test123456'
+let transferCreate = ref({});
 
+// process form data received from components
 function fromChild(data) {
-    console.log(data);
+    // console.log(data);
     if (data.form) {
         // form.value = {...data.form, ...form.value};
         if (!form.value[data.section]) form.value[data.section] = {};
@@ -200,6 +201,9 @@ function fromChild(data) {
     // console.log(form.value);
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
+    console.log(form.value.basicData.title);
+    if (form.value.basicData.title) transferCreate.value['title'] = form.value.basicData.title;
 }
 
 </script>

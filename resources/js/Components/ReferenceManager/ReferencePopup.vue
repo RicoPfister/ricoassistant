@@ -1,10 +1,10 @@
 <template>
 
 <!-- reference picker popup container -->
-<div class="h-fit w-full px-2 flex flex-col bg-white border-r border-b border-l border-black">
+<div class=" z-40 h-fit w-full px-2 flex flex-col bg-white border-r border-b border-l border-black">
 
     <!-- reference picker box -->
-    <div class="flex flex-col z-50 overflow-y-auto max-h-52 text-sm xl:text-base w-full">
+    <div class="flex flex-col overflow-y-auto max-h-52 text-sm xl:text-base w-full">
 
         <!-- popup: found in database -->
         <div class="">
@@ -47,8 +47,6 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'transfer', 'toParent', 'toChild', 'fromController']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'fromChild']);
-
-let referencePickerOpen = ref({});
 
 // 1) receive data from parent
 //---------------------------------
