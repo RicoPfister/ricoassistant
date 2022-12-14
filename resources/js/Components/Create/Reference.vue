@@ -45,7 +45,7 @@ const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'fromChild', 'toChild']);
 
 let form = useForm({
-    reference: {0: {'title': '', 'basic_id': ''}},
+    reference: {0: {'referenceTitle': '', 'basic_id': ''}},
     // fromController: {},
     referencePickerOpen: 0,
     key: 1,
@@ -104,10 +104,11 @@ function fromChild(data) {
 
 // listen to title placeholder auto set
 watch(() => props.transferCreate, (curr, prev) => {
-    console.log(props.transferCreate);
+    console.log('ok');
+    console.log(props.transferCreate.title);
     // if (props.transfer.misc.parentId == 1 && (props.transfer.basicData.basicTitle || props.transfer.basicData.basicTitle == '') && !form.reference[0].title) {
-    if (props.transferCreate.title) {
-        console.log('ok');
+    if (props.transferCreate.title != 'undefined') {
+
         // console.log(props.transfer.basicData.basicTitle);
         if (props.transferCreate.title == '') referenceDOM.value.placeholder = placeholderText.value
         else referenceDOM.value.placeholder = props.transferCreate.title;

@@ -101,7 +101,7 @@ let emit = defineEmits(['fromChild']);
 
 // send input to Create.vue
 watch(() => form, (curr, prev) => {
-    // console.log(form);
+    console.log(form);
     // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
     emit('fromChild', {'section':'basicData', 'subSection':'refDate', 'form': form.basicRefDate});
     emit('fromChild', {'section':'basicData', 'subSection':'medium', 'form': form.basicMedium});

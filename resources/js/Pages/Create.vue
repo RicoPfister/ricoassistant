@@ -54,7 +54,7 @@ import FormManager from "../Components/FormManager/FormPopup.vue";
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
 
-let form = ref({});
+let form = ref({'basicData': ''});
 
 let dataParent = ref({});
 
@@ -158,12 +158,9 @@ function dataToParent() {
     }
 }
 
-
 function toParent(data) {
     // console.log('ok');
     // console.log(data);
-    if (data.basicTitle) transfer.value = data;
-
     if (data.activityTo) {
         form.value['activityTo'] = data.activityTo;
     };
@@ -176,23 +173,23 @@ function toParent(data) {
     //     form.value['referenceReference'] = data.referenceReference;
     // };
 
-    if (data.activityTag) {
-        form.value['tagData']['activityTag'] = [];
-        form.value['tagData']['activityTag'] = data.activityTag;
-    };
+    // if (data.activityTag) {
+    //     form.value['tagData']['activityTag'] = [];
+    //     form.value['tagData']['activityTag'] = data.activityTag;
+    // };
 
-    if (data.sourceTag) {
-        form.value['tagData']['sourceTag'] = [];
-        form.value['tagData']['sourceTag'] = data.sourceTag;
-    };
+    // if (data.sourceTag) {
+    //     form.value['tagData']['sourceTag'] = [];
+    //     form.value['tagData']['sourceTag'] = data.sourceTag;
+    // };
 }
 
 let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
-    // console.log(data);
-    if (data.form) {
+    console.log(data);
+    if (data.form != 'undefined') {
         // form.value = {...data.form, ...form.value};
         if (!form.value[data.section]) form.value[data.section] = {};
         form.value[data.section][data.subSection] = data.form;
@@ -202,8 +199,7 @@ function fromChild(data) {
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;
     // componentCollectionUpdate.value = !componentCollectionUpdate.value;
 
-    console.log(form.value.basicData.title);
-    if (form.value.basicData.title) transferCreate.value['title'] = form.value.basicData.title;
+    transferCreate.value['title'] = form.value.basicData.title;
 }
 
 </script>
