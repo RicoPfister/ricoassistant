@@ -103,6 +103,7 @@ let emit = defineEmits(['fromChild']);
 watch(() => form, (curr, prev) => {
     console.log(form);
     // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
+    console.log('ok');
     emit('fromChild', {'section':'basicData', 'subSection':'refDate', 'form': form.basicRefDate});
     emit('fromChild', {'section':'basicData', 'subSection':'medium', 'form': form.basicMedium});
     emit('fromChild', {'section':'basicData', 'subSection':'title', 'form': form.basicTitle});

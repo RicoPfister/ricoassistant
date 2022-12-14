@@ -481,19 +481,21 @@ function activityRowDuplicate(n) {
     activityTotalRow.value++
 }
 
-// send form changes to Create.vue
-watch(() => form, (curr, prev) => {
+// // send form changes to Create.vue
+// watch(() => form, (curr, prev) => {
 
-// console.log(form);
-emit('toParent', form);
+// // console.log(form);
+// // emit('fromChild', {form)};
+// // emit('fromChild', {'section':'activityData', 'subSection':'activityReference', 'form': form.activityReference});
 
-}, {deep: true}, 500);
+
+// }, {deep: true}, 500);
 
 //! watch for diagram width adjustments and add title/medium in basics.vue
 watch(() => form.activityTo, (curr, prev) => {
 
-    // set basic title and medium
-    emit('toParent', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
+    //?? set basic title and medium
+    // emit('fromChild', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
 
     let minutes = 0;
     let minuteTotal = 0;
@@ -597,7 +599,8 @@ function tagTooltipShow(index, data) {
 // send to parent: reference selection
 function fromChild(data) {
     console.log(data);
-    emit('fromChild', {'section':'activityData', 'subSection':'reference', 'form': data.reference.reference});
+    emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
+    emit('fromChild', {'section':'activityData', 'subSection':'timeTo', 'form': form.activityTo});
 }
 
 //  send to parent: edit menu selection

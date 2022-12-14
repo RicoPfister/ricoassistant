@@ -154,8 +154,8 @@ watch(() => form, (curr, prev) => {
 
 // process component data
 function dataToParent() {
-    if (data.tagSource) {
-    }
+    // if (data.tagSource) {
+    // }
 }
 
 function toParent(data) {
@@ -192,7 +192,13 @@ function fromChild(data) {
     if (data.form != 'undefined') {
         // form.value = {...data.form, ...form.value};
         if (!form.value[data.section]) form.value[data.section] = {};
-        form.value[data.section][data.subSection] = data.form;
+        if (typeof data.index !== 'undefined') {
+            if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+            form.value[data.section][data.subSection][data.index]  = {};
+            form.value[data.section][data.subSection][data.index] = data.form;
+        } else {
+            form.value[data.section][data.subSection]= data.form;
+        }
         // form.value[test123] = data.form;
     }
     // console.log(form.value);

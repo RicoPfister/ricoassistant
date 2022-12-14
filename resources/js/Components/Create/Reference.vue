@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- reference input -->
-                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none" ref="referenceDOM"  type="text" :placeholder="placeholderText" v-model="form.reference[props.toChild.parentIndex].referenceTitle">
+                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none" ref="referenceDOM"  type="text" :placeholder="placeholderText" v-model="form.reference.referenceTitle">
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@ const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'fromChild', 'toChild']);
 
 let form = useForm({
-    reference: {0: {'referenceTitle': '', 'basic_id': ''}},
+    reference: {'referenceTitle': '', 'basic_id': ''},
     // fromController: {},
     referencePickerOpen: 0,
     key: 1,
@@ -73,10 +73,10 @@ function referenceCheckerFunction(index, id, check) {
 
         // check if reference form ***input*** has been and send request to controller
         else if (check == 'inputCheck' && ( form.referencePickerOpen == 0 || typeof form.referencePickerOpen == 'undefined' ) &&
-        form.reference[index].referenceTitle.length > 2) {
+        form.reference.referenceTitle.length > 2) {
             // console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference[index].referenceTitle, row: index, parentId: id}, {replace: false,  preserveState: true, preserveScroll: true});
+                Inertia.post('refcheck', { reference: form.reference.referenceTitle, row: index, parentId: id}, {replace: false,  preserveState: true, preserveScroll: true});
             }, 500);
         }
     }
@@ -95,8 +95,8 @@ function referenceCheckerFunction(index, id, check) {
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
     // console.log(data);
-    form.reference[data.referenceData.index] = data.referenceData;
-    emit('fromChild', {'reference': form, 'parentId': data.parentId});
+    form.reference = data.referenceData;
+    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex});
 
     // console.log(props.toChild.parentIndex);
     form.referencePickerOpen = 0;
