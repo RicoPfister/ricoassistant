@@ -5,7 +5,7 @@
         <div class="flex flex-row items-center z-30 h-7">
 
             <!-- select reference button -->
-            <button @click.prevent="referenceCheckerFunction('lastUsed')" class="w-[42px] flex justify-center h-full items-center bg-gray-100 border-r border-gray-300" type="button">
+            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="w-[42px] flex justify-center h-full items-center bg-gray-100 border-r border-gray-300" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-fit p-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -64,13 +64,15 @@ function referenceCheckerFunction(index, id, check) {
         // form.referenceChecker['check'] = check;
         // form.referenceChecker['key']++;
 
+        console.log(check);
         // check if reference popup ***selection*** has been fired and send request to controller
-        if (check == 'lastUsed' && ( form.referencePickerOpen[index] == 0 || typeof form.referencePickerOpen[index] == 'undefined')) {
-            Inertia.post('refcheck', { reference: check, index, parentId: id}, {replace: true,  preserveState: true, preserveScroll: true});
+        if (check == 'lastUsed' && ( form.referencePickerOpen == 0 || typeof form.referencePickerOpen == 'undefined')) {
+            console.log('ok');
+            Inertia.post('refcheck', { reference: check, row: index, parentId: id}, {replace: true,  preserveState: true, preserveScroll: true});
         }
 
         // check if reference form ***input*** has been and send request to controller
-        else if (check == 'inputCheck' && ( form.referencePickerOpen[index] == 0 || typeof form.referencePickerOpen[index] == 'undefined' ) &&
+        else if (check == 'inputCheck' && ( form.referencePickerOpen == 0 || typeof form.referencePickerOpen == 'undefined' ) &&
         form.reference[index].referenceTitle.length > 2) {
             // console.log('ok');
             setTimeout(() => {
@@ -110,7 +112,8 @@ watch(() => props.transfer, (curr, prev) => {
 
 watch(() => props.fromController, (curr, prev) => {
 
-    console.log(props.toChild.parentIndex);
+    console.log(props.fromController);
+    console.log(props.toChild);
 
     if(props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.row == props.toChild.parentIndex) {
         form.referencePickerOpen = 1;
