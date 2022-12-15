@@ -41,13 +41,13 @@ let form = useForm({
 
 // send to parent: statement input data
 function InputData() {
-    console.log('ok');
+    // console.log('ok');
     emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
 }
 
 // send to parent: reference selection
 function fromChild(data) {
-    emit('fromChild', {'section':'statementData', 'subSection':'reference', 'form': data.reference.reference});
+    emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
 }
 
 //  send to parent: edit menu selection

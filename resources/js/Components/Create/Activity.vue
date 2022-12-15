@@ -600,7 +600,7 @@ function tagTooltipShow(index, data) {
 function fromChild(data) {
     console.log(data);
     emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
-    emit('fromChild', {'section':'activityData', 'subSection':'timeTo', 'form': form.activityTo});
+    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
 }
 
 //  send to parent: edit menu selection

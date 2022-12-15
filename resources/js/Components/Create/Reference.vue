@@ -104,8 +104,8 @@ function fromChild(data) {
 
 // listen to title placeholder auto set
 watch(() => props.transferCreate, (curr, prev) => {
-    console.log('ok');
-    console.log(props.transferCreate.title);
+    // console.log('ok');
+    // console.log(props.transferCreate.title);
     // if (props.transfer.misc.parentId == 1 && (props.transfer.basicData.basicTitle || props.transfer.basicData.basicTitle == '') && !form.reference[0].title) {
     if (props.transferCreate.title != 'undefined') {
 

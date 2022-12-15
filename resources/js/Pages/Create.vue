@@ -188,7 +188,7 @@ let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
-    console.log(data);
+    // console.log(data);
     if (data.form != 'undefined') {
         // form.value = {...data.form, ...form.value};
         if (!form.value[data.section]) form.value[data.section] = {};
