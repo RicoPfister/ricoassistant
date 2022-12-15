@@ -314,6 +314,10 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function reference(Request $request) {
 
+        function reference_children() {
+
+        }
+
         // dd($request);
         // dd($request->parentId);
 
@@ -328,9 +332,9 @@ class RicoAssistant extends Controller {
         if ($request->reference == 'lastUsed') {
 
             // get last 10 references
-            $referencedIds = DB::table('refs')
+            $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
-                ->where('basic_id', '=', $user->id)
+                ->where('user_id', '=', $user->id)
                 // ->distinct('basic_id')
                 // ->where('basic_id', '=', 'basic_ref')
                 // ->whereRaw('basic_id = basic_ref')
@@ -519,5 +523,4 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Create', ['dataCommon' => $tagCollectionSelection]);
     }
-
 }
