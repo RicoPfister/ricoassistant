@@ -97,6 +97,8 @@ class RicoAssistant extends Controller {
         // create reference
         function reference($db_id, $checkValue, $request, $basics) {
 
+            // dd($request);
+
             // get db_name
             $db_name_list = DB::table('database_lists')->where('id', '=', $db_id)->pluck('db_name');
             $db_name = $db_name_list[0].'Data';
@@ -106,9 +108,8 @@ class RicoAssistant extends Controller {
             // dd($db_name[0].'Data');
             // dd($request->$db_name['reference'] );
 
-            // dd($checkValue);
-
             if (!$checkValue) {
+                // dd($checkValue);
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
                 $ref->basic_ref = $basics->id;
@@ -122,6 +123,7 @@ class RicoAssistant extends Controller {
                 // foreach ($request->activityTo as $i=>$activity) {
                 foreach ($request->$db_name['reference'] as $key => $value) {
                     // dd($value);
+                    // dd(count($request->$db_name['reference']));
                     $ref = new Ref();
                     $ref->basic_id = $basics->id;
                     $ref->basic_ref = $value['basic_id'];
@@ -132,6 +134,8 @@ class RicoAssistant extends Controller {
                 }
             }
         }
+
+        // dd($ref);
 
         $basics = new Basic();
         $basics->ref_date = $request->basicData['refDate'];
@@ -185,7 +189,7 @@ class RicoAssistant extends Controller {
             // fire reference function
             if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
             else $checkValue = '';
-            // dd($checkValue);
+            dd($checkValue);
             reference($db_id = 4, $checkValue, $request, $basics);
         }
 
@@ -193,26 +197,26 @@ class RicoAssistant extends Controller {
 
         // store reference reference
         // ------------------------------
-        if (!isset($request->referenceReference)){
+        // if (!isset($request->referenceReference)){
 
-            $ref = new Ref();
-            $ref->basic_id = $basics->id;
-            $ref->basic_ref = $basics->id;
-            $ref->ref_db_id = 1;
-            $ref->ref_db_index = 1;
-            $ref->tracking = $request->ip();
-            $ref->save();
-        }
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $basics->id;
+        //     $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
 
-        else if (isset($request->referenceReference)){
-            $ref = new Ref();
-            $ref->basic_id = $basics->id;
-            $ref->basic_ref = $request['referenceReference']['reference'][0]['basic_id'];
-            $ref->ref_db_id = 1;
-            $ref->ref_db_index = 1;
-            $ref->tracking = $request->ip();
-            $ref->save();
-        }
+        // else if (isset($request->referenceReference)){
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $request['referenceReference']['reference'][0]['basic_id'];
+        //     $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
 
         // // store activity reference
         // //-------------------------------
@@ -227,18 +231,18 @@ class RicoAssistant extends Controller {
         //     $ref->save();
         // }
 
-        if (isset($request->reference)){
+        // if (isset($request->reference)){
 
-            foreach($request->reference['reference'] as $index => $data) {
-                $ref = new Ref();
-                $ref->basic_id = $basics->id;
-                $ref->basic_ref = $request['reference']['reference'][$index]['basic_id'];
-                // $ref->ref_db_id = 1;
-                $ref->ref_db_index = 1;
-                $ref->tracking = $request->ip();
-                $ref->save();
-            }
-        }
+        //     foreach($request->reference['reference'] as $index => $data) {
+        //         $ref = new Ref();
+        //         $ref->basic_id = $basics->id;
+        //         $ref->basic_ref = $request['reference']['reference'][$index]['basic_id'];
+        //         // $ref->ref_db_id = 1;
+        //         $ref->ref_db_index = 1;
+        //         $ref->tracking = $request->ip();
+        //         $ref->save();
+        //     }
+        // }
 
         // if ($accounting == 1){
 
