@@ -54,6 +54,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 onMounted(() => {
     // console.log(1);
     // console.log(props.fromController.misc.row-1);
+    console.log(props.fromController.referencesResult);
 });
 
 // 4) send data to parent

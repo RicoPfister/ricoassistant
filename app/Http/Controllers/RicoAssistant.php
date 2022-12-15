@@ -318,9 +318,75 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function reference(Request $request) {
 
-        function reference_children() {
+        function reference_inheritance_list($id, $i, $user) {
 
+            $counter = 1;
+
+            // dd($id);
+            $parent_list = [];
+
+            // check if there are children
+            $parent_ref = DB::table('refs')
+            ->where('status', '=', null)
+            // ->where('user_id', '=', $user->id)
+            ->where('basic_id', '=', $id->id)
+            // ->distinct('basic_id')
+            // ->where('basic_id', '=', 'basic_ref')
+            // ->whereRaw('basic_id = basic_ref')
+            ->first();
+            // ->get();
+
+            // dd($parent);
+
+            $parent_checker_next_value = $parent_ref->basic_ref;
+
+            // dd($parent_checker_next_value);
+
+            do  {
+                if ($parent_ref->basic_id != $parent_ref->basic_ref) {
+                    // get corresponding basic db entry data
+                    $parent_basic = DB::table('basics')
+                    ->where('status', '=', null)
+                    ->where('user_id', '=', $user->id)
+                    ->where('id', '=', $parent_checker_next_value)
+                    // ->distinct('basic_id')
+                    // ->where('basic_id', '=', 'basic_ref')
+                    // ->whereRaw('basic_id = basic_ref')
+                    ->first();
+
+                    // check next ref db entry
+                    $parent_ref = DB::table('refs')
+                    ->where('status', '=', null)
+                    // ->where('user_id', '=', $user->id)
+                    ->where('basic_id', '=', $parent_checker_next_value)
+                    // ->distinct('basic_id')
+                    // ->where('basic_id', '=', 'basic_ref')
+                    // ->whereRaw('basic_id = basic_ref')
+                    ->first();
+
+                    array_push($parent_list, $parent_basic);
+                    $parent_checker_next_value = $parent_ref->basic_ref;
+                    $parent_checker = 1;
+                    $counter++;
+                }
+                else $parent_checker = 0;
+            } while ($parent_checker || $counter > 10);
+
+                    // if (){
+                        // dd($parent_list)
+
+
+                // dd($parent_checker_next_value);
+
+            // dd($children_list);
+
+            // $children = [];
+            // array_push($children, ['abc' => 4]);
+
+            return $parent_list;
         }
+
+        // dd($counter > 10);
 
         // dd($request);
         // dd($request->parentId);
@@ -364,6 +430,8 @@ class RicoAssistant extends Controller {
                 } else {};
 
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
+
+                $result['referencesResult'][$i]['inheritance'] = reference_inheritance_list($id, $i, $user);
             };
 
             $result['misc']['row'] = $request->row;
