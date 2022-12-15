@@ -4,16 +4,17 @@
     <div class="flex gap-3 flex-wrap w-full min-w-0 h-fit">
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Date*:</label>
-            <input class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 leading-none h-8" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <input class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
         </div>
 
-        <div class="flex flex-col lg:max-w-fit w-52">
-            <label class="font-bold" aria-label="Category Input font-bold" for="medium">Medium*:</label>
-            <select class="border border-black outline-0 focus:border-black focus:ring-0 leading-none h-8" id="medium" v-model="form['basicMedium']">
+        <div class="flex flex-col lg:max-w-fit">
+            <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Medium*:</label>
+            <select class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
                 <optgroup label="Idea:">
-                    <option value="1">Sound</option>
+                    <option value="1">
+                        Sound</option>
                     <option value="2">Picture</option>
                     <option value="3">Video</option>
                     <option value="4">Letter</option>
@@ -35,7 +36,7 @@
                 <label class="font-bold" aria-label="Category Input" for="title">Title*:</label>
 
                 <!-- title input -->
-                <input @input="basicTitleChecker()" class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-8" id="title" type="text" v-model="form['basicTitle']">
+                <input @input="basicTitleChecker()" class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-9" id="title" type="text" v-model="form['basicTitle']">
 
                 <!-- warnings -->
                 <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[29px] right-0 pr-1 flex flex-row items-center">

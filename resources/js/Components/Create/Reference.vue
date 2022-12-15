@@ -5,9 +5,10 @@
         <div class="relative flex flex-row items-center h-full">
 
             <!-- select reference button -->
-            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="w-[42px] flex justify-center h-full items-center bg-gray-100 border-r border-gray-300" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-auto h-fit p-1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="relative w-[36px] flex h-full items-center bg-gray-100 border-r border-gray-300 leading-none pl-1" type="button">
+                <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">0</div>
+                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[18px] h-[18px]">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5l-3.9 19.5m-2.1-19.5l-3.9 19.5" />
                 </svg>
             </button>
 
@@ -19,7 +20,7 @@
                 </div>
 
                 <!-- reference input -->
-                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none" ref="referenceDOM"  type="text" :placeholder="placeholderText" v-model="form.reference.referenceTitle">
+                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"  type="text" :placeholder="placeholderText" v-model="form.reference.referenceTitle">
             </div>
         </div>
     </div>
