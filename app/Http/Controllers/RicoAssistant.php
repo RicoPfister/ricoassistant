@@ -416,9 +416,13 @@ class RicoAssistant extends Controller {
 
             foreach ($referencedIds as $i=>$id) {
 
+                // dd($id);
+
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
                 $result['referencesResult'][$i]['id'] = $id->id;
+                $result['referencesResult'][$i]['ref_date'] = $id->ref_date;
+                $result['referencesResult'][$i]['updated_at'] = $id->updated_at;
 
                 $tag = DB::table('tags')
                 ->where('basic_id', '=', $id->id)
