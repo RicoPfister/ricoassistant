@@ -1,29 +1,32 @@
 <template>
 
 <!-- reference picker popup container -->
-<div class=" z-40 h-fit w-full px-2 flex flex-col bg-white border-r border-b border-l border-black mb-3">
+<div class="z-40 w-full flex flex-col bg-yellow-50 border-r border-b border-l border-black mb-3">
 
     <!-- reference picker box -->
-    <div class="flex flex-col overflow-y-auto max-h-52 text-sm xl:text-base w-full">
+    <div class="flex flex-col w-full">
 
         <!-- popup: found in database -->
-        <div class=" text-sm">
+        <div class="z-40 px-1">
             <div class=""><b>Reference(s) found in Database:</b></div>
-            <div v-for="(item, index) in props.fromController.referencesResult" class="flex flex-row items-center w-full justify-between border-b last:border-b-none
+            <div v-for="(item, index) in props.fromController.referencesResult" class="relative flex flex-row items-center w-full justify-between border-b last:border-b-none
             text-gray-500">
-                <div class="flex flex-row items-center w-full h-[17px]">
-                    <div class="flex flex-flow">
-                        <button class="w-5 flex justify-center items-center">
+
+            <!-- detail reference popup -->
+            <div v-if="detailPopupOpen[index]" class="absolute top-0 left-[18px] bg-yellow-50 w-[calc(100%-18px)] z-40">123</div>
+                <div class="flex flex-row items-center w-[700px]">
+                    <!-- <div class="flex flex-flow">
+                        <button class="w-fit flex justify-center items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                 class="w-[15px] h-[15px] hover:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018
                                 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                             </svg>
                         </button>
-                    </div>
+                    </div> -->
 
-                    <div class="flex flex-row border-r pr-1 group">
-                        <div class="w-5 flex justify-center items-center">
+                    <!-- <div class="flex flex-row border-r"> -->
+                        <!-- <div class="w-fit flex justify-center items-center pl-[3px] pr-[1px]">
                             <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                             class="w-[13px] h-[13px] group-hover:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -31,29 +34,31 @@
                                 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25
                                 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                             </svg>
-                        </div>
-                        <div class="w-2 flex justify-center group-hover:text-black">
+                        </div> -->
+
+                        <!-- total inheritances -->
+                        <!-- <div class="w-2 flex justify-center group-hover:text-black">
                             {{ item.inheritance.length != '' ? item.inheritance.length : '-' }}
-                        </div>
-                    </div>
+                        </div> -->
+                    <!-- </div> -->
 
                     <!-- reference picker -->
                     <div class="flex flex-row justify-between group text-gray-400 w-full">
 
                         <!-- left part: reference icon, main reference, inheritance -->
-                        <div class="flex flex-row h-[15px] pl-1 w-full">
+                        <div class="flex flex-row h-[15px] w-full">
 
                             <!-- icon -->
-                            <div class="flex items-center w-fit">
+                            <button type="button" class="flex items-center min-w-fit">
                                 <ListIconsMedium :medium="item.medium"/>
-                            </div>
+                            </button>
 
                             <!-- inheritance box -->
-                            <div class="flex flex-row items-center ml-1 w-[523px]">
+                            <div class="flex flex-row items-center ml-1 w-full">
 
-                                <div @click="referencePopupSelect(index)" class="font-bold text-gray-500 group-hover:text-black truncate max-w-full">
+                                <button type="button" @click="referencePopupSelect(index)" class="font-bold text-gray-500 hover:text-black truncate max-w-full">
                                     <div class="truncate max-w-full">{{ item.title }}</div>
-                                </div>
+                                </button>
 
                                 <div v-if="item.inheritance != ''" class="flex items-center w-fit">&nbsp;>&nbsp;</div>
 
@@ -63,30 +68,16 @@
                                     <div v-for="(item2, index2) in item.inheritance" class="flex flex-flow items-center truncate min-w-0">
 
                                         <!-- inheritance title -->
-                                        <button type="button" class="pl-0 h-[15px] flex items-center truncate min-w-0">
+                                        <div class="pl-0 h-[15px] flex items-center truncate min-w-0">
                                             <div class="truncate min-w-0">{{ item2.title }}</div>
-                                        </button>
+                                        </div>
 
-                                        <!-- updated at -->
+                                        <!-- separator -->
                                         <div v-if="index2 < item.inheritance.length-1" class="flex items-center w-fit">&nbsp;>&nbsp;</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- right part: date icon, updated at -->
-                        <div class="flex flex-row h-[15px] items-center leading-none p-0 w-[116px] justify-end">
-
-                            <div class="h-full flex items-center w-fit">
-                                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[13px] h-[13px] group-hover:stroke-black">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008z" />
-                                </svg>
-                            </div>
-
-                            <div class="ml-1 group-hover:text-black flex items-center mr-2"> {{ item.updated_at.slice(0, 11) }}</div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -123,6 +114,8 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import ListIconsMedium from "../ListIconsMedium.vue";
 
+let detailPopupOpen = ref([]);
+
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'transfer', 'toParent', 'toChild', 'fromController']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'fromChild', 'medium']);
 
@@ -132,7 +125,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 onMounted(() => {
     // console.log(1);
     // console.log(props.fromController.misc.row-1);
-    console.log(props.fromController.referencesResult);
+    // console.log(props.fromController.referencesResult);
 });
 
 // 4) send data to parent
@@ -143,7 +136,5 @@ function referencePopupSelect(rowIndex) {
     emit('fromChild', {'parentIndex': props.fromController.misc.row, 'parentId': props.fromController.misc.parentId, 'referenceData': {'index': props.fromController.misc.row, 'referenceTitle': props.fromController.referencesResult[rowIndex].title, 'basic_id': props.fromController.referencesResult[rowIndex].basic_id}});
     // emit('fromChild', 'test');
     // referencePickerOpen.value[props.toChild.referenceChecker.rowIndex-1]= 0;
-    // console.log(props.toChild.referencePickerOpen[props.toChild.referenceChecker.rowIndex-1]);
-    // console.log(props.toChild.referenceChecker.rowIndex-1);
 }
 </script>

@@ -77,9 +77,9 @@
             </div>
 
             <!-- reference box -->
-            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
+            <div class="relative z-40 w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
 
-                <div class="w-full h-[30px]">
+                <div class="absolute w-full h-[30px] z-40">
                     <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
                 </div>
 

@@ -13,8 +13,7 @@
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
                 <optgroup label="Idea:">
-                    <option value="1">
-                        Sound</option>
+                    <option value="1">Sound</option>
                     <option value="2">Picture</option>
                     <option value="3">Video</option>
                     <option value="4">Letter</option>

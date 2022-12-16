@@ -318,7 +318,11 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function reference(Request $request) {
 
+        // dd($request);
+
         function reference_inheritance_list($id, $i, $user) {
+
+            // var_dump($id, $i);
 
             $counter = 1;
 
@@ -338,40 +342,43 @@ class RicoAssistant extends Controller {
 
             // dd($parent);
 
-            $parent_checker_next_value = $parent_ref->basic_ref;
+            // var_dump($parent_ref->basic_ref);
 
-            // dd($parent_checker_next_value);
+            if (isset($parent_ref->basic_ref)) {
+                $parent_checker_next_value = $parent_ref->basic_ref;
 
-            do  {
-                if ($parent_ref->basic_id != $parent_ref->basic_ref) {
-                    // get corresponding basic db entry data
-                    $parent_basic = DB::table('basics')
-                    ->where('status', '=', null)
-                    ->where('user_id', '=', $user->id)
-                    ->where('id', '=', $parent_checker_next_value)
-                    // ->distinct('basic_id')
-                    // ->where('basic_id', '=', 'basic_ref')
-                    // ->whereRaw('basic_id = basic_ref')
-                    ->first();
+                // dd($parent_checker_next_value);
 
-                    // check next ref db entry
-                    $parent_ref = DB::table('refs')
-                    ->where('status', '=', null)
-                    // ->where('user_id', '=', $user->id)
-                    ->where('basic_id', '=', $parent_checker_next_value)
-                    // ->distinct('basic_id')
-                    // ->where('basic_id', '=', 'basic_ref')
-                    // ->whereRaw('basic_id = basic_ref')
-                    ->first();
+                do  {
+                    if ($parent_ref->basic_id != $parent_ref->basic_ref) {
+                        // get corresponding basic db entry data
+                        $parent_basic = DB::table('basics')
+                        ->where('status', '=', null)
+                        ->where('user_id', '=', $user->id)
+                        ->where('id', '=', $parent_checker_next_value)
+                        // ->distinct('basic_id')
+                        // ->where('basic_id', '=', 'basic_ref')
+                        // ->whereRaw('basic_id = basic_ref')
+                        ->first();
 
-                    array_push($parent_list, $parent_basic);
-                    $parent_checker_next_value = $parent_ref->basic_ref;
-                    $parent_checker = 1;
-                    $counter++;
-                }
-                else $parent_checker = 0;
-            } while ($parent_checker || $counter > 10);
+                        // check next ref db entry
+                        $parent_ref = DB::table('refs')
+                        ->where('status', '=', null)
+                        // ->where('user_id', '=', $user->id)
+                        ->where('basic_id', '=', $parent_checker_next_value)
+                        // ->distinct('basic_id')
+                        // ->where('basic_id', '=', 'basic_ref')
+                        // ->whereRaw('basic_id = basic_ref')
+                        ->first();
 
+                        array_push($parent_list, $parent_basic);
+                        $parent_checker_next_value = $parent_ref->basic_ref;
+                        $parent_checker = 1;
+                        $counter++;
+                    }
+                    else $parent_checker = 0;
+                } while ($parent_checker || $counter > 10);
+            }
                     // if (){
                         // dd($parent_list)
 
