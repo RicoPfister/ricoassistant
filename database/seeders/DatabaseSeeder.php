@@ -50,57 +50,57 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'sound',
+            'medium_name' => 'Sound',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'picture',
+            'medium_name' => 'Picture',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'video',
+            'medium_name' => 'Video',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'letter',
+            'medium_name' => 'Letter',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'interactivity',
+            'medium_name' => 'Interactivity',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'system',
+            'medium_name' => 'System',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'location',
+            'medium_name' => 'Location',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'self_awareness',
+            'medium_name' => 'Self Awareness',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'self_reproduction',
+            'medium_name' => 'Self Reproduction',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'external_activation',
+            'medium_name' => 'External Activation',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('medium_lists')->insert([
-            'medium_name' => 'external_motivation',
+            'medium_name' => 'External Motivation',
             'tracking' => '127.0.0.1',
         ]);
     }

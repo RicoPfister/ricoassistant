@@ -427,6 +427,7 @@ class RicoAssistant extends Controller {
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
+                $result['referencesResult'][$i]['medium_name'] = DB::table('medium_lists')->where('id', '=', $id->medium)->pluck('medium_name');
                 $result['referencesResult'][$i]['id'] = $id->id;
                 $result['referencesResult'][$i]['ref_date'] = $id->ref_date;
                 $result['referencesResult'][$i]['updated_at'] = $id->updated_at;
