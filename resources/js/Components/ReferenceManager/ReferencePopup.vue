@@ -9,14 +9,14 @@
         <!-- popup: found in database -->
         <div class="z-40 px-2 pb-1">
             <div class=""><b>Reference(s) found in Database:</b></div>
-            <div @mouseleave="detailPopupOpen[index] = 0; showInheritanceTitleActive = 0; showInheritanceIndexActive = 0;" v-for="(item, index) in props.fromController.referencesResult" class="relative flex flex-row items-center w-full
+            <div @mouseleave="detailPopupOpen[index] = 0; showInheritanceTitleActive = 0; showInheritanceIndexActive = 0;" v-for="(item, index) in props.fromController.referencesResult" class="relative flex flex-row items-center
             justify-between border-b last:border-b-none text-gray-500">
 
             <!-- detail reference popup -->
             <div v-if="detailPopupOpen[index]" class="absolute top-0 left-[18px] bg-stone-300 w-[calc(100%-18px)] z-40 flex flex-col">
 
                 <!-- title and inheritances -->
-                <div class="flex flex-col items-center">
+                <div class="flex flex-col border">
                     <div>
                         <button @click="referencePopupSelect(index)" v-if="showInheritanceTitleActive == 0" type="button" class="truncate font-bold ml-1 hover:text-black w-[700px] text-start">{{ item.title }}</button>
                     </div>
@@ -29,7 +29,9 @@
 
                 <!-- detail reference info row -->
                 <div class="flex flex-row border-t">
-                    <div class="flex justify-center pl-1 items-center pr-1">{{ !showInheritanceIndexActive ? item.inheritance.length+1 : item.inheritance.length+1-showInheritanceIndexActive }}</div>
+
+                    <!-- inheritance index -->
+                    <button class="flex justify-center pl-1 items-center pr-1 hover:text-black">{{ !showInheritanceIndexActive ? item.inheritance.length+1 : item.inheritance.length+1-showInheritanceIndexActive }}</button>
 
                     <!-- button previous reference -->
                     <button @click.prevent="showInheritanceSwitchher('previous', index)" class="border-l w-5 flex items-center justify-center text-center bg-slate-300">
@@ -180,6 +182,10 @@ function showInheritanceSwitchher(switcher, index) {
     }
 
     // console.log(showInheritanceIndexActive.value);
+}
+
+function addtab() {
+    emit('addtab');
 }
 
 </script>

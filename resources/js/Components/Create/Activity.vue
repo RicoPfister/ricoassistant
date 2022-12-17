@@ -77,9 +77,9 @@
             </div>
 
             <!-- reference box -->
-            <div class="relative z-40 w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
+            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
 
-                <div class="absolute w-full h-[30px] z-40">
+                <div class="absolute w-full h-[30px]">
                     <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
                 </div>
 
@@ -147,12 +147,12 @@
     <!-- ------------------------------------------------ -->
     <div aria-label="Drop Down Activity Day Overview" class="">
 
-        <div class="flex z-20 w-full justify-center whitespace-nowrap overflow-x-auto">
+        <div class="flex z-10 w-full justify-center whitespace-nowrap overflow-x-auto">
 
             <!-- diagram box -->
             <div class="flex flex-col">
 
-                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 z-20 bg-white">
+                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 bg-white">
                     <div v-for="(width, index) in activityDayOverviewDiagram1a" :key="'A'+index" class="flex flex-row">
                         <div class="h-full bg-stone-300 flex" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                     </div>
@@ -172,7 +172,7 @@
 
                 </div>
 
-                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 z-20 mt-1 bg-white">
+                <div class="relative w-[722px] border border-gray-300 h-5 flex flex-row text-gray-500 mt-1 bg-white">
                     <div v-for="(width, index) in activityDayOverviewDiagram1b" :key="'B'+index" class="flex flex-row">
                         <div class="h-full bg-stone-300" :style="{ width: width['minute']+'px', background: activityDiagramColorTag[width['row']] }"></div>
                     </div>

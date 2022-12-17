@@ -43,7 +43,7 @@ class RicoAssistant extends Controller {
     public function detail(Request $request) {
 
         // dd($request);
-        dd($request->reference);
+        // dd($request->reference);
         // dd($request->basic_id);
 
         $user = Auth::user();
@@ -189,7 +189,7 @@ class RicoAssistant extends Controller {
             // fire reference function
             if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
             else $checkValue = '';
-            dd($checkValue);
+            // dd($checkValue);
             reference($db_id = 4, $checkValue, $request, $basics);
         }
 
