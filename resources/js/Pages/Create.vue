@@ -147,10 +147,10 @@ function dataChild(data) {
 
 // }, {'deep': true}, 500));
 
-// listen to form changes and emit them
-watch(() => form, (curr, prev) => {
-    emit('dataForm', {'dataForm': form});
-}, {deep: true}, 500);
+// // listen to form changes and emit them
+// watch(() => form, (curr, prev) => {
+//     emit('dataForm', {'dataForm': form});
+// }, {deep: true}, 500);
 
 // process component data
 function dataToParent() {

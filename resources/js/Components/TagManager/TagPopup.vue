@@ -87,7 +87,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :fromParentTagString="props.fromParentTagString" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
+            <contentBox :toChild="props.toChild" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
@@ -104,11 +104,10 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import contentBox from "./TagContent.vue";
-
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild', 'fromParentTagString', 'dataForm', 'dataCommon']);
-let emit = defineEmits(['fromParentTagString', 'dataChild', 'tagPopupOpen', 'dataToParent']);
+let props = defineProps(['dataChild', 'fromParentTagString', 'dataForm', 'dataCommon', 'fromChild', 'toChild']);
+let emit = defineEmits(['fromParentTagString', 'dataChild', 'tagPopupOpen', 'fromChild', 'toChild']);
 
 let categoryPopupOpen = ref(0);
 let tagContentList = ref();
@@ -126,14 +125,12 @@ function dataChild(data) {
 //     emit('dataChild', {'tagCollection': tagCollection.value});
 // };
 
-Inertia.post('tag');
-
 let tagCollectionInputFormat = ref();
 
 onMounted(() => {
-    if (props.fromParentTagString) {
+    if (props.toChild) {
         // console.log(props.fromParentTagString);
-        tagCollectionInputFormat.value = props.fromParentTagString;
+        tagCollectionInputFormat.value = props.toChild;
     }
   })
 
@@ -170,8 +167,8 @@ function emitParent() {
         // no space at the end when reaching last entry
         if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
-        // console.log(tagCollectionInputFormat.value);
-        emit('dataToParent', {'tagCollection': tagCollectionInputFormat.value});
+        console.log(tagCollectionInputFormat.value);
+        emit('fromChild', {'tagCollection': tagCollectionInputFormat.value});
     }
 
 </script>

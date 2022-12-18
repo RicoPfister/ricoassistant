@@ -39,7 +39,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
-let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString']);
+let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString', 'toChild']);
 let emit = defineEmits(['dataChild']);
 
 let tagArray = ref([]);
@@ -61,16 +61,18 @@ function removeTagFromList(index) {tagArray.value.push(props.dataParent);
 // get child data
 onMounted(() => {
 
-    if (props.dataForm.basicTitle) {
-        title.value = props.dataForm.basicTitle;
-        // alternate title text
-    } else title.value = '';
+    //!! if (props.dataForm.basicTitle) {
+    //     title.value = props.dataForm.basicTitle;
+    //     alternate title text
+    // } else title.value = '';
+    console.log(props.toChild);
+
 
     // check if tag string can be convertet to tag select
-    if (props.fromParentTagString) {
+    if (typeof props.toChild.tagCollection[0] !== 'undefined') {
 
-        // console.log(props.fromParentTagString);
-        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.fromParentTagString);
+        console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagCollection[0]));
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagCollection[0]);
         // console.log(tagArray.value);
     }
 })

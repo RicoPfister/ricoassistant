@@ -75,12 +75,10 @@
                 <!-- source tags -->
                 <!-- ------------------------------------------------------ -->
                 <div class="border-b-2 border-black font-bold">Tags</div>
-                <div class="pt-2">
-                    <TagForm :data-common="props.dataCommon" />
-                </div>
+                <TagForm />
 
                 <!-- source preview-->
-                <div class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
+                <div class="border-black border-b-2 font-bold">Source Preview (if available)</div>
                 <div class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
                         <div v-if="item.type.split('/')[0] == 'image'" class="py-1">
@@ -96,11 +94,6 @@
     </div>
 </div>
 
-<!-- open popup -->
-<!-- <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
-</div> -->
-
 </template>
 
 <script setup>
@@ -109,7 +102,6 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
-import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue"
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
@@ -160,6 +152,43 @@ onMounted(() => {
         preview.value = props.dataForm.previewlist;
     }
   })
+
+//   tag popup
+// ---------------------------------------------------------
+
+// let emit = defineEmits(['dataForm']);
+
+// onMounted(() => {
+//     console.log(props.dataForm.basicTitle);
+
+//     if (typeof props.dataParent.title != 'undefined') {
+//         // console.log(props.dataForm.statement);
+//         title = props.dataParent.title;
+//     } else title = 'No title found';
+// })
+
+// send tag string to tag popup
+let tagCollectionInputFormat = ref([]);
+let tagCollectionInputIndex = ref('');
+
+function fromChild(data) {
+
+    // console.log(data);
+
+    if (data.tagCollection) {
+
+        // console.log(data.tagCollection);
+        tagCollectionInputFormat.value[tagCollectionInputIndex.value] = data.tagCollection;
+        tagPopupOpen.value = 0;
+    }
+}
+
+function tagPopupOpenData(index) {
+
+    tagCollectionInputIndex.value = index;
+    tagPopupOpen.value = 1;
+    // console.log(tagCollectionInputIndex.value);
+}
 
 // emit formData
 let form = ref({});

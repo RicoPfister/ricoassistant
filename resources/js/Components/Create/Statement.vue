@@ -10,7 +10,9 @@
     </div>
 </div>
 
-<TagForm :from-parent="'titleNo'" />
+<div class="border-l border-r border-b border-black">
+    <TagForm :from-parent="'titleNo'" :data-common="props.dataCommon" />
+</div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
     <ReferenceStatement :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
