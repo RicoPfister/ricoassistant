@@ -76,7 +76,7 @@
                 <!-- ------------------------------------------------------ -->
                 <div class="border-b-2 border-black font-bold">Tags</div>
                 <div class="pt-2">
-                    <TagForm :data-common="props.dataCommon" />
+                    <TagForm :fromController="props.fromController" />
                 </div>
 
                 <!-- source preview-->

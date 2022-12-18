@@ -91,7 +91,7 @@
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <CategoryPopup v-if="categoryPopupOpen" :data-common="props.dataCommon" @dataChild="dataChild"/>
+            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" @dataChild="dataChild"/>
         </div>
     </div>
 </div>
@@ -113,7 +113,7 @@ let categoryPopupOpen = ref(0);
 let tagContentList = ref();
 let tagCollection = ref();
 
-// emit tag data to TagContent.vue
+//? emit tag data to TagContent.vue
 function dataChild(data) {
     // console.log(data);
     if (data.tagSelect) tagContentList.value = data.tagSelect;

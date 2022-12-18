@@ -595,16 +595,17 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function tag(Request $request) {
 
+        // dd($request);
+
         $tagCollectionRaw = DB::table('tags')->get();
 
         foreach($tagCollectionRaw as $key => $value) {
-
             $tagCollectionSelection['tagCollection'][$key][0] = $value->tag_category;
             $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
         }
-
+        $tagCollectionSelection['misc']['parentId']= $request->parentId;
         // dd($tagCollectionSelection);
 
-        return Inertia::render('Create', ['dataCommon' => $tagCollectionSelection]);
+        return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
     }
 }

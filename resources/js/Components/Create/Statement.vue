@@ -11,7 +11,7 @@
 </div>
 
 <div class="border-l border-r border-b border-black">
-    <TagForm :from-parent="'titleNo'" :data-common="props.dataCommon" />
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0}" :fromController="props.fromController" />
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">

@@ -22,7 +22,7 @@
             </div>
 
             <KeepAlive>
-                <SubCategory v-if="SubCategoryOpen[index]" :dataParent="tagCollection[index]" :idParent="index" @data-child="dataChild"/>
+                <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index}" @fromChild="fromChild"/>
             </KeepAlive>
 
         </div>
@@ -41,15 +41,15 @@ import SubCategory from "./TagPopupSubCategory.vue";
 let SubCategoryOpen = ref([]);
 let tagCollection = ref([]);
 
-let props = defineProps(['dataParent', 'dataChild', 'dataCommon']);
-let emit = defineEmits(['dataParent', 'idParent', 'dataChild']);
+let props = defineProps(['dataCommon']);
+let emit = defineEmits('fromChild');
 
 // let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let categoryActiveTotal = ref([]);
 
 // get TagPopupSubCategory.vue data and emit tag data to TagPopup.vue
-function dataChild(data){
-    if (typeof categoryActiveTotal.value[data[0]] == 'undefined') categoryActiveTotal.value[data[0]] = 1; else categoryActiveTotal.value[data[0]]++;
+function fromChild(data){
+    if (typeof categoryActiveTotal.value[data[0]] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data[0]]++;
 
     // collect tag data and emit
     emit('dataChild', {'tagSelect': [tagCollection.value[data[0]][0], data[1]]});
@@ -60,7 +60,7 @@ function dataChild(data){
 // }, {deep: true}, 500);
 
 onMounted(() => {
-    tagCollection.value = props.dataCommon.tagCollection;
+    tagCollection.value = props.fromController.tagCollection;
 })
 
 </script>

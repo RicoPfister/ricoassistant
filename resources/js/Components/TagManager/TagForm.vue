@@ -1,17 +1,9 @@
 <template>
 
     <div>
-        <div class="flex flex-col">
+        <div class="relative flex flex-col">
 
-            <button class="flex flex-row justify-between items-center" type="button">
-
-                <label v-if="titleOpen" class="" aria-label="Statement Input" for="statement">Tags:</label>
-
-                <!-- <MenuEntry /> -->
-
-            </button>
-
-            <div :class="({'border-t': titleOpen})" class="flex flex-row items-center h-[31px]">
+            <div class="flex flex-row items-center h-[31px]">
 
                 <!-- add button -->
                 <button @click.prevent="tagPopupOpenData" class="relative w-[36px] flex h-full items-center bg-gray-100 border-r border-gray-300 leading-none pl-1" type="button">
@@ -23,8 +15,8 @@
                 </button>
 
                 <!-- open popup -->
-                <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-                    <TagPopup :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-parent="tagCollectionInputFormat" :data-form="props.dataForm" @fromChild="fromChild" :toChild="{'tagCollection': tagCollectionInputFormat}"/>
+                <div class="absolute h-full w-full top-0 left-0 z-50">
+                    <TagPopup v-if="tagPopupOpen" :fromController="props.fromController" :toChild="{'tagCollection': tagCollectionInputFormat}" @fromChild="fromChild"/>
                 </div>
 
                 <!-- tag input -->
@@ -56,10 +48,9 @@ let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild']);
 
 // });
 
-let tagPopupOpen = ref(0);
+let tagPopupOpen = ref(1);
 let tagCollectionInputIndex = ref(0);
 let tagCollectionInputFormat = ref({});
-let titleOpen = ref(1);
 let controllerDataArrived = ref(0);
 
 // onMounted(() => {
@@ -79,18 +70,17 @@ let controllerDataArrived = ref(0);
 //     }
 // }
 
-// request controller data
-function tagPopupOpenData() {
-    Inertia.post('tag');
-}
-
-onMounted(() => {
-    titleOpen.value = !titleOpen.value;
-});
+// onMounted(() => {
+//     titleOpen.value = !titleOpen.value;
+// });
 
 // listen to controller feedback and opens tag popup
-watch(() => props.dataCommon, (curr, prev) => {
-    tagPopupOpen.value = 1;
+watch(() => props.fromController, (curr, prev) => {
+    if (props.dataCommon.parentId == props.toChild.parentId && props.dataCommon.parentIndex == props.toChild.parentIndex) {
+        console.log(ok);
+        tagPopupOpen.value = 1;
+    }
+
 }, {deep: true}, 500);
 
 //   tag popup (formerly part of Source.vue)
@@ -132,6 +122,10 @@ function fromChild(data) {
 //     console.log(tagCollectionInputIndex.value);
 // }
 
+// request controller data
+function tagPopupOpenData() {
+       Inertia.post('tag', {'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex});
+}
 
 </script>
 
