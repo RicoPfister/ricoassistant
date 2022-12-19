@@ -151,17 +151,18 @@ onMounted(() => {
 
 // send changes to parent
 
+// send to parent: tag data from child
 function fromChild(data) {
-
     if (data.component = "tag" && data.parentId == 3) {
         emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
 }
 
-// emit form
+// send to parent: file upload
 watch(() => InputData, (curr, prev) => {
-// emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
-
+    // emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
+    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+    emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
 }, {deep: true}, 500);
 
 // send to parent:
@@ -175,16 +176,16 @@ watch(() => InputData, (curr, prev) => {
 // }
 
 // emit formData
-let form = ref({});
-function toParentTagDataGroup(index) {
-    tagCollectionInputIndex.value = index;
+// let form = ref({});
+// function toParentTagDataGroup(index) {
+//     tagCollectionInputIndex.value = index;
 
-    form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
+//     form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
 
-    // console.log(form.value);
+//     // console.log(form.value);
 
-    // send formData
-    emit('toParent', {'sourceTag': form.value});
-}
+//     // send formData
+//     emit('toParent', {'sourceTag': form.value});
+// }
 
 </script>

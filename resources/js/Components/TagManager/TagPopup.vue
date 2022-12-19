@@ -137,6 +137,7 @@ function fromChild(data) {
 // };
 
 let tagCollectionInputFormat = ref();
+// let tagCollectionGroupFormat = ref();
 
 onMounted(() => {
     // console.log(props.toChild);
@@ -181,11 +182,11 @@ function saveTagPopup() {
         if (index1 != tagSelectionListGroup.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
         // console.log(tagCollectionInputFormat.value);
-        emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value});
+        emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value, 'tagSelectionListGroup': tagSelectionListGroup.value});
     }
 
 function cancelTagPopup() {
-    emit('fromChild', {'tagSelectionListString': ''});
+    emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
 }
 
 </script>

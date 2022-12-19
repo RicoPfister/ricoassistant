@@ -74,28 +74,37 @@ class RicoAssistant extends Controller {
         // dd($request);
 
         // create tag
-        function tagData($request, $id, $index, $basics, $sources) {
+        function tagData($request, $index, $basics, $sources, $id) {
+
+            // dd($request, $index, $basics, $sources, $id);
+            // dd($request->sourceData['tag']);
+            // dd($request->sourceData['tag'][$index]);
 
             switch ($id) {
 
-                case 2:
-                    if (isset ($request->tagData['tagSource'][$index])) {
-                        $tag = new Tag();
-                        $tag->db_name = 2;
-                        $tag->db_id = $sources->id;
-                        if (isset ($request->tagData['tagSource'][$index][0])) $tag->tag_category = $request->tagData['tagSource'][$index][0];
-                        if (isset ($request->tagData['tagSource'][$index][1])) $tag->tag_context = $request->tagData['tagSource'][$index][1];
-                        if (isset ($request->tagData['tagSource'][$index][2])) $tag->tag_content = $request->tagData['tagSource'][$index][2];
-                        if (isset ($request->tagData['tagSource'][$index][3])) $tag->tag_comment = $request->tagData['tagSource'][$index][3];
-                        $tag->tracking = $request->ip();
-                        $tag->save();
+                case 3:
+                    foreach ($request->sourceData['tag'][$index] as $key => $value) {
+                        // dd($value);
+                            // dd($value2);
+                            // dd($request, $index, $basics, $sources, $id);
+                            // dd($request->sourceData['tag'][$index][0]);
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->db_id = 3;
+                            $tag->db_index = $sources->id;
+                            if (isset ($value[0])) $tag->tag_category = $value[0];
+                            if (isset ($value[1])) $tag->tag_context = $value[1];
+                            if (isset ($value[2])) $tag->tag_content = $value[2];
+                            if (isset ($value[3])) $tag->tag_comment = $value[3];
+                            $tag->tracking = $request->ip();
+                            $tag->save();
                     }
                 break;
             }
         };
 
         // create reference
-        function reference($db_id, $checkValue, $request, $basics) {
+        function reference($db_id, $request, $basics) {
 
             // dd($request);
 
@@ -108,18 +117,17 @@ class RicoAssistant extends Controller {
             // dd($db_name[0].'Data');
             // dd($request->$db_name['reference'] );
 
-            if (!$checkValue) {
-                // dd($checkValue);
-                $ref = new Ref();
-                $ref->basic_id = $basics->id;
-                $ref->basic_ref = $basics->id;
-                $ref->ref_db_id = $db_id;
-                $ref->ref_db_index = 1;
-                $ref->tracking = $request->ip();
-                $ref->save();
-            }
+            // if (!$checkValue) {
+            //     $ref = new Ref();
+            //     $ref->basic_id = $basics->id;
+            //     $ref->basic_ref = $basics->id;
+            //     $ref->ref_db_id = $db_id;
+            //     $ref->ref_db_index = 1;
+            //     $ref->tracking = $request->ip();
+            //     $ref->save();
+            // }
 
-            else {
+
                 // foreach ($request->activityTo as $i=>$activity) {
                 foreach ($request->$db_name['reference'] as $key => $value) {
                     // dd($value);
@@ -132,11 +140,10 @@ class RicoAssistant extends Controller {
                     $ref->tracking = $request->ip();
                     $ref->save();
                 }
-            }
+
         }
 
-        // dd($ref);
-
+        // create basic
         $basics = new Basic();
         $basics->ref_date = $request->basicData['refDate'];
         $basics->title = $request->basicData['title'];
@@ -146,6 +153,7 @@ class RicoAssistant extends Controller {
         $basics->tracking = $request->ip();
         $basics->save();
 
+        // create statement
         if (isset($request->statementData)){
             $statement = new Statement();
             $statement->basic_id = $basics->id;
@@ -154,13 +162,11 @@ class RicoAssistant extends Controller {
             $statement->save();
 
             // fire reference function
-            if (isset($request->statementData['reference'])) $checkValue = $request->statementData['reference'];
-            else $checkValue = '';
+            if (isset($request->statementData['reference'])) reference($db_id = 2, $request, $basics);;
             // dd($checkValue);
-            reference($db_id = 2, $checkValue, $request, $basics);
         }
 
-        // dd($checkValue);
+        // create activity
         if ($request->activityData){
 
             // dd($request->activityData['activityTo'][0]);
@@ -258,14 +264,19 @@ class RicoAssistant extends Controller {
         //     $accounting->save();
         // }
 
-        // store files
-        if (isset($request->filelist)) {
+        // create source
 
-            // dd($request);
+        // dd($request->file('sourceData')['filelist']);
+
+        if ($request->sourceData['filelist']) {
+
+            // dd($request->files['sourceData']);
+            // dd($request->file[sourceData]['filelist']);
 
             // store file meta data
-            foreach($request->file('filelist') as $index => $dataString) {
+            foreach($request->sourceData['filelist'] as $index => $dataString) {
 
+                // dd($request->sourceData['filelist']);
                 // dd($dataString['file']->hashName());
 
                 $sources = new Source();
@@ -276,14 +287,15 @@ class RicoAssistant extends Controller {
                 $sources->tracking = $request->ip();
                 $sources->save();
 
-                // dd($request);
+                // dd($sources);
 
-                // isset tagData: execute tagData function
-                if (isset ($request->tagData['tagSource'])) tagData($request, 2, $index, $basics, $sources);
+                // create tag
+                // dd($request->souceData['tag']);
+                if (isset ($request->sourceData['tag'])) tagData($request, $index, $basics, $sources, 3);
             }
 
             // store file content data
-            foreach($request->file('filelist') as $dataString2) {
+            foreach($request->file('sourceData')['filelist'] as $dataString2) {
                 Storage::disk('local')->put('public/images/inventory/', $dataString2['file']);
             }
         }

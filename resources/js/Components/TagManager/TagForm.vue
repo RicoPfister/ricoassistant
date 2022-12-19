@@ -47,6 +47,7 @@ let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fr
 let tagPopupOpen = ref(0);
 let tagCollectionInputIndex = ref(0);
 let tagCollectionInputFormat = ref({});
+let tagCollectionGroupFormat = ref({});
 let controllerDataArrived = ref(0);
 
 // onMounted(() => {
@@ -98,7 +99,7 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
-    // console.log(data.tagCollection);
+    // console.log(data);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
     if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
@@ -107,6 +108,7 @@ function fromChild(data) {
         // tagCollectionInputFormat.value = data.tagCollection;
 
         if (data.tagSelectionListString !== '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+        if (data.tagSelectionListGroup !== '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
 
         tagPopupOpen.value = 0;
     }
@@ -126,8 +128,15 @@ function tagPopupOpenData() {
 
 // send changes to parent
 // send to parent: listen to tag changes
-watch(() => tagCollectionInputFormat.value, (curr, prev) => {
-    emit('fromChild', {'tagList': tagCollectionInputFormat.value, 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+// console.log(tagCollectionGroupFormat.value);
+watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
+    // console.log(tagCollectionGroupFormat.value[0]);
+    emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+}, {deep: true}, 500);
+
+watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
+    // console.log(tagCollectionInputFormat.value[0]);
+    emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
 </script>
