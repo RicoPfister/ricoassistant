@@ -61,7 +61,7 @@
             </div>
 
             <div class="flex flex-row ">
-                <button @click="$emit('tagPopupOpen')" class="px-2 bg-gray-200 h-[34px] flex items-center border-l border-r border-gray-400" type="button">
+                <button @click="cancelTagPopup" class="px-2 bg-gray-200 h-[34px] flex items-center border-l border-r border-gray-400" type="button">
                     <div class="flex flex-row items-center">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="red" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
@@ -72,7 +72,7 @@
                     </div>
                 </button>
 
-                <button @click="emitParent" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
+                <button @click="saveTagPopup" class="px-2 bg-gray-200 h-[34px] flex items-center" type="button">
                     <div class="flex flex-row items-center">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
@@ -87,11 +87,11 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :toChild="props.toChild" :dataParent="tagContentList" :data-form="props.dataForm" @data-child="dataChild"/>
+            <contentBox :toChild="{'tagSelection': tagSelection, 'tagSelectionListString': tagSelectionListString}" @fromChild="fromChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" @dataChild="dataChild"/>
+            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" @fromChild="fromChild"/>
         </div>
     </div>
 </div>
@@ -106,40 +106,53 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
 import CategoryPopup from "./TagPopupCategory.vue"
 
-let props = defineProps(['dataChild', 'fromParentTagString', 'dataForm', 'dataCommon', 'fromChild', 'toChild']);
-let emit = defineEmits(['fromParentTagString', 'dataChild', 'tagPopupOpen', 'fromChild', 'toChild']);
+let props = defineProps(['fromParentTagString', 'dataForm', 'dataCommon', 'fromChild', 'toChild', 'fromController']);
+let emit = defineEmits(['fromParentTagString', 'tagPopupOpen', 'fromChild', 'toChild']);
 
 let categoryPopupOpen = ref(0);
-let tagContentList = ref();
-let tagCollection = ref();
+let tagSelection = ref([]);
+let tagSelectionListGroup = ref([]);
+let tagSelectionListString = ref([]);
 
 //? emit tag data to TagContent.vue
-function dataChild(data) {
+function fromChild(data) {
+
     // console.log(data);
-    if (data.tagSelect) tagContentList.value = data.tagSelect;
-    if (data.tagCollection) tagCollection.value = data.tagCollection;
+
+    if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    // console.log(tagSelection.value);
+    // console.log(data.tagSelectionList);
+    if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
+
+    // if (typeof data.tagSelectionList != 'undefined') {
+
+    //     tagSelectionList.value = data.tagSelectionList;
+    //     console.log(tagSelectionList.value);
+    // }
 }
 
 // save submit back to source
 // function emitData() {
-//     emit('dataChild', {'tagCollection': tagCollection.value});
+//     emit('dataChild', {'tagSelectionList': tagSelectionList.value});
 // };
 
 let tagCollectionInputFormat = ref();
 
 onMounted(() => {
-    if (props.toChild) {
+    // console.log(props.toChild);
+    if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log(props.fromParentTagString);
-        tagCollectionInputFormat.value = props.toChild;
+        // tagCollectionInputFormat.value = props.toChild;
+        tagSelectionListString.value = props.toChild.tagSelectionListString;
+        // console.log(tagSelectionList.value);
     }
-  })
+});
 
 //   transcript tag select to tag input format
-
-function emitParent() {
+function saveTagPopup() {
 
     tagCollectionInputFormat.value = '';
-    tagCollection.value.forEach(createTagInputGroup);
+    tagSelectionListGroup.value.forEach(createTagInputGroup);
 
     function createTagInputGroup(item, index1) {
 
@@ -165,11 +178,15 @@ function emitParent() {
             }
         }
         // no space at the end when reaching last entry
-        if (index1 != tagCollection.value.length-1) tagCollectionInputFormat.value  += ' ';
+        if (index1 != tagSelectionListGroup.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
-        console.log(tagCollectionInputFormat.value);
-        emit('fromChild', {'tagCollection': tagCollectionInputFormat.value});
+        // console.log(tagCollectionInputFormat.value);
+        emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value});
     }
+
+function cancelTagPopup() {
+    emit('fromChild', {'tagSelectionListString': ''});
+}
 
 </script>
 

@@ -1,10 +1,10 @@
 <template>
 
 <!-- tag categories/content -->
-<div v-for="(item, index) in props.toChild.tagCollection" class="flex flex-col bg-white w-full">
+<div v-for="(item, index) in props.toChild.tagCollection[1]" class="flex flex-col bg-white w-full">
     <div :class="{'bg-blue-100': categorySubActive[index]}" class="h-[34px] border-b border-gray-400 w-full flex flex-row">
 
-        <button @click.prevent="categorySubActive[index] = 1; fromChild(item)" class="px-2 border-r border-gray-400 h-full flex items-center w-full justify-between" type="button">
+        <button @click.prevent="categorySubActive[index] = 1; fromChild(index)" class="px-2 border-r border-gray-400 h-full flex items-center w-full justify-between" type="button">
             <div class="flex items-center ml-1">{{ item }}</div>
 
             <div v-if="categorySubActive[index]">
@@ -30,8 +30,8 @@ let emit = defineEmits(['fromChild']);
 let categorySubActive = ref([]);
 
 // emit data to TagPopupCategory.vue
-function fromChild(item) {
-    emit('fromChild', [{'tagSelected': item, 'index': props.toChild.index}]);
+function fromChild(index) {
+    emit('fromChild', {'index': props.toChild.index, 'subIndex': index});
 }
 
 </script>

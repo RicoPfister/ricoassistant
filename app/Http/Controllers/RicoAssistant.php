@@ -604,6 +604,7 @@ class RicoAssistant extends Controller {
             $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
         }
         $tagCollectionSelection['misc']['parentId']= $request->parentId;
+        $tagCollectionSelection['misc']['parentIndex']= $request->parentIndex;
         // dd($tagCollectionSelection);
 
         return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);

@@ -39,22 +39,45 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
-let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString', 'toChild']);
-let emit = defineEmits(['dataChild']);
+let props = defineProps(['toChild']);
+let emit = defineEmits(['fromChild']);
 
 let tagArray = ref([]);
 let title = ref('');
 
 // basic title response
-watch(() => props.dataParent, _.debounce( (curr, prev) => {
+watch(() => props.toChild.tagSelection, _.debounce( (curr, prev) => {
 
-    // console.log(props.dataParent);
+    // console.log(props.toChild);
 
-    tagArray.value.push(props.dataParent);
+    // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
+    // tagArray.value.push(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
+    if (typeof props.toChild.tagSelection !== 'undefined') tagArray.value.push(props.toChild.tagSelection);
 
 }, 500));
 
-function removeTagFromList(index) {tagArray.value.push(props.dataParent);
+watch(() => props.toChild.tagSelectionListString, _.debounce( (curr, prev) => {
+
+    // console.log(props.toChild.tagSelectionList);
+    // tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList);
+    // tagArray.value = props.toChild.tagSelectionList;
+
+    // if (props.toChild.tagSelectionList[0].length > 0) {
+    //     console.log('ok');
+    //     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+    //     tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList);
+    // }
+       console.log('ok');
+    if (typeof props.toChild.tagSelectionListString !== 'undefined') {
+        // console.log('ok');
+        // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionListString);
+    }
+
+}, 500));
+
+function removeTagFromList(index) {
+    // tagArray.value.push(props.dataParent);
     tagArray.value.splice(index, 1);
 }
 
@@ -65,22 +88,23 @@ onMounted(() => {
     //     title.value = props.dataForm.basicTitle;
     //     alternate title text
     // } else title.value = '';
-    console.log(props.toChild);
-
+    // console.log(props.toChild);
 
     // check if tag string can be convertet to tag select
-    if (typeof props.toChild.tagCollection[0] !== 'undefined') {
+    // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList));
+    // console.log(props.toChild.tagSelectionListString);
 
-        console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagCollection[0]));
-        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagCollection[0]);
-        // console.log(tagArray.value);
+    if (props.toChild.tagSelectionListString.length > 0) {
+        // console.log('ok');
+        // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionListString);
     }
 })
 
 // listen to tag collection changes and emit to tagPopup.vue
 watch(() => tagArray.value, (curr, prev) => {
-    // console.log('ok');
-    emit('dataChild', {'tagCollection': tagArray.value});
+    // console.log(tagArray.value);
+    emit('fromChild', {'tagSelectionListGroup': tagArray.value});
 }, {deep: true}, 500);
 
 </script>
