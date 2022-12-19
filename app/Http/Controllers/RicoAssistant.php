@@ -32,6 +32,7 @@ use App\Models\TagValue;
 
 class RicoAssistant extends Controller {
 
+    // filter
     public function filter(Request $request) {
 
         $user = Auth::user();
@@ -61,30 +62,91 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
+        // get user data
         $user = Auth::user();
 
+        // validation
         $validated = $request->validate([
             'basicData.refDate' => 'required',
             'basicData.medium' => 'required',
             'basicData.title' => 'required',
         ]);
 
-        // create tag
+        // create tag function
         function tagData($request, $index, $basics, $id, $id2) {
 
             switch ($id) {
 
                 case 2:
                     foreach ($request->statementData['tag'][$index] as $key => $value) {
-                        $tag = new Tag();
-                        $tag->basic_id = $basics->id;
-                        $tag->db_id = 2;
-                        if (isset ($value[0])) $tag->tag_category = $value[0];
-                        if (isset ($value[1])) $tag->tag_context = $value[1];
-                        if (isset ($value[2])) $tag->tag_content = $value[2];
-                        if (isset ($value[3])) $tag->tag_comment = $value[3];
-                        $tag->tracking = $request->ip();
-                        $tag->save();
+
+                        // check and store tag category
+                        if (isset ($value[0])) {
+                            $tag_category = new TagCategory();
+                            $tag_category->content = $value[0];
+                            $tag_category->tracking = $request->ip();
+                            $tag_category->save();
+
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->section_table = 2;
+                            $tag->section_table_id = $id2->id;
+                            $tag->tag_table = 1;
+                            $tag->tag_table_id = $tag_category->id;
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+                        };
+
+                        // check and store tag context
+                        if (isset ($value[1])) {
+                            $tag_context = new TagContext();
+                            $tag_context->content = $value[1];
+                            $tag_context->tracking = $request->ip();
+                            $tag_context->save();
+
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->section_table = 2;
+                            $tag->section_table_id = $id2->id;
+                            $tag->tag_table = 2;
+                            $tag->tag_table_id = $tag_context->id;
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+                        };
+
+                        // check and store tag value
+                        if (isset ($value[2])) {
+                            $tag_value = new TagValue();
+                            $tag_value->content = $value[2];
+                            $tag_value->tracking = $request->ip();
+                            $tag_value->save();
+
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->section_table = 2;
+                            $tag->section_table_id = $id2->id;
+                            $tag->tag_table = 3;
+                            $tag->tag_table_id = $tag_value->id;
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+                        };
+
+                        // check and store tag detail
+                        if (isset ($value[3])) {
+                            $tag_detail = new TagDetail();
+                            $tag_detail->content = $value[3];
+                            $tag_detail->tracking = $request->ip();
+                            $tag_detail->save();
+
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->section_table = 2;
+                            $tag->section_table_id = $id2->id;
+                            $tag->tag_table = 4;
+                            $tag->tag_table_id = $tag_detail->id;
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+                        };
                     }
                 break;
 
@@ -105,7 +167,7 @@ class RicoAssistant extends Controller {
             }
         };
 
-        // create reference
+        // create reference function
         function reference($db_id, $request, $basics) {
 
             // get db_name
@@ -136,6 +198,7 @@ class RicoAssistant extends Controller {
 
         // create statement
         if (isset($request->statementData)){
+
             $statement = new SectionStatement();
             $statement->basic_id = $basics->id;
             $statement->statement = $request->statementData['statement'];
@@ -146,8 +209,7 @@ class RicoAssistant extends Controller {
             if (isset($request->statementData['reference'])) reference($db_id = 2, $request, $basics);
 
             // fire tag function
-            if (isset ($request->statementData['tag'])) tagData($request, 0, $basics, 2, '');
-
+            if (isset ($request->statementData['tag'])) tagData($request, 0, $basics, 2, $statement);
         }
 
         // create activity
@@ -176,6 +238,7 @@ class RicoAssistant extends Controller {
             reference($db_id = 4, $checkValue, $request, $basics);
         }
 
+        // create source
         if (isset ($request->sourceData['filelist'])) {
 
             // store file meta data
