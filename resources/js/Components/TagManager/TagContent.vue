@@ -8,7 +8,7 @@
 </div>
 
 <div class="h-auto flex flex-row bg-gray-100">
-        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags for Entry:&nbsp;<span>{{ title }}</span></div>
+        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags related to entry:&nbsp;<span>{{ title }}</span></div>
     </div>
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
@@ -37,78 +37,74 @@
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
+import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
-let props = defineProps(['dataParent', 'dataForm', 'fromParentTagString']);
-let emit = defineEmits(['dataChild']);
+let props = defineProps(['toChild']);
+let emit = defineEmits(['fromChild']);
 
 let tagArray = ref([]);
 let title = ref('');
 
 // basic title response
-watch(() => props.dataParent, _.debounce( (curr, prev) => {
+watch(() => props.toChild.tagSelection, _.debounce( (curr, prev) => {
 
-    // console.log(props.dataParent);
+    // console.log(props.toChild);
 
-    tagArray.value.push(props.dataParent);
-    // console.log(tagArray.value);
+    // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
+    // tagArray.value.push(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
+    if (typeof props.toChild.tagSelection !== 'undefined') tagArray.value.push(props.toChild.tagSelection);
+
+}, 500));
+
+watch(() => props.toChild.tagSelectionListString, _.debounce( (curr, prev) => {
+
+    // console.log(props.toChild.tagSelectionList);
+    // tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList);
+    // tagArray.value = props.toChild.tagSelectionList;
+
+    // if (props.toChild.tagSelectionList[0].length > 0) {
+    //     console.log('ok');
+    //     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+    //     tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList);
+    // }
+       console.log('ok');
+    if (typeof props.toChild.tagSelectionListString !== 'undefined') {
+        // console.log('ok');
+        // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionListString);
+    }
 
 }, 500));
 
 function removeTagFromList(index) {
+    // tagArray.value.push(props.dataParent);
     tagArray.value.splice(index, 1);
 }
 
 // get child data
 onMounted(() => {
 
-    if (props.dataForm.basicTitle) {
-        title.value = props.dataForm.basicTitle;
-    } else title.value = '- (No title set)';
+    //!! if (props.dataForm.basicTitle) {
+    //     title.value = props.dataForm.basicTitle;
+    //     alternate title text
+    // } else title.value = '';
+    // console.log(props.toChild);
 
     // check if tag string can be convertet to tag select
-    if (props.fromParentTagString) {
+    // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList));
+    // console.log(props.toChild.tagSelectionListString);
 
-        let tagCollectionSplitInGroup = props.fromParentTagString.split(/[\s@]/);
-        let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
-
-        let tagGroupSplitComment = [];
-        let tagGroupSplitFilter = [];
-        let tagGroupSplitmain = [];
-        let tagGroupSplitmainFilter = [];
-
-        tagCollectionSplitInGroupFilter.forEach(tagCollectionEdit);
-
-        function tagCollectionEdit(item, index) {
-
-            //? set nested value
-            if (tagCollectionSplitInGroupFilter.length > 0) tagArray.value[index] = [];
-
-            // split comment
-            tagGroupSplitComment[index] = item.split(/[(%)]/);
-            tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != ' ');
-
-            tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
-            tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != ' ');
-
-            // add content tags
-            for (let i = 0; i < 3; i++) {
-                if (tagGroupSplitmainFilter[index][i]) {
-                    tagArray.value[index].push(tagGroupSplitmainFilter[index][i]);
-                } else tagArray.value[index].push('');
-            }
-
-            // add comment tag
-            if (tagGroupSplitmainFilter[index][1]) {
-               tagArray.value[index].push(tagGroupSplitFilter[index][1]);
-            } else tagArray.value[index].push('');
-        }
+    if (props.toChild.tagSelectionListString.length > 0) {
+        // console.log('ok');
+        // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
+        tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionListString);
     }
 })
 
 // listen to tag collection changes and emit to tagPopup.vue
 watch(() => tagArray.value, (curr, prev) => {
-    // console.log('ok');
-    emit('dataChild', {'tagCollection': tagArray.value});
+    // console.log(tagArray.value);
+    emit('fromChild', {'tagSelectionListGroup': tagArray.value});
 }, {deep: true}, 500);
 
 </script>

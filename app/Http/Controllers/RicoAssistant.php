@@ -8,9 +8,10 @@ use Illuminate\Http\Post;
 use App\Models\Tag;
 use App\Models\Basic;
 use App\Models\Rating;
-use App\Models\Reference;
+use App\Models\Ref;
 use App\Models\Statement;
 use App\Models\Accounting;
+use App\Models\DatabaseList;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Source;
@@ -31,180 +32,254 @@ class RicoAssistant extends Controller {
             ->where('status', '=', '')
             ->take(20);
 
-        if(isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->take(1); $listAuth = $publicAuth->merge($userAuth);}
+        if (isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->take(1); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
         return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
 
+    // detail
+    // -------------------------------------------------------
     public function detail(Request $request) {
 
         // dd($request);
-
+        // dd($request->reference);
         // dd($request->basic_id);
 
         $user = Auth::user();
 
             $basic = Basic::find($request->basic_id);
-            // $statement = Statement::find($request->id);
-            // $activity = Activity::find($request->id);
-            // $reference = Reference::find($request->id);
-            // $tag = Tag::find($request->id);
-            // $accounting = Accounting::find($request->id);
-            // $documents = DB::table('documents')->where('documents.basic_id', '=', $request->id)->get();
-            // $rating = Rating::find($request->id);
-
-            // return Inertia::render('TabManager', ['basic' => $basic, 'statement' => $statement, 'accounting' => $accounting, 'activity' => $activity, 'reference' => $reference, 'tag' => $tag, 'rating' => $rating, 'documents' => $documents]);
-            // dd($basic->title);
 
             return Inertia::render('TabManager/TabManager', ['detail' => $basic]);
     }
 
+    // store
+    // -------------------------------------------------------
     public function store(Request $request) {
 
         // dd($request);
+        // dd($request->referenceReference['fromController']['referencesResult']);
+        // dd($request->reference['reference']);
+        // dd($request->basic);
         // dd($request->filelist);
 
         $user = Auth::user();
 
         $validated = $request->validate([
-            'basicRefDate' => 'required',
-            'basicMedium' => 'required',
-            'basicTitle' => 'required',
+            'basicData.refDate' => 'required',
+            'basicData.medium' => 'required',
+            'basicData.title' => 'required',
         ]);
 
         // dd($request);
 
-        $rating = 0;
-        $activity = 0;
-        $accounting = 0;
+        // create tag
+        function tagData($request, $id, $index, $basics, $sources) {
 
-        foreach($request->all() as $key => $value) {
+            switch ($id) {
 
-            if(strpos($key, 'rating') !== false){
-                $rating = 1;
+                case 2:
+                    if (isset ($request->tagData['tagSource'][$index])) {
+                        $tag = new Tag();
+                        $tag->db_name = 2;
+                        $tag->db_id = $sources->id;
+                        if (isset ($request->tagData['tagSource'][$index][0])) $tag->tag_category = $request->tagData['tagSource'][$index][0];
+                        if (isset ($request->tagData['tagSource'][$index][1])) $tag->tag_context = $request->tagData['tagSource'][$index][1];
+                        if (isset ($request->tagData['tagSource'][$index][2])) $tag->tag_content = $request->tagData['tagSource'][$index][2];
+                        if (isset ($request->tagData['tagSource'][$index][3])) $tag->tag_comment = $request->tagData['tagSource'][$index][3];
+                        $tag->tracking = $request->ip();
+                        $tag->save();
+                    }
+                break;
+            }
+        };
+
+        // create reference
+        function reference($db_id, $checkValue, $request, $basics) {
+
+            // dd($request);
+
+            // get db_name
+            $db_name_list = DB::table('database_lists')->where('id', '=', $db_id)->pluck('db_name');
+            $db_name = $db_name_list[0].'Data';
+            // parse_str($db_name[0].'Data', $db_name2);
+            // dd($db_name[0]);
+            // $test = 'statementData';
+            // dd($db_name[0].'Data');
+            // dd($request->$db_name['reference'] );
+
+            if (!$checkValue) {
+                // dd($checkValue);
+                $ref = new Ref();
+                $ref->basic_id = $basics->id;
+                $ref->basic_ref = $basics->id;
+                $ref->ref_db_id = $db_id;
+                $ref->ref_db_index = 1;
+                $ref->tracking = $request->ip();
+                $ref->save();
             }
 
-            if(strpos($key, 'activity') !== false){
-                $activity = 1;
-            }
-
-            if(strpos($key, 'accounting') !== false){
-                $accounting = 1;
+            else {
+                // foreach ($request->activityTo as $i=>$activity) {
+                foreach ($request->$db_name['reference'] as $key => $value) {
+                    // dd($value);
+                    // dd(count($request->$db_name['reference']));
+                    $ref = new Ref();
+                    $ref->basic_id = $basics->id;
+                    $ref->basic_ref = $value['basic_id'];
+                    $ref->ref_db_id = $db_id;
+                    $ref->ref_db_index = 1;
+                    $ref->tracking = $request->ip();
+                    $ref->save();
+                }
             }
         }
 
+        // dd($ref);
+
         $basics = new Basic();
-        $basics->ref_date = $request->basicRefDate;
-        $basics->title = $request->basicTitle;
-        $basics->medium = $request->basicMedium;
-        // $basic->status = $request->basic['status'];
+        $basics->ref_date = $request->basicData['refDate'];
+        $basics->title = $request->basicData['title'];
+        $basics->medium = $request->basicData['medium'];
+        // $basic->status = $request->basicData['status'];
         $basics->user_id = $user->id;
         $basics->tracking = $request->ip();
         $basics->save();
 
-        if(isset($request->statement)){
-
+        if (isset($request->statementData)){
             $statement = new Statement();
-            $statement->basics_id = $basics->id;
-            $statement->statement = $request->statement;
+            $statement->basic_id = $basics->id;
+            $statement->statement = $request->statementData['statement'];
             $statement->tracking = $request->ip();
             $statement->save();
+
+            // fire reference function
+            if (isset($request->statementData['reference'])) $checkValue = $request->statementData['reference'];
+            else $checkValue = '';
+            // dd($checkValue);
+            reference($db_id = 2, $checkValue, $request, $basics);
         }
 
-        // dd($request);
+        // dd($checkValue);
+        if ($request->activityData){
 
-        if($rating == 1){
+            // dd($request->activityData['activityTo'][0]);
 
-            $rating = new Rating();
+            foreach ($request->activityData['activityTo'] as $i=>$activity) {
 
-            $rating->basic_id = $basic->id;
-            if(isset($request->rating_comparison)) {$rating->rating_comparison = $request->rating_comparison;};
-            if(isset($request->rating_happiness)) {$rating->rating_happiness = $request->rating_happiness;};
-            if(isset($request->rating_sadness)) {$rating->rating_sadness = $request->rating_sadness;};
-            if(isset($request->rating_quality)) $rating->rating_quality= $request->rating_quality;
-            if(isset($request->rating_ingenuity)) $rating->rating_ingenuity = $request->rating_ingenuity;
-            if(isset($request->rating_originality)) $rating->rating_originality= $request->rating_originality;
-            if(isset($request->rating_complexity)) $rating->rating_complexity = $request->rating_complexity;
-            if(isset($request->rating_simplicity)) $rating->rating_simplicity = $request->rating_simplicity;
-            if(isset($request->rating_usability)) $rating->rating_usability = $request->rating_usability;
-            if(isset($request->rating_versatility)) $rating->rating_versatility = $request->rating_versatility;
-            if(isset($request->rating_developement)) $rating->rating_developement = $request->rating_developement;
-            if(isset($request->rating_sustainability)) $rating->rating_sustainability = $request->rating_sustainability;
-            $rating->tracking = $request->ip();
-            $rating->save();
+                // dd($activity);
 
-        }
+                // dd($request->activityData['activityTo'][$i]);
 
-        if($request->activityTo){
-
-            // dd($request->activityTo[0]);
-
-            foreach ($request->activityTo as $i=>$activity) {
-
-                if (is_numeric($request->activityTo[$i])) {
+                if (is_numeric($request->activityData['activityTo'][$i])) {
 
                     $activities[$i] = [
-                        'basic_id' => $basic->id,
-                        'activityTo' => $request->activityTo[$i],
-                        'activityReference' => $request->activityReference[$i],
+                        'basic_id' => $basics->id,
+                        'activityTo' => $activity,
+                        // 'reference' => $request->reference[$i],
                         'tracking' => $request->ip(),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
                 }
-
             };
 
             DB::table('activities')->insert($activities);
 
+            // fire reference function
+            if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
+            else $checkValue = '';
+            // dd($checkValue);
+            reference($db_id = 4, $checkValue, $request, $basics);
         }
 
-        if($request->reference){
+        // dd($request);
 
-            $activity = new Reference();
+        // store reference reference
+        // ------------------------------
+        // if (!isset($request->referenceReference)){
 
-            $activity->basic_id = $basic->id;
-            $activity->reference = $request->reference;
-            $activity->tracking = $request->ip();
-            $activity->save();
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $basics->id;
+        //     $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
 
-        }
+        // else if (isset($request->referenceReference)){
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $request['referenceReference']['reference'][0]['basic_id'];
+        //     $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
 
-        if($accounting == 1){
+        // // store activity reference
+        // //-------------------------------
+        // if (!isset($request->reference)){
+        //     // dd($request);
+        //     $ref = new Ref();
+        //     $ref->basic_id = $basics->id;
+        //     $ref->basic_ref = $basics->id;
+        //     // $ref->ref_db_id = 1;
+        //     $ref->ref_db_index = 1;
+        //     $ref->tracking = $request->ip();
+        //     $ref->save();
+        // }
 
-            $accounting = new Accounting();
+        // if (isset($request->reference)){
 
-            $accounting->basic_id = $basic->id;
-            $accounting->accounting_producer = $request->accounting_producer;
-            $accounting->accounting_trader = $request->accounting_trader;
-            $accounting->accounting_price = $request->accounting_price;
-            $accounting->accounting_currency = $request->accounting_currency;
-            $accounting->accounting_price_default_currency = $request->accounting_price_default_currency;
-            $accounting->tracking = $request->ip();
-            $accounting->save();
+        //     foreach($request->reference['reference'] as $index => $data) {
+        //         $ref = new Ref();
+        //         $ref->basic_id = $basics->id;
+        //         $ref->basic_ref = $request['reference']['reference'][$index]['basic_id'];
+        //         // $ref->ref_db_id = 1;
+        //         $ref->ref_db_index = 1;
+        //         $ref->tracking = $request->ip();
+        //         $ref->save();
+        //     }
+        // }
 
-        }
+        // if ($accounting == 1){
+
+        //     $accounting = new Accounting();
+
+        //     $accounting->basic_id = $basic->id;
+        //     $accounting->accounting_producer = $request->accounting_producer;
+        //     $accounting->accounting_trader = $request->accounting_trader;
+        //     $accounting->accounting_price = $request->accounting_price;
+        //     $accounting->accounting_currency = $request->accounting_currency;
+        //     $accounting->accounting_price_default_currency = $request->accounting_price_default_currency;
+        //     $accounting->tracking = $request->ip();
+        //     $accounting->save();
+        // }
 
         // store files
-        //----------------------------------------------------
-
-        if(isset($request->filelist)) {
+        if (isset($request->filelist)) {
 
             // dd($request);
 
             // store file meta data
-            foreach($request->file('filelist') as $dataString) {
+            foreach($request->file('filelist') as $index => $dataString) {
 
                 // dd($dataString['file']->hashName());
 
-                $source = new Source();
-                $source->basics_id = $basics->id;
-                $source->path = $dataString['file']->hashName();
-                $source->extension = $dataString['file']->extension();
-                $source->size = $dataString['file']->getSize();
-                $source->tracking = $request->ip();
-                $source->save();
+                $sources = new Source();
+                $sources->basic_id = $basics->id;
+                $sources->path = $dataString['file']->hashName();
+                $sources->extension = $dataString['file']->extension();
+                $sources->size = $dataString['file']->getSize();
+                $sources->tracking = $request->ip();
+                $sources->save();
+
+                // dd($request);
+
+                // isset tagData: execute tagData function
+                if (isset ($request->tagData['tagSource'])) tagData($request, 2, $index, $basics, $sources);
             }
 
             // store file content data
@@ -213,66 +288,19 @@ class RicoAssistant extends Controller {
             }
         }
 
-        // if(isset($request->documentJPG)) {
-        //     foreach($request->file('filelist') as $dataString) {
-
-        //         $document = new Document();
-        //         $document->basic_id = $basic->id;
-        //         $document->path = $dataString->hashName();
-        //         $document->extension = $dataString->extension();
-        //         $document->size = $dataString->getSize();
-        //         $document->tracking = $request->ip();
-        //         $document->save();
-        //     }
-
-        //     foreach($request->file('documentJPG') as $dataString2) {
-        //         Storage::disk('local')->put('public/images/inventory/', $dataString2);
-        //     }
-        // }
-
-        // if(isset($request->document_link)) {
-
-        //         $document = new Document();
-        //         $document->basic_id = $basic->id;
-        //         $document->path = $request->document_link;
-        //         $document->extension = 'www';
-        //         $document->size = 0;
-        //         $document->tracking = $request->ip();
-        //         $document->save();
-        // }
-
-        // dd($request);
-
-        if($request->tagData){
-            if ($request->tagData['tagSource']) {
-                foreach($request->tagData['tagSource'] as $key => $value) {;
-                    $tag = new Tag();
-                    $tag->basics_id = $basics->id;
-                    $tag->db_name = 2;
-                    // $tag->db_id = $source->basics_id;
-                    if (isset ($value[0])) $tag->tag_category = $value[0];
-                    if (isset ($value[1])) $tag->tag_context = $value[1];
-                    if (isset ($value[2])) $tag->tag_content = $value[2];
-                    if (isset ($value[3])) $tag->tag_comment = $value[3];
-                    $tag->tracking = $request->ip();
-                    $tag->save();
-                }
-            }
-        }
-
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }
 
+    // update
+    // -------------------------------------------------------
     public function update(Request $request) {
 
         foreach($request->all() as $key => $value) {
 
-            if($key != 'id'){
-
+            if ($key != 'id'){
                 $update = DB::table('ricoassistants')
                 ->where('id', $request->id)
                 ->update([$key => $value]);
-
             }
 
         }
@@ -287,51 +315,148 @@ class RicoAssistant extends Controller {
     }
 
     // reference
-    // **************************************************
-
+    // -------------------------------------------------------
     public function reference(Request $request) {
 
         // dd($request);
 
+        function reference_inheritance_list($id, $i, $user) {
+
+            // var_dump($id, $i);
+
+            $counter = 1;
+
+            // dd($id);
+            $parent_list = [];
+
+            // check if there are children
+            $parent_ref = DB::table('refs')
+            ->where('status', '=', null)
+            // ->where('user_id', '=', $user->id)
+            ->where('basic_id', '=', $id->id)
+            // ->distinct('basic_id')
+            // ->where('basic_id', '=', 'basic_ref')
+            // ->whereRaw('basic_id = basic_ref')
+            ->first();
+            // ->get();
+
+            // dd($parent);
+
+            // var_dump($parent_ref->basic_ref);
+
+            if (isset($parent_ref->basic_ref)) {
+                $parent_checker_next_value = $parent_ref->basic_ref;
+
+                // dd($parent_checker_next_value);
+
+                do  {
+                    if ($parent_ref->basic_id != $parent_ref->basic_ref) {
+                        // get corresponding basic db entry data
+                        $parent_basic = DB::table('basics')
+                        ->where('status', '=', null)
+                        ->where('user_id', '=', $user->id)
+                        ->where('id', '=', $parent_checker_next_value)
+                        // ->distinct('basic_id')
+                        // ->where('basic_id', '=', 'basic_ref')
+                        // ->whereRaw('basic_id = basic_ref')
+                        ->first();
+
+                        // check next ref db entry
+                        $parent_ref = DB::table('refs')
+                        ->where('status', '=', null)
+                        // ->where('user_id', '=', $user->id)
+                        ->where('basic_id', '=', $parent_checker_next_value)
+                        // ->distinct('basic_id')
+                        // ->where('basic_id', '=', 'basic_ref')
+                        // ->whereRaw('basic_id = basic_ref')
+                        ->first();
+
+                        array_push($parent_list, $parent_basic);
+                        $parent_checker_next_value = $parent_ref->basic_ref;
+                        $parent_checker = 1;
+                        $counter++;
+                    }
+                    else $parent_checker = 0;
+                } while ($parent_checker || $counter > 10);
+            }
+                    // if (){
+                        // dd($parent_list)
+
+
+                // dd($parent_checker_next_value);
+
+            // dd($children_list);
+
+            // $children = [];
+            // array_push($children, ['abc' => 4]);
+
+            return $parent_list;
+        }
+
+        // dd($counter > 10);
+
+        // dd($request);
+        // dd($request->parentId);
+
         $user = Auth::user();
         $result = [];
 
-        if ($request->activityReference == 'lastUsed') {
+        $db_id = DB::table('basics')->where('title', '=', $request->basicTitle)->pluck('id');
+        // dd($db_id[0]);
 
+        // check if "last used" was selected
+        //-------------------------------------
+        if ($request->reference == 'lastUsed') {
+
+            // get last 10 references
             $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
+                // ->distinct('basic_id')
+                // ->where('basic_id', '=', 'basic_ref')
+                // ->whereRaw('basic_id = basic_ref')
                 ->orderByDesc('updated_at')
                 ->take(10)
                 ->get();
 
+            // dd($referencedIds);
+
             foreach ($referencedIds as $i=>$id) {
+
+                // dd($id);
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
+                $result['referencesResult'][$i]['medium_name'] = DB::table('medium_lists')->where('id', '=', $id->medium)->pluck('medium_name');
                 $result['referencesResult'][$i]['id'] = $id->id;
+                $result['referencesResult'][$i]['ref_date'] = $id->ref_date;
+                $result['referencesResult'][$i]['updated_at'] = $id->updated_at;
 
                 $tag = DB::table('tags')
                 ->where('basic_id', '=', $id->id)
-                ->where('tagcontext', '=', 'ActivityDiagramColor')
+                ->where('tag_context', '=', 'ActivityDiagramColor')
                 ->get();
 
                 if (count($tag)) {
-                    $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                    $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                 } else {};
 
+                $result['referencesResult'][$i]['basic_id'] = $id->id;
+
+                $result['referencesResult'][$i]['inheritance'] = reference_inheritance_list($id, $i, $user);
             };
 
             $result['misc']['row'] = $request->row;
-
         }
 
+        // 'reference input' was set
+        //-------------------------------------
         else {
 
             $referencesResultCheck = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                ->where('title', 'LIKE', '%'.$request->activityReference.'%')
+                ->where('title', 'LIKE', '%'.$request->reference.'%')
                 ->get();
 
             if (count($referencesResultCheck)) {
@@ -343,31 +468,38 @@ class RicoAssistant extends Controller {
 
                         $tag = DB::table('tags')
                             ->where('basic_id', '=', $id->id)
-                            ->where('tagcontext', '=', 'ActivityDiagramColor')
+                            ->where('tag_context', '=', 'ActivityDiagramColor')
                             ->get();
 
                         // dd($tag);
 
                         if (count($tag)) {
-                            $result['referencesResult'][$i]['color'] = $tag[0]->tagcontent;
+                            $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                         } else {};
 
                         $result['referencesResult'][$i]['medium'] = $id->medium;
                         $result['referencesResult'][$i]['id'] = $id->id;
                     }
+                    $result['referencesResult'][$i]['basic_id'] = $id->id;
                 }
 
                 $result['misc']['row'] = $request->row;
+
             } else {
                 $result['misc']['row'] = 0;
+
             };
         }
 
+        $result['misc']['parentId'] = $request->parentId;
+
         // dd($result);
 
-        return Inertia::render('Create', $result);
+        return Inertia::render('Create', ['fromController' => $result]);
     }
 
+    // basic titlecheck
+    // -------------------------------------------------------
     public function titlecheck(Request $request) {
 
         // dd($request);
@@ -456,21 +588,25 @@ class RicoAssistant extends Controller {
             // dd($basicResult['basicResult']['warning']);
             // dd($basicResult);
 
-        return Inertia::render('Create', $basicResult);
+        return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
     }
 
+    // tag
+    // -------------------------------------------------------
     public function tag(Request $request) {
+
+        // dd($request);
 
         $tagCollectionRaw = DB::table('tags')->get();
 
         foreach($tagCollectionRaw as $key => $value) {
-
             $tagCollectionSelection['tagCollection'][$key][0] = $value->tag_category;
             $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
         }
-
+        $tagCollectionSelection['misc']['parentId']= $request->parentId;
+        $tagCollectionSelection['misc']['parentIndex']= $request->parentIndex;
         // dd($tagCollectionSelection);
 
-        return Inertia::render('Create', ['dataCommon' => $tagCollectionSelection]);
+        return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
     }
 }

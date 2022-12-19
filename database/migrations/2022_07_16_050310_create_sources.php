@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('sources', function (Blueprint $table) {
             $table->id('id');
 
-            $table->foreignID('basic_id')->references('id')->on('basics');
+            $table->bigInteger('basic_id')->unsigned();
+            $table->foreign('basic_id')->references('id')->on('basics');
 
             $table->string('path', 2048);
             $table->string('extension');

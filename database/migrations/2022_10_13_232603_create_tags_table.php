@@ -16,11 +16,9 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
 
-            $table->bigInteger('basics_id')->unsigned();
-            $table->foreign('basics_id')->references('id')->on('basics');
-
-            $table->tinyInteger('db_name')->nullable();
-            // $table->tinyInteger('db_id')->nullable();
+            $table->bigInteger('basic_id')->nullable();
+            $table->tinyInteger('db_id')->nullable();
+            $table->bigInteger('db_index')->nullable();
 
             $table->tinyText('tag_category')->nullable();
             $table->tinyText('tag_context')->nullable();

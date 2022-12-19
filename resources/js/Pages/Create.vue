@@ -6,29 +6,27 @@
 <form aria-label="New Entry Container" class="absolute mb-10">
 
     <!-- content container -->
-    <div class="lg:w-[755px] mt-10">
+    <div class="lg:w-[780px] mt-10">
 
         <TabBar />
 
         <div class="relative w-full min-w-0 border-2 border-gray-500 flex flex-col flex-nowrap shadow-xl max-h-[calc(100vh-250px)]">
 
-            <div ref="scrollArea" class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-5 py-3">
+            <div ref="scrollArea" class="gap-y-2 flex flex-col grow overflow-y-scroll shadow-inner bg-stone-100 px-3 pb-3 pt-2">
 
                 <!-- component generator -->
 
-                <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index">
-                    <component :is="componentSource[item]" :data-common="props.dataCommon" @data-child="dataChild" :data-parent="dataParent" :data-form="form" :component-id="index-1" @dataToParent="dataToParent"/>
+                <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
+                    <component @data-child="dataChild" :is="componentSource[item]" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
+                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
                     <Footer @data-child="dataChild"/>
                 </div>
-
             </div>
-
         </div>
     </div>
-
 </form>
 
 </Header>
@@ -53,10 +51,11 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent']);
-let emit = defineEmits(['dataParent', 'dataForm']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
 
-let form = ref({});
+let form = ref({'basicData': ''});
+
 let dataParent = ref({});
 
 const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
@@ -66,8 +65,7 @@ let scrollArea = ref();
 
 // process received child data
 function dataChild(data) {
-
-    // console.log(data);
+    // console.log('ok');
 
     // scroll to top
     if (data.scrollToTop) {
@@ -75,6 +73,7 @@ function dataChild(data) {
     };
 
     // add form data to form collection
+//obsolete. clear and remove.
     if (data.formData) {
         form.value = {...form.value, ...data.formData}
     };
@@ -107,15 +106,10 @@ function dataChild(data) {
         for (const [key, value] of Object.entries(data.componentSelected)) {
             componentCollection.push(parseInt(key)+4);
             dataParent.value['sectionSelected'][key] = 1;
-
-            // console.log(key);
-
-            // add tag collection
-            // if(parseInt(key)+4 != 8) componentCollection.push(2);
         }
 
         // add reference section
-        componentCollection.push(3);
+        // componentCollection.push(3);
 
         //? v-for trigger
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
@@ -139,29 +133,79 @@ function dataChild(data) {
 }
 
 // basic title response
-watch(() => props.basicResult, _.debounce( (curr, prev) => {
+// watch(() => props.basicResult, _.debounce( (curr, prev) => {
 
-    dataParent.value.basicTitleData = props.basicResult;
+//     dataParent.value.basicTitleData = props.basicResult;
 
-    if (props.basicResult[0].warning == 2) {
-        dataParent.value.basicTitelPickerOpen = 1;
-    } else {
-        dataParent.value.basicTitelPickerOpen = 0;
-    }
+//     // console.log(props.basicResult);
 
-}, 500));
+//     if (props.basicResult[0].warning == 2) {
+//         dataParent.value.basicTitelPickerOpen = 1;
+//     } else {
+//         dataParent.value.basicTitelPickerOpen = 0;
+//     }
 
-// listen to form changes and emit them
-watch(() => form, (curr, prev) => {
-    emit('dataForm', {'dataForm': form});
-}, {deep: true}, 500);
+// }, {'deep': true}, 500));
+
+// // listen to form changes and emit them
+// watch(() => form, (curr, prev) => {
+//     emit('dataForm', {'dataForm': form});
+// }, {deep: true}, 500);
 
 // process component data
-function dataToParent(data) {
-    if (data.tagSource) {
+function dataToParent() {
+    // if (data.tagSource) {
+    // }
+}
 
+function toParent(data) {
+    // console.log('ok');
+    // console.log(data);
+    if (data.activityTo) {
+        form.value['activityTo'] = data.activityTo;
+    };
+
+    // if (data.activityReference) {
+    //     form.value['activityReference'] = data.activityReference;
+    // };
+
+    // if (data.referenceReference) {
+    //     form.value['referenceReference'] = data.referenceReference;
+    // };
+
+    // if (data.activityTag) {
+    //     form.value['tagData']['activityTag'] = [];
+    //     form.value['tagData']['activityTag'] = data.activityTag;
+    // };
+
+    // if (data.sourceTag) {
+    //     form.value['tagData']['sourceTag'] = [];
+    //     form.value['tagData']['sourceTag'] = data.sourceTag;
+    // };
+}
+
+let transferCreate = ref({});
+
+// process form data received from components
+function fromChild(data) {
+    // console.log(data);
+    if (data.form != 'undefined') {
+        // form.value = {...data.form, ...form.value};
+        if (!form.value[data.section]) form.value[data.section] = {};
+        if (typeof data.index !== 'undefined') {
+            if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+            form.value[data.section][data.subSection][data.index]  = {};
+            form.value[data.section][data.subSection][data.index] = data.form;
+        } else {
+            form.value[data.section][data.subSection]= data.form;
+        }
+        // form.value[test123] = data.form;
     }
+    // console.log(form.value);
+    // componentCollectionUpdate.value = !componentCollectionUpdate.value;
+    // componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
+    transferCreate.value['title'] = form.value.basicData.title;
 }
 
 </script>
-

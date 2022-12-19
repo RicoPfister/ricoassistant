@@ -3,60 +3,60 @@
 
 <div>
     <div class="flex flex-col">
-
         <div class="flex flex-row justify-between items-center" type="button">
-
-            <label class="" aria-label="Statement Input" for="statement">Statement*: </label>
-
             <MenuEntry @data-child="dataChildMenuEntry"/>
-
         </div>
-
-        <textarea class="border border-black outline-0 focus:border-black focus:ring-0" v-model="dataChild['statement']" rows="10" id="statement" type="text"></textarea>
-
+        <textarea @change="InputData" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
     </div>
+</div>
+
+<div class="border-l border-r border-b border-black">
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0}" :fromController="props.fromController" :key="'2'"/>
+</div>
+
+<div class="border-l border-r border-b border-black h-[31px]">
+    <ReferenceStatement :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" :key="'2'"/>
 </div>
 
 </template>
 
 <script setup>
 
+import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
+import TagForm from "../TagManager/TagForm.vue";
+import ReferenceStatement from "./Reference.vue";
 
-let dataChild = ref({});
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate']);
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId']);
-let emit = defineEmits(['dataChild']);
+// let statement = ref();
+let form = useForm({
+    statement:'',
+});
 
-// emit form
-watch(() => dataChild, (curr, prev) => {
+// send changes to parent
+//-----------------------------------------
 
-    emit('dataChild', {'formData': dataChild.value});
+// send to parent: statement input data
+function InputData() {
+    // console.log('ok');
+    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
+}
 
-}, {deep: true}, 500);
+// send to parent: reference selection
+function fromChild(data) {
+    emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+}
 
+//  send to parent: edit menu selection
 function dataChildMenuEntry(n) {
-    // alert(n['formDataEdit']);
-    // alert(props.componentId);
     if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
     if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
-
-// watch(() => props.dataForm, _.debounce( (curr, prev) => {
-
-// console.log(props.dataForm.statement);
-
-// }, 500));
-
-onMounted(() => {
-    if (props.dataForm.statement) {
-        // console.log(props.dataForm.statement);
-        dataChild.value['statement'] = props.dataForm.statement;
-    }
-  })
 
 </script>
 

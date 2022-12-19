@@ -13,19 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('accountings', function (Blueprint $table) {
+        Schema::create('refs', function (Blueprint $table) {
             $table->id();
 
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('basics');
+            $table->bigInteger('basic_ref');
 
-            $table->tinyText('accounting_producer')->nullable();
-            $table->string('accounting_trader')->nullable();
-            $table->decimal('accounting_price', $precision = 20, $scale = 2)->nullable();
-            $table->string('accounting_currency')->nullable();
-            $table->decimal('accounting_price_default_currency', $precision = 20, $scale = 2)->nullable();
+            $table->tinyInteger('ref_db_id')->nullable();
+            $table->tinyInteger('ref_db_index')->nullable();
+            // $table->tinyInteger('ref_db_heading')->nullable();
 
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
@@ -39,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accountings');
+        Schema::dropIfExists('references');
     }
 };
