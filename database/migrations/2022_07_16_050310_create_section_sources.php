@@ -17,14 +17,14 @@ return new class extends Migration
             $table->id('id');
 
             $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
+            $table->foreign('basic_id')->references('id')->on('section_basics');
 
             $table->string('path', 2048);
             $table->string('extension');
             $table->integer('size');
             $table->timestamps();
 
-            $table->tinyText('tracking')->nullable();
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
         });
     }

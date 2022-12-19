@@ -19,12 +19,12 @@ return new class extends Migration
             $table->bigInteger('basic_id');
 
             $table->tinyInteger('section_table');
-            $table->bigInteger('section_table_id')->nullable();
+            $table->bigInteger('section_table_id');
 
             $table->bigInteger('tag_table');
             $table->bigInteger('tag_table_id');
 
-            $table->string('tracking', 50)->nullable();
+            $table->string('tracking', 50);
             $table->string('status', 1)->nullable();
 
             $table->timestamps();

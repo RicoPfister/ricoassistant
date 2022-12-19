@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->tinyText('medium_name');
 
-            $table->tinyText('tracking');
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

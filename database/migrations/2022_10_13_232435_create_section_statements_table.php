@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id();
 
             $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
+            $table->foreign('basic_id')->references('id')->on('section_basics');
 
             $table->text('statement');
 
-            $table->tinyText('tracking');
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

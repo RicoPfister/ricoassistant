@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tag_categories', function (Blueprint $table) {
             $table->id();
-            $table->text('content', 255);
+            $table->string('content', 50);
             $table->string('tracking', 50);
             $table->timestamps();
         });

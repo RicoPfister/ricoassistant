@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tag_details', function (Blueprint $table) {
             $table->id();
-            $table->string('content', 50);
+            $table->text('content');
             $table->string('tracking', 50);
             $table->timestamps();
         });

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->tinyInteger('ref_db_index');
             $table->tinyInteger('ref_db_heading')->nullable();
 
-            $table->tinyText('tracking');
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

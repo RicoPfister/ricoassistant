@@ -17,12 +17,11 @@ return new class extends Migration
             $table->id();
 
             $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
+            $table->foreign('basic_id')->references('id')->on('section_basics');
 
-            $table->string('activityTo', 5)->nullable();
+            $table->string('activityTo', 5);
 
-            $table->tinyText('tracking');
-
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }

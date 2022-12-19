@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('database_lists', function (Blueprint $table) {
+        Schema::create('index_databases', function (Blueprint $table) {
             $table->id('id');
 
             $table->tinyText('db_name');
 
-            $table->tinyText('tracking');
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

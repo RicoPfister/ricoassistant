@@ -52,7 +52,7 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-            $basic = Basic::find($request->basic_id);
+            $basic = SectionBasic::find($request->basic_id);
 
             return Inertia::render('TabManager/TabManager', ['detail' => $basic]);
     }
@@ -109,7 +109,7 @@ class RicoAssistant extends Controller {
         function reference($db_id, $request, $basics) {
 
             // get db_name
-            $db_name_list = DB::table('database_lists')->where('id', '=', $db_id)->pluck('db_name');
+            $db_name_list = DB::table('index_databases')->where('id', '=', $db_id)->pluck('db_name');
             $db_name = $db_name_list[0].'Data';
 
                 // foreach ($request->activityTo as $i=>$activity) {
@@ -126,7 +126,7 @@ class RicoAssistant extends Controller {
         }
 
         // create basic
-        $basics = new Basic();
+        $basics = new SectionBasic();
         $basics->ref_date = $request->basicData['refDate'];
         $basics->title = $request->basicData['title'];
         $basics->medium = $request->basicData['medium'];
@@ -136,7 +136,7 @@ class RicoAssistant extends Controller {
 
         // create statement
         if (isset($request->statementData)){
-            $statement = new Statement();
+            $statement = new SectionStatement();
             $statement->basic_id = $basics->id;
             $statement->statement = $request->statementData['statement'];
             $statement->tracking = $request->ip();
@@ -167,7 +167,7 @@ class RicoAssistant extends Controller {
                 }
             };
 
-            DB::table('activities')->insert($activities);
+            DB::table('section_activities')->insert($activities);
 
             // fire reference function
             if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
@@ -181,7 +181,7 @@ class RicoAssistant extends Controller {
             // store file meta data
             foreach($request->sourceData['filelist'] as $index => $dataString) {
 
-                $sources = new Source();
+                $sources = new SectionSource();
                 $sources->basic_id = $basics->id;
                 $sources->path = $dataString['file']->hashName();
                 $sources->extension = $dataString['file']->extension();
@@ -247,7 +247,7 @@ class RicoAssistant extends Controller {
                 do  {
                     if ($parent_ref->basic_id != $parent_ref->basic_ref) {
                         // get corresponding basic db entry data
-                        $parent_basic = DB::table('basics')
+                        $parent_basic = DB::table('section_basics')
                         ->where('status', '=', null)
                         ->where('user_id', '=', $user->id)
                         ->where('id', '=', $parent_checker_next_value)
@@ -274,14 +274,14 @@ class RicoAssistant extends Controller {
         $user = Auth::user();
         $result = [];
 
-        $db_id = DB::table('basics')->where('title', '=', $request->basicTitle)->pluck('id');
+        $db_id = DB::table('section_basics')->where('title', '=', $request->basicTitle)->pluck('id');
 
         // check if "last used" was selected
         //-------------------------------------
         if ($request->reference == 'lastUsed') {
 
             // get last 10 references
-            $referencedIds = DB::table('basics')
+            $referencedIds = DB::table('section_basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
                 ->orderByDesc('updated_at')
@@ -318,7 +318,7 @@ class RicoAssistant extends Controller {
         //-------------------------------------
         else {
 
-            $referencesResultCheck = DB::table('basics')
+            $referencesResultCheck = DB::table('section_basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
@@ -368,7 +368,7 @@ class RicoAssistant extends Controller {
         $result = [];
 
         // create instant search results
-        $basicTitleResultCheck = DB::table('basics')
+        $basicTitleResultCheck = DB::table('section_basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
                 ->where('title', '=', $request->basicTitle)
@@ -436,7 +436,7 @@ class RicoAssistant extends Controller {
         return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
     }
 
-    // tag
+    // get tag list
     // -------------------------------------------------------
     public function tag(Request $request) {
 
