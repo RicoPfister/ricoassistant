@@ -13,17 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('basics', function (Blueprint $table) {
-            $table->id()->startingValue(1);
+        Schema::create('index_mediums', function (Blueprint $table) {
+            $table->id('id');
 
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->tinyText('medium_name');
 
-            $table->date('ref_date');
-            $table->tinyText('title');
-            $table->tinyText('medium');
-
-            $table->tinyText('tracking')->nullable();
+            $table->tinyText('tracking');
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
@@ -37,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('basics');
+        Schema::dropIfExists('medium_lists');
     }
 };

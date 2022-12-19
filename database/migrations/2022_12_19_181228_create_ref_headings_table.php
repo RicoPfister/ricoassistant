@@ -13,20 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('ref_headings', function (Blueprint $table) {
             $table->id();
-
-            $table->bigInteger('basic_id');
-
-            $table->tinyInteger('section_table');
-            $table->bigInteger('section_table_id')->nullable();
-
-            $table->bigInteger('tag_table');
-            $table->bigInteger('tag_table_id');
-
-            $table->string('tracking', 50)->nullable();
-            $table->string('status', 1)->nullable();
-
             $table->timestamps();
         });
     }
@@ -38,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('ref_headings');
     }
 };

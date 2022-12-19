@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('medium_lists', function (Blueprint $table) {
-            $table->id('id');
+        Schema::create('section_activities', function (Blueprint $table) {
+            $table->id();
 
-            $table->tinyText('medium_name');
+            $table->bigInteger('basic_id')->unsigned();
+            $table->foreign('basic_id')->references('id')->on('basics');
+
+            $table->string('activityTo', 5)->nullable();
 
             $table->tinyText('tracking');
-            $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
         });
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('medium_lists');
+        Schema::dropIfExists('time_trackings');
     }
 };

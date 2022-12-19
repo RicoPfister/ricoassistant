@@ -3,24 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Inertia\Inertia;
+use Redirect;
 use Illuminate\Http\Request;
 use Illuminate\Http\Post;
-use App\Models\Tag;
-use App\Models\Basic;
-use App\Models\Rating;
-use App\Models\Ref;
-use App\Models\Statement;
-use App\Models\Accounting;
-use App\Models\DatabaseList;
-use App\Models\User;
-use App\Models\Contact;
-use App\Models\Source;
-use App\Models\Activity;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
-use Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\User;
+use App\Models\Contact;
+
+use App\Models\IndexDatabase;
+use App\Models\IndexMedium;
+
+use App\Models\SectionBasic;
+use App\Models\SectionStatement;
+use App\Models\SectionActivity;
+use App\Models\SectionSource;
+
+use App\Models\Ref;
+
+use App\Models\Tag;
+use App\Models\TagCategory;
+use App\Models\TagContext;
+use App\Models\TagDetail;
+use App\Models\TagValue;
 
 class RicoAssistant extends Controller {
 
@@ -42,10 +50,6 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function detail(Request $request) {
 
-        // dd($request);
-        // dd($request->reference);
-        // dd($request->basic_id);
-
         $user = Auth::user();
 
             $basic = Basic::find($request->basic_id);
@@ -57,12 +61,6 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        // dd($request);
-        // dd($request->referenceReference['fromController']['referencesResult']);
-        // dd($request->reference['reference']);
-        // dd($request->basic);
-        // dd($request->filelist);
-
         $user = Auth::user();
 
         $validated = $request->validate([
@@ -71,51 +69,37 @@ class RicoAssistant extends Controller {
             'basicData.title' => 'required',
         ]);
 
-        // dd($request);
-
         // create tag
         function tagData($request, $index, $basics, $id, $id2) {
-            // dd('ok');
-            // dd($request, $index, $basics, $sources, $id);
-            // dd($request->sourceData['tag']);
-            // dd($request->sourceData['tag'][$index]);
 
             switch ($id) {
 
                 case 2:
                     foreach ($request->statementData['tag'][$index] as $key => $value) {
-                        // dd($value);
-                            // dd($value);
-                            // dd($request, $index, $basics, $sources, $id);
-                            // dd($request->sourceData['tag'][$index][0]);
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->db_id = 2;
-                            if (isset ($value[0])) $tag->tag_category = $value[0];
-                            if (isset ($value[1])) $tag->tag_context = $value[1];
-                            if (isset ($value[2])) $tag->tag_content = $value[2];
-                            if (isset ($value[3])) $tag->tag_comment = $value[3];
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                        $tag = new Tag();
+                        $tag->basic_id = $basics->id;
+                        $tag->db_id = 2;
+                        if (isset ($value[0])) $tag->tag_category = $value[0];
+                        if (isset ($value[1])) $tag->tag_context = $value[1];
+                        if (isset ($value[2])) $tag->tag_content = $value[2];
+                        if (isset ($value[3])) $tag->tag_comment = $value[3];
+                        $tag->tracking = $request->ip();
+                        $tag->save();
                     }
                 break;
 
                 case 3:
                     foreach ($request->sourceData['tag'][$index] as $key => $value) {
-                        // dd($value);
-                            // dd($value2);
-                            // dd($request, $index, $basics, $sources, $id);
-                            // dd($request->sourceData['tag'][$index][0]);
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->db_id = 3;
-                            $tag->db_index = $id2->id;
-                            if (isset ($value[0])) $tag->tag_category = $value[0];
-                            if (isset ($value[1])) $tag->tag_context = $value[1];
-                            if (isset ($value[2])) $tag->tag_content = $value[2];
-                            if (isset ($value[3])) $tag->tag_comment = $value[3];
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                        $tag = new Tag();
+                        $tag->basic_id = $basics->id;
+                        $tag->db_id = 3;
+                        $tag->db_index = $id2->id;
+                        if (isset ($value[0])) $tag->tag_category = $value[0];
+                        if (isset ($value[1])) $tag->tag_context = $value[1];
+                        if (isset ($value[2])) $tag->tag_content = $value[2];
+                        if (isset ($value[3])) $tag->tag_comment = $value[3];
+                        $tag->tracking = $request->ip();
+                        $tag->save();
                     }
                 break;
             }
@@ -124,32 +108,12 @@ class RicoAssistant extends Controller {
         // create reference
         function reference($db_id, $request, $basics) {
 
-            // dd($request);
-
             // get db_name
             $db_name_list = DB::table('database_lists')->where('id', '=', $db_id)->pluck('db_name');
             $db_name = $db_name_list[0].'Data';
-            // parse_str($db_name[0].'Data', $db_name2);
-            // dd($db_name[0]);
-            // $test = 'statementData';
-            // dd($db_name[0].'Data');
-            // dd($request->$db_name['reference'] );
-
-            // if (!$checkValue) {
-            //     $ref = new Ref();
-            //     $ref->basic_id = $basics->id;
-            //     $ref->basic_ref = $basics->id;
-            //     $ref->ref_db_id = $db_id;
-            //     $ref->ref_db_index = 1;
-            //     $ref->tracking = $request->ip();
-            //     $ref->save();
-            // }
-
 
                 // foreach ($request->activityTo as $i=>$activity) {
                 foreach ($request->$db_name['reference'] as $key => $value) {
-                    // dd($value);
-                    // dd(count($request->$db_name['reference']));
                     $ref = new Ref();
                     $ref->basic_id = $basics->id;
                     $ref->basic_ref = $value['basic_id'];
@@ -166,7 +130,6 @@ class RicoAssistant extends Controller {
         $basics->ref_date = $request->basicData['refDate'];
         $basics->title = $request->basicData['title'];
         $basics->medium = $request->basicData['medium'];
-        // $basic->status = $request->basicData['status'];
         $basics->user_id = $user->id;
         $basics->tracking = $request->ip();
         $basics->save();
@@ -185,26 +148,18 @@ class RicoAssistant extends Controller {
             // fire tag function
             if (isset ($request->statementData['tag'])) tagData($request, 0, $basics, 2, '');
 
-            // dd($checkValue);
         }
 
         // create activity
         if ($request->activityData){
 
-            // dd($request->activityData['activityTo'][0]);
-
             foreach ($request->activityData['activityTo'] as $i=>$activity) {
-
-                // dd($activity);
-
-                // dd($request->activityData['activityTo'][$i]);
 
                 if (is_numeric($request->activityData['activityTo'][$i])) {
 
                     $activities[$i] = [
                         'basic_id' => $basics->id,
                         'activityTo' => $activity,
-                        // 'reference' => $request->reference[$i],
                         'tracking' => $request->ip(),
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -217,89 +172,14 @@ class RicoAssistant extends Controller {
             // fire reference function
             if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
             else $checkValue = '';
-            // dd($checkValue);
+
             reference($db_id = 4, $checkValue, $request, $basics);
         }
 
-        // dd($request);
-
-        // store reference reference
-        // ------------------------------
-        // if (!isset($request->referenceReference)){
-
-        //     $ref = new Ref();
-        //     $ref->basic_id = $basics->id;
-        //     $ref->basic_ref = $basics->id;
-        //     $ref->ref_db_id = 1;
-        //     $ref->ref_db_index = 1;
-        //     $ref->tracking = $request->ip();
-        //     $ref->save();
-        // }
-
-        // else if (isset($request->referenceReference)){
-        //     $ref = new Ref();
-        //     $ref->basic_id = $basics->id;
-        //     $ref->basic_ref = $request['referenceReference']['reference'][0]['basic_id'];
-        //     $ref->ref_db_id = 1;
-        //     $ref->ref_db_index = 1;
-        //     $ref->tracking = $request->ip();
-        //     $ref->save();
-        // }
-
-        // // store activity reference
-        // //-------------------------------
-        // if (!isset($request->reference)){
-        //     // dd($request);
-        //     $ref = new Ref();
-        //     $ref->basic_id = $basics->id;
-        //     $ref->basic_ref = $basics->id;
-        //     // $ref->ref_db_id = 1;
-        //     $ref->ref_db_index = 1;
-        //     $ref->tracking = $request->ip();
-        //     $ref->save();
-        // }
-
-        // if (isset($request->reference)){
-
-        //     foreach($request->reference['reference'] as $index => $data) {
-        //         $ref = new Ref();
-        //         $ref->basic_id = $basics->id;
-        //         $ref->basic_ref = $request['reference']['reference'][$index]['basic_id'];
-        //         // $ref->ref_db_id = 1;
-        //         $ref->ref_db_index = 1;
-        //         $ref->tracking = $request->ip();
-        //         $ref->save();
-        //     }
-        // }
-
-        // if ($accounting == 1){
-
-        //     $accounting = new Accounting();
-
-        //     $accounting->basic_id = $basic->id;
-        //     $accounting->accounting_producer = $request->accounting_producer;
-        //     $accounting->accounting_trader = $request->accounting_trader;
-        //     $accounting->accounting_price = $request->accounting_price;
-        //     $accounting->accounting_currency = $request->accounting_currency;
-        //     $accounting->accounting_price_default_currency = $request->accounting_price_default_currency;
-        //     $accounting->tracking = $request->ip();
-        //     $accounting->save();
-        // }
-
-        // create source
-
-        // dd($request->file('sourceData')['filelist']);
-
         if (isset ($request->sourceData['filelist'])) {
-
-            // dd($request->files['sourceData']);
-            // dd($request->file[sourceData]['filelist']);
 
             // store file meta data
             foreach($request->sourceData['filelist'] as $index => $dataString) {
-
-                // dd($request->sourceData['filelist']);
-                // dd($dataString['file']->hashName());
 
                 $sources = new Source();
                 $sources->basic_id = $basics->id;
@@ -309,10 +189,7 @@ class RicoAssistant extends Controller {
                 $sources->tracking = $request->ip();
                 $sources->save();
 
-                // dd($sources);
-
                 // create tag
-                // dd($request->souceData['tag']);
                 if (isset ($request->sourceData['tag'])) tagData($request, $index, $basics, 3, $sources);
             }
 
@@ -352,36 +229,20 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function reference(Request $request) {
 
-        // dd($request);
-
         function reference_inheritance_list($id, $i, $user) {
-
-            // var_dump($id, $i);
 
             $counter = 1;
 
-            // dd($id);
             $parent_list = [];
 
             // check if there are children
             $parent_ref = DB::table('refs')
             ->where('status', '=', null)
-            // ->where('user_id', '=', $user->id)
             ->where('basic_id', '=', $id->id)
-            // ->distinct('basic_id')
-            // ->where('basic_id', '=', 'basic_ref')
-            // ->whereRaw('basic_id = basic_ref')
             ->first();
-            // ->get();
-
-            // dd($parent);
-
-            // var_dump($parent_ref->basic_ref);
 
             if (isset($parent_ref->basic_ref)) {
                 $parent_checker_next_value = $parent_ref->basic_ref;
-
-                // dd($parent_checker_next_value);
 
                 do  {
                     if ($parent_ref->basic_id != $parent_ref->basic_ref) {
@@ -390,19 +251,12 @@ class RicoAssistant extends Controller {
                         ->where('status', '=', null)
                         ->where('user_id', '=', $user->id)
                         ->where('id', '=', $parent_checker_next_value)
-                        // ->distinct('basic_id')
-                        // ->where('basic_id', '=', 'basic_ref')
-                        // ->whereRaw('basic_id = basic_ref')
                         ->first();
 
                         // check next ref db entry
                         $parent_ref = DB::table('refs')
                         ->where('status', '=', null)
-                        // ->where('user_id', '=', $user->id)
                         ->where('basic_id', '=', $parent_checker_next_value)
-                        // ->distinct('basic_id')
-                        // ->where('basic_id', '=', 'basic_ref')
-                        // ->whereRaw('basic_id = basic_ref')
                         ->first();
 
                         array_push($parent_list, $parent_basic);
@@ -413,30 +267,14 @@ class RicoAssistant extends Controller {
                     else $parent_checker = 0;
                 } while ($parent_checker || $counter > 10);
             }
-                    // if (){
-                        // dd($parent_list)
-
-
-                // dd($parent_checker_next_value);
-
-            // dd($children_list);
-
-            // $children = [];
-            // array_push($children, ['abc' => 4]);
 
             return $parent_list;
         }
-
-        // dd($counter > 10);
-
-        // dd($request);
-        // dd($request->parentId);
 
         $user = Auth::user();
         $result = [];
 
         $db_id = DB::table('basics')->where('title', '=', $request->basicTitle)->pluck('id');
-        // dd($db_id[0]);
 
         // check if "last used" was selected
         //-------------------------------------
@@ -446,18 +284,11 @@ class RicoAssistant extends Controller {
             $referencedIds = DB::table('basics')
                 ->where('status', '=', null)
                 ->where('user_id', '=', $user->id)
-                // ->distinct('basic_id')
-                // ->where('basic_id', '=', 'basic_ref')
-                // ->whereRaw('basic_id = basic_ref')
                 ->orderByDesc('updated_at')
                 ->take(10)
                 ->get();
 
-            // dd($referencedIds);
-
             foreach ($referencedIds as $i=>$id) {
-
-                // dd($id);
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
@@ -505,8 +336,6 @@ class RicoAssistant extends Controller {
                             ->where('tag_context', '=', 'ActivityDiagramColor')
                             ->get();
 
-                        // dd($tag);
-
                         if (count($tag)) {
                             $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
                         } else {};
@@ -527,16 +356,12 @@ class RicoAssistant extends Controller {
 
         $result['misc']['parentId'] = $request->parentId;
 
-        // dd($result);
-
         return Inertia::render('Create', ['fromController' => $result]);
     }
 
     // basic titlecheck
     // -------------------------------------------------------
     public function titlecheck(Request $request) {
-
-        // dd($request);
 
         // user auth
         $user = Auth::user();
@@ -548,8 +373,6 @@ class RicoAssistant extends Controller {
                 ->where('user_id', '=', $user->id)
                 ->where('title', '=', $request->basicTitle)
                 ->get();
-
-        // dd($basicTitleResultCheck);
 
             // isolate collection title and duplicated dates
             if (count($basicTitleResultCheck)) {
@@ -575,9 +398,6 @@ class RicoAssistant extends Controller {
                         $aa++;
                     }
                 }
-
-                // dd($title);
-                // dd($date);
 
                 // add title to collection
                 if (isset($date[0]['ref_date']) && isset($title[0]['title'])) {
@@ -608,19 +428,10 @@ class RicoAssistant extends Controller {
                     $basicResult['basicResult'][0]['warning'] = '1';
                 };
 
-                // dd($basicResult);
-
-                // $basicResult['basicResult']['ref_date'][$i] = $id->ref_date;
-                // $basicResult['basicResult']['title'][$i] = $id->title;
-
             } else {
                 // else set title to null
                 $basicResult['basicResult'][0]['title'] = '';
             };
-
-            // dd($basicResult['basicResult']['ref_date']);
-            // dd($basicResult['basicResult']['warning']);
-            // dd($basicResult);
 
         return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
     }
@@ -628,8 +439,6 @@ class RicoAssistant extends Controller {
     // tag
     // -------------------------------------------------------
     public function tag(Request $request) {
-
-        // dd($request);
 
         $tagCollectionRaw = DB::table('tags')->get();
 
@@ -639,7 +448,6 @@ class RicoAssistant extends Controller {
         }
         $tagCollectionSelection['misc']['parentId']= $request->parentId;
         $tagCollectionSelection['misc']['parentIndex']= $request->parentIndex;
-        // dd($tagCollectionSelection);
 
         return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
     }

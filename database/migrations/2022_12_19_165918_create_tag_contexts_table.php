@@ -13,17 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('statements', function (Blueprint $table) {
+        Schema::create('tag_contexts', function (Blueprint $table) {
             $table->id();
-
-            $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
-
-            $table->text('statement');
-
-            $table->tinyText('tracking');
-            $table->tinyInteger('status')->nullable();
-
+            $table->string('content', 50);
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }
@@ -35,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('statements');
+        Schema::dropIfExists('tag_unique_contexts');
     }
 };
