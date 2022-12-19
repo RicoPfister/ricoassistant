@@ -11,11 +11,11 @@
 </div>
 
 <div class="border-l border-r border-b border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0}" :fromController="props.fromController" key="2" @fromChild="fromChild"/>
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0}" :fromController="props.fromController" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" key="2" @fromChild="fromChild"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
 </template>
@@ -49,11 +49,12 @@ function InputData() {
 
 // send to parent: reference selection OR tag list
 function fromChild(data) {
-    if (data.component == 'reference') {
+    if (data.component == 'reference' && data.parentId == 2) {
         emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
     }
 
-    if (data.component == 'tag') {
+    if (data.component == 'tag' && data.parentId == 2) {
+        // console.log('ok');
         emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
 }
@@ -65,9 +66,9 @@ function dataChildMenuEntry(n) {
 }
 
 // send to parent: listen to tag changes
-// watch(() => props.fromChild, (curr, prev) => {
-// emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
-// }, {deep: true}, 500);
+watch(() => props.fromChild, (curr, prev) => {
+emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+}, {deep: true}, 500);
 
 </script>
 

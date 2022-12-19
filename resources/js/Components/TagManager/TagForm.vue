@@ -127,7 +127,7 @@ function tagPopupOpenData() {
 // send changes to parent
 // send to parent: listen to tag changes
 watch(() => tagCollectionInputFormat.value, (curr, prev) => {
-emit('fromChild', {'tagList': tagCollectionInputFormat, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    emit('fromChild', {'tagList': tagCollectionInputFormat.value, 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
 </script>

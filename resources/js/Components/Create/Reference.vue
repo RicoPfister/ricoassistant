@@ -97,7 +97,7 @@ function referenceCheckerFunction(index, id, check) {
 function fromChild(data) {
     // console.log(data);
     form.reference = data.referenceData;
-    emit('fromChild', {'reference': form, 'parentIndex': data.parentIndex, 'component': 'reference'});
+    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'component': 'reference'});
 
     // console.log(props.toChild.parentIndex);
     form.referencePickerOpen = 0;
