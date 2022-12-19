@@ -74,13 +74,31 @@ class RicoAssistant extends Controller {
         // dd($request);
 
         // create tag
-        function tagData($request, $index, $basics, $sources, $id) {
-
+        function tagData($request, $index, $basics, $id, $id2) {
+            // dd('ok');
             // dd($request, $index, $basics, $sources, $id);
             // dd($request->sourceData['tag']);
             // dd($request->sourceData['tag'][$index]);
 
             switch ($id) {
+
+                case 2:
+                    foreach ($request->statementData['tag'][$index] as $key => $value) {
+                        // dd($value);
+                            // dd($value);
+                            // dd($request, $index, $basics, $sources, $id);
+                            // dd($request->sourceData['tag'][$index][0]);
+                            $tag = new Tag();
+                            $tag->basic_id = $basics->id;
+                            $tag->db_id = 2;
+                            if (isset ($value[0])) $tag->tag_category = $value[0];
+                            if (isset ($value[1])) $tag->tag_context = $value[1];
+                            if (isset ($value[2])) $tag->tag_content = $value[2];
+                            if (isset ($value[3])) $tag->tag_comment = $value[3];
+                            $tag->tracking = $request->ip();
+                            $tag->save();
+                    }
+                break;
 
                 case 3:
                     foreach ($request->sourceData['tag'][$index] as $key => $value) {
@@ -91,7 +109,7 @@ class RicoAssistant extends Controller {
                             $tag = new Tag();
                             $tag->basic_id = $basics->id;
                             $tag->db_id = 3;
-                            $tag->db_index = $sources->id;
+                            $tag->db_index = $id2->id;
                             if (isset ($value[0])) $tag->tag_category = $value[0];
                             if (isset ($value[1])) $tag->tag_context = $value[1];
                             if (isset ($value[2])) $tag->tag_content = $value[2];
@@ -162,7 +180,11 @@ class RicoAssistant extends Controller {
             $statement->save();
 
             // fire reference function
-            if (isset($request->statementData['reference'])) reference($db_id = 2, $request, $basics);;
+            if (isset($request->statementData['reference'])) reference($db_id = 2, $request, $basics);
+
+            // fire tag function
+            if (isset ($request->statementData['tag'])) tagData($request, 0, $basics, 2, '');
+
             // dd($checkValue);
         }
 
@@ -268,7 +290,7 @@ class RicoAssistant extends Controller {
 
         // dd($request->file('sourceData')['filelist']);
 
-        if ($request->sourceData['filelist']) {
+        if (isset ($request->sourceData['filelist'])) {
 
             // dd($request->files['sourceData']);
             // dd($request->file[sourceData]['filelist']);
@@ -291,7 +313,7 @@ class RicoAssistant extends Controller {
 
                 // create tag
                 // dd($request->souceData['tag']);
-                if (isset ($request->sourceData['tag'])) tagData($request, $index, $basics, $sources, 3);
+                if (isset ($request->sourceData['tag'])) tagData($request, $index, $basics, 3, $sources);
             }
 
             // store file content data
