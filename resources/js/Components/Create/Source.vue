@@ -78,7 +78,7 @@
                 <div class="pt-2 space-y-[2px] w-full">
                     <div v-for="(item, index) in InputData" class="border border-black w-full">
                         <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" :key="'3-'+index"/></div>
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" :key="3+'-'+index"/></div>
                         </div>
                     </div>
                 </div>

@@ -38,7 +38,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
 let props = defineProps(['dataForm', 'dataCommon', 'emitToParent', 'fromParent', 'fromChild', 'toChild', 'fromController']);
-let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild']);
+let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fromChild']);
 
 // let form = useForm({
 
@@ -123,6 +123,12 @@ function fromChild(data) {
 function tagPopupOpenData() {
     Inertia.post('tag', {'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex});
 }
+
+// send changes to parent
+// send to parent: listen to tag changes
+watch(() => tagCollectionInputFormat.value, (curr, prev) => {
+emit('fromChild', {'tagList': tagCollectionInputFormat, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+}, {deep: true}, 500);
 
 </script>
 
