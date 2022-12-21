@@ -93,14 +93,16 @@ class RicoAssistant extends Controller {
                                 $content = $tag_category;
                             }
 
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->section_table = 2;
-                            $tag->section_table_id = $id2->id;
-                            $tag->tag_table = 1;
-                            $tag->tag_table_id = $content->id;
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                            $tag1 = new Tag();
+                            $tag1->basic_id = $basics->id;
+                            $tag1->section_table = 2;
+                            $tag1->section_table_id = $id2->id;
+                            $tag1->tag_table = 1;
+                            $tag1->tag_table_id = $content->id;
+                            $tag1->tracking = $request->ip();
+                            $tag1->save();
+                            $tag1->tag_id = $tag1->id;
+                            $tag1->save();
                         };
 
                         // check from avaibility and db uniqueness and store tag context
@@ -116,14 +118,15 @@ class RicoAssistant extends Controller {
                                 $content = $tag_context;
                             }
 
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->section_table = 2;
-                            $tag->section_table_id = $id2->id;
-                            $tag->tag_table = 2;
-                            $tag->tag_table_id = $content->id;
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                            $tag2 = new Tag();
+                            $tag2->basic_id = $basics->id;
+                            $tag2->section_table = 2;
+                            $tag2->section_table_id = $id2->id;
+                            $tag2->tag_id = $tag1->id;
+                            $tag2->tag_table = 2;
+                            $tag2->tag_table_id = $content->id;
+                            $tag2->tracking = $request->ip();
+                            $tag2->save();
                         };
 
                         // check from avaibility and db uniqueness and store tag value
@@ -139,14 +142,15 @@ class RicoAssistant extends Controller {
                                 $content = $tag_value;
                             }
 
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->section_table = 2;
-                            $tag->section_table_id = $id2->id;
-                            $tag->tag_table = 3;
-                            $tag->tag_table_id = $content->id;
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                            $tag3 = new Tag();
+                            $tag3->basic_id = $basics->id;
+                            $tag3->section_table = 2;
+                            $tag3->section_table_id = $id2->id;
+                            $tag3->tag_id = $tag1->id;
+                            $tag3->tag_table = 3;
+                            $tag3->tag_table_id = $content->id;
+                            $tag3->tracking = $request->ip();
+                            $tag3->save();
                         };
 
                         // check from avaibility and db uniqueness and store tag detail
@@ -162,14 +166,15 @@ class RicoAssistant extends Controller {
                                 $content = $tag_details;
                             }
 
-                            $tag = new Tag();
-                            $tag->basic_id = $basics->id;
-                            $tag->section_table = 2;
-                            $tag->section_table_id = $id2->id;
-                            $tag->tag_table = 4;
-                            $tag->tag_table_id = $content->id;
-                            $tag->tracking = $request->ip();
-                            $tag->save();
+                            $tag4 = new Tag();
+                            $tag4->basic_id = $basics->id;
+                            $tag4->section_table = 2;
+                            $tag4->section_table_id = $id2->id;
+                            $tag4->tag_id = $tag1->id;
+                            $tag4->tag_table = 4;
+                            $tag4->tag_table_id = $content->id;
+                            $tag4->tracking = $request->ip();
+                            $tag4->save();
                         };
                     }
                 break;
@@ -527,14 +532,179 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function tag(Request $request) {
 
-        $tagCollectionRaw = DB::table('tags')->get();
+        // $tag_distinct = DB::table('tags')
+        // ->select('tag_table', 'tag_table_id')
+        // ->where('tag_table', '=', 1)
+        // ->get()
+        // ->groupBy('tag_id');
 
-        foreach($tagCollectionRaw as $key => $value) {
-            $tagCollectionSelection['tagCollection'][$key][0] = $value->tag_category;
-            $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
-        }
+        // dd($tag_distinct);
+
+        // step 1: collect distinct tag category
+        $tag_category_distinct_id = DB::table('tag_categories')
+        ->select('id', 'content')
+        ->get();
+
+        // dd($tag_category_distinct_id);
+
+        // $tag_category_distinct = DB::table('tags')
+        // ->select('tag_id', 'tag_table', 'tag_table_id')
+        // ->distinct()
+        // ->where('tag_table', '=', 1)
+        // ->orWhere('tag_table', '=', 2)
+        // ->get()
+        // ->groupBy('tag_id');
+
+        // dd();
+
+        // $tag_category_all = DB::table('tag_categories')
+        // $tag_context_all = DB::table('tag_contexts')
+        // ->select('id', 'content')
+        // ->get();
+
+        // $tagText = $tag_category_all
+
+        // step 2: for each tag category: collect distinct tag context
+        // $tagCollectionSelection['tagCollection'] = [];
+
+        // step 2: allocate all ccontext ids corresponding to a single category
+        $tag_collection_category_context = [];
+        foreach ($tag_category_distinct_id as $key => $tag_single_category) {
+
+            // dd($tag_single_category);
+
+            // step 2.1 collection db ids from a single category
+            $tag_category_id = DB::table('tags')
+            ->where('tag_table', '=', 1)
+            ->where('tag_table_id', '=', $tag_single_category->id)
+            ->get()
+            ->pluck('tag_id');
+
+            // dd($tag_category_id);
+
+            // step 2.2 collection context ids from a single category
+            $tag_context_distinct = [];
+            foreach ($tag_category_id as $tag_id_index => $tag_id) {
+
+                $tag_context_id = DB::table('tags')
+                ->where('tag_id', '=', $tag_id)
+                ->where('tag_table', '=', 2)
+                ->get()
+                ->pluck('tag_table_id');
+
+                // dd($tag_context_id);
+                array_push($tag_context_distinct, $tag_context_id[0]);
+            }
+
+                // keep only unique tag context ids
+                $tag_context_distinct_unique = array_unique($tag_context_distinct);
+
+                // dd($tag_context_distinct_unique);
+
+                // step 2.3: collect all tag context contents from a single category
+                $tag_context_id_single_collection = [];
+                foreach ($tag_context_distinct_unique as $tag_id => $tag_single_id) {
+                    $tag_context_id_single = DB::table('tag_contexts')
+                    ->where('id', '=', $tag_single_id)
+                    ->select('id', 'content')
+                    ->get();
+                    // ->pluck('id', 'content');
+
+                    // dd($tag_context_id_single);
+
+                    // step 2.4: gather all unique contexts from a single category
+                    array_push($tag_context_id_single_collection, $tag_context_id_single[0]->content);
+                }
+
+            array_push($tag_collection_category_context, [$tag_single_category->content, $tag_context_id_single_collection]);
+
+        };
+
+            // dd($tag_collection_category_context);
+            // $test = array_unique($tag_context_id_single_collection);
+
+            // dd($tag_category_distinct_id);
+            // dd($tag_category_distinct_id, $tag_context_id_single_collection);
+            // $_tag_category_context_collection = [];
+            // array_push($_tag_category_context_collection, $tag_context_id_single_collection, $tag_category_distinct_id);
+            // dd($_tag_category_context_collection);
+            // $test = $tag_context_distinct->unique();
+            // $test->values()->all();
+
+            // dd($test);
+
+            // $tag_context_distinct = DB::table('tags')
+            // ->where('tag_table', '=', 1)
+            // ->orWhere('tag_table', '=', 2)
+            // ->where('table')
+            // ->get()
+            // ->groupBy('tag_id');
+            // ->select('tag_id')
+
+            // dd($tag_context_distinct);
+
+            // $tag_category_id = DB::table('tags')
+            // ->where('tag_table', '=', 1)
+            // ->Where('tag_table_id', '=', $value->id)
+            // ->select('tag_id')
+            // ->get();
+
+            // $tag_context_
+
+            // $tag_context_distinct = db::table('tags')
+            // ->where('tag_table', '=', 2)
+            // ->where('tag_table', '=', 2)
+            // ->select('tag_table_id')
+            // ->get();
+
+            // dd($tag_context_distinct);
+
+            // $tag_connection = DB::table('tags')
+            // ->where('tag_table', '=', 1)
+            // ->where('tag_table_id', '=', $value->id)
+            // ->get();
+
+            // $tag_context_distinct = DB::table('tag_contexts')
+            // ->where('tag_table', '=', 2)
+            // ->get()
+            // ->distinct();
+
+            // dd($tag_context_distinct);
+            // dd($tag_connection);
+            // dd($value);
+            // $tag_context_distinct = DB::table('tag_context');
+            // dd($value[0]->tag_table_id);
+
+            // $tag_category_text = DB::table('tag_categories')
+            // ->where('id', '=', $value[0]->tag_table_id)
+            // ->get()
+            // ->pluck('content');
+
+            // $tag_context_text = DB::table('tag_contexts')
+            // ->where('id', '=', $value[1]->tag_table_id)
+            // ->get()
+            // ->pluck('content');
+
+            // array_push($tagCollectionSelection['tagCollection'], [$tag_category_text[0], [$tag_context_text[0]]]);
+
+
+
+        // dd($tag_context_text[0]);
+        // dd($tagCollectionSelection);
+        // dd($tag_distinct , $tag_text);
+        // dd($tag_all, $tag_category_all, $tag_context_all);
+
+        // $tagCollectionRaw = DB::table('tags')->get();
+
+        // foreach($tagCollectionRaw as $key => $value) {
+        //     $tagCollectionSelection['tagCollection'][$key][0] = $value->tag_category;
+        //     $tagCollectionSelection['tagCollection'][$key][1][1] = $value->tag_context;
+        // }
+        $tagCollectionSelection['tagCollection'] = $tag_collection_category_context;
         $tagCollectionSelection['misc']['parentId']= $request->parentId;
         $tagCollectionSelection['misc']['parentIndex']= $request->parentIndex;
+
+        // dd($tagCollectionSelection);
 
         return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
     }

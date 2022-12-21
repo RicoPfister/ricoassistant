@@ -21,6 +21,7 @@ return new class extends Migration
             $table->tinyInteger('section_table');
             $table->bigInteger('section_table_id');
 
+            $table->bigInteger('tag_id')->nullable();
             $table->bigInteger('tag_table');
             $table->bigInteger('tag_table_id');
 

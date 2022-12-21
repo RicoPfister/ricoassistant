@@ -1,26 +1,42 @@
 <template>
 
-<!-- tag categories/content -->
+<!-- tag category/context dropdown box -->
 <div class="w-[200px] bg-white">
     <div class="max-h-[500px] border-r border-b border-gray-400 overflow-y-scroll">
-        <div v-for="(item, index) in tagCollection" class="flex flex-col bg-white">
-            <div class="h-[34px] border-b border-gray-400">
 
-                <button @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="px-2 border-r border-gray-400 h-full flex w-full items-center justify-between" typeP="button">
+        <!-- tag category dropdown -->
+        <div v-for="(item, index) in tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
+            <div class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-blue-200">
 
-                    <div class="flex items-center font-bold">{{ item[0] }}</div>
+                <div class="border-r border-gray-400 h-full flex w-full items-center justify-between">
 
-                    <div class="flex flex-row items-center">
-                        <div class="text-[12px] text-blue-600">{{ categoryActiveTotal[index] }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                        </svg>
+                    <div class="flex flex-row items-center h-full leading-none p-0 m-0">
+
+                        <!-- tag category title -->
+                        <button type="button" @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="flex items-center font-bold pl-1 h-full leading-none p-0 m-0">{{ item[0] }}</button>
+
+                        <!-- new tag context button -->
+                        <button @click="newTag(index)" class="px-1 hover:text-blue-600 h-full items-center leading-none p-0 m-0" type="button">[+]</button>
                     </div>
 
-                </button>
+                    <!-- dropdown indicator -->
+                    <button @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="flex flex-row items-center grow justify-end h-full leading-none p-0 m-0" ttype="button">
+
+                        <!-- selected context counter -->
+                        <div class="text-[12px] flex items-center h-full">{{ categoryActiveTotal[index] }}</div>
+
+                        <!-- dropdown open indicator -->
+                        <div class="flex items-center h-full leading-none p-0 m-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 pr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
 
             </div>
 
+            <!-- tag context dropdown -->
             <KeepAlive>
                 <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index}" @fromChild="fromChild"/>
             </KeepAlive>
@@ -41,20 +57,21 @@ import SubCategory from "./TagPopupSubCategory.vue";
 let SubCategoryOpen = ref([]);
 let tagCollection = ref([]);
 
-let props = defineProps(['fromController']);
-let emit = defineEmits(['fromChild']);
+let props = defineProps(['fromController', 'toChild', 'fromChild']);
+let emit = defineEmits(['fromChild', 'toChild']);
 
 // let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let categoryActiveTotal = ref([]);
 
 // get TagPopupSubCategory.vue data and emit tag data to TagPopup.vue
 function fromChild(data){
-    if (typeof categoryActiveTotal.value[data[0]] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data[0]]++;
+    console.log(data);
+    if (typeof categoryActiveTotal.value[data.index] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data.index]++;
 
-    // console.log(tagCollection.value[data.index]+tagCollection.value[data.index][1][data.subIndex]);
-    // console.log(data);
-    // collect tag data and emit
-    // emit('fromChild', {'tagSelection': '@'+tagCollection.value[data.index][0]+':'+tagCollection.value[data.index][1][data.subIndex]});
+    if (data.index == 'new') {
+        emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': 'new'});
+
+    }
     emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': tagCollection.value[data.index][1][data.subIndex]});
 }
 
@@ -65,6 +82,11 @@ function fromChild(data){
 onMounted(() => {
     tagCollection.value = props.fromController.tagCollection;
 })
+
+function newTag(data) {
+    // console.log('ok');
+    emit('fromChild', {'tagSelectionCategory': tagCollection.value[data][0], 'tagSelectionContext': 'new'});
+}
 
 </script>
 

@@ -32,7 +32,7 @@
                 </div>
             </button>
 
-            <button @click="categoryPopupOpen = !categoryPopupOpen" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button @click="newTag" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between">
 
                     <div class="flex flex-row">
@@ -43,7 +43,7 @@
                             </svg>
                         </div>
 
-                        <div class="ml-1">Create Tag</div>
+                        <div class="ml-1">New Tag</div>
                     </div>
                 </div>
             </button>
@@ -117,12 +117,14 @@ let tagSelectionListString = ref([]);
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
-    // console.log(data);
+    // console.log(data.tagSelectionContext);
 
-    if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
+
+    else if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
     // console.log(tagSelection.value);
     // console.log(data.tagSelectionList);
-    if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
+    else if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
 
     // if (typeof data.tagSelectionList != 'undefined') {
 
@@ -187,6 +189,10 @@ function saveTagPopup() {
 
 function cancelTagPopup() {
     emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
+}
+
+function newTag() {
+    tagSelection.value = ['', ''];
 }
 
 </script>
