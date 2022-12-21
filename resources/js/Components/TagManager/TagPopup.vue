@@ -87,7 +87,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :toChild="{'tagSelection': tagSelection, 'tagSelectionListString': tagSelectionListString}" @fromChild="fromChild"/>
+            <contentBox :toChild="{'tagSelection': tagSelection, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">

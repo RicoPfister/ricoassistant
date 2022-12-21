@@ -15,15 +15,15 @@
                         <!-- tag category title -->
                         <button type="button" @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="flex items-center font-bold pl-1 h-full leading-none p-0 m-0">{{ item[0] }}</button>
 
+                        <!-- total context tags indicator -->
+                        <button @click="newTag(index)" class="pl-1 h-full flex items-center text-xs leading-none p-0 m-0 hover:text-blue-600" type="button">{{ '['+ (typeof categoryActiveTotal[index] !== 'undefined' ? categoryActiveTotal[index] : 0) +'/'+ props.fromController.tagCollection[index][1].length +']' }}</button>
+
                         <!-- new tag context button -->
-                        <button @click="newTag(index)" class="px-1 hover:text-blue-600 h-full items-center leading-none p-0 m-0" type="button">[+]</button>
+                        <!-- <button @click="newTag(index)" class="ml-1 hover:text-blue-600 h-full flex items-center text-xs leading-none p-0 m-0" type="button">+</button> -->
                     </div>
 
-                    <!-- dropdown indicator -->
+                    <!-- dropdown indicator area -->
                     <button @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="flex flex-row items-center grow justify-end h-full leading-none p-0 m-0" ttype="button">
-
-                        <!-- selected context counter -->
-                        <div class="text-[12px] flex items-center h-full">{{ categoryActiveTotal[index] }}</div>
 
                         <!-- dropdown open indicator -->
                         <div class="flex items-center h-full leading-none p-0 m-0">

@@ -15,7 +15,7 @@
 
         <!-- open popup -->
         <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-            <TagPopup :fromController="props.fromController" :toChild="{'tagSelectionListString': tagCollectionInputFormat[0]}" @fromChild="fromChild"/>
+            <TagPopup :fromController="props.fromController" :toChild="{'tagSelectionListString': tagCollectionInputFormat[0], 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
         </div>
 
         <!-- tag input -->

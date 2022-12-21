@@ -8,7 +8,7 @@
 </div>
 
 <div class="h-auto flex flex-row bg-gray-100">
-        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags related to entry:&nbsp;<span>{{ title }}</span></div>
+        <div class="px-1 flex items-center w-full border-b border-r border-gray-400 bg-gray-300">Tags related to entry:&nbsp;<span class="font-bold">{{ title }}</span></div>
     </div>
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
@@ -84,10 +84,11 @@ function removeTagFromList(index) {
 // get child data
 onMounted(() => {
 
-    //!! if (props.dataForm.basicTitle) {
-    //     title.value = props.dataForm.basicTitle;
-    //     alternate title text
-    // } else title.value = '';
+    // listen to and set Basic.vue title if available
+    if (props.toChild.basicTitle) {
+        title.value = props.toChild.basicTitle;
+        // alternate title text
+    } else title.value = '';
     // console.log(props.toChild);
 
     // check if tag string can be convertet to tag select
