@@ -65,7 +65,7 @@ let categoryActiveTotal = ref([]);
 
 // get TagPopupSubCategory.vue data and emit tag data to TagPopup.vue
 function fromChild(data){
-    console.log(data);
+    // console.log(data);
     if (typeof categoryActiveTotal.value[data.index] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data.index]++;
 
     if (data.index == 'new') {
