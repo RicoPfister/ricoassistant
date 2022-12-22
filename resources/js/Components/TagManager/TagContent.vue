@@ -18,7 +18,7 @@
         <input class="px-1 flex items-center border-r border-b border-gray-400 w-[120px]" placeholder="Value" v-model="tagArray[index][2]">
 
         <div class="flex flex-row justify-between items-center border-r border-b border-gray-400 w-full grow h-6">
-            <input class="grow pl-3 truncate h-full" placeholder="Comment" v-model="tagArray[index][3]">
+            <input class="grow pl-1 truncate h-full" placeholder="Details" v-model="tagArray[index][3]">
 
             <!-- edit menu button -->
             <div @mouseover="tagEditMenu[index] = 1" @mouseleave="tagEditMenu[index] = 0" class="relative border-l border-gray-400 h-full w-fit flex flex-row leading-none pr-1">
@@ -119,7 +119,7 @@ watch(() => props.toChild.tagSelectionListString, _.debounce( (curr, prev) => {
     //     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
     //     tagArray.value = TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelectionList);
     // }
-       console.log('ok');
+    //    console.log('ok');
     if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log('ok');
         // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagInputList));
