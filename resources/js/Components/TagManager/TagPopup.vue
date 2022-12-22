@@ -151,7 +151,7 @@ onMounted(() => {
     }
 });
 
-//   transcript tag select to tag input format
+//transcript tag select to tag input format
 function saveTagPopup() {
 
     tagCollectionInputFormat.value = '';

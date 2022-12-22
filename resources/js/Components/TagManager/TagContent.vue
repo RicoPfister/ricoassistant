@@ -24,7 +24,7 @@
             <div @mouseover="tagEditMenu[index] = 1" @mouseleave="tagEditMenu[index] = 0" class="relative border-l border-gray-400 h-full w-fit flex flex-row leading-none pr-1">
 
                 <div class="flex items-center leading-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-fit h-full hover:stroke-2 leading-none
+                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-fit h-full hover:stroke-2 leading-none
                 pl-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213
                     1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26
@@ -137,7 +137,7 @@ function duplicateTagRow(index) {
     // tagDuplication = tagArray.value[index];
     // console.log(tagDuplication);
     console.log(tagArray.value[index]);
-    tagArray.value.splice(index, 0, {});
+    tagArray.value.splice(index, 0, []);
     tagArray.value[index][0] = tagArray.value[index+1][0];
     tagArray.value[index][1] = tagArray.value[index+1][1];
     tagArray.value[index][2] = tagArray.value[index+1][2];
@@ -178,7 +178,7 @@ onMounted(() => {
 
 // listen to tag collection changes and emit to tagPopup.vue
 watch(() => tagArray.value, (curr, prev) => {
-    // console.log(tagArray.value);
+    console.log(tagArray.value);
     emit('fromChild', {'tagSelectionListGroup': tagArray.value});
 }, {deep: true}, 500);
 
