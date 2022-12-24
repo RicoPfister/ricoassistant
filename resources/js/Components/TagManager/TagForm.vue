@@ -27,7 +27,7 @@
         <!-- tag input -->
         <div class="grow">
             <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent bg-stone-50 pl-2 h-7 leading-none text-sm
-            text-gray-500 w-full" type="text" placeholder="Insert tags: @Category:Context:Content(Comment)" v-model="tagCollectionInputFormat[0]">
+            text-gray-500 w-full" type="text" placeholder="Insert tags: @Category:Context:Value(Detail)" v-model="tagCollectionInputFormat[0]">
         </div>
     </div>
 </div>
@@ -106,19 +106,24 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
-    if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
+    if (data.tagSelectionListString) {
+        if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
 
-        // console.log(data.tagCollection);
-        // tagCollectionInputFormat.value = data.tagCollection;
+            // console.log(data.tagCollection);
+            // tagCollectionInputFormat.value = data.tagCollection;
 
-        if (data.tagSelectionListString !== '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
-        if (data.tagSelectionListGroup !== '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+            if (data.tagSelectionListString !== '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+            if (data.tagSelectionListGroup !== '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
 
-        tagPopupOpen.value = 0;
+            tagPopupOpen.value = 0;
+        }
     }
+
+    if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
+    console.log(data);
 }
 
 // function tagPopupOpenData(index) {
@@ -143,7 +148,9 @@ watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
 
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
     // console.log(tagCollectionInputFormat.value[0]);
-    emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    if (typeof tagCollectionInputFormat.value[0] !== 'undefined') {
+        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    }
 }, {deep: true}, 500);
 
 </script>

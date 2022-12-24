@@ -200,6 +200,28 @@ function fromChild(data) {
         }
     }
 
+    // if (data.tagPresetItemSelected) {
+    //     if (!form.value[data.section]) form.value[data.section] = {};
+    //     if (typeof data.index !== 'undefined') {
+    //         if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+    //         form.value[data.section][data.subSection][data.index]  = {};
+    //         form.value[data.section][data.subSection][data.index] = data.form;
+    //     } else {
+    //         form.value[data.section][data.subSection]= data.form;
+    //     }
+    // }
+
+    // if (data.presetCreate) {
+    //     if (!form.value[data.section]) form.value[data.section] = {};
+    //     if (typeof data.index !== 'undefined') {
+    //         if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+    //         form.value[data.section][data.subSection][data.index]  = {};
+    //         form.value[data.section][data.subSection][data.index] = data.form;
+    //     } else {
+    //         form.value[data.section][data.subSection]= data.form;
+    //     }
+    // }
+
     transferCreate.value['title'] = form.value.basicData.title;
 }
 

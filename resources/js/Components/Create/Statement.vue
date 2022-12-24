@@ -57,6 +57,11 @@ function fromChild(data) {
         // console.log('ok');
         emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
+
+    if (data.tagPreset) {
+        // console.log(data.tagPreset);
+        emit('fromChild', {'section':'statementData', 'subSection':'tagPreset', 'form': data.tagPreset});
+    }
 }
 
 //  send to parent: edit menu selection

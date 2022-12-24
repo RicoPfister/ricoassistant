@@ -100,6 +100,7 @@ let tagEditMenu = ref([]);
 // basic title response
 watch(() => props.toChild.tagSelection, _.debounce( (curr, prev) => {
 
+    console.log(props.toChild.tagSelection);
     // console.log(props.toChild);
 
     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));

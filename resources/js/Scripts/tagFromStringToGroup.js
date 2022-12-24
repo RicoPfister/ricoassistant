@@ -33,6 +33,7 @@ export function tagFromStringToGroup(tagData) {
         // tagGroupSplitPresetFilter[index] = tagGroupSplitPreset[index].filter(element => element != '');
         // console.log(tagGroupSplitPresetFilter[index]);
 
+        //! preset part is obsolete. delete?
         // check if tag input contains preset
         if (tagGroupSplitFilter[index][0].match(/^Preset/)) {
                 // split category, context and detail

@@ -113,13 +113,26 @@ let categoryPopupOpen = ref(0);
 let tagSelection = ref([]);
 let tagSelectionListGroup = ref([]);
 let tagSelectionListString = ref([]);
+let tagPresetGroupCollection = ref({});
 
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
+    console.log(data.tagPreset);
     // console.log(data.tagSelectionContext);
 
-    if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
+    // if () {
+
+    // }
+
+    if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
+
+    if (data.tagSelectionCategory == 'Preset') {
+        console.log('ok');
+        tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    }
+
+    else if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
 
     else if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
     // console.log(tagSelection.value);
@@ -131,6 +144,9 @@ function fromChild(data) {
     //     tagSelectionList.value = data.tagSelectionList;
     //     console.log(tagSelectionList.value);
     // }
+
+
+    console.log(data.tagPreset);
 }
 
 // save submit back to source
