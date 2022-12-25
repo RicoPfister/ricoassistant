@@ -145,7 +145,6 @@ function fromChild(data) {
     //     console.log(tagSelectionList.value);
     // }
 
-
     console.log(data.tagPreset);
 }
 

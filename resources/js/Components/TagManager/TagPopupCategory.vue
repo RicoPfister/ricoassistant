@@ -2,7 +2,7 @@
 
 <!-- tag category/context dropdown box -->
 <div class="w-[200px] bg-white">
-    <div class="max-h-[500px] border-r border-b border-gray-400 overflow-y-scroll">
+    <div class="max-h-[500px] border-r border-gray-400 overflow-y-scroll">
 
         <!-- tag category dropdown -->
         <div v-for="(item, index) in tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">

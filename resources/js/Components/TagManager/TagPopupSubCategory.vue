@@ -36,13 +36,16 @@
             <div class="items-center h-full pr-1">
 
                     <!-- preset menu button -->
-                <button @click="tagPresetMenu(index)" class="h-full" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full py-[2px]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0
-                        002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0
-                        00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0
-                        0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
+                <button @click="tagPresetMenu(index)" class="h-full flex flex-row items-center" type="button">
+                    <div class="text-sm flex items-center h-full">{{ typeof tagPresetGroupCollection[index] !== 'undefined' ? tagPresetGroupCollection[0].length : 1 }}</div>
+                    <div class="h-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0
+                            002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0
+                            00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0
+                            0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                    </div>
                 </button>
 
             <!-- preset popup -->
@@ -59,8 +62,7 @@
                     </div>
 
                     <!-- list: database tags preset -->
-                    <div v-if="props.toChild.tagPreset" v-for="(item2, index2) in props.toChild.tagCollection !== 'Preset' ? props.toChild.tagPreset : ''" class="flex flew-col border-b border-black last:border-b-0 w-full">
-
+                    <div v-if="props.toChild.tagPreset && props.toChild.tagCollection[0] !== 'Preset'" v-for="(item2, index2) in props.toChild.tagCollection !== 'Preset' ? props.toChild.tagPreset : ''" class="flex flew-col border-b border-black last:border-b-0 w-full">
                         <!-- button: select preset item -->
                         <button @click.prevent="tagPresetSelected(index, index2)" class="items-center flex flex-row h-[26px] w-full" type="button">
 
@@ -74,6 +76,14 @@
                                 <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8">{{ item2 }}</div>
                             </div>
                         </button>
+                    </div>
+
+                    <!-- show preset list items -->
+                    <div v-else-if="props.toChild.tagPreset && props.toChild.tagCollection[0] == 'Preset'" v-for="(item2, index2) in tagPresetGroupCollection[index]" class="flex flew-col border-b border-black last:border-b-0 w-full">
+                        <!-- button: select preset item -->
+                        <div class="items-center flex flex-row h-[26px] w-full">
+                            <div class="text-gray-700 h-full truncate max-w-fit mr-8 pl-1 flex items-center">{{ item2 }}</div>
+                        </div>
                     </div>
                     <div v-else class="p-1">No presets found. Please create one.</div>
                 </div>
