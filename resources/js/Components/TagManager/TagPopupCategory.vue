@@ -5,7 +5,7 @@
     <div class="max-h-[500px] border-r border-gray-400 overflow-y-scroll">
 
         <!-- tag category dropdown -->
-        <div v-for="(item, index) in tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
+        <div v-for="(item, index) in props.toChild.popupId == 1 ? props.toChild.tagPresetCollection : tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
             <div class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-stone-300">
 
                 <!-- category box -->
@@ -42,7 +42,7 @@
 
             <!-- tag context dropdown -->
             <KeepAlive>
-                <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index, 'tagPreset': tagCollection.slice(-1)[0][0] == 'Preset' ? tagCollection.slice(-1)[0][1] : '', 'tagPresetGroupCollection': props.toChild.tagPresetGroupCollection}" @fromChild="fromChild"/>
+                <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index, 'tagPreset': tagCollection.slice(-1)[0][0] == 'Preset' ? tagCollection.slice(-1)[0][1] : '', 'tagPresetCollection': props.toChild.tagPresetCollection}" @fromChild="fromChild"/>
             </KeepAlive>
 
         </div>

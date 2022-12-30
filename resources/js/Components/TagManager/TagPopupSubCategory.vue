@@ -48,21 +48,21 @@
                     </div>
                 </button>
 
-            <!-- preset popup -->
-            <!-- ++++++++++++++++++++++++++++++ -->
+                <!-- preset popup -->
+                <!-- ++++++++++++++++++++++++++++++ -->
 
                 <!-- preset menu popup -->
                 <div v-if="tagPresetMenuOpen[index]" class="absolute border border-black bg-stone-200 max-w-[500px]">
 
                     <!-- create preset entry input -->
-                    <div v-if="props.toChild.tagCollection[0] !== 'Preset'" class="flex items-center border-b border-black h-full">
+                    <div class="flex items-center border-b border-black h-full">
                         <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-1 h-[26px] w-80 truncate" type="text"
                         placeholder="Select or type in a new preset list name..." v-model="tagPresetCreateInput">
                         <div @click="tagCreatePreset(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-stone-300 text-gray-600 hover:text-black w-fit">Create</div>
                     </div>
 
                     <!-- list: database tags preset -->
-                    <div v-if="props.toChild.tagPreset && props.toChild.tagCollection[0] !== 'Preset'" v-for="(item2, index2) in props.toChild.tagCollection !== 'Preset' ? props.toChild.tagPreset : ''" class="flex flew-col border-b border-black last:border-b-0 w-full">
+                    <div v-if="props.toChild.tagPresetCollection.length > 0" v-for="(item2, index2) in props.toChild.tagPresetCollection" class="flex flew-col border-b border-black last:border-b-0 w-full">
 
                         <!-- button: select preset item -->
                         <button @click.prevent="tagPresetSelected(index, index2)" class="items-center flex flex-row h-[26px] w-full" type="button">
@@ -74,19 +74,21 @@
                                 </svg>
                             </div>
                             <div class="w-full">
-                                <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8">{{ item2 }}</div>
+                                <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8">{{ item2[0] }}</div>
                             </div>
                         </button>
-                    </div>
 
-                    <!-- show preset list items -->
-                    <div v-else-if="props.toChild.tagPreset && props.toChild.tagCollection[0] == 'Preset'" v-for="(item2, index2) in tagPresetStringCollection[index]" class="flex flew-col border-b border-black last:border-b-0 w-full">
-                        <!-- button: select preset item -->
-                        <div class="items-center flex flex-row h-[26px] w-full">
-                            <div class="text-gray-700 h-full truncate max-w-fit mr-8 pl-1 flex items-center">{{ item2 }}</div>
-                        </div>
                     </div>
                     <div v-else class="p-1">No presets found. Please create one.</div>
+
+                    <!-- preset dropdown: show group items -->
+                    <div v-if="0" v-for="(item2, index2) in props.toChild.tagPresetCollection" class="flex flew-col border-b border-black last:border-b-0 w-full">
+                        <!-- button: select preset item -->
+                        <div class="items-center flex flex-row h-[26px] w-full">
+                            <div class="text-gray-700 h-full truncate max-w-fit mr-8 pl-1 flex items-center">{{ item2[0] }}</div>
+                        </div>
+                    </div>
+                    <!-- <div v-else class="p-1">No presets found. Please create one.</div> -->
                 </div>
             </div>
         </div>
