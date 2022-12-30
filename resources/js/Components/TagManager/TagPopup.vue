@@ -91,7 +91,7 @@
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" @fromChild="fromChild"/>
+            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" :toChild="{'tagPresetGroupCollection': tagPresetGroupCollection}" @fromChild="fromChild"/>
         </div>
     </div>
 </div>
@@ -113,19 +113,63 @@ let categoryPopupOpen = ref(0);
 let tagSelection = ref([]);
 let tagSelectionListGroup = ref([]);
 let tagSelectionListString = ref([]);
+let tagPresetStringCollection = ref({});
 let tagPresetGroupCollection = ref({});
+let tagCollection = ref([]);
 
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
-    console.log(data.tagPreset);
+    // console.log(data);
+
+    if (data.presetData.presetItemSelected) {
+        // console.log('ok');
+        // console.log(data);
+        // console.log(tagCollection.value[data.index][0]);
+        // tagPresetGroupCollection.value.push([[tagCollection.value[data.index][1][0], tagCollection.value[data.index][1][data.subIndex]]]);
+        tagPresetGroupCollection.value[data.presetData.presetIndex].push([tagCollection.value[data.presetData.index][0], tagCollection.value[data.presetData.index][1][data.presetData.subIndex]]);
+        // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
+        // console.log(tagPresetGroupCollection.value);
+    }
+
+    // save preset name in tagPresetGroupCollection
+    if (data.presetData.presetCreate) {
+
+        console.log(data.presetData);
+
+    // create first preset name
+
+    // check if preset is not created befor and filled in group name is not set
+    if (tagCollection.value[tagCollection.value.length-1][0] !== 'Preset' && !tagCollection.value[tagCollection.value.length-1][1].find(element => element == data.presetData.presetCreate)) {
+        console.log('ok');
+        tagCollection.value.push(['Preset']);
+        tagCollection.value[tagCollection.value.length-1][1] = [data.presetData.presetCreate];
+        tagPresetGroupCollection.value[0] =  [[tagCollection.value[data.presetData.index][0], tagCollection.value[data.presetData.index][1][data.presetData.subIndex]]];
+
+    // create additional preset name
+    } else if (!tagCollection.value[tagCollection.value.length-1][1].find(element => element == data.presetData.presetCreate)) {
+        tagCollection.value[tagCollection.value.length-1][1].push(data.presetData.presetCreate);
+        tagPresetGroupCollection.value.push([[tagCollection.value[data.presetData.index][0], tagCollection.value[data.index][1][data.presetData.subIndex]]]);
+    };
+
+    // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
+    }
+
+
+    // console.log(data.tagPreset);
     // console.log(data.tagSelectionContext);
 
     // if () {
 
     // }
 
-    if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
+    if (data.tagPreset) {
+
+        console.log(data.tagPreset);
+
+
+        emit('fromChild', {'tagPreset': data.tagPreset})
+    };
 
     if (data.tagSelectionCategory == 'Preset') {
         console.log('ok');
@@ -145,7 +189,7 @@ function fromChild(data) {
     //     console.log(tagSelectionList.value);
     // }
 
-    console.log(data.tagPreset);
+    // console.log(data.tagPreset);
 }
 
 // save submit back to source
@@ -164,6 +208,7 @@ onMounted(() => {
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }
+    tagCollection.value = props.fromController.tagCollection;
 });
 
 //transcript tag select to tag input format

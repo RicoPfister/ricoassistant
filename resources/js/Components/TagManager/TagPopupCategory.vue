@@ -42,7 +42,7 @@
 
             <!-- tag context dropdown -->
             <KeepAlive>
-                <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index, 'tagPreset': tagCollection.slice(-1)[0][0] == 'Preset' ? tagCollection.slice(-1)[0][1] : '', 'tagPresetListItems': tagPresetGroupCollection != '' ? tagPresetGroupCollection : ''}" @fromChild="fromChild"/>
+                <SubCategory v-if="SubCategoryOpen[index]" :toChild="{'tagCollection': tagCollection[index], 'index': index, 'tagPreset': tagCollection.slice(-1)[0][0] == 'Preset' ? tagCollection.slice(-1)[0][1] : '', 'tagPresetGroupCollection': props.toChild.tagPresetGroupCollection}" @fromChild="fromChild"/>
             </KeepAlive>
 
         </div>
@@ -71,44 +71,9 @@ let categoryActiveTotal = ref([]);
 // get TagPopupSubCategory.vue data and emit tag data to TagPopup.vue
 function fromChild(data){
 
-    console.log(data);
-    // console.log(tagCollection.value[tagCollection.value.length-1][0]);
-
-    // save preset name in tagPresetGroupCollection
-    if (data.presetItemSelected) {
-        // console.log('ok');
-        console.log(data);
-        // console.log(tagCollection.value[data.index][0]);
-        // tagPresetGroupCollection.value.push([[tagCollection.value[data.index][1][0], tagCollection.value[data.index][1][data.subIndex]]]);
-        tagPresetGroupCollection.value[data.presetIndex].push([tagCollection.value[data.index][0], tagCollection.value[data.index][1][data.subIndex]]);
-        emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
-        console.log(tagPresetGroupCollection.value);
-    }
-
-    // save preset name in tagPresetGroupCollection
-    else if (data.presetCreate) {
-        // console.log(data.presetCreate);
-        // console.log(data.subIndex);
-        // console.log(tagCollection.value[tagCollection.value.length-1]);
-        // console.log(tagCollection.value[tagCollection.value.length-1][1].find(element => element == tagCollection.value[data.index][1][data.subIndex]));
-        // console.log(tagCollection.value[data.index][1][data.subIndex]);
-
-        // create first preset name
-        if (tagCollection.value[tagCollection.value.length-1][0] !== 'Preset' && !tagCollection.value[tagCollection.value.length-1][1].find(element => element == data.presetCreate)) {
-            // tagCollection.value['Preset'] = [data.presetCreate];
-            tagCollection.value.push(['Preset']);
-            tagCollection.value[tagCollection.value.length-1][1] = [data.presetCreate];
-            tagPresetGroupCollection.value[0] =  [[tagCollection.value[data.index][0], tagCollection.value[data.index][1][data.subIndex]]];
-            // tagCollection.value['Preset'] = [data.presetCreate];
-
-        // create additional preset name
-        } else if (!tagCollection.value[tagCollection.value.length-1][1].find(element => element == data.presetCreate)) {
-            tagCollection.value[tagCollection.value.length-1][1].push(data.presetCreate);
-            tagPresetGroupCollection.value.push([[tagCollection.value[data.index][0], tagCollection.value[data.index][1][data.subIndex]]]);
-        };
-        // tagCollection.value.push([data.presetCreate]);
-        // tagCollection.value[tagCollection.value.length-1][1] =  [tagCollection.value[data.index][data.subIndex]];
-        emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
+    // send preset data to TagPop.vue
+    if (data.presetData) {
+        emit('fromChild', {'presetData': data.presetData});
     }
 
     if (typeof categoryActiveTotal.value[data.index] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data.index]++;
@@ -121,10 +86,6 @@ function fromChild(data){
         console.log(tagCollection.value[data.index][1][data.subIndex]);
         emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': tagCollection.value[data.index][1][data.subIndex]});
     }
-
-    // if (data.tagPresetSelected) {
-    //     emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': tagCollection.value[data.index][1][data.subIndex]});
-    // }
 }
 
 // watch(() => props.dataCommon, (curr, prev) => {
