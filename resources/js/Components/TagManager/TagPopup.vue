@@ -9,7 +9,32 @@
         <!-- header -->
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
-            <button @click="categoryPopupOpen = !categoryPopupOpen" class="w-[200px] px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <!-- add tag dropdown -->
+            <button :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+                <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
+
+                    <div class="flex flex-row">
+                        <!-- info button -->
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                            </svg>
+                        </div>
+
+                        <div class="ml-1">Preset</div>
+                    </div>
+
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                        </svg>
+                    </div>
+                </div>
+            </button>
+
+            <!-- add tag dropdown -->
+            <button @click="categoryPopupOpen = !categoryPopupOpen; popupId = 2" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between">
 
                     <div class="flex flex-row">
@@ -21,29 +46,13 @@
                             </svg>
                         </div>
 
-                        <div class="ml-1">Add Tag</div>
+                        <div class="ml-1">Single</div>
                     </div>
 
                     <div class="">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                         </svg>
-                    </div>
-                </div>
-            </button>
-
-            <button @click="categoryPopupOpen = !categoryPopupOpen" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
-                <div class="flex flex-row items-center justify-between">
-
-                    <div class="flex flex-row">
-                        <!-- info button -->
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-
-                        <div class="ml-1">Create Tag</div>
                     </div>
                 </div>
             </button>
@@ -87,11 +96,12 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :toChild="{'tagSelection': tagSelection, 'tagSelectionListString': tagSelectionListString}" @fromChild="fromChild"/>
+            <contentBox :toChild="{'tagSelection': {'tagSelection': tagSelection, 'keyid': keyid}, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <CategoryPopup v-if="categoryPopupOpen" :fromController="props.fromController" @fromChild="fromChild"/>
+            <PresetPopup v-if="popupId == 1 && categoryPopupOpen" :fromController="props.fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
+            <CategoryPopup v-if="popupId == 2 && categoryPopupOpen" :fromController="props.fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
         </div>
     </div>
 </div>
@@ -105,21 +115,114 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import contentBox from "./TagContent.vue";
 import CategoryPopup from "./TagPopupCategory.vue"
+import PresetPopup from "./TagPopupPreset.vue"
 
 let props = defineProps(['fromParentTagString', 'dataForm', 'dataCommon', 'fromChild', 'toChild', 'fromController']);
 let emit = defineEmits(['fromParentTagString', 'tagPopupOpen', 'fromChild', 'toChild']);
 
 let categoryPopupOpen = ref(0);
 let tagSelection = ref([]);
+let tagPresetCollection = ref([]);
 let tagSelectionListGroup = ref([]);
 let tagSelectionListString = ref([]);
+let tagPresetStringCollection = ref({});
+let tagCollection = ref([]);
+let popupId = ref(0);
+let keyid = ref(1);
 
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
+    console.log(data);
+
+    // add selected tag preset in tag list
+    if (typeof data?.tagSelectionPreset !== 'undefined') {
+        console.log('ok');
+        // console.log(data.tagSelectionPreset);
+        tagSelection.value = tagPresetCollection.value[data.tagSelectionPreset][1];
+        keyid.value++;
+        console.log('ok');
+    }
+
+    // console.log(data.presetData?.presetCreate);
+
+    if (data.presetData?.presetCreate) {
+
+        console.log(data.presetData);
+        console.log(tagPresetCollection.value.includes(data.presetData.presetCreate));
+
+        if (data.presetData?.presetCreate) {
+        // check if preset group is not alreay crated and create it if so
+        let tagPresetCheckDuplicate = [];
+        tagPresetCollection.value.forEach(item => {
+            tagPresetCheckDuplicate.push(item[0]);
+            console.log(item);
+        });
+        // console.log(tagPresetCheckDuplicate.includes(data.presetData.presetCreate));
+        if (!tagPresetCheckDuplicate.includes(data.presetData.presetCreate)) tagPresetCollection.value.push([data.presetData.presetCreate]);
+        }
+
+
+            // tagPresetollection.value.push(['Preset']);
+
+            // tagPresetGroupCollection.value[0] = [[tagPresetCollection.value[data.presetData.index][0],
+            // tagPresetCollection.value[data.presetData.index][1][data.presetData.subIndex]]];
+
+        // create additional preset name
+
+        // else if (!tagPresetCollection.value[tagPresetCollection.value.length-1][1].find(element => element == data.presetData.presetCreate)) {
+        //     tagPresetCollection.value[tagPresetCollection.value.length-1][1].push(data.presetData.presetCreate);
+        //     tagPresetGroupCollection.value.push([[tagCollection.value[data.presetData.index][0],
+        //     tagCollection.value[data.index][1][data.presetData.subIndex]]]);
+        // };
+
+        // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
+    }
+
     // console.log(data);
 
-    if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    if (data.presetData?.presetItemSelected) {
+        // console.log('ok');
+        // console.log(data);
+        // console.log(tagCollection.value[data.index][0]);
+        // tagPresetGroupCollection.value.push([[tagCollection.value[data.index][1][0], tagCollection.value[data.index][1][data.subIndex]]]);
+        if (!tagPresetCollection.value[data.presetData.presetIndex][1]) tagPresetCollection.value[data.presetData.presetIndex][1] = [];
+        tagPresetCollection.value[data.presetData.presetIndex][1].push([tagCollection.value[data.presetData.index][0],
+        tagCollection.value[data.presetData.index][1][data.presetData.subIndex]]);
+        // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
+        // console.log(tagPresetGroupCollection.value);
+    }
+
+    // save preset name in tagPresetGroupCollection
+
+
+
+    // console.log(data.tagPreset);
+    // console.log(data.tagSelectionContext);
+
+    // if () {
+
+    // }
+
+    if (data.tagPreset) {
+
+        console.log(data.tagPreset);
+
+
+        emit('fromChild', {'tagPreset': data.tagPreset})
+    };
+
+    // if (data.tagSelectionCategory == 'Preset') {
+    //     console.log('ok');
+    //     tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    // }
+
+    // else if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
+
+    if (typeof data.tagSelectionCategory !== 'undefined') {
+        tagSelection.value = [[data.tagSelectionCategory, data.tagSelectionContext]]
+        keyid.value++;
+    };
     // console.log(tagSelection.value);
     // console.log(data.tagSelectionList);
     if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
@@ -129,6 +232,8 @@ function fromChild(data) {
     //     tagSelectionList.value = data.tagSelectionList;
     //     console.log(tagSelectionList.value);
     // }
+
+    // console.log(data.tagPreset);
 }
 
 // save submit back to source
@@ -137,6 +242,7 @@ function fromChild(data) {
 // };
 
 let tagCollectionInputFormat = ref();
+// let tagCollectionGroupFormat = ref();
 
 onMounted(() => {
     // console.log(props.toChild);
@@ -146,9 +252,10 @@ onMounted(() => {
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }
+    tagCollection.value = props.fromController.tagCollection;
 });
 
-//   transcript tag select to tag input format
+//transcript tag select to tag input format
 function saveTagPopup() {
 
     tagCollectionInputFormat.value = '';
@@ -181,12 +288,17 @@ function saveTagPopup() {
         if (index1 != tagSelectionListGroup.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
         // console.log(tagCollectionInputFormat.value);
-        emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value});
+        emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value, 'tagSelectionListGroup': tagSelectionListGroup.value});
     }
 
 function cancelTagPopup() {
-    emit('fromChild', {'tagSelectionListString': ''});
+    console.log('ok');
+    emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
 }
+
+// function newTag() {
+//     tagSelection.value = ['', ''];
+// }
 
 </script>
 

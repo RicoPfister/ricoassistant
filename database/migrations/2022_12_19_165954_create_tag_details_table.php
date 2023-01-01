@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('medium_lists', function (Blueprint $table) {
-            $table->id('id');
-
-            $table->tinyText('medium_name');
-
-            $table->tinyText('tracking');
-            $table->tinyInteger('status')->nullable();
-
+        Schema::create('tag_details', function (Blueprint $table) {
+            $table->id();
+            $table->text('content');
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('medium_lists');
+        Schema::dropIfExists('tag_unique_details');
     }
 };

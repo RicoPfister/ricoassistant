@@ -13,16 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('activities', function (Blueprint $table) {
+        Schema::create('index_tag_presets', function (Blueprint $table) {
             $table->id();
-
-            $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
-
-            $table->string('activityTo', 5)->nullable();
-
-            $table->tinyText('tracking');
-
+            $table->string('preset_name', 50);
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }
@@ -34,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('time_trackings');
+        Schema::dropIfExists('index_tag_presets');
     }
 };

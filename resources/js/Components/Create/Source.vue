@@ -9,7 +9,7 @@
 
             <label class="" aria-label="Statement Input" for="statement">Source*: </label>
 
-            <MenuEntry @data-child="dataChildMenuEntry"/>
+            <!-- <MenuEntry @data-child="dataChildMenuEntry"/> -->
 
         </div>
 
@@ -78,7 +78,7 @@
                 <div class="pt-2 space-y-[2px] w-full">
                     <div v-for="(item, index) in InputData" class="border border-black w-full">
                         <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" :key="'3-'+index"/></div>
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" @fromChild="fromChild"/></div>
                         </div>
                     </div>
                 </div>
@@ -126,16 +126,7 @@ let tagPopupOpen = ref();
 let uniqueKey = ref(1);
 let InputData = ref([]);
 
-// emit form
-watch(() => dataChild, (curr, prev) => {
 
-    emit('dataChild', {'formData': dataChild.value});
-
-}, {deep: true}, 500);
-
-function dataChildMenuEntry(n) {
-    emit('dataChild', {'formDataEdit': n['formDataEdit']});
-}
 
 // file preview
 let preview = ref([]);
@@ -150,13 +141,6 @@ function FileChange(event, index) {
     }
 }
 
-// emit form
-watch(() => InputData, (curr, prev) => {
-
-emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
-
-}, {deep: true}, 500);
-
 // fill in already extisting data
 onMounted(() => {
     if (props.dataForm.filelist) {
@@ -165,17 +149,43 @@ onMounted(() => {
     }
   })
 
-// emit formData
-let form = ref({});
-function toParentTagDataGroup(index) {
-    tagCollectionInputIndex.value = index;
+// send changes to parent
 
-    form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
-
-    // console.log(form.value);
-
-    // send formData
-    emit('toParent', {'sourceTag': form.value});
+// send to parent: tag data from child
+function fromChild(data) {
+    if (data.component = "tag" && data.parentId == 3) {
+        emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+    }
 }
+
+// send to parent: file upload
+watch(() => InputData, (curr, prev) => {
+    // emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
+    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+    emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
+}, {deep: true}, 500);
+
+// send to parent:
+// watch(() => dataChild, (curr, prev) => {
+// emit('dataChild', {'formData': dataChild.value});
+// }, {deep: true}, 500);
+
+// send to parent: box menu
+// function dataChildMenuEntry(n) {
+// emit('dataChild', {'formDataEdit': n['formDataEdit']});
+// }
+
+// emit formData
+// let form = ref({});
+// function toParentTagDataGroup(index) {
+//     tagCollectionInputIndex.value = index;
+
+//     form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
+
+//     // console.log(form.value);
+
+//     // send formData
+//     emit('toParent', {'sourceTag': form.value});
+// }
 
 </script>

@@ -16,15 +16,14 @@ return new class extends Migration
         Schema::create('refs', function (Blueprint $table) {
             $table->id();
 
-            $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
+            $table->bigInteger('basic_id');
             $table->bigInteger('basic_ref');
 
-            $table->tinyInteger('ref_db_id')->nullable();
-            $table->tinyInteger('ref_db_index')->nullable();
-            // $table->tinyInteger('ref_db_heading')->nullable();
+            $table->tinyInteger('ref_db_id');
+            $table->tinyInteger('ref_db_index');
+            $table->tinyInteger('ref_db_heading')->nullable();
 
-            $table->tinyText('tracking');
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

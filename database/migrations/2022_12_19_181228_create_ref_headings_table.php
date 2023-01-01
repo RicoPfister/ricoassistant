@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('database_lists', function (Blueprint $table) {
-            $table->id('id');
-
-            $table->tinyText('db_name');
-
-            $table->tinyText('tracking');
-            $table->tinyInteger('status')->nullable();
-
+        Schema::create('ref_headings', function (Blueprint $table) {
+            $table->id();
+            $table->string('content', 50);
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('database_lists');
+        Schema::dropIfExists('ref_headings');
     }
 };

@@ -13,17 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('statements', function (Blueprint $table) {
+        Schema::create('section_activities', function (Blueprint $table) {
             $table->id();
 
             $table->bigInteger('basic_id')->unsigned();
-            $table->foreign('basic_id')->references('id')->on('basics');
+            $table->foreign('basic_id')->references('id')->on('section_basics');
 
-            $table->text('statement');
+            $table->string('activityTo', 5);
 
-            $table->tinyText('tracking');
-            $table->tinyInteger('status')->nullable();
-
+            $table->string('tracking', 50);
             $table->timestamps();
         });
     }
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('statements');
+        Schema::dropIfExists('time_trackings');
     }
 };

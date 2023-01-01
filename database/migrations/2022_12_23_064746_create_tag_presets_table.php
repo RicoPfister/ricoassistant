@@ -13,21 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('tag_presets', function (Blueprint $table) {
             $table->id();
-
-            $table->bigInteger('basic_id');
-
-            $table->tinyInteger('section_table');
-            $table->bigInteger('section_table_id');
-
-            $table->bigInteger('tag_id')->nullable();
-            $table->bigInteger('tag_table');
-            $table->bigInteger('tag_table_id');
-
+            $table->string('group_id', 50);
+            $table->string('tag_category', 50);
+            $table->string('tag_context', 50);
             $table->string('tracking', 50);
-            $table->string('status', 1)->nullable();
-
             $table->timestamps();
         });
     }
@@ -39,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('tag_presets');
     }
 };

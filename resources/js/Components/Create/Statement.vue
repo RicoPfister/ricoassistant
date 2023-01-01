@@ -11,11 +11,11 @@
 </div>
 
 <div class="border-l border-r border-b border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0}" :fromController="props.fromController" :key="'2'"/>
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild.basicData.title}" :fromController="props.fromController" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
-    <ReferenceStatement :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" :key="'2'"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
 </template>
@@ -28,7 +28,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
-import ReferenceStatement from "./Reference.vue";
+import Reference from "./Reference.vue";
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate']);
@@ -47,9 +47,21 @@ function InputData() {
     emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
 }
 
-// send to parent: reference selection
+// send to parent: reference selection OR tag list
 function fromChild(data) {
-    emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+    if (data.component == 'reference' && data.parentId == 2) {
+        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+    }
+
+    if (data.component == 'tag' && data.parentId == 2) {
+        // console.log('ok');
+        emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+    }
+
+    if (data.tagPreset) {
+        // console.log(data.tagPreset);
+        emit('fromChild', {'section':'statementData', 'subSection':'tagPreset', 'form': data.tagPreset});
+    }
 }
 
 //  send to parent: edit menu selection
@@ -57,6 +69,11 @@ function dataChildMenuEntry(n) {
     if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
     if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
+
+// send to parent: listen to tag changes
+watch(() => props.fromChild, (curr, prev) => {
+emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+}, {deep: true}, 500);
 
 </script>
 

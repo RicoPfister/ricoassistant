@@ -13,20 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id();
+        Schema::create('section_basics', function (Blueprint $table) {
+            $table->id()->startingValue(1);
 
-            $table->bigInteger('basic_id');
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
 
-            $table->tinyInteger('section_table');
-            $table->bigInteger('section_table_id');
-
-            $table->bigInteger('tag_id')->nullable();
-            $table->bigInteger('tag_table');
-            $table->bigInteger('tag_table_id');
+            $table->date('ref_date');
+            $table->string('title', 255);
+            $table->string('medium', 50);
 
             $table->string('tracking', 50);
-            $table->string('status', 1)->nullable();
+            $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
         });
@@ -39,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('basics');
     }
 };

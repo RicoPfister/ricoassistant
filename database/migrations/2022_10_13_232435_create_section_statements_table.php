@@ -13,17 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('basics', function (Blueprint $table) {
-            $table->id()->startingValue(1);
+        Schema::create('section_statements', function (Blueprint $table) {
+            $table->id();
 
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->bigInteger('basic_id')->unsigned();
+            $table->foreign('basic_id')->references('id')->on('section_basics');
 
-            $table->date('ref_date');
-            $table->tinyText('title');
-            $table->tinyText('medium');
+            $table->text('statement');
 
-            $table->tinyText('tracking')->nullable();
+            $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();
@@ -37,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('basics');
+        Schema::dropIfExists('statements');
     }
 };
