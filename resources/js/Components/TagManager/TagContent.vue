@@ -98,14 +98,19 @@ let tagEditMenu = ref([]);
 // let tagDuplication = ref([]);
 
 // basic title response
-watch(() => props.toChild.tagSelection, _.debounce( (curr, prev) => {
+watch(() => props.toChild.tagSelection.keyid, _.debounce( (curr, prev) => {
 
     console.log(props.toChild.tagSelection);
     // console.log(props.toChild);
 
     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
     // tagArray.value.push(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
-    if (typeof props.toChild.tagSelection !== 'undefined') tagArray.value.push(props.toChild.tagSelection);
+    if (typeof props.toChild.tagSelection.tagSelection !== 'undefined') {
+        props.toChild.tagSelection.tagSelection.forEach((item, index) => {
+            console.log(item);
+            tagArray.value.push(item);
+        });
+    };
 
 }, 500));
 

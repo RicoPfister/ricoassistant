@@ -10,8 +10,8 @@
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <!-- add tag dropdown -->
-            <button @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
-                <div class="flex flex-row items-center justify-between">
+            <button :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+                <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
                     <div class="flex flex-row">
                         <!-- info button -->
@@ -26,8 +26,7 @@
                     </div>
 
                     <div class="">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-3
-                        ">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                         </svg>
                     </div>
@@ -97,7 +96,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)]">
-            <contentBox :toChild="{'tagSelection': tagSelection, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
+            <contentBox :toChild="{'tagSelection': {'tagSelection': tagSelection, 'keyid': keyid}, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0">
@@ -129,23 +128,48 @@ let tagSelectionListString = ref([]);
 let tagPresetStringCollection = ref({});
 let tagCollection = ref([]);
 let popupId = ref(0);
+let keyid = ref(1);
 
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
-    if (data.presetData.presetCreate) {
+    console.log(data);
+
+    // add selected tag preset in tag list
+    if (typeof data?.tagSelectionPreset !== 'undefined') {
+        console.log('ok');
+        // console.log(data.tagSelectionPreset);
+        tagSelection.value = tagPresetCollection.value[data.tagSelectionPreset][1];
+        keyid.value++;
+        console.log('ok');
+    }
+
+    // console.log(data.presetData?.presetCreate);
+
+    if (data.presetData?.presetCreate) {
 
         console.log(data.presetData);
+        console.log(tagPresetCollection.value.includes(data.presetData.presetCreate));
 
+        if (data.presetData?.presetCreate) {
         // check if preset group is not alreay crated and create it if so
-        if (!tagPresetCollection.value.find(element => element == data.presetData.presetCreate)) {
+        let tagPresetCheckDuplicate = [];
+        tagPresetCollection.value.forEach(item => {
+            tagPresetCheckDuplicate.push(item[0]);
+            console.log(item);
+        });
+        // console.log(tagPresetCheckDuplicate.includes(data.presetData.presetCreate));
+        if (!tagPresetCheckDuplicate.includes(data.presetData.presetCreate)) tagPresetCollection.value.push([data.presetData.presetCreate]);
+        }
+
+
             // tagPresetollection.value.push(['Preset']);
-            tagPresetCollection.value.push([data.presetData.presetCreate]);
+
             // tagPresetGroupCollection.value[0] = [[tagPresetCollection.value[data.presetData.index][0],
             // tagPresetCollection.value[data.presetData.index][1][data.presetData.subIndex]]];
 
         // create additional preset name
-        }
+
         // else if (!tagPresetCollection.value[tagPresetCollection.value.length-1][1].find(element => element == data.presetData.presetCreate)) {
         //     tagPresetCollection.value[tagPresetCollection.value.length-1][1].push(data.presetData.presetCreate);
         //     tagPresetGroupCollection.value.push([[tagCollection.value[data.presetData.index][0],
@@ -157,7 +181,7 @@ function fromChild(data) {
 
     // console.log(data);
 
-    if (data.presetData.presetItemSelected) {
+    if (data.presetData?.presetItemSelected) {
         // console.log('ok');
         // console.log(data);
         // console.log(tagCollection.value[data.index][0]);
@@ -188,17 +212,20 @@ function fromChild(data) {
         emit('fromChild', {'tagPreset': data.tagPreset})
     };
 
-    if (data.tagSelectionCategory == 'Preset') {
-        console.log('ok');
-        tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
-    }
+    // if (data.tagSelectionCategory == 'Preset') {
+    //     console.log('ok');
+    //     tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    // }
 
-    else if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
+    // else if (data.tagSelectionContext == 'new') tagSelection.value = [data.tagSelectionCategory, ''];
 
-    else if (typeof data.tagSelectionCategory !== 'undefined') tagSelection.value = [data.tagSelectionCategory, data.tagSelectionContext];
+    if (typeof data.tagSelectionCategory !== 'undefined') {
+        tagSelection.value = [[data.tagSelectionCategory, data.tagSelectionContext]]
+        keyid.value++;
+    };
     // console.log(tagSelection.value);
     // console.log(data.tagSelectionList);
-    else if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
+    if (data.tagSelectionListGroup) tagSelectionListGroup.value = data.tagSelectionListGroup;
 
     // if (typeof data.tagSelectionList != 'undefined') {
 
@@ -265,12 +292,13 @@ function saveTagPopup() {
     }
 
 function cancelTagPopup() {
+    console.log('ok');
     emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
 }
 
-function newTag() {
-    tagSelection.value = ['', ''];
-}
+// function newTag() {
+//     tagSelection.value = ['', ''];
+// }
 
 </script>
 

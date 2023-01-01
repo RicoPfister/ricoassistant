@@ -6,71 +6,25 @@
 
         <!-- tag category dropdown -->
         <div v-for="(item, index) in props.toChild.tagPresetCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
-            <div class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-stone-300">
+            <div  class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-stone-300">
 
                 <!-- category box -->
                 <!-- ------------------ -->
                 <div class="border-r border-gray-400 h-full flex w-full items-center justify-between">
 
                     <!-- left box -->
-                    <div class="flex flex-row items-center h-full leading-none p-0 m-0">
+                    <div class="group flex flex-row items-center h-full leading-none p-0 m-0">
 
                         <!-- tag category title -->
-                        <button type="button" @click.prevent="PresetSelect(index)" class="flex items-center font-bold pl-1 h-full leading-none p-0 m-0">{{ item[0] }}</button>
+                        <button :disabled="!props.toChild.tagPresetCollection[index]?.[1]" type="button" @click.prevent="PresetSelect(index)" class="flex items-center enabled:font-bold disabled:text-gray-500 pl-1 h-full leading-none p-0 m-0">{{ item[0] }}</button>
 
                         <!-- total context tags indicator -->
                         <div class="h-full">
 
+                        <button :disabled="!props.toChild.tagPresetCollection[index]?.[1]" @click="tagPresetGroupOpen[index] = !tagPresetGroupOpen[index]" class="pl-1 h-full flex items-center text-xs leading-none p-0 m-0 enabled:hover:text-blue-600 disabled:text-gray-500" type="button">{{ props.toChild.tagPresetCollection[index]?.[1] ? '['+ props.toChild.tagPresetCollection[index][1].length +']' : '[0]' }}</button>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <button @click="tagPresetGroupOpen[index] = !tagPresetGroupOpen[index]" class="pl-1 h-full flex items-center text-xs leading-none p-0 m-0 hover:text-blue-600" type="button">{{ '['+ props.toChild.tagPresetCollection[index][1].length +']' }}</button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- preset popup -->
-            <!-- ++++++++++++++++++++++++++++++ -->
+                <!-- preset popup -->
+                <!-- ++++++++++++++++++++++++++++++ -->
 
                 <!-- preset menu popup -->
                 <div v-if="tagPresetGroupOpen[index]" class="absolute border border-black bg-stone-200 max-w-[500px]">
@@ -84,7 +38,7 @@
         <!-- icon: add to preset -->
 
         <div class="w-full">
-            <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8">{{ item3[0] }}</div>
+            <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8 pl-1"><span class="font-bold">{{ item3[0] }}</span>{{ ': '+item3[1] }}</div>
         </div>
     </button>
 
@@ -108,53 +62,10 @@
 
 
 
-
-
-
-
-
-
-
                     </div>
                         <!-- new tag context button -->
                         <!-- <button @click="newTag(index)" class="ml-1 hover:text-blue-600 h-full flex items-center text-xs leading-none p-0 m-0" type="button">+</button> -->
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -253,10 +164,6 @@
 
 
 
-
-
-
-
                     </button>
                 </div>
                 </div>
@@ -267,8 +174,6 @@
 
 
         </div>
-
-
 
 
 
@@ -308,9 +213,9 @@ function fromChild(data){
 
     if (typeof categoryActiveTotal.value[data.index] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data.index]++;
 
-    if (data.index == 'new') {
-        emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': 'new'});
-    }
+    // if (data.index == 'new') {
+    //     emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': 'new'});
+    // }
 
     if (data.tagContextSelected) {
         console.log(tagCollection.value[data.index][1][data.subIndex]);
@@ -327,9 +232,13 @@ onMounted(() => {
     // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 })
 
-function newTag(data) {
-    // console.log('ok');
-    emit('fromChild', {'tagSelectionCategory': tagCollection.value[data][0], 'tagSelectionContext': 'new'});
+// function newTag(data) {
+//     emit('fromChild', {'tagSelectionCategory': tagCollection.value[data][0], 'tagSelectionContext': 'new'});
+// }
+
+function PresetSelect(index) {
+    // console.log(index);
+    emit('fromChild', {'tagSelectionPreset': index});
 }
 
 </script>

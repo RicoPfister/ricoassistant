@@ -133,7 +133,7 @@ function tagCreatePreset(index) {
     // console.log(index);
     // console.log(props.toChild.index);
     emit('fromChild', {'presetData': {'presetCreate': tagPresetCreateInput.value, 'index': props.toChild.index, 'subIndex': index}});
-    tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
+    // tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
     tagPresetCreateInput.value = '';
 }
 

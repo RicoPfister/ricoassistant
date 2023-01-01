@@ -106,12 +106,14 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
-    console.log(data);
+    console.log(data.tagSelectionListString);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
-    if (data.tagSelectionListString) {
+    if (typeof data.tagSelectionListString !== 'default') {
+        console.log('ok');
         if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
 
+            console.log('ok');
             // console.log(data.tagCollection);
             // tagCollectionInputFormat.value = data.tagCollection;
 
