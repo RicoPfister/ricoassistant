@@ -10,7 +10,7 @@
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <!-- add tag dropdown -->
-            <button :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
                     <div class="flex flex-row">
@@ -34,7 +34,7 @@
             </button>
 
             <!-- add tag dropdown -->
-            <button @click="categoryPopupOpen = !categoryPopupOpen; popupId = 2" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 2}" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 2" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between">
 
                     <div class="flex flex-row">
@@ -100,8 +100,8 @@
         </div>
 
         <div class="absolute top-[35px] left-0">
-            <PresetPopup v-if="popupId == 1 && categoryPopupOpen" :fromController="props.fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
-            <CategoryPopup v-if="popupId == 2 && categoryPopupOpen" :fromController="props.fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
+            <PresetPopup v-if="popupId == 1 && categoryPopupOpen" :fromController="fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
+            <CategoryPopup v-if="popupId == 2 && categoryPopupOpen" :fromController="fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
         </div>
     </div>
 </div>
@@ -129,6 +129,7 @@ let tagPresetStringCollection = ref({});
 let tagCollection = ref([]);
 let popupId = ref(0);
 let keyid = ref(1);
+let fromController = ref('');
 
 //? emit tag data to TagContent.vue
 function fromChild(data) {
@@ -142,6 +143,7 @@ function fromChild(data) {
         tagSelection.value = tagPresetCollection.value[data.tagSelectionPreset][1];
         keyid.value++;
         console.log('ok');
+        Inertia.post('preset_store', tagSelection.value);
     }
 
     // console.log(data.presetData?.presetCreate);
@@ -152,21 +154,46 @@ function fromChild(data) {
         console.log(tagPresetCollection.value.includes(data.presetData.presetCreate));
 
         if (data.presetData?.presetCreate) {
-        // check if preset group is not alreay crated and create it if so
-        let tagPresetCheckDuplicate = [];
-        tagPresetCollection.value.forEach(item => {
-            tagPresetCheckDuplicate.push(item[0]);
-            console.log(item);
-        });
-        // console.log(tagPresetCheckDuplicate.includes(data.presetData.presetCreate));
-        if (!tagPresetCheckDuplicate.includes(data.presetData.presetCreate)) tagPresetCollection.value.push([data.presetData.presetCreate]);
+            // check if preset group is not alreay crated and create it if so
+            let tagPresetCheckDuplicate = [];
+            tagPresetCollection.value.forEach(item => {
+                tagPresetCheckDuplicate.push(item[0]);
+                console.log(item);
+            });
+
+            // console.log(tagPresetCheckDuplicate.includes(data.presetData.presetCreate));
+            if (!tagPresetCheckDuplicate.includes(data.presetData.presetCreate)) {
+                tagPresetCollection.value.push([data.presetData.presetCreate])
+                // Inertia.post('/preset_store', {'preset_name': data.presetData.presetCreate}, {replace: false,  preserveState: true, preserveScroll: true});
+                // Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, parentId:1},
+                // {replace: false,  preserveState: true, preserveScroll: true});
+
+                Inertia.visit('/preset_store', {
+  method: 'post',
+  data: {'preset_name': data.presetData.presetCreate},
+  replace: false,
+  preserveState: true,
+  preserveScroll: true,
+  only: [],
+  headers: {},
+  errorBag: null,
+  forceFormData: false,
+  onCancelToken: cancelToken => {},
+  onCancel: () => {},
+  onBefore: visit => {},
+  onStart: visit => {},
+  onProgress: progress => {},
+  onSuccess: page => {},
+  onError: errors => {},
+  onFinish: visit => {},
+})
+            };
         }
 
+        // tagPresetollection.value.push(['Preset']);
 
-            // tagPresetollection.value.push(['Preset']);
-
-            // tagPresetGroupCollection.value[0] = [[tagPresetCollection.value[data.presetData.index][0],
-            // tagPresetCollection.value[data.presetData.index][1][data.presetData.subIndex]]];
+        // tagPresetGroupCollection.value[0] = [[tagPresetCollection.value[data.presetData.index][0],
+        // tagPresetCollection.value[data.presetData.index][1][data.presetData.subIndex]]];
 
         // create additional preset name
 
@@ -189,6 +216,44 @@ function fromChild(data) {
         if (!tagPresetCollection.value[data.presetData.presetIndex][1]) tagPresetCollection.value[data.presetData.presetIndex][1] = [];
         tagPresetCollection.value[data.presetData.presetIndex][1].push([tagCollection.value[data.presetData.index][0],
         tagCollection.value[data.presetData.index][1][data.presetData.subIndex]]);
+
+
+
+
+
+
+
+
+
+        Inertia.visit('/preset_store', {
+  method: 'post',
+  data: {'preset_group': {'preset_name': tagPresetCollection.value[data.presetData.presetIndex][0], 'tag_category': tagCollection.value[data.presetData.index][0], 'tag_context': tagCollection.value[data.presetData.index][1][data.presetData.subIndex]}},
+  replace: false,
+  preserveState: true,
+  preserveScroll: true,
+  only: [],
+  headers: {},
+  errorBag: null,
+  forceFormData: false,
+  onCancelToken: cancelToken => {},
+  onCancel: () => {},
+  onBefore: visit => {},
+  onStart: visit => {},
+  onProgress: progress => {},
+  onSuccess: page => {},
+  onError: errors => {},
+  onFinish: visit => {},
+})
+
+
+
+
+
+
+
+
+
+
         // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
         // console.log(tagPresetGroupCollection.value);
     }
@@ -253,6 +318,11 @@ onMounted(() => {
         // console.log(tagSelectionList.value);
     }
     tagCollection.value = props.fromController.tagCollection;
+
+    if (props?.fromController) {
+        console.log('ok');
+        fromController.value = props.fromController;
+    }
 });
 
 //transcript tag select to tag input format
@@ -299,6 +369,14 @@ function cancelTagPopup() {
 // function newTag() {
 //     tagSelection.value = ['', ''];
 // }
+
+watch(() => props.fromController, (curr, prev) => {
+    console.log('ok');
+    console.log(props?.fromController);
+    if (props?.fromController) {
+        console.log('ok');
+        fromController.value = props.fromController};
+}, {deep: true}, 500);
 
 </script>
 

@@ -128,7 +128,7 @@ watch(() => props.fromController, (curr, prev) => {
     // console.log(props.fromController);
     // console.log(props.toChild);
 
-    if(props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.row == props.toChild.parentIndex) {
+    if(props.fromController.misc?.parentId == props.toChild?.parentId && props.fromController?.misc.row == props.toChild?.parentIndex) {
         form.referencePickerOpen = 1;
     }
 

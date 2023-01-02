@@ -60,6 +60,10 @@ Route::post('/refcheck', [RicoAssistant::class, 'reference'])->name('refcheck');
 Route::post('/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
 Route::post('/tag', [RicoAssistant::class, 'tag'])->name('tag');
 
+Route::post('/preset_store', [RicoAssistant::class, 'preset_store'])->name('preset_store');
+Route::post('/preset_update', [RicoAssistant::class, 'preset_update'])->name('preset_update');
+Route::post('/preset_delete', [RicoAssistant::class, 'preset_delete'])->name('preset_delete');
+
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
 });

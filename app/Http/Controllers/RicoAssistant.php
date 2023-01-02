@@ -92,7 +92,27 @@ class RicoAssistant extends Controller {
                         // check data availability and db uniqueness and store tag category
                         if (isset ($value[0])) {
 
-                            if (count($content_check) > 0) $content = $content_check[0];
+                            // dd('ok');
+
+                            if (count($content_check) > 0) {
+                                // dd('ok');
+                                // dd($content_check[0]);
+                                $content = $content_check[0];
+
+                                $tag1 = new Tag();
+                                $tag1->basic_id = $basics->id;
+                                $tag1->section_table = 2;
+                                $tag1->section_table_id = $id2->id;
+                                $tag1->tag_table = 1;
+                                $tag1->tag_table_id = $content->id;
+                                $tag1->tracking = $request->ip();
+                                $tag1->save();
+
+                                $tag1->tag_id = $tag1->id;
+                                $tag1->save();
+
+                                // dd('ok');
+                            }
                             else {
                                 $tag_category = new TagCategory();
                                 $tag_category->content = $value[0];
@@ -112,6 +132,8 @@ class RicoAssistant extends Controller {
 
                                 $tag1->tag_id = $tag1->id;
                                 $tag1->save();
+
+                                // dd('ok');
                             };
                         };
 
@@ -585,7 +607,7 @@ class RicoAssistant extends Controller {
                 ->get()
                 ->pluck('tag_table_id');
 
-                // dd($tag_context_id);
+                // dd($tag_context_id[0]);
                 array_push($tag_context_distinct, $tag_context_id[0]);
             }
 
@@ -619,5 +641,101 @@ class RicoAssistant extends Controller {
         // dd($tagCollectionSelection);
 
         return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
+    }
+
+    // get tag list for tag selection
+    // -------------------------------------------------------
+    public function preset_store(Request $request) {
+
+        // dd($request);
+
+        if (isset($request->preset_name)) {
+            // dd($request);
+            $tag_preset = new IndexTagPreset();
+            $tag_preset->preset_name = $request->preset_name;
+            $tag_preset->tracking = $request->ip();
+            $tag_preset->save();
+        }
+
+        if (isset($request->preset_group)) {
+
+            // dd($request);
+            // dd($request->preset_group);
+
+            // $group_id = DB::table('index_tag_presets')
+
+            // $preset_id = ;
+
+            // dd($request->preset_group['tag_category']);
+
+            $tag_preset = new TagPreset();
+
+            // dd($preset_id);
+            $tag_preset->group_id = DB::table('index_tag_presets')
+            ->where('preset_name', '=', $request->preset_group['preset_name'])
+            ->pluck('id')[0];
+
+            $tag_preset->tag_category = DB::table('tag_categories')
+            ->where('content', '=', $request->preset_group['tag_category'])
+            ->pluck('id')[0];
+
+            // convert tag category name to id
+            $tag_category_id = DB::table('tag_categories')
+            ->where('content', '=', $request->preset_group['tag_category'])
+            ->pluck('id');
+
+            // convert tag context name to id
+            $tag_context_id = DB::table('tag_contexts')
+            ->where('content', '=', $request->preset_group['tag_context'])
+            ->pluck('id');
+
+            // dd($tag_category_id[0]);
+
+            // get tag category tag group ids
+            $tags_category_id = DB::table('tags')
+            ->where('tag_table', '=', 1)
+            ->where('tag_table_id', '=', $tag_category_id[0])
+            ->get();
+
+
+
+
+            // $tags_context_id
+
+            // dd($tags_category_id);
+            // dd($tags_category_id[0]->tag_id);
+
+            foreach ($tags_category_id as $key => $value) {
+
+                $tags_context_id = DB::table('tags')
+                ->where('tag_table', '=', 2)
+                ->where('tag_id', '=', $value->tag_id)
+                ->where('tag_table_id', '=', $tag_context_id[0])
+                ->get();
+
+                if(count($tags_context_id)) dd($tags_context_id[0]->id);
+
+            }
+
+
+
+            dd($tags_context_id);
+
+            // $tag_id = db
+
+            // $tag_context_id = DB::table('tags')
+            // ->where('')
+
+            // $tag_preset->tag_context = DB::table('tag_contexts')
+            // ->where('content', '=', $request->preset_group['tag_context'])
+            // ->pluck('id')[0];
+
+            // $tag_preset->tag_context =;
+            $tag_preset->tracking = $request->ip();
+            $tag_preset->save();
+        }
+
+        return Inertia::render('Create');
+        // return redirect()->route('tag')->with('message', 'Entry Successfully Created');
     }
 }

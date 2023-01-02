@@ -6,7 +6,7 @@
 
         <!-- tag category dropdown -->
         <div v-for="(item, index) in props.toChild.tagPresetCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
-            <div  class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-stone-300">
+            <div  class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-lime-200">
 
                 <!-- category box -->
                 <!-- ------------------ -->
@@ -33,14 +33,14 @@
 <div v-for="(item3, index3) in props.toChild.tagPresetCollection[index][1]" class="flex flew-col border-b border-black last:border-b-0 w-full">
 
     <!-- button: select preset item -->
-    <button @click.prevent="tagPresetSelected(index, index2)" class="items-center flex flex-row h-[26px] w-full" type="button">
+    <div class="items-center flex flex-row h-[26px] w-full" type="button">
 
         <!-- icon: add to preset -->
 
         <div class="w-full">
             <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8 pl-1"><span class="font-bold">{{ item3[0] }}</span>{{ ': '+item3[1] }}</div>
         </div>
-    </button>
+    </div>
 
 </div>
 
@@ -228,7 +228,7 @@ function fromChild(data){
 // }, {deep: true}, 500);
 
 onMounted(() => {
-    tagCollection.value = props.fromController.tagCollection;
+    // tagCollection.value = props.fromController.tagCollection;
     // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 })
 

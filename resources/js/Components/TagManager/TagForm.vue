@@ -80,7 +80,7 @@ let controllerDataArrived = ref(0);
 
 // listen to controller feedback and opens tag popup
 watch(() => props.fromController, (curr, prev) => {
-    if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
+    if (props.fromController?.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
         // console.log('ok');
         tagPopupOpen.value = 1;
     }
