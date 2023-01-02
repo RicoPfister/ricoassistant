@@ -56,6 +56,7 @@ let tagCollectionInputIndex = ref(0);
 let tagCollectionInputFormat = ref({});
 let tagCollectionGroupFormat = ref({});
 let controllerDataArrived = ref(0);
+let fromController = ref('');
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -109,9 +110,11 @@ function fromChild(data) {
     console.log(data.tagSelectionListString);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
-    if (typeof data.tagSelectionListString !== 'default') {
+    if (typeof data.tagSelectionListString !== 'undefined') {
+
         console.log('ok');
-        if (props.fromController.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
+
+        if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
             console.log('ok');
             // console.log(data.tagCollection);
@@ -154,6 +157,22 @@ watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
         emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
     }
 }, {deep: true}, 500);
+
+// listen to fromController and save it in fromController
+watch(() => props.fromController, (curr, prev) => {
+    // console.log('ok');
+    // console.log(props?.fromController);
+    if (props?.fromController) {
+        console.log('ok');
+        fromController.value = props.fromController};
+}, {deep: true}, 500);
+
+onMounted(() => {
+if (props?.fromController) {
+    fromController.value = props.fromController;
+};
+// tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
+})
 
 </script>
 
