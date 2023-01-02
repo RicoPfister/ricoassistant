@@ -58,7 +58,7 @@ let form = ref({'basicData': ''});
 
 let dataParent = ref({});
 
-const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
+const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();

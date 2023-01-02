@@ -448,20 +448,71 @@ class RicoAssistant extends Controller {
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
                 ->get();
 
+                // dd($referencesResultCheck);
+
             if (count($referencesResultCheck)) {
+
+                // dd($referencesResultCheck);
 
                 foreach ($referencesResultCheck as $i=>$id) {
 
                     if (count($referencesResultCheck) == 0) {} else {
                         $result['referencesResult'][$i]['title'] = $id->title;
 
-                        $tag = DB::table('tags')
-                            ->where('basic_id', '=', $id->id)
-                            ->where('tag_context', '=', 'ActivityDiagramColor')
+                        // dd($id);
+                        // dd($id->id);
+
+                        // set ActivityDiagramColor id
+                        $activitydiagramcolor_id = DB::table('tag_contexts')
+                        ->where('content', '=', 'ActivityDiagramColor')
+                        ->get();
+
+                        // dd($activitydiagramcolor_id);
+
+                        $tag_id = DB::table('tags')
+                        ->where('basic_id', '=', $id->id)
+                        ->where('tag_table', '=', 2)
+                        ->where('tag_table_id', '=', $activitydiagramcolor_id[0]->id)
+                        ->get();
+
+                        // dd($tag_id);
+
+                        if (count($tag_id)) {
+                            $tag_value_id = DB::table('tags')
+                            ->where('tag_id', '=', $tag_id[0]->tag_id)
+                            ->where('tag_table', '=', 3)
                             ->get();
 
-                        if (count($tag)) {
-                            $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
+                            // dd($tag_value_id);
+
+                            $tag_value_content = DB::table('tag_values')
+                            ->where('id', '=', $tag_value_id[0]->tag_table_id)
+                            ->get();
+
+                            // dd($tag_value_content[0]->content);
+                        } else $tag_value_content = '';
+
+                        // dd($tag_table_id_context);
+
+                        // foreach ($tag_table_id_context as $index=>$item) {
+
+                        //     $tag_context_name = DB::table('tag_contexts')
+                        //     ->where('id', '=', $item)
+                        //     ->pluck('content')[0];
+
+                        //     if ($tag_context_name == ActivityDiagramColor) break;
+                        // }
+
+                        // dd($tag_context_name);
+
+                        // $tag = DB::table('tags')
+                        //     ->where('basic_id', '=', $id->id)
+                        //     ->where('tag_context', '=', 'ActivityDiagramColor')
+                        //     ->get();
+
+                        if (isset($tag_value_content[0]->content)) {
+                            $result['referencesResult'][$i]['color'] = $tag_value_content[0]->content;
+                            // dd($result);
                         } else {};
 
                         $result['referencesResult'][$i]['medium'] = $id->medium;
@@ -479,6 +530,8 @@ class RicoAssistant extends Controller {
         }
 
         $result['misc']['parentId'] = $request->parentId;
+
+        // dd($result);
 
         return Inertia::render('Create', ['fromController' => $result]);
     }

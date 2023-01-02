@@ -56,6 +56,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" :d="item[5]" />
                         </svg>
                         <div><b>{{ item[0] }}</b> {{ item[1] }}</div>
+
                     </button>
 
                 </div>

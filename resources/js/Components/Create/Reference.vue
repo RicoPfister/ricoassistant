@@ -102,9 +102,9 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
-    // console.log(data);
+    console.log(data);
     form.reference = data.referenceData;
-    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'component': 'reference'});
+    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component': 'reference'});
 
     // console.log(props.toChild.parentIndex);
     form.referencePickerOpen = 0;

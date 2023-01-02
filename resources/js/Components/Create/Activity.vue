@@ -258,7 +258,7 @@ let activityTotalRow = ref(1);
 let activityDayOverviewDiagram = ref([]);
 let activityDayOverviewDiagram1a = ref([]);
 let activityDayOverviewDiagram1b = ref([]);
-let activityDiagramColorTag = ref([]);
+let activityDiagramColorTag = ref(['']);
 
 let tagPopupOpen = ref(0);
 let tagTooltipOpen = ref([]);
@@ -599,6 +599,11 @@ function tagTooltipShow(index, data) {
 // send to parent: reference selection
 function fromChild(data) {
     console.log(data);
+
+    // set activity diagram color
+    activityDiagramColorTag.value[data.parentIndex] = data.color;
+    console.log(activityDiagramColorTag.value);
+
     emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
     emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
 }
@@ -608,5 +613,11 @@ function dataChildMenuEntry(n) {
     if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
     if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
+
+// watch(() => props.fromController, (curr, prev) => {
+//     if (props?.fromController) {
+//         console.log('ok');
+//         fromController.value = props.fromController};
+// }, {deep: true}, 500);
 
 </script>
