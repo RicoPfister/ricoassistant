@@ -323,6 +323,8 @@ onMounted(() => {
         console.log('ok');
         fromController.value = props.fromController;
     }
+
+    if (props.fromController?.tagPresetCollection) tagPresetCollection.value = props.fromController.tagPresetCollection;
 });
 
 //transcript tag select to tag input format

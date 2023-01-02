@@ -636,13 +636,61 @@ class RicoAssistant extends Controller {
 
         // preset collection
 
+        $tag_preset_group = DB::table('tag_presets')
+        ->get()
+        ->groupBy('group_id');
+
+        $tag_preset_context = [];
+        $tag_preset_name;
+        $presetId = 0;
+
+        foreach ($tag_preset_group as $key => $value) {
+            // dd($key, $value);
+
+            $tag_preset_name = DB::table('index_tag_presets')
+            ->where('id', '=', $key)
+            ->pluck('preset_name')[0];
+
+            $tag_preset_context[$presetId] = [$tag_preset_name];
+
+            // $tag_preset_context[$presetId] = [];
+
+
+            foreach ($value as $key2 => $value2) {
+                // dd($key2, $value2);
+
+                $tag_preset_category_name = DB::table('tag_categories')
+                ->where('id', '=', $value2->tag_category)
+                ->pluck('content');
+
+                $tag_preset_context_name = DB::table('tag_contexts')
+                ->where('id', '=', $value2->tag_context)
+                ->pluck('content');
+
+                // dd($tag_preset_category_name[0]);
+
+                // $tag_preset_context_name =
+
+                $tag_preset_context[$presetId][1][$key2][0] = $tag_preset_category_name[0];
+                $tag_preset_context[$presetId][1][$key2][1] = $tag_preset_context_name[0];
+                // dd($tag_preset_name);
+
+
+
+            }
+            // dd($tag_preset_context);
+            $presetId++;
+        }
+
+        // dd($tag_preset_context);
+
         // $tag_preset_
         // DB::table('')
 
         // $tag_collection_preset
 
         $tagCollectionSelection['tagCollection'] = $tag_collection_category_context;
-        // $tagCollectionSelection['tagCollection'] = $tag_collection_preset;
+        $tagCollectionSelection['tagPresetCollection'] = $tag_preset_context;
         $tagCollectionSelection['misc']['parentId']= $request->parentId;
         $tagCollectionSelection['misc']['parentIndex']= $request->parentIndex;
 
@@ -721,18 +769,17 @@ class RicoAssistant extends Controller {
                 ->where('tag_table_id', '=', $tag_context_id[0])
                 ->get();
 
+                // dd( $tags_context_id[0]);
+
                 if(count($tags_context_id)) {
-                    // dd($tags_context_id[0]->id);
-                    $tag_preset->tag_context = $tags_context_id[0]->id;
+                    // dd($tags_context_id[0]);
+                    $tag_preset->tag_context = $tags_context_id[0]->tag_table_id;
                     break;
                 }
             }
 
             $tag_preset->tracking = $request->ip();
             $tag_preset->save();
-
-
-
 
             // dd($tags_context_id);
 
