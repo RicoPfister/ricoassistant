@@ -105,6 +105,10 @@
     <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
 </div> -->
 
+<div class="border-l border-r border-b border-black h-[31px]">
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+</div>
+
 </template>
 
 <script setup>
@@ -116,6 +120,7 @@ import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue"
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
+import Reference from "./Reference.vue";
 
 let dataChild = ref({'statement': ''});
 
@@ -153,8 +158,19 @@ onMounted(() => {
 
 // send to parent: tag data from child
 function fromChild(data) {
-    if (data.component = "tag" && data.parentId == 3) {
+
+    // console.log(data);
+    console.log(data.component);
+    console.log(data?.reference?.reference.referenceTitle);
+
+    if (data.component == "tag" && data.parentId == 3) {
+        console.log(data);
         emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+    }
+
+    if (data.component == 'reference' && data.parentId == 3) {
+        console.log(data);
+        emit('fromChild', {'section':'sourceData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
     }
 }
 
