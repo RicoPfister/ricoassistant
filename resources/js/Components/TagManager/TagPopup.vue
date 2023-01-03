@@ -134,7 +134,17 @@ let fromController = ref('');
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
+
+    if (data?.tagPresetRenameNew) {
+        console.log(data);
+        console.log(tagPresetCollection.value[data.index][0]);
+
+        Inertia.post('preset_update', {'tagPresetRenameNew': data.tagPresetRenameNew, 'tagPresetRenameOld': tagPresetCollection.value[data.index][0]});
+
+        // tagPresetCollection.value[data.index][0] = data.tagPresetRenameNew;
+
+    }
 
     // add selected tag preset in tag list
     if (typeof data?.tagSelectionPreset !== 'undefined') {
@@ -168,25 +178,7 @@ function fromChild(data) {
                 // Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, parentId:1},
                 // {replace: false,  preserveState: true, preserveScroll: true});
 
-                Inertia.visit('/preset_store', {
-  method: 'post',
-  data: {'preset_name': data.presetData.presetCreate},
-  replace: false,
-  preserveState: true,
-  preserveScroll: true,
-  only: [],
-  headers: {},
-  errorBag: null,
-  forceFormData: false,
-  onCancelToken: cancelToken => {},
-  onCancel: () => {},
-  onBefore: visit => {},
-  onStart: visit => {},
-  onProgress: progress => {},
-  onSuccess: page => {},
-  onError: errors => {},
-  onFinish: visit => {},
-})
+
             };
         }
 

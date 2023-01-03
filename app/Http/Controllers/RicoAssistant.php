@@ -459,6 +459,9 @@ class RicoAssistant extends Controller {
                     if (count($referencesResultCheck) == 0) {} else {
                         $result['referencesResult'][$i]['title'] = $id->title;
 
+                        // ActivityDiagramColor
+                        // --------------------------------
+
                         // dd($id);
                         // dd($id->id);
 
@@ -469,6 +472,8 @@ class RicoAssistant extends Controller {
 
                         // dd($activitydiagramcolor_id);
 
+                        if (count($activitydiagramcolor_id) > 0) {
+                        // find ActivityDiagramColor id
                         $tag_id = DB::table('tags')
                         ->where('basic_id', '=', $id->id)
                         ->where('tag_table', '=', 2)
@@ -477,7 +482,7 @@ class RicoAssistant extends Controller {
 
                         // dd($tag_id);
 
-                        if (count($tag_id)) {
+
                             $tag_value_id = DB::table('tags')
                             ->where('tag_id', '=', $tag_id[0]->tag_id)
                             ->where('tag_table', '=', 3)
@@ -693,6 +698,8 @@ class RicoAssistant extends Controller {
         ->get()
         ->groupBy('group_id');
 
+        // dd($tag_preset_group);
+
         $tag_preset_context = [];
         $tag_preset_name;
         $presetId = 0;
@@ -757,16 +764,28 @@ class RicoAssistant extends Controller {
     public function preset_store(Request $request) {
 
         // dd($request);
+        // dd($request->preset_group['preset_name']);
 
-        if (isset($request->preset_name)) {
-            // dd($request);
-            $tag_preset = new IndexTagPreset();
-            $tag_preset->preset_name = $request->preset_name;
-            $tag_preset->tracking = $request->ip();
-            $tag_preset->save();
-        }
+        // if (isset($request->preset_group)) {
+        //     // dd($request);
+
+        // }
 
         if (isset($request->preset_group)) {
+
+            $presetNameCheck = DB::table('index_tag_presets')
+            ->where('preset_name', '=', $request->preset_group['preset_name'])
+            ->get();
+
+            // dd(count($presetNameCheck));
+
+            if (count($presetNameCheck) == 0) {
+                // dd('ok');
+                $tag_preset = new IndexTagPreset();
+                $tag_preset->preset_name = $request->preset_group['preset_name'];
+                $tag_preset->tracking = $request->ip();
+                $tag_preset->save();
+            }
 
             // dd($request);
             // dd($request->preset_group);
@@ -849,6 +868,19 @@ class RicoAssistant extends Controller {
             $tag_preset->tracking = $request->ip();
             $tag_preset->save();
         }
+
+        return Inertia::render('Create');
+        // return redirect()->route('tag')->with('message', 'Entry Successfully Created');
+    }
+
+    public function preset_update(Request $request) {
+
+        // dd($request);
+        // dd($request->tagPresetRenameOld);
+
+        DB::table('index_tag_presets')
+        ->where('preset_name', '=', $request->tagPresetRenameOld)
+        ->update(['preset_name' => $request->tagPresetRenameNew]);
 
         return Inertia::render('Create');
         // return redirect()->route('tag')->with('message', 'Entry Successfully Created');

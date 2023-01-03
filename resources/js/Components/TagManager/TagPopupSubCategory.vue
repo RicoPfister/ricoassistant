@@ -124,7 +124,7 @@ function tagPresetSelected(index, index2){
     // console.log('ok');
     // console.log(index2);
     tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
-    emit('fromChild', {'presetData': {'presetItemSelected': 1, 'presetIndex': index2, 'index': props.toChild.index, 'subIndex': index}});
+    emit('fromChild', {'presetData': {'presetCreate': tagPresetCreateInput.value, 'presetItemSelected': 1, 'presetIndex': index2, 'index': props.toChild.index, 'subIndex': index}});
     // console.log(index);
     // console.log('ok');
 }

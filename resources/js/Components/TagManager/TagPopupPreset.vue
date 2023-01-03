@@ -85,10 +85,10 @@
 
 
                     <!-- dropdown indicator area -->
-                    <button @click.prevent="tagPresetMenuOpen[index] = !tagPresetMenuOpen[index]" class="h-full" ttype="button">
+                    <div class="h-full">
 
                         <!-- dropdown open indicator -->
-                        <div class="flex items-center h-full">
+                        <button @click.prevent="tagPresetMenuOpen[index] = !tagPresetMenuOpen[index]" class="flex items-center h-full" type="button">
                             <div class="h-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full p-[2px]">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0
@@ -97,7 +97,7 @@
                                     0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
                                 </svg>
                             </div>
-                        </div>
+                        </button>
 
 
 
@@ -118,34 +118,15 @@
             <!-- ++++++++++++++++++++++++++++++ -->
 
                 <!-- preset menu popup -->
-                <div v-if="tagPresetMenuOpen[index]" class="absolute border border-black bg-stone-200 max-w-[500px]">
+                <div v-if="tagPresetMenuOpen[index]" class="absolute border border-black bg-stone-200 w-[400px]">
 
 <!-- create preset entry input -->
-<div class="flex items-center border-b border-black h-full">
-    <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-1 h-[26px] w-80 truncate" type="text"
-    placeholder="Select or type in a new preset list name..." v-model="tagPresetCreateInput">
-    <div @click="tagCreatePreset(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-stone-300 text-gray-600 hover:text-black w-fit">Create</div>
+<div class="flex items-center border-black h-full">
+    <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-1 h-[26px] w-80 truncate bg-stone-200" type="text"
+    placeholder="" v-model="tagPresetRenameTemp">
+    <button @click.prevent="tagPresetDeleteFunction(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-red-300 text-gray-600 hover:text-black w-fit" type="button">Delete</button>
+    <button @click.prevent="tagPresetRenameFunction(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-blue-300 text-gray-600 hover:text-black w-fit" type="button">Rename</button>
 </div>
-
-<!-- list: database tags preset -->
-<div v-if="props.toChild.tagPresetCollection.length > 0" v-for="(item2, index2) in props.toChild.tagPresetCollection" class="flex flew-col border-b border-black last:border-b-0 w-full">
-
-    <!-- button: select preset item -->
-    <button @click.prevent="tagPresetSelected(index, index2)" class="items-center flex flex-row h-[26px] w-full" type="button">
-
-        <!-- icon: add to preset -->
-        <div class="h-full">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-full p-[3px]">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-            </svg>
-        </div>
-        <div class="w-full">
-            <div class="text-gray-700 hover:text-black h-full truncate max-w-fit mr-8">{{ item2[0] }}</div>
-        </div>
-    </button>
-
-</div>
-<div v-else class="p-1">No presets found. Please create one.</div>
 
 <!-- preset dropdown: show group items -->
 <div v-if="0" v-for="(item2, index2) in props.toChild.tagPresetCollection" class="flex flew-col border-b border-black last:border-b-0 w-full">
@@ -164,7 +145,7 @@
 
 
 
-                    </button>
+</div>
                 </div>
                 </div>
             </div>
@@ -194,8 +175,10 @@ let SubCategoryOpen = ref([]);
 let tagCollection = ref([]);
 let tagPresetGroupCollection = ref([]);
 let tagPresetMenuOpen = ref([]);
-let tagPresetCreateInput = ref('');
+let tagPresetRename = ref();
 let tagPresetGroupOpen = ref([]);
+let tagPresetCollection = '';
+let tagPresetRenameTemp = ref('');
 
 let props = defineProps(['fromController', 'toChild', 'fromChild']);
 let emit = defineEmits(['fromChild', 'toChild']);
@@ -228,6 +211,12 @@ function fromChild(data){
 // }, {deep: true}, 500);
 
 onMounted(() => {
+    console.log('ok');
+    console.log(props.toChild?.tagPresetCollection);
+    if (props.toChild?.tagPresetCollection) {
+        tagPresetCollection = props.toChild.tagPresetCollection;
+        tagPresetRename.value = tagPresetCollection;
+    }
     // tagCollection.value = props.fromController.tagCollection;
     // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 })
@@ -239,6 +228,17 @@ onMounted(() => {
 function PresetSelect(index) {
     // console.log(index);
     emit('fromChild', {'tagSelectionPreset': index});
+};
+
+function tagPresetRenameFunction(index) {
+    console.log('ok');
+    console.log(tagPresetRenameTemp);
+    emit('fromChild', {'tagPresetRenameNew': tagPresetRenameTemp.value, 'index': index});
+}
+
+function tagPresetDeleteFunction(index) {
+    console.log('ok');
+    emit('fromChild', {'tagPresetDelete': 123, 'index': index});
 }
 
 </script>
