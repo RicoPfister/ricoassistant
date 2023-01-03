@@ -25,7 +25,7 @@
         </div>
 
         <!-- tag input -->
-        <div class="grow">
+        <div v-if="tagInputShow" class="grow">
             <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent bg-stone-50 pl-2 h-7 leading-none text-sm
             text-gray-500 w-full" type="text" placeholder="Insert tags: @Category:Context:Value(Detail)" v-model="tagCollectionInputFormat[0]">
         </div>
@@ -57,6 +57,7 @@ let tagCollectionInputFormat = ref({});
 let tagCollectionGroupFormat = ref({});
 let controllerDataArrived = ref(0);
 let fromController = ref('');
+let tagInputShow = ref(1);
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -168,9 +169,16 @@ watch(() => props.fromController, (curr, prev) => {
 }, {deep: true}, 500);
 
 onMounted(() => {
+console.log(props.toChild);
+
 if (props?.fromController) {
     fromController.value = props.fromController;
 };
+
+if (typeof props.toChild?.tagInputShow !== 'undefined') {
+    // console.log(data);
+    tagInputShow.value = props.toChild.tagInputShow;
+}
 // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 })
 
