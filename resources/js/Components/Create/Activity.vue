@@ -166,15 +166,18 @@
                     </div>
 
                     <!--0-12 disgram -->
-                    <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                    <div class="absolute top-0 left-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         0
                     </div>
 
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
-
+                    <!-- separator lines -->
+                    <div class="absolute top-0 left-0 h-full items-center flex flex-row w-full">
+                        <div v-for="item in 6" class="border-r w-[120px] h-full border-gry-500"></div>
                     </div>
 
-                    <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full flex items-center"></div>
+
+                    <div class="absolute top-0 right-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         12
                     </div>
 
@@ -186,15 +189,20 @@
                     </div>
 
                     <!-- 12-24 day diagram -->
-                    <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                    <div class="absolute top-0 left-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         12
+                    </div>
+
+                    <!-- separator lines -->
+                    <div class="absolute top-0 left-0 h-full items-center flex flex-row w-full">
+                        <div v-for="item in 6" class="border-r w-[120px] h-full border-gry-500"></div>
                     </div>
 
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
 
                     </div>
 
-                    <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                    <div class="absolute top-0 right-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         24
                     </div>
                 </div>
@@ -613,6 +621,7 @@ function fromChild(data) {
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
+    else activityDiagramColorTag.value[data.parentIndex] = '';
     // console.log(activityDiagramColorTag.value);
 
     if (data.component == 'reference' && data.parentId == 4) {
