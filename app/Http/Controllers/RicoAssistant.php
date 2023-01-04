@@ -233,19 +233,22 @@ class RicoAssistant extends Controller {
         function reference($db_id, $request, $basics) {
 
             // get db_name
-            $db_name_list = DB::table('index_databases')->where('id', '=', $db_id)->pluck('db_name');
+            $db_name_list = DB::table('index_databases')
+            ->where('id', '=', $db_id)
+            ->pluck('db_name');
+
             $db_name = $db_name_list[0].'Data';
 
-                // foreach ($request->activityTo as $i=>$activity) {
-                foreach ($request->$db_name['reference'] as $key => $value) {
-                    $ref = new Ref();
-                    $ref->basic_id = $basics->id;
-                    $ref->basic_ref = $value['basic_id'];
-                    $ref->ref_db_id = $db_id;
-                    $ref->ref_db_index = 1;
-                    $ref->tracking = $request->ip();
-                    $ref->save();
-                }
+            // foreach ($request->activityTo as $i=>$activity) {
+            foreach ($request->$db_name['reference'] as $key => $value) {
+                $ref = new Ref();
+                $ref->basic_id = $basics->id;
+                $ref->basic_ref = $value['basic_id'];
+                $ref->ref_db_id = $db_id;
+                $ref->ref_db_index = 1;
+                $ref->tracking = $request->ip();
+                $ref->save();
+            }
 
         }
 
@@ -417,10 +420,12 @@ class RicoAssistant extends Controller {
 
                 $result['referencesResult'][$i]['title'] = $id->title;
                 $result['referencesResult'][$i]['medium'] = $id->medium;
-                $result['referencesResult'][$i]['medium_name'] = DB::table('medium_lists')->where('id', '=', $id->medium)->pluck('medium_name');
+                $result['referencesResult'][$i]['medium_name'] = DB::table('index_mediums')->where('id', '=', $id->medium)->pluck('medium_name');
                 $result['referencesResult'][$i]['id'] = $id->id;
                 $result['referencesResult'][$i]['ref_date'] = $id->ref_date;
                 $result['referencesResult'][$i]['updated_at'] = $id->updated_at;
+
+                // add activity diagram color tag
 
                 $tag = DB::table('tags')
                 ->where('basic_id', '=', $id->id)
