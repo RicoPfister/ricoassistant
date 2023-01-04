@@ -10,7 +10,7 @@
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <!-- add tag dropdown -->
-            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 1" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
                     <div class="flex flex-row">
@@ -134,7 +134,17 @@ let fromController = ref('');
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
-    // console.log(data);
+    if (data.presetPopupOpen == 1) categoryPopupOpen.value = !categoryPopupOpen.value;
+
+        // console.log(data);
+
+    if (data?.tagPresetGroupDeleteIndex >= 0) {
+        Inertia.post('preset_delete', {'tagPresetGroupDeleteIndex': tagPresetCollection.value[data.tagPresetGroupDeleteIndex][0], 'tagPresetGroupDeleteSubindex': data.tagPresetGroupDeleteSubindex});
+    }
+
+    if (data?.tagPresetDelete >= 0) {
+        Inertia.post('preset_delete', {'tagPresetDelete': tagPresetCollection.value[data.tagPresetDelete][0]});
+    }
 
     if (data?.tagPresetRenameNew) {
         console.log(data);
@@ -197,6 +207,8 @@ function fromChild(data) {
 
         // emit('fromChild', {'tagPreset': tagPresetGroupCollection.value});
     }
+
+
 
     // console.log(data);
 
@@ -316,7 +328,11 @@ onMounted(() => {
         fromController.value = props.fromController;
     }
 
-    if (props.fromController?.tagPresetCollection) tagPresetCollection.value = props.fromController.tagPresetCollection;
+    // console.log();
+    if (props.fromController?.tagPresetCollection) {
+        console.log('ok');
+        tagPresetCollection.value = props.fromController.tagPresetCollection;
+    }
 });
 
 //transcript tag select to tag input format
@@ -366,11 +382,21 @@ function cancelTagPopup() {
 
 watch(() => props.fromController, (curr, prev) => {
     console.log('ok');
-    console.log(props?.fromController);
+    console.log(props.fromController);
     if (props?.fromController) {
         console.log('ok');
-        fromController.value = props.fromController};
+        //! reduce to one please
+        fromController.value = props.fromController;
+        tagPresetCollection.value = props.fromController.tagPresetCollection;
+    };
 }, {deep: true}, 500);
+
+function tagPresetPopupFunction() {
+    Inertia.post('tag', {'parentId': fromController.value.misc.parentId, 'parentIndex':fromController.value.misc.parentIndex});
+
+    categoryPopupOpen.value = !categoryPopupOpen.value;
+    popupId.value = 1;
+}
 
 </script>
 

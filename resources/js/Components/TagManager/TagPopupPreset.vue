@@ -123,20 +123,24 @@
 <!-- create preset entry input -->
 <div class="flex items-center border-black h-full">
     <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-1 h-[26px] w-80 truncate bg-stone-200" type="text"
-    placeholder="" v-model="tagPresetRenameTemp">
-    <button @click.prevent="tagPresetDeleteFunction(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-red-300 text-gray-600 hover:text-black w-fit" type="button">Delete</button>
+    placeholder="Insert new name" v-model="tagPresetRenameTemp">
+    <button @click.prevent="tagPresetDeleteFunction(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-red-300 text-gray-600 hover:text-black w-fit whitespace-nowrap" type="button">Delete Preset</button>
     <button @click.prevent="tagPresetRenameFunction(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-blue-300 text-gray-600 hover:text-black w-fit" type="button">Rename</button>
 </div>
 
 <!-- preset dropdown: show group items -->
-<div v-if="0" v-for="(item2, index2) in props.toChild.tagPresetCollection" class="flex flew-col border-b border-black last:border-b-0 w-full">
+<div v-if="1" v-for="(item2, index2) in props.toChild.tagPresetCollection[index][1]" class="flex flew-col border-b border-t border-black last:border-b-0 w-full">
     <!-- button: select preset item -->
     <div class="items-center flex flex-row h-[26px] w-full">
-        <div class="text-gray-700 h-full truncate max-w-fit mr-8 pl-1 flex items-center">{{ item2[0] }}</div>
+        <div class="text-gray-700 h-full truncate mr-2 pl-1 flex items-center grow"><span class="font-bold">{{ item2[0] }}</span>{{ ': '+item2[1] }}</div>
+        <button @click.prevent="tagPresetGroupDeleteFunction(index, index2)" class="px-2 border-l border-black h-[26px] flex items-center bg-red-300 text-gray-600 hover:text-black w-fit whitespace-nowrap" type="button">Delete Entry</button>
     </div>
 </div>
 <!-- <div v-else class="p-1">No presets found. Please create one.</div> -->
 </div>
+
+
+
 
 
 
@@ -234,11 +238,22 @@ function tagPresetRenameFunction(index) {
     console.log('ok');
     console.log(tagPresetRenameTemp);
     emit('fromChild', {'tagPresetRenameNew': tagPresetRenameTemp.value, 'index': index});
+    emit('fromChild', {'presetPopupOpen': 1});
+    // tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
 }
 
 function tagPresetDeleteFunction(index) {
     console.log('ok');
-    emit('fromChild', {'tagPresetDelete': 123, 'index': index});
+    emit('fromChild', {'tagPresetDelete': index});
+    emit('fromChild', {'presetPopupOpen': 1});
+    // tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
+}
+
+function tagPresetGroupDeleteFunction(index, index2) {
+    console.log('ok');
+    emit('fromChild', {'tagPresetGroupDeleteIndex': index, 'tagPresetGroupDeleteSubindex': index2});
+    emit('fromChild', {'presetPopupOpen': 1});
+    // tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
 }
 
 </script>

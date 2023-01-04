@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('group_id', 50);
             $table->string('tag_category', 50);
             $table->string('tag_context', 50);
+            $table->string('status', 1)->nullable();
             $table->string('tracking', 50);
             $table->timestamps();
         });

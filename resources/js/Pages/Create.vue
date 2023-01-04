@@ -225,4 +225,11 @@ function fromChild(data) {
     transferCreate.value['title'] = form.value.basicData.title;
 }
 
+// watch(() => props.fromController, (curr, prev) => {
+//     if (props?.fromController?.database) {
+//         console.log('ok');
+//         Inertia.post('tag');
+//     };
+// }, {deep: true}, 500);
+
 </script>

@@ -82,7 +82,7 @@ let tagInputShow = ref(1);
 
 // listen to controller feedback and opens tag popup
 watch(() => props.fromController, (curr, prev) => {
-    if (props.fromController?.misc.parentId == props.toChild.parentId && props.fromController.misc.parentIndex == props.toChild.parentIndex) {
+    if (props.fromController?.misc?.parentId == props.toChild?.parentId && props.fromController.misc?.parentIndex == props.toChild?.parentIndex) {
         // console.log('ok');
         tagPopupOpen.value = 1;
     }
@@ -140,6 +140,7 @@ function fromChild(data) {
 // }
 
 // request controller data
+//! triple inertia.post => see popup preset and single inertia.post
 function tagPopupOpenData() {
     Inertia.post('tag', {'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex});
 }

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Redirect;
 use Illuminate\Http\Request;
 use Illuminate\Http\Post;
+// use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -695,6 +696,7 @@ class RicoAssistant extends Controller {
         // preset collection
 
         $tag_preset_group = DB::table('tag_presets')
+        ->where('status', '=', null)
         ->get()
         ->groupBy('group_id');
 
@@ -721,10 +723,12 @@ class RicoAssistant extends Controller {
 
                 $tag_preset_category_name = DB::table('tag_categories')
                 ->where('id', '=', $value2->tag_category)
+                // ->where('status', '=', null)
                 ->pluck('content');
 
                 $tag_preset_context_name = DB::table('tag_contexts')
                 ->where('id', '=', $value2->tag_context)
+                // ->where('status', '=', null)
                 ->pluck('content');
 
                 // dd($tag_preset_category_name[0]);
@@ -771,12 +775,17 @@ class RicoAssistant extends Controller {
 
         // }
 
+        // preset name duplicate check
         if (isset($request->preset_group)) {
+
+            // dd($request->preset_group['preset_name']);
 
             $presetNameCheck = DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->preset_group['preset_name'])
+            ->where('status', '=', null)
             ->get();
 
+            // dd($presetNameCheck);
             // dd(count($presetNameCheck));
 
             if (count($presetNameCheck) == 0) {
@@ -870,6 +879,7 @@ class RicoAssistant extends Controller {
         }
 
         return Inertia::render('Create');
+        // Route::post('/tag', [RicoAssistant::class, 'tag'])->name('tag');
         // return redirect()->route('tag')->with('message', 'Entry Successfully Created');
     }
 
@@ -881,6 +891,81 @@ class RicoAssistant extends Controller {
         DB::table('index_tag_presets')
         ->where('preset_name', '=', $request->tagPresetRenameOld)
         ->update(['preset_name' => $request->tagPresetRenameNew]);
+
+        return Inertia::render('Create');
+    }
+
+    public function preset_delete(Request $request) {
+
+        // dd($request);
+        // dd($request->tagPresetRenameOld);
+        if (isset($request->tagPresetGroupDeleteIndex)) {
+
+            $preset_name_id = DB::table('index_tag_presets')
+            ->where('preset_name', '=', $request->tagPresetGroupDeleteIndex)
+            ->where('status', '=', null)
+            // ->update(['status' => 2]);
+            ->get();
+
+            // dd($preset_name_id);
+
+            $preset_group_total = DB::table('tag_presets')
+            ->where('group_id', '=', $preset_name_id[0]->id)
+            ->where('status', '=', null)
+            ->get();
+
+            $preset_group_deletion = $preset_group_total[$request->tagPresetGroupDeleteSubindex]->id;
+            // dd($preset_group_deletion);
+
+            DB::table('tag_presets')
+            ->where('id', '=', $preset_group_deletion)
+            ->where('status', '=', null)
+            ->update(['status' => 2]);
+
+            $preset_group_remaining = DB::table('tag_presets')
+            ->where('group_id', '=', $preset_name_id[0]->id)
+            ->where('status', '=', null)
+            ->get();
+
+            // dd($preset_group_remaining);
+
+            if(count($preset_group_remaining) <= 0) {
+                DB::table('index_tag_presets')
+                ->where('preset_name', '=', $request->tagPresetGroupDeleteIndex)
+                ->where('status', '=', null)
+                // ->update(['status' => 2]);
+                ->update(['status' => 2]);
+            }
+
+            // dd($preset_group_remaining);
+
+            // dd($preset_group_total);
+
+        }
+
+        // set status to 2 (delete) for preset name
+        if (isset($request->tagPresetDelete)) {
+
+        $preset_delete_id = DB::table('index_tag_presets')
+        ->where('preset_name', '=', $request->tagPresetDelete)
+        // ->update(['status' => 2]);
+        ->get();
+
+        DB::table('index_tag_presets')
+        ->where('preset_name', '=', $request->tagPresetDelete)
+        ->update(['status' => 2]);
+        // ->get();
+
+        // dd($preset_delete_id);
+        // $preset_delete_id->update(['status' => 22]);
+
+        // set status to 2 (delete) for preset name
+        DB::table('tag_presets')
+        ->where('group_id', '=', $preset_delete_id[0]->id)
+        ->update(['status' => 2]);
+    }
+
+        // dd($preset_delete_id[0]->id);
 
         return Inertia::render('Create');
         // return redirect()->route('tag')->with('message', 'Entry Successfully Created');
