@@ -359,6 +359,8 @@ class RicoAssistant extends Controller {
 
         function reference_inheritance_list($id, $i, $user) {
 
+            // dd($id, $i, $user);
+
             $counter = 1;
 
             $parent_list = [];
@@ -369,7 +371,10 @@ class RicoAssistant extends Controller {
             ->where('basic_id', '=', $id->id)
             ->first();
 
+            // dd($parent_ref);
+
             if (isset($parent_ref->basic_ref)) {
+                // dd($parent_ref->basic_ref);
                 $parent_checker_next_value = $parent_ref->basic_ref;
 
                 do  {
@@ -381,16 +386,24 @@ class RicoAssistant extends Controller {
                         ->where('id', '=', $parent_checker_next_value)
                         ->first();
 
+                        // dd($parent_basic);
+                        // dd($parent_checker_next_value);
+
                         // check next ref db entry
                         $parent_ref = DB::table('refs')
                         ->where('status', '=', null)
                         ->where('basic_id', '=', $parent_checker_next_value)
                         ->first();
 
+                        // dd($parent_ref);
+
                         array_push($parent_list, $parent_basic);
+                        if (isset($parent_ref->basic_ref)) {
                         $parent_checker_next_value = $parent_ref->basic_ref;
+
                         $parent_checker = 1;
                         $counter++;
+                        } else $parent_checker = 0;
                     }
                     else $parent_checker = 0;
                 } while ($parent_checker || $counter > 10);
@@ -416,6 +429,8 @@ class RicoAssistant extends Controller {
                 ->take(10)
                 ->get();
 
+            // dd($referencedIds);
+
             foreach ($referencedIds as $i=>$id) {
 
                 $result['referencesResult'][$i]['title'] = $id->title;
@@ -427,14 +442,49 @@ class RicoAssistant extends Controller {
 
                 // add activity diagram color tag
 
-                $tag = DB::table('tags')
-                ->where('basic_id', '=', $id->id)
-                ->where('tag_context', '=', 'ActivityDiagramColor')
+
+
+                // set ActivityDiagramColor id
+                $activitydiagramcolor_id = DB::table('tag_contexts')
+                ->where('content', '=', 'ActivityDiagramColor')
                 ->get();
 
-                if (count($tag)) {
-                    $result['referencesResult'][$i]['color'] = $tag[0]->tag_content;
-                } else {};
+                // dd($activitydiagramcolor_id);
+
+                if (count($activitydiagramcolor_id) > 0) {
+                    // find ActivityDiagramColor id
+                    $tag_id = DB::table('tags')
+                    ->where('basic_id', '=', $id->id)
+                    ->where('tag_table', '=', 2)
+                    ->where('tag_table_id', '=', $activitydiagramcolor_id[0]->id)
+                    ->get();
+
+                    // dd($tag_id);
+                    // dd($tag_id[0]->tag_id);
+
+                    if (isset($tag_id[0]->tag_id)) {
+                        $tag_value_id = DB::table('tags')
+                        ->where('tag_id', '=', $tag_id[0]->tag_id)
+                        ->where('tag_table', '=', 3)
+                        ->get();
+
+                        // dd($tag_value_id);
+
+                        $tag_value_content = DB::table('tag_values')
+                        ->where('id', '=', $tag_value_id[0]->tag_table_id)
+                        ->get();
+
+                    } else $tag_value_content = '';
+
+
+                        // dd($tag_value_content[0]->content);
+                    } else $tag_value_content = '';
+
+                    if (isset($tag_value_content[0]->content)) {
+                        $result['referencesResult'][$i]['color'] = $tag_value_content[0]->content;
+                        // dd($result);
+                    } else {};
+
 
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
 
