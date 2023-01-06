@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('index_databases')->insert([
-            'db_name' => 'sources',
+            'db_name' => 'source',
             'tracking' => '127.0.0.1',
         ]);
 

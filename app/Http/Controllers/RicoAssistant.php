@@ -78,9 +78,11 @@ class RicoAssistant extends Controller {
         ]);
 
         // create tag function
-        function tagData($request, $index, $basics, $id2, $form_section_name, $db_section_id) {
+        function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
 
-            foreach ($request->$form_section_name['tag'][$index] as $key => $value) {
+            // dd($request, $index, $basics, $id2, $db_section_id, $db_name);
+
+            foreach ($request->$db_name['tag'][$index] as $key => $value) {
 
                 $content_check = DB::table('tag_categories')->where('content', '=', $value[0])->get();
 
@@ -99,8 +101,8 @@ class RicoAssistant extends Controller {
 
                         $tag1 = new Tag();
                         $tag1->basic_id = $basics->id;
-                        $tag1->section_table = 2;
-                        $tag1->section_table_id = $id2->id;
+                        $tag1->section_table = $db_section_id;
+                        $tag1->section_table_id = $id2;
                         $tag1->tag_table = 1;
                         $tag1->tag_table_id = $content->id;
                         $tag1->tracking = $request->ip();
@@ -121,8 +123,8 @@ class RicoAssistant extends Controller {
 
                         $tag1 = new Tag();
                         $tag1->basic_id = $basics->id;
-                        $tag1->section_table = 2;
-                        $tag1->section_table_id = $id2->id;
+                        $tag1->section_table = $db_section_id;
+                        $tag1->section_table_id = $id2;
                         $tag1->tag_table = 1;
                         $tag1->tag_table_id = $content->id;
                         $tag1->tracking = $request->ip();
@@ -150,8 +152,8 @@ class RicoAssistant extends Controller {
 
                     $tag2 = new Tag();
                     $tag2->basic_id = $basics->id;
-                    $tag2->section_table = 2;
-                    $tag2->section_table_id = $id2->id;
+                    $tag2->section_table = $db_section_id;
+                    $tag2->section_table_id = $id2;
                     $tag2->tag_id = $tag1->id;
                     $tag2->tag_table = 2;
                     $tag2->tag_table_id = $content->id;
@@ -160,7 +162,7 @@ class RicoAssistant extends Controller {
                 };
 
                 // check data availability and db uniqueness and store tag value
-                if (isset ($value[0])) {
+                if (isset ($value[2])) {
                     $content_check = DB::table('tag_values')->where('content', '=', $value[2])->get();
 
                     if (count($content_check) > 0) $content = $content_check[0];
@@ -174,8 +176,8 @@ class RicoAssistant extends Controller {
 
                     $tag3 = new Tag();
                     $tag3->basic_id = $basics->id;
-                    $tag3->section_table = 2;
-                    $tag3->section_table_id = $id2->id;
+                    $tag3->section_table = $db_section_id;
+                    $tag3->section_table_id = $id2;
                     $tag3->tag_id = $tag1->id;
                     $tag3->tag_table = 3;
                     $tag3->tag_table_id = $content->id;
@@ -184,7 +186,7 @@ class RicoAssistant extends Controller {
                 };
 
                 // check availability and db uniqueness and store tag detail
-                if (isset ($value[0])) {
+                if (isset ($value[3])) {
                     $content_check = DB::table('tag_details')->where('content', '=', $value[3])->get();
 
                     if (count($content_check) > 0) $content = $content_check[0];
@@ -198,8 +200,8 @@ class RicoAssistant extends Controller {
 
                     $tag4 = new Tag();
                     $tag4->basic_id = $basics->id;
-                    $tag4->section_table = 2;
-                    $tag4->section_table_id = $id2->id;
+                    $tag4->section_table = $db_section_id;
+                    $tag4->section_table_id = $id2;
                     $tag4->tag_id = $tag1->id;
                     $tag4->tag_table = 4;
                     $tag4->tag_table_id = $content->id;
@@ -210,26 +212,20 @@ class RicoAssistant extends Controller {
         };
 
         // create reference function
-        function reference($db_id, $request, $basics) {
+        function reference($db_id, $db_name, $request, $basics, $section_data, $i) {
 
-            // get db_name
-            $db_name_list = DB::table('index_databases')
-            ->where('id', '=', $db_id)
-            ->pluck('db_name');
-
-            $db_name = $db_name_list[0].'Data';
+            // dd($db_id, $db_name, $request, $basics, $section_data, $i);
 
             // foreach ($request->activityTo as $i=>$activity) {
-            foreach ($request->$db_name['reference'] as $key => $value) {
+            // foreach ($request->$db_name['reference'] as $key => $value) {
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
-                $ref->basic_ref = $value['basic_id'];
+                $ref->basic_ref = $request->$db_name['reference'][$i]['basic_id'];
                 $ref->ref_db_id = $db_id;
-                $ref->ref_db_index = 1;
+                $ref->ref_db_index = $section_data;
                 $ref->tracking = $request->ip();
                 $ref->save();
-            }
-
+            // }
         }
 
         // create basic
@@ -250,23 +246,46 @@ class RicoAssistant extends Controller {
             $statement->tracking = $request->ip();
             $statement->save();
 
-            $form_section_name = 'statementData';
+            // set section id
             $db_section_id = 2;
+            $activities = 0;
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $db_section_id)
+            ->pluck('db_name');
+            $db_name =  $form_section_name [0].'Data';
 
             // fire reference function
-            if (isset($request->statementData['reference'])) reference($db_id = 2, $request, $basics);
+            if (isset($request->statementData['reference'])) {
+                reference($db_section_id, $db_name, $request, $basics, $activities);
+            }
 
             // fire tag function
-            if (isset ($request->statementData['tag'])) tagData($request, 0, $basics, $statement, $form_section_name, $db_section_id);
+            if (isset ($request->statementData['tag'])) {
+                tagData($request, 0, $basics, $statement->id, $db_section_id, $db_name);
+            }
         }
 
         // create activity
         if ($request->activityData){
 
+            // set section id
+            $db_section_id = 4;
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $db_section_id)
+            ->pluck('db_name');
+            $db_name =  $form_section_name [0].'Data';
+
+            // dd($request->activityData['activityTo']);
+
             foreach ($request->activityData['activityTo'] as $i=>$activity) {
 
                 if (is_numeric($request->activityData['activityTo'][$i])) {
 
+                    // store activity index data
                     $activities[$i] = [
                         'basic_id' => $basics->id,
                         'activityTo' => $activity,
@@ -274,20 +293,46 @@ class RicoAssistant extends Controller {
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
+
+                    // dd($activities);
+                    $activities_id = DB::table('section_activities')->insertGetId($activities[$i]);
+                    // dd($$activities_id);
+
+                    // fire reference function
+                    // if (isset($request->activityData['reference'])) {
+                    //     $checkValue = $request->activityData['reference'];
+                    // }
+                    // else $checkValue = '';
+                    // dd($activities[0]);
+                    reference($db_section_id, $db_name, $request, $basics, $activities_id, $i);
+
+                    // fire tag function
+                    // dd($request->activityData['tag']);
+                    if (isset($request->activityData['tag'])) {
+                        // dd($db_name);
+                        tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);
+
+                        // $request, $index, $basics, $id2, $db_name, $db_section_id
+                    }
                 }
             };
 
-            DB::table('section_activities')->insert($activities);
 
-            // fire reference function
-            if (isset($request->activityData['reference'])) $checkValue = $request->activityData['reference'];
-            else $checkValue = '';
-
-            reference($db_id = 4, $checkValue, $request, $basics);
         }
 
         // create source
         if (isset ($request->sourceData['filelist'])) {
+
+            // set section id
+            $db_section_id = 3;
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $db_section_id)
+            ->pluck('db_name');
+            $db_name =  $form_section_name [0].'Data';
+
+            // dd($request->sourceData['filelist']);
 
             // store file meta data
             foreach($request->sourceData['filelist'] as $index => $dataString) {
@@ -300,9 +345,23 @@ class RicoAssistant extends Controller {
                 $sources->tracking = $request->ip();
                 $sources->save();
 
-                // create tag
-                if (isset ($request->sourceData['tag'])) tagData($request, $index, $basics, 3, $sources);
+                // fire tag function
+                // dd($request->activityData['tag']);
+                if (isset($request->sourceData['tag'])) {
+                    // dd($db_name);
+                    tagData($request, $index, $basics, $sources->id, $db_section_id, $db_name);
+                    // tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);
+                }
             }
+
+            // create tag
+            // if (isset ($request->sourceData['tag'])){
+            //     tagData($db_section_id, $db_name, $request, $basics,$sources->id, $index);
+            // }
+            if (isset($request->sourceData['reference'])) {
+                reference($db_section_id, $db_name, $request, $basics, $sources->id, 0);
+            };
+            // reference($db_section_id, $db_name, $request, $basics, $activities_id, $i);
 
             // store file content data
             foreach($request->file('sourceData')['filelist'] as $dataString2) {
