@@ -40,12 +40,18 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-        $publicAuth = Basic::all()
-            ->where('status', '=', '')
-            ->take(20);
+        $publicAuth = DB::table('section_basics')
+            ->where('status', '=', 1)
+            ->select('id', 'medium', 'title', 'ref_date')
+            ->limit(20)
+            ->get();
 
-        if (isset($user)) {$userAuth = Basic::all()->where('user_id', '=', $user->id)->take(1); $listAuth = $publicAuth->merge($userAuth);}
+        // dd($publicAuth);
+
+        if (isset($user)) {$userAuth = SectionBasic::all()->where('user_id', '=', $user->id)->take(20); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
+
+        // dd($listAuth);
 
         return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
@@ -54,11 +60,18 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function detail(Request $request) {
 
+        // dd($request);
+
         $user = Auth::user();
 
-            $basic = SectionBasic::find($request->basic_id);
+            $detail['basicData'] = SectionBasic::find($request->basic_id);
+            $detail['statementData'] = DB::table('section_statements')->where('basic_id', '=', $request->basic_id)->get();
+            $detail['activitytData'] = DB::table('section_activities')->where('basic_id', '=', $request->basic_id)->get();
+            $detail['sourceData'] = DB::table('section_sources')->where('basic_id', '=', $request->basic_id)->get();
 
-            return Inertia::render('TabManager/TabManager', ['detail' => $basic]);
+            // dd($detail);
+
+            return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
     }
 
     // store
