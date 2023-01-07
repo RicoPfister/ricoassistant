@@ -35,7 +35,7 @@ use App\Models\TagValue;
 
 class RicoAssistant extends Controller {
 
-    // filter
+    // show filter (show default list view)
     public function filter(Request $request) {
 
         $user = Auth::user();
@@ -44,11 +44,12 @@ class RicoAssistant extends Controller {
             ->where('status', '=', 1)
             ->select('id', 'medium', 'title', 'ref_date')
             ->limit(20)
+            ->latest('updated_at')
             ->get();
 
         // dd($publicAuth);
 
-        if (isset($user)) {$userAuth = SectionBasic::all()->where('user_id', '=', $user->id)->take(20); $listAuth = $publicAuth->merge($userAuth);}
+        if (isset($user)) {$userAuth = SectionBasic::all()->where('user_id', '=', $user->id)->take(20)->sortByDesc('updated_at'); $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
         // dd($listAuth);
@@ -64,10 +65,79 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
+            // create basic collection
+            // ++++++++++++++++++++++++++++++++++++
+
             $detail['basicData'] = SectionBasic::find($request->basic_id);
-            $detail['statementData'] = DB::table('section_statements')->where('basic_id', '=', $request->basic_id)->get();
-            $detail['activitytData'] = DB::table('section_activities')->where('basic_id', '=', $request->basic_id)->get();
-            $detail['sourceData'] = DB::table('section_sources')->where('basic_id', '=', $request->basic_id)->get();
+
+            // create statement collection
+            // ++++++++++++++++++++++++++++++++++++
+
+            // get tags based on basic id
+            $detail['statementData']['statement'] = DB::table('section_statements')
+            ->where('basic_id', '=', $request->basic_id)
+            ->get();
+
+            // get tag groups
+            $tag_rawdata = DB::table('tags')
+            ->where('basic_id', '=', $request->basic_id)
+            ->where('section_table', '=', 2)
+            ->get()
+            ->groupBy('tag_id');
+
+            // tag array definition
+            $detail['statementData']['tag'] = [];
+            $i = 0;
+
+            // create tag groups content
+            foreach ($tag_rawdata as $key => $value) {
+                $detail['statementData']['tag'][$i] = [];
+                // array_push($detail['statementData']['tag'], []);
+
+                foreach ($value as $key2 => $value2) {
+                    // dd($value2);
+                    if ($value2->tag_table == 1) $tag_table = 'tag_categories';
+                    if ($value2->tag_table == 2) $tag_table = 'tag_contexts';
+                    if ($value2->tag_table == 3) $tag_table = 'tag_values';
+                    if ($value2->tag_table == 4) $tag_table = 'tag_details';
+
+                    $value2->content= DB::table($tag_table)
+                    ->where('id', '=', $value2->tag_table_id)
+                    ->pluck('content')[0];
+
+                    // array_push($value2, ['test' => 123]);
+                    array_push($detail['statementData']['tag'][$i], $value2);
+                }
+                // $detail['statementData']['tag'].push()
+                $i++;
+            }
+
+            // get reference parent data
+            // dd($detail['basicData']['id']);
+            $detail['statementData']['reference_parent'] = DB::table('refs')
+            ->where('basic_id', '=', $detail['basicData']['id'])
+            // ->join('section_basic', 'section_basic.id', '=', )
+            ->get();
+
+            // dd($detail['statementData']['reference'][0]->id);
+
+            $detail['statementData']['reference_parent'][1] = DB::table('section_basics')
+            ->where('id', '=', $detail['statementData']['reference_parent'][0]->id)
+            ->get();
+
+            // create activity collection
+            // ++++++++++++++++++++++++++++++++++++
+
+            $detail['activitytData'] = DB::table('section_activities')
+            ->where('basic_id', '=', $request->basic_id)
+            ->get();
+
+            // create source collection
+            // ++++++++++++++++++++++++++++++++++++
+
+            $detail['sourceData'] = DB::table('section_sources')
+            ->where('basic_id', '=', $request->basic_id)
+            ->get();
 
             // dd($detail);
 
@@ -267,11 +337,11 @@ class RicoAssistant extends Controller {
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $db_section_id)
             ->pluck('db_name');
-            $db_name =  $form_section_name [0].'Data';
+            $db_name = $form_section_name [0].'Data';
 
             // fire reference function
             if (isset($request->statementData['reference'])) {
-                reference($db_section_id, $db_name, $request, $basics, $activities);
+                reference($db_section_id, $db_name, $request, $basics, $activities, 0);
             }
 
             // fire tag function

@@ -8,16 +8,41 @@
 
 <!-- {{ typeof detailData?.activitytData }} -->
 
-<div v-if="typeof detailData?.statementData?.[0] !== 'undefined'">
-    {{ detailData.statementData[0].statement }}
+<!-- section statement -->
+<div v-if="typeof detailData?.statementData !== 'undefined'">
+    <pre>{{ detailData.statementData.statement[0].statement }}</pre>
+
+    <!-- get tag list -->
+    <div v-if="typeof detailData?.statementData.tag !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData.statementData.tag">
+
+            <div class="flex fle-row">
+                <div v-for="(item2, index2) in item">
+                    <!-- {{ item2 }} -->
+                    {{ index2 == 0 ? '@' + item[index2]['content'] : index2 < 3 ? ':' + item[index2]['content'] : '' }}
+                </div>
+                <div>&nbsp;</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- get reference parent -->
+    <div v-if="typeof detailData?.statementData.reference_parent !== 'undefined'" class="flex flex-row">
+        {{ detailData?.statementData.reference_parent[1][0]['title'] }}
+    </div>
+
 </div>
 
+<!-- section activity -->
 <div v-if="typeof detailData?.activitytData?.[0] !== 'undefined'">
     123
 </div>
 
+<!-- section source -->
 <div v-if="typeof detailData?.sourceData?.[0] !== 'undefined'">
-    456
+    <!-- <img :src=""> -->
+    <!-- {{ detailData.sourceData[0].path }} -->
+    <img :src="'/storage/inventory/' + detailData.sourceData[0].path" />
 </div>
 
 </template>
