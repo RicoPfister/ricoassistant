@@ -70,6 +70,9 @@ class RicoAssistant extends Controller {
 
             $detail['basicData'] = SectionBasic::find($request->basic_id);
 
+            // section collection
+            // -------------------------------------
+
             // create statement collection
             // ++++++++++++++++++++++++++++++++++++
 
@@ -112,34 +115,74 @@ class RicoAssistant extends Controller {
                 $i++;
             }
 
-            // get reference parent data
+            // get reference parents data
             // dd($detail['basicData']['id']);
-            $detail['statementData']['reference_parent'] = DB::table('refs')
-            ->where('basic_id', '=', $detail['basicData']['id'])
-            // ->join('section_basic', 'section_basic.id', '=', )
+
+            $i = 0;
+            do {
+
+                // get refernce id
+                $reference_id = DB::table('refs')
+                ->where('basic_id', '=', $detail['basicData']['id'])
+                // ->join('section_basic', 'section_basic.id', '=', )
+                ->get();
+
+                // dd($reference_id[0]->id);
+
+                // get reference content data if refrebce id was found
+                if (count($reference_id) > 0) {
+                    // dd($detail['statementData']['reference'][0]->id);
+                    $detail['statementData']['reference_parents'][1][$i] = DB::table('section_basics')
+                    ->where('id', '=', $reference_id[0]->id)
+                    ->get();
+
+                    // dd($reference_id[0]->basic_ref);
+
+                    $detail['basicData']['id'] = $reference_id[0]->basic_ref;
+                }
+
+                $i++;
+            } while (count($reference_id) > 0);
+
+            // get reference children data
+            $reference_children_id = DB::table('refs')
+            ->where('basic_ref', '=', $request->basic_id)
             ->get();
 
-            // dd($detail['statementData']['reference'][0]->id);
+            // dd($reference_children_id);
 
-            $detail['statementData']['reference_parent'][1] = DB::table('section_basics')
-            ->where('id', '=', $detail['statementData']['reference_parent'][0]->id)
-            ->get();
+            foreach ($reference_children_id as $key => $value) {
+
+                // dd($value);
+
+                $reference_children_title = DB::table('section_basics')
+                ->where('id', '=', $value->basic_id)
+                ->get();
+
+                // dd($reference_children_title);
+
+                $detail['statementData']['reference_children'][1][$key] = $reference_children_title;
+            }
+
+            // dd($detail);
+
+            // dd($detail);
 
             // create activity collection
             // ++++++++++++++++++++++++++++++++++++
 
-            $detail['activitytData'] = DB::table('section_activities')
-            ->where('basic_id', '=', $request->basic_id)
-            ->get();
+            // $detail['activitytData'] = DB::table('section_activities')
+            // ->where('basic_id', '=', $request->basic_id)
+            // ->get();
 
             // create source collection
             // ++++++++++++++++++++++++++++++++++++
 
-            $detail['sourceData'] = DB::table('section_sources')
-            ->where('basic_id', '=', $request->basic_id)
-            ->get();
+            // $detail['sourceData'] = DB::table('section_sources')
+            // ->where('basic_id', '=', $request->basic_id)
+            // ->get();
 
-            // dd($detail);
+            // // dd($detail);
 
             return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
     }

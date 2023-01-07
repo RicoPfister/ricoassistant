@@ -26,9 +26,19 @@
         </div>
     </div>
 
-    <!-- get reference parent -->
-    <div v-if="typeof detailData?.statementData.reference_parent !== 'undefined'" class="flex flex-row">
-        {{ detailData?.statementData.reference_parent[1][0]['title'] }}
+    <!-- get reference parents -->
+    <div v-if="typeof detailData?.statementData.reference_parents !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData?.statementData.reference_parents[1]">
+            <b>{{ item[0]['title'] }}</b>{{ (index !== detailData?.statementData.reference_parents[1].length-1  ? '>' : '') }}
+        </div>
+    </div>
+    <div v-else>Main Entry.</div>
+
+    <!-- get reference children -->
+    <div v-if="typeof detailData?.statementData.reference_children!== 'undefined'" class="flex flex-col">
+        <div v-for="(item, index) in detailData?.statementData.reference_children[1]">
+            {{ item[0]['title'] }}
+        </div>
     </div>
 
 </div>
