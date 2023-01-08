@@ -75,6 +75,7 @@ function dataChild(data) {
     // add form data to form collection
 //obsolete. clear and remove.
     if (data.formData) {
+
         form.value = {...form.value, ...data.formData}
     };
 
@@ -93,6 +94,47 @@ function dataChild(data) {
     //? store form
     //------------------------------------------------
     if (data.submit == 1) {
+
+        if (form.value.activityData?.activityTo) {
+            form.value.activityData.activityTime = [];
+
+            console.log(form.value.activityData.activityTo);
+
+            let activityTimeTotal = 0;
+            let activityTimeHourString = 0;
+            let activityTimeHourMinute = 0;
+            let activityTime = 0;
+
+            form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+
+            function activityTimeConvert(item, index) {
+                // console.log(item);
+
+                activityTimeHourString = item.toString().slice(0, -2);
+                activityTimeHourMinute = item.toString().slice(-2);
+
+                activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
+
+                // console.log(activityTime);
+
+                activityTime -= activityTimeTotal;
+
+                form.value.activityData.activityTime[index] = activityTime;
+                // console.log(activityTime);
+
+                activityTimeTotal += activityTime;
+
+                // console.log(activityTimeTotal);
+
+                // console.log(activityTimeHourString);
+                // console.log(activityTimeHourMinute);
+
+                // form.value.activityData.activityTime[index] = item.slice(2);
+            };
+        };
+
+        // console.log(form.value);
+
         Inertia.post('store', form.value);
     };
 

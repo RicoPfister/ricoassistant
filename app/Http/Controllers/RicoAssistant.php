@@ -65,126 +65,23 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
-            // create basic collection
-            // ++++++++++++++++++++++++++++++++++++
+        // create basic collection
+        // ++++++++++++++++++++++++++++++++++++
+        $detail['basicData'] = SectionBasic::find($request->basic_id);
 
-            $detail['basicData'] = SectionBasic::find($request->basic_id);
+        // section collection
+        // -------------------------------------
 
-            // section collection
-            // -------------------------------------
+        $section_collection = DB::table('index_databases')
+        ->where('id', '>', 1)
+        ->where('id', '<', 5)
+        ->get();
 
-            // create statement collection
-            // ++++++++++++++++++++++++++++++++++++
+        // dd($section_raw);
 
-            // get tags based on basic id
-            $detail['statementData']['statement'] = DB::table('section_statements')
-            ->where('basic_id', '=', $request->basic_id)
-            ->get();
+        // $section_collection = array_slice($section_raw, 3);
 
-            // get tag groups
-            $tag_rawdata = DB::table('tags')
-            ->where('basic_id', '=', $request->basic_id)
-            ->where('section_table', '=', 2)
-            ->get()
-            ->groupBy('tag_id');
-
-            // tag array definition
-            $detail['statementData']['tag'] = [];
-            $i = 0;
-
-            // create tag groups content
-            foreach ($tag_rawdata as $key => $value) {
-                $detail['statementData']['tag'][$i] = [];
-                // array_push($detail['statementData']['tag'], []);
-
-                foreach ($value as $key2 => $value2) {
-                    // dd($value2);
-                    if ($value2->tag_table == 1) $tag_table = 'tag_categories';
-                    if ($value2->tag_table == 2) $tag_table = 'tag_contexts';
-                    if ($value2->tag_table == 3) $tag_table = 'tag_values';
-                    if ($value2->tag_table == 4) $tag_table = 'tag_details';
-
-                    $value2->content= DB::table($tag_table)
-                    ->where('id', '=', $value2->tag_table_id)
-                    ->pluck('content')[0];
-
-                    // array_push($value2, ['test' => 123]);
-                    array_push($detail['statementData']['tag'][$i], $value2);
-                }
-                // $detail['statementData']['tag'].push()
-                $i++;
-            }
-
-            // get reference parents data
-            // dd($detail['basicData']['id']);
-
-            $i = 0;
-            do {
-
-                // get refernce id
-                $reference_id = DB::table('refs')
-                ->where('basic_id', '=', $detail['basicData']['id'])
-                // ->join('section_basic', 'section_basic.id', '=', )
-                ->get();
-
-                // dd($reference_id[0]->id);
-
-                // get reference content data if refrebce id was found
-                if (count($reference_id) > 0) {
-                    // dd($detail['statementData']['reference'][0]->id);
-                    $detail['statementData']['reference_parents'][1][$i] = DB::table('section_basics')
-                    ->where('id', '=', $reference_id[0]->id)
-                    ->get();
-
-                    // dd($reference_id[0]->basic_ref);
-
-                    $detail['basicData']['id'] = $reference_id[0]->basic_ref;
-                }
-
-                $i++;
-            } while (count($reference_id) > 0);
-
-            // get reference children data
-            $reference_children_id = DB::table('refs')
-            ->where('basic_ref', '=', $request->basic_id)
-            ->get();
-
-            // dd($reference_children_id);
-
-            foreach ($reference_children_id as $key => $value) {
-
-                // dd($value);
-
-                $reference_children_title = DB::table('section_basics')
-                ->where('id', '=', $value->basic_id)
-                ->get();
-
-                // dd($reference_children_title);
-
-                $detail['statementData']['reference_children'][1][$key] = $reference_children_title;
-            }
-
-            // dd($detail);
-
-            // dd($detail);
-
-            // create activity collection
-            // ++++++++++++++++++++++++++++++++++++
-
-            // $detail['activitytData'] = DB::table('section_activities')
-            // ->where('basic_id', '=', $request->basic_id)
-            // ->get();
-
-            // create source collection
-            // ++++++++++++++++++++++++++++++++++++
-
-            // $detail['sourceData'] = DB::table('section_sources')
-            // ->where('basic_id', '=', $request->basic_id)
-            // ->get();
-
-            // // dd($detail);
-
-            return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
+        // dd($section_collection);
     }
 
     // store
@@ -352,6 +249,10 @@ class RicoAssistant extends Controller {
                 $ref->tracking = $request->ip();
                 $ref->save();
             // }
+
+            // dd(['ref_id' => $ref->id]);
+
+            return $ref->id;
         }
 
         // create basic
@@ -407,21 +308,21 @@ class RicoAssistant extends Controller {
 
             // dd($request->activityData['activityTo']);
 
-            foreach ($request->activityData['activityTo'] as $i=>$activity) {
+            foreach ($request->activityData['activityTo'] as $i => $activity) {
 
                 if (is_numeric($request->activityData['activityTo'][$i])) {
 
                     // store activity index data
-                    $activities[$i] = [
-                        'basic_id' => $basics->id,
-                        'activityTo' => $activity,
-                        'tracking' => $request->ip(),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
+                    $activites = new SectionActivity();
+                    $activites->basic_id = $basics->id;
+                    $activites->activityTime = $request->activityData['activityTime'][$i];
+                    $activites->tracking = $request->ip();
+                    $activites->created_at = now();
+                    $activites->updated_at = now();
+                    $activites->save();
 
                     // dd($activities);
-                    $activities_id = DB::table('section_activities')->insertGetId($activities[$i]);
+                    // $activities_id = DB::table('section_activities')->insertGetId($activities[$i]);
                     // dd($$activities_id);
 
                     // fire reference function
@@ -430,7 +331,16 @@ class RicoAssistant extends Controller {
                     // }
                     // else $checkValue = '';
                     // dd($activities[0]);
-                    reference($db_section_id, $db_name, $request, $basics, $activities_id, $i);
+                    // dd(reference($db_section_id, $db_name, $request, $basics, $activities_id, $i));
+
+                    // dd($ref);
+
+                    // dd(reference($db_section_id, $db_name, $request, $basics, $activities_id, $i));
+
+                    $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites->id, $i);
+                    $activites->save();
+
+                    // $activities_reference = DB::table('section_activities')->insert(reference($db_section_id, $db_name, $request, $basics, $activites->id, $i));
 
                     // fire tag function
                     // dd($request->activityData['tag']);

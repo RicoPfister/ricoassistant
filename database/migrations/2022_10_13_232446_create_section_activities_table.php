@@ -18,8 +18,9 @@ return new class extends Migration
 
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('section_basics');
+            $table->bigInteger('ref_id')->nullable();
 
-            $table->string('activityTo', 5);
+            $table->string('activityTime', 5);
 
             $table->string('tracking', 50);
             $table->timestamps();

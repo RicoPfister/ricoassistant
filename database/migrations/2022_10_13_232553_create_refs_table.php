@@ -19,8 +19,8 @@ return new class extends Migration
             $table->bigInteger('basic_id');
             $table->bigInteger('basic_ref');
 
-            $table->tinyInteger('ref_db_id');
-            $table->tinyInteger('ref_db_index');
+            $table->bigInteger('ref_db_id');
+            $table->bigInteger('ref_db_index');
             $table->tinyInteger('ref_db_heading')->nullable();
 
             $table->string('tracking', 50);
