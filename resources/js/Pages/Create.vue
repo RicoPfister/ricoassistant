@@ -58,7 +58,7 @@ let form = ref({'basicData': ''});
 
 let dataParent = ref({});
 
-const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Administration, Source];
+const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
@@ -75,6 +75,7 @@ function dataChild(data) {
     // add form data to form collection
 //obsolete. clear and remove.
     if (data.formData) {
+
         form.value = {...form.value, ...data.formData}
     };
 
@@ -88,11 +89,54 @@ function dataChild(data) {
 
         form.value = ({});
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
+        form.value['componentCollection'] = componentCollection;
     };
 
     //? store form
     //------------------------------------------------
     if (data.submit == 1) {
+
+        if (form.value.activityData?.activityTo) {
+            form.value.activityData.activityTime = [];
+
+            console.log(form.value.activityData.activityTo);
+
+            let activityTimeTotal = 0;
+            let activityTimeHourString = 0;
+            let activityTimeHourMinute = 0;
+            let activityTime = 0;
+
+            form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+
+            function activityTimeConvert(item, index) {
+                // console.log(item);
+
+                activityTimeHourString = item.toString().slice(0, -2);
+                activityTimeHourMinute = item.toString().slice(-2);
+
+                activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
+
+                // console.log(activityTime);
+
+                activityTime -= activityTimeTotal;
+
+                form.value.activityData.activityTime[index] = activityTime;
+                // console.log(activityTime);
+
+                activityTimeTotal += activityTime;
+
+                // console.log(activityTimeTotal);
+
+                // console.log(activityTimeHourString);
+                // console.log(activityTimeHourMinute);
+
+                // form.value.activityData.activityTime[index] = item.slice(2);
+            };
+        };
+
+        // console.log(form.value);
+
         Inertia.post('store', form.value);
     };
 
@@ -113,6 +157,7 @@ function dataChild(data) {
 
         //? v-for trigger
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
+        form.value['componentCollection'] = componentCollection;
     };
 
     // build collection: form manager
@@ -130,6 +175,8 @@ function dataChild(data) {
         componentCollection.splice(data.delete, 1);
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
+
+    form.value['componentCollection'] = componentCollection;
 }
 
 // basic title response
@@ -224,5 +271,12 @@ function fromChild(data) {
 
     transferCreate.value['title'] = form.value.basicData.title;
 }
+
+// watch(() => props.fromController, (curr, prev) => {
+//     if (props?.fromController?.database) {
+//         console.log('ok');
+//         Inertia.post('tag');
+//     };
+// }, {deep: true}, 500);
 
 </script>

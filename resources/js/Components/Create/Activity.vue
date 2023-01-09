@@ -3,9 +3,12 @@
 
 <!-- activity container -->
 <!-- ------------------------------------------------ -->
-<div aria-label="Activity" class="relative flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px] pb-3">
+<div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px] pb-3">
 
-    <SectionTitle :Id="2"/>
+    <div class="relative -top-[16px]">
+        <SectionTitle :Id="2"/>
+    </div>
+
 
     <!-- time schedule box-->
     <!-- ------------------------------------------------ -->
@@ -77,14 +80,19 @@
             </div>
 
             <!-- reference box -->
-            <div class="relative w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
+            <div class="w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
 
-                <div class="absolute w-full h-[30px]">
-                    <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                <div class="w-full h-[30px] flex flex-row">
+                    <div class="grow">
+                        <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                    </div>
+                    <div class="w-fit">
+                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild.basicData.title, 'tagInputShow': 0}" :fromController="props.fromController" @fromChild="fromChild"/>
+                    </div>
                 </div>
 
                 <!-- tag buttons -->
-                <div class="h-full flex items-center bg-gray-200 w-fit">
+                <!-- <div class="h-full flex items-center bg-gray-200 w-fit">
                     <div class="border-l border-gray-400 p-1 w-auto h-full" @mouseover="tagTooltipShow(index)" @mouseleave="tagTooltipShow(index, 1)">
                         <button type="button" @click.prevent="tagPopupOpenActive(index)" class="w-auto h-full">
                             <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-yellow-600': form.activityTag[index]}" class="w-auto h-full hover:stroke-black">
@@ -93,7 +101,7 @@
                             </svg>
                         </button>
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
@@ -138,7 +146,7 @@
                 </div>
             </div>
             <!-- tag tool tip -->
-            <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-200 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div>
+            <!-- <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-200 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div> -->
         </div>
 
     </div>
@@ -158,15 +166,18 @@
                     </div>
 
                     <!--0-12 disgram -->
-                    <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                    <div class="absolute top-0 left-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         0
                     </div>
 
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
-
+                    <!-- separator lines -->
+                    <div class="absolute top-0 left-0 h-full items-center flex flex-row w-full">
+                        <div v-for="item in 6" class="border-r w-[120px] h-full border-gry-500"></div>
                     </div>
 
-                    <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full flex items-center"></div>
+
+                    <div class="absolute top-0 right-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         12
                     </div>
 
@@ -178,15 +189,20 @@
                     </div>
 
                     <!-- 12-24 day diagram -->
-                    <div class="absolute top-0 left-0 h-full pl-1 flex items-center">
+                    <div class="absolute top-0 left-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         12
+                    </div>
+
+                    <!-- separator lines -->
+                    <div class="absolute top-0 left-0 h-full items-center flex flex-row w-full">
+                        <div v-for="item in 6" class="border-r w-[120px] h-full border-gry-500"></div>
                     </div>
 
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full">
 
                     </div>
 
-                    <div class="absolute top-0 right-0 h-full pr-1 flex items-center">
+                    <div class="absolute top-0 right-0 h-full flex items-center bg-black text-white opacity-50 w-4 justify-center">
                         24
                     </div>
                 </div>
@@ -220,9 +236,9 @@
 </div>
 
 <!-- open popup -->
-<div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-    <TagPopup :fromParentTagString="form.activityTag[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent" @from-controller="fromController" @from-child="fromChild"/>
-</div>
+<!-- <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
+    <TagPopup :toChild="tagInputShow == 0" :fromParentTagString="form.activityTag[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @dataToParent="dataToParent" @from-controller="fromController" @from-child="fromChild"/>
+</div> -->
 
 </template>
 
@@ -236,6 +252,7 @@ import * as Date from "../../Scripts/date.js"
 import SectionTitle from "../FormManager/SectionTitle.vue"
 import ReferenceActivity from "./Reference.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
+import TagForm from "../TagManager/TagForm.vue";
 
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
@@ -258,7 +275,7 @@ let activityTotalRow = ref(1);
 let activityDayOverviewDiagram = ref([]);
 let activityDayOverviewDiagram1a = ref([]);
 let activityDayOverviewDiagram1b = ref([]);
-let activityDiagramColorTag = ref([]);
+let activityDiagramColorTag = ref(['']);
 
 let tagPopupOpen = ref(0);
 let tagTooltipOpen = ref([]);
@@ -550,6 +567,8 @@ watch(() => form.activityTo, (curr, prev) => {
             l = 1;
         };
     }
+
+    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
 }, {deep: true}, 500);
 
 function tagPopupOpenActive(data) {
@@ -599,8 +618,23 @@ function tagTooltipShow(index, data) {
 // send to parent: reference selection
 function fromChild(data) {
     console.log(data);
-    emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
-    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
+
+    // set activity diagram color
+    if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
+    else activityDiagramColorTag.value[data.parentIndex] = '';
+    // console.log(activityDiagramColorTag.value);
+
+    if (data.component == 'reference' && data.parentId == 4) {
+        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
+    }
+
+    // if () {
+    //     emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
+    // }
+
+    if (data.component == 'tag' && data.parentId == 4) {
+        emit('fromChild', {'section':'activityData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+    }
 }
 
 //  send to parent: edit menu selection
@@ -608,5 +642,11 @@ function dataChildMenuEntry(n) {
     if (n['formDataEdit'] == 1) emit('dataChild', {'formDataEdit': 1});
     if (n['formDataEdit'] == 2) emit('dataChild', {'delete': props.componentId+1});
 }
+
+// watch(() => props.fromController, (curr, prev) => {
+//     if (props?.fromController) {
+//         console.log('ok');
+//         fromController.value = props.fromController};
+// }, {deep: true}, 500);
 
 </script>

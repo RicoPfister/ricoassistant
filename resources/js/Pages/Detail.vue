@@ -1,98 +1,120 @@
 <template>
 
-<!-- title -->
+     <!-- title -->
 <div class="text-center">
-    <h1 class="text-2xl border-b border-black">{{ detailData.title }}</h1>
-    <div class="text-gray-400 text-sm">Video Game | 1986</div>
+    <h1 class="text-2xl border-b border-black">{{ detailData.basicData?.title }}</h1>
+    <div class="text-gray-400 text-sm">Video Game |</div>
 </div>
 
-<!-- index container -->
-<div class="">
+<!-- {{ typeof detailData?.activitytData }} -->
 
-    <!-- index -->
-    <div @mouseover="indexMenuOpen = 1" @mouseleave="indexMenuOpen = 0" class="flex flex-row gap-1 items-center">
+<!-- section statement -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++ -->
+<div v-if="typeof detailData?.statementData !== 'undefined'">
+    <pre>{{ detailData.statementData.statement[0].statement }}</pre>
 
-        <!-- title -->
-        <button @click="IndexCollapsState('switch')" class="flex flex-row items-center gap-1 hover:text-lime-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
+    <!-- {{ detailData?.statementData.tag[0][0]  }} -->
 
-            <div>Index</div>
-        </button>
+    <!-- get tag list -->
+    <div class="font-bold mt-2">Tags:</div>
+    <div v-if="typeof detailData?.statementData.tag !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData.statementData.tag">
 
-        <!-- title menu -->
-        <div v-show="indexMenuOpen" class="flex flex-row border">
-            <button @click="IndexCollapsState(1)" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 leading-none hover:stroke-lime-600">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-            </button>
+            <!-- {{ item }} -->
 
-            <button @click="IndexCollapsState(0)" type="button" class="">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 leading-none hover:stroke-lime-600">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                </svg>
-            </button>
+            <div class="flex fle-row">
+                <div v-for="(item2, index2) in item">
+                    <!-- {{  item2['content'] }} -->
+                    {{ index2 == 0 ? '@' + item2['content'] : index2 < 4 ? ':' + item2['content'] : '' }}
 
-            <button @click="IndexShowOpen = !IndexShowOpen" type="button" class="">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 leading-none hover:stroke-red-600">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+                </div>
+                <div>&nbsp;</div>
+            </div>
         </div>
     </div>
 
-    <!-- heading -->
-    <div v-if="IndexShowOpen" v-for="(item, index) in headings" class="mb-1 flex flex-col">
-        <div class="flex flex-row">
+    <!-- get reference parents -->
+    <div class="font-bold mt-2">Reference Parents:</div>
+    <div v-if="typeof detailData?.statementData.reference_parents !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData?.statementData.reference_parents[1]">
+            <b>{{ item['title'] }}</b>{{ (index !== detailData?.statementData.reference_parents[1].length-1  ? '>' : '') }}
+        </div>
+    </div>
+    <div v-else class="">Main Entry</div>
 
-            <!-- main heading number -->
-            <div class="justify-end h-[16px] w-[18px] flex items-center">{{ index + 1}}</div>
-            <div class="h-[16px] w-[35px] flex items-center"></div>
+    <!-- get reference children -->
+    <div class="font-bold mt-2">Reference Children:</div>
+    <div v-if="typeof detailData?.statementData.reference_children!== 'undefined'" class="flex flex-col">
+        <div v-for="(item, index) in detailData?.statementData.reference_children" class="flex flex-row">
+            {{ item[0]['ref_db_name'] + '&nbsp;' +  item[0]['title'] + '&nbsp;' + item[0]['ref_date'] }}
+            <div v-if="typeof item[0]?.['ref_id']?.[0]?.['activityTime'] !== 'undefined'">{{  '&nbsp;' + item[0]['ref_id'][0]['activityTime'] +'min'}}</div>
+            <div v-if="typeof item[0]?.['ref_id']?.[0]?.['path'] !== 'undefined'">{{ '&nbsp;' + 'File: ' + item[0]['ref_id'].length }}</div>
 
-            <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0"
-            class="flex flex-row h-[16px]">
+        </div>
+    </div>
 
-                <!-- heading text button -->
-                <button v-if="typeof item[1] != 'undefined'" @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
-                    {{ item[0] }}
-                </button>
+</div>
 
-                <!-- heading text button -->
-                <div v-else class="h-[16px] flex items-center font-bold cursor-default">
-                    {{ item[0] }}
+<!-- section activity -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<div v-if="typeof detailData?.activitytData?.[0] !== 'undefined'">
+    123
+</div>
+
+<!-- section source -->
+<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
+<div v-if="typeof detailData?.sourceData?.[0] !== 'undefined'">
+
+
+
+<!-- get tag list -->
+<div class="font-bold">Tags:</div>
+    <div v-if="typeof detailData?.sourceData.tag !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData.sourceData.tag">
+
+            <!-- {{ item }} -->
+
+            <div class="flex fle-row">
+                <div v-for="(item2, index2) in item">
+                    <!-- {{  item2['content'] }} -->
+                    {{ index2 == 0 ? '@' + item2['content'] : index2 < 4 ? ':' + item2['content'] : '' }}
+
                 </div>
-
-                <!-- link button -->
-                <button v-show="indexLink[index]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 hover:stroke-lime-600">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- ending part -->
-            <div v-if="typeof item[1] != 'undefined'" class="flex flex-row grow" >
-
-                <!-- leading dots -->
-                <div class="relative grow mx-1 h-[16px] flex items-center" >
-                    <div class="absolute -top-[3px] border-b border-black h-[16px] w-full"></div>
-                </div>
-
-                <!-- infos / collaps icon -->
-                <div class="w-fit h-[16px] flex items-center">
-                    <div class="">
-                        {{ item[1].length }}</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                    </svg>
-                </div>
+                <div>&nbsp;</div>
             </div>
         </div>
-
-        <IndexSubHeading1 v-if="IndexSubHeadingOpen[index]" :data="headings" :index="index"/>
     </div>
+
+    <!-- get reference parents -->
+    <div class="font-bold">Reference Parents:</div>
+    <div v-if="typeof detailData?.sourceData.reference_parents !== 'undefined'" class="flex flex-row">
+        <div v-for="(item, index) in detailData?.sourceData.reference_parents[1]">
+            <b>{{ item['title'] }}</b>{{ (index !== detailData?.sourceData.reference_parents[1].length-1  ? '>' : '') }}
+        </div>
+    </div>
+    <div v-else class="">Main Entry</div>
+
+    <!-- get reference children -->
+    <div class="font-bold mt-2">Reference Children:</div>
+    <div v-if="typeof detailData?.sourceData.reference_children!== 'undefined'" class="flex flex-col">
+        <div v-for="(item, index) in detailData?.sourceData.reference_children" class="flex flex-row">
+
+            {{ item[0]['ref_db_name'] + '&nbsp;' +  item[0]['title'] + '&nbsp;' + item[0]['ref_date'] }}
+            <div v-if="typeof item[0]?.['ref_id']?.[0]?.['activityTime'] !== 'undefined'">{{  '&nbsp;' + item[0]['ref_id'][0]['activityTime'] +'min'}}</div>
+            <div v-if="typeof item[0]?.['ref_id']?.[0]?.['path'] !== 'undefined'">{{ '&nbsp;' + 'File: ' + item[0]['ref_id'].length }}</div>
+
+        </div>
+    </div>
+    <!-- {{ detailData.sourceData[0].extension }} -->
+    <div v-if="detailData.sourceData[0].extension == 'jpg' || detailData.sourceData[0].extension == 'png'"><img :src="'/storage/inventory/' + detailData.sourceData[0].path" /></div>
+
+    <div v-if="detailData.sourceData[0].extension == 'mp4'">
+        <video width="320" height="240" controls>
+            <source :src="'/storage/inventory/' + detailData.sourceData[0].path" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
 </div>
 
 </template>
@@ -112,108 +134,13 @@ let indexMenuOpenSwitcher = ref('open');
 let IndexShowOpen = ref(1);
 let indexLink = ref([0]);
 
-let headings = ref([]);
-headings.value[0] = ['Arrangement'];
-headings.value[0][1] = [];
-headings.value[0][1][0] = ['Idea'];
-headings.value[0][1][1] = ['Resource'];
-headings.value[0][1][2] = ['Intention'];
-headings.value[0][1][0][1] = [];
-headings.value[0][1][0][1][0] = ['H1 Level 3-1'];
-headings.value[0][1][0][1][1] = ['H2 Level 3-2'];
-
-headings.value[1] = ['Realisation'];
-headings.value[1][1] = [];
-headings.value[1][1][0] = ['Story'];
-headings.value[1][1][1] = ['Programming'];
-headings.value[1][1][2] = ['Graphic'];
-headings.value[1][1][3] = ['Sound'];
-headings.value[1][1][0][1] = [];
-headings.value[1][1][0][1][0] = ['H2 Level 3-1'];
-headings.value[1][1][0][1][1] = ['H2 Level 3-2'];
-headings.value[1][1][0][1][2] = ['H2 Level 3-3'];
-
-headings.value[2] = ['Impact'];
-headings.value[2][1] = [];
-headings.value[2][1][0] = ['Rewiews'];
-headings.value[2][1][1] = ['Wealth'];
-headings.value[2][1][2] = ['Successor'];
-headings.value[2][1][0][1] = [];
-headings.value[2][1][0][1][0] = ['Level 3-1'];
-headings.value[2][1][0][1][1] = ['Level 3-2'];
-
-headings.value[3] = ['Register'];
-headings.value[4] = ['Register'];
-headings.value[5] = ['Register'];
-headings.value[6] = ['Register'];
-headings.value[7] = ['Register'];
-headings.value[8] = ['Register'];
-headings.value[9] = ['Register'];
-
-headings.value[10] = ['Register'];
-headings.value[10][1] = [];
-headings.value[10][1][0] = ['Idea'];
-headings.value[10][1][1] = ['Resource'];
-headings.value[10][1][2] = ['Intention'];
-headings.value[10][1][3] = ['Intention'];
-headings.value[10][1][4] = ['Intention'];
-headings.value[10][1][4][1] = [];
-headings.value[10][1][4][1][0] = ['H1 Level 3-1'];
-headings.value[10][1][4][1][1] = ['H2 Level 3-2'];
-
 onMounted(() => {
-    detailData.value = props.detail;
+    detailData.value = props?.detail;
 });
 
 watch(() => props.detail, _.debounce( (curr, prev) => {
     detailData.value = props.detail;
 }, 500)
 );
-
-function textSizeHeading(index) {
-
-    if (typeof headings.value[1][index] != 'undefined') {
-        if (headings.value[1][index].search(/\.%\./g) != -1) {
-            return '14px';
-        }
-    }
-}
-
-Object.keys(headings.value).forEach((key, i) => {
-
-    IndexSubHeadingOpen.value.push(0);
-
-});
-
-function IndexCollapsState(n) {
-
-    if (n == 'switch') {
-
-        switch (indexMenuOpenSwitcher.value) {
-
-            case 'open':
-                IndexShowOpen.value = 1;
-                n = 1;
-                indexMenuOpenSwitcher.value = 'close';
-                break;
-
-            case 'close':
-                n = 0;
-                indexMenuOpenSwitcher.value = 'hide';
-                break;
-
-            case 'hide':
-                IndexShowOpen.value = 0;
-                indexMenuOpenSwitcher.value = 'open';
-                break;
-        }
-
-    }
-
-    Object.keys(IndexSubHeadingOpen.value).forEach((key, i) => {
-        IndexSubHeadingOpen.value[key] = n;
-    });
-
-}
 
 </script>

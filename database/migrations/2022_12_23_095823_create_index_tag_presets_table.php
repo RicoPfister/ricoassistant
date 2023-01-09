@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('index_tag_presets', function (Blueprint $table) {
             $table->id();
             $table->string('preset_name', 50);
+            $table->string('status', 1)->nullable();
             $table->string('tracking', 50);
             $table->timestamps();
         });

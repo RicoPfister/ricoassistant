@@ -58,7 +58,7 @@
                     <div class="flex items-center border-b border-black h-full">
                         <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-1 h-[26px] w-80 truncate" type="text"
                         placeholder="Select or type in a new preset list name..." v-model="tagPresetCreateInput">
-                        <div @click="tagCreatePreset(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-stone-300 text-gray-600 hover:text-black w-fit">Create</div>
+                        <div @click.prevent="tagCreatePreset(index)" class="px-2 border-l border-black h-[26px] flex items-center bg-stone-300 text-gray-600 hover:text-black w-fit">Create</div>
                     </div>
 
                     <!-- list: database tags preset -->
@@ -124,7 +124,7 @@ function tagPresetSelected(index, index2){
     // console.log('ok');
     // console.log(index2);
     tagPresetMenuOpen.value[index] = !tagPresetMenuOpen.value[index];
-    emit('fromChild', {'presetData': {'presetItemSelected': 1, 'presetIndex': index2, 'index': props.toChild.index, 'subIndex': index}});
+    emit('fromChild', {'presetData': {'presetCreate': tagPresetCreateInput.value, 'presetItemSelected': 1, 'presetIndex': index2, 'index': props.toChild.index, 'subIndex': index}});
     // console.log(index);
     // console.log('ok');
 }

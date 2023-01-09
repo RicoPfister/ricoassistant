@@ -5,8 +5,8 @@
     <div class="max-h-[500px] border-r border-gray-400 overflow-y-scroll">
 
         <!-- tag category dropdown -->
-        <div v-for="(item, index) in props.toChild.popupId == 1 ? props.toChild.tagPresetCollection : tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
-            <div class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-stone-300">
+        <div v-for="(item, index) in tagCollection" class="flex flex-col bg-white h-full leading-none p-0 m-0">
+            <div class="border-b border-gray-400 h-6 leading-none p-0 m-0 bg-lime-200">
 
                 <!-- category box -->
                 <!-- ------------------ -->
@@ -19,7 +19,7 @@
                         <button type="button" @click.prevent="SubCategoryOpen[index] = !SubCategoryOpen[index]" class="flex items-center font-bold pl-1 h-full leading-none p-0 m-0">{{ item[0] }}</button>
 
                         <!-- total context tags indicator -->
-                        <button @click="newTag(index)" class="pl-1 h-full flex items-center text-xs leading-none p-0 m-0 hover:text-blue-600" type="button">{{ '['+ (typeof categoryActiveTotal[index] !== 'undefined' ? categoryActiveTotal[index] : 0) +'/'+ props.fromController.tagCollection[index][1].length +']' }}</button>
+                        <button @click.prevent="newTag(index)" class="pl-1 h-full flex items-center text-xs leading-none p-0 m-0 hover:text-blue-600" type="button">{{ '['+ (typeof categoryActiveTotal[index] !== 'undefined' ? categoryActiveTotal[index] : 0) +'/'+ props.fromController?.tagCollection[index][1].length +']' }}</button>
 
                         <!-- new tag context button -->
                         <!-- <button @click="newTag(index)" class="ml-1 hover:text-blue-600 h-full flex items-center text-xs leading-none p-0 m-0" type="button">+</button> -->
@@ -65,6 +65,8 @@ let tagPresetGroupCollection = ref([]);
 let props = defineProps(['fromController', 'toChild', 'fromChild']);
 let emit = defineEmits(['fromChild', 'toChild']);
 
+// let
+
 // let tagCollection = ref([['Presets', ['Presets', 'Test A2']], ['Characteristics', ['Test B1', 'Test B2']], ['Administration', ['Lost', 'Lent', 'Rent']], ['Rating Mood', ['Test B1', 'Test B2']], ['Rating Item', ['Test B1', 'Test B2']], ['Rating Media', ['Test B1', 'Test B2']]]);
 let categoryActiveTotal = ref([]);
 
@@ -93,7 +95,11 @@ function fromChild(data){
 // }, {deep: true}, 500);
 
 onMounted(() => {
-    tagCollection.value = props.fromController.tagCollection;
+
+    if (props.fromController?.tagCollection) {
+        console.log(props.fromController?.tagCollection);
+        tagCollection.value = props.fromController.tagCollection
+    };
     // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 })
 

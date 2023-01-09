@@ -111,7 +111,7 @@ watch(() => form, (curr, prev) => {
 
 // processing parent props
 watch(() => props.fromController, (curr, prev) => {
-    if (props.fromController.misc.parentId == 1) {
+    if (props.fromController?.misc?.parentId == 1) {
 
         // console.log(props.fromController);
         // cl(props.dataParent.basicTitleData[0].warning);
