@@ -65,23 +65,321 @@ class RicoAssistant extends Controller {
 
         $user = Auth::user();
 
+        // get detail tags
+        function detail_tag($request, $section_id) {
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $section_id)
+            ->pluck('db_name');
+            $db_name = $form_section_name [0].'Data';
+
+            // get tag groups
+            $tag_rawdata = DB::table('tags')
+            ->where('basic_id', '=', $request->basic_id)
+            ->where('section_table', '=', $section_id)
+            ->get()
+            ->groupBy('tag_id');
+
+            // dd($tag_rawdata);
+
+            if (count($tag_rawdata) > 0) {
+
+                // tag array definition
+                $detail[$db_name]['tag'] = [];
+                $i = 0;
+
+                // create tag groups content
+                foreach ($tag_rawdata as $key => $value) {
+                    $detail[$db_name]['tag'][$i] = [];
+                    // dd($value);
+                    // array_push($detail['statementData']['tag'], []);
+
+                    foreach ($value as $key2 => $value2) {
+                        // dd($value2);
+                        if ($value2->tag_table == 1) $tag_table = 'tag_categories';
+                        if ($value2->tag_table == 2) $tag_table = 'tag_contexts';
+                        if ($value2->tag_table == 3) $tag_table = 'tag_values';
+                        if ($value2->tag_table == 4) $tag_table = 'tag_details';
+
+                        $value2->content= DB::table($tag_table)
+                        ->where('id', '=', $value2->tag_table_id)
+                        ->pluck('content')[0];
+
+                        // dd($value2);
+
+
+
+                        // array_push($value2, ['test' => 123]);
+                        array_push($detail[$db_name]['tag'][$i], $value2);
+                    }
+                    // $detail['statementData']['tag'].push()
+                    $i++;
+                }
+                return $detail[$db_name]['tag'];
+            }
+            // dd($detail);
+        }
+
+        function detail_reference_parents($detail, $request, $section_id) {
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $section_id)
+            ->pluck('db_name');
+            $db_name = $form_section_name [0].'Data';
+
+            // get reference parents data
+            // dd($detail['basicData']['id']);
+
+            $i = 0;
+            do {
+
+                // dd($detail);
+
+                // get reference id
+                $reference_id = DB::table('refs')
+                ->where('basic_id', '=', $detail['basicData']['id'])
+                // ->join('section_basic', 'section_basic.id', '=', )
+                ->get();
+
+                // dd($reference_id);
+                // dd($reference_id[0]->id);
+
+
+
+                // get reference content data if reference id was found
+                if (count($reference_id) > 0) {
+
+                    // $detail[$db_name]['reference_parents'] = [];
+                    // // dd($detail[$db_name]['reference_parents'] );
+                    // $detail[$db_name]['reference_parents'][1] = [];
+                    // $detail[$db_name]['reference_parents'][1][$i] = [];
+
+                    // dd($detail['statementData']['reference'][0]->id);
+                    $_reference_parents_id = DB::table('section_basics')
+                    ->where('id', '=', $reference_id[0]->basic_ref)
+                    ->get();
+
+                    if (isset($_reference_parents_id)){
+
+                    // dd($_reference_parents_id);
+
+                    // $detail[$db_name]['reference_parents'] = [];
+
+                    // dd($section_id);
+
+                    $detail[$db_name]['reference_parents'] = $_reference_parents_id[0];
+
+                    // dd($detail[$db_name]['reference_parents']);
+
+                    // $detail[$db_name]['reference_children'][$key] = $reference_children_title;
+                    }
+
+                    // dd($reference_id[0]->basic_ref);
+
+                    $detail['basicData']['id'] = $reference_id[0]->basic_ref;
+
+
+                }
+
+                $i++;
+            } while (count($reference_id) > 0);
+
+            // dd($detail[$db_name]['reference_parents'][1]);
+            if (isset($detail[$db_name]['reference_parents'])) return $detail[$db_name]['reference_parents'];
+        }
+
+        function detail_reference_children($detail, $request, $section_id) {
+
+            // dd('ok');
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $section_id)
+            ->pluck('db_name');
+            $db_name = $form_section_name [0].'Data';
+
+            // dd($request->basic_id);
+
+            // get reference children data
+            $reference_children_id = DB::table('refs')
+            ->where('basic_ref', '=', $request->basic_id)
+            ->get();
+
+            // dd($reference_children_id);
+
+            foreach ($reference_children_id as $key => $value) {
+
+                // dd($value);
+                // dd($value->ref_db_id);
+
+                $reference_children_title = DB::table('section_basics')
+                ->where('id', '=', $value->basic_id)
+                ->get();
+
+                // dd($reference_children_title);
+
+
+
+                $detail[$db_name]['reference_children'][$key] = $reference_children_title;
+                // $detail[$db_name]['reference_children'][0]->put('test', 123);
+                // $detail[$db_name]['reference_children'][0]['test'] = [123];
+                // dd($value->ref_db_index);
+                // dd($detail[$db_name]['reference_children']);
+
+                // check and get activity data
+                if ($value->ref_db_id == 4) {
+                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_activities')
+                    ->where('id', '=', $value->ref_db_index)
+                    ->get();
+
+                }
+
+                else if ($value->ref_db_id == 3) {
+                    // check and get source data
+                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_sources')
+                    ->where('basic_id', '=', $value->ref_db_index)
+                    ->get();
+
+                }
+
+                $detail[$db_name]['reference_children'][$key][0]->ref_db_id = $value->ref_db_id;
+
+                // dd($form_section_name);
+                // dd($detail[$db_name]['reference_children'][$key][0]);
+
+                $ref_db_name  = DB::table('index_databases')
+                ->where('id', '=', $detail[$db_name]['reference_children'][$key][0]->ref_db_id)
+                ->pluck('db_name');
+
+                $detail[$db_name]['reference_children'][$key][0]->ref_db_name = $ref_db_name[0];
+                // $detail[$db_name]['reference_children'][0][0][1] = 123;
+                // dd($detail);
+                // array_push($detail[$db_name]['reference_children'][1][$key], ['test' => 123]);
+
+                // dd($detail[$db_name]['reference_children'][1]);
+            };
+
+            if (isset($detail[$db_name]['reference_children'])) return $detail[$db_name]['reference_children'];
+        }
+
         // create basic collection
         // ++++++++++++++++++++++++++++++++++++
         $detail['basicData'] = SectionBasic::find($request->basic_id);
 
-        // section collection
-        // -------------------------------------
+        // create statement collection
+        // ++++++++++++++++++++++++++++++++++++
 
-        $section_collection = DB::table('index_databases')
-        ->where('id', '>', 1)
-        ->where('id', '<', 5)
+        $detail_statement = DB::table('section_statements')
+        ->where('basic_id', '=', $request->basic_id)
         ->get();
+
+        if (count($detail_statement) > 0) {
+            // dd('ok');
+            $detail['statementData']['statement'] = $detail_statement;
+
+            // dd(detail_tag($request, $db_section_id, $db_name));
+
+            $db_section_id = 2;
+
+            $detail_tag_collection = detail_tag($request, $db_section_id);
+
+            if (isset($detail_tag_collection)) {
+                $detail['statementData']['tag'] = $detail_tag_collection;
+            }
+
+            // dd('ok');
+
+            $detail_reference_parents_collection = detail_reference_parents($detail, $request, $db_section_id);
+            // dd($detail_reference_parents_collection);
+            if (isset($detail_reference_parents_collection)) {
+                $detail['statementData']['reference_parents'] = $detail_reference_parents_collection;
+            }
+
+            $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
+            // dd($detail_reference_children_collection);
+            if (isset($detail_reference_children_collection)) {
+                $detail['statementData']['reference_children'] = $detail_reference_children_collection;
+            }
+        }
+
+        // create activity collection
+        // ++++++++++++++++++++++++++++++++++++
+
+        $detail_activity = DB::table('section_activities')
+        ->where('basic_id', '=', $request->basic_id)
+        ->get();
+
+        if (count($detail_activity) > 0) {
+            $detail['activityData']['activityTime'] = $detail_activity;
+
+            $db_section_id = 4;
+
+            $detail_tag_collection = detail_tag($request, $db_section_id);
+
+            // dd($detail_tag_collection);
+
+            if (isset($detail_tag_collection)) {
+                $detail['activityData']['tag'] = $detail_tag_collection;
+            }
+
+            // dd('ok');
+
+            $detail_reference_parents_collection = detail_reference_parents($detail, $request, $db_section_id);
+            // dd($detail_reference_parents_collection);
+            if (isset($detail_reference_parents_collection)) {
+                $detail['activityData']['reference_parents'] = $detail_reference_parents_collection;
+            }
+
+            $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
+            // dd($detail_reference_children_collection);
+            if (isset($detail_reference_children_collection)) {
+                $detail['activityData']['reference_children'] = $detail_reference_children_collection;
+            }
+        }
+
+        // create source collection
+        // ++++++++++++++++++++++++++++++++++++
+
+        $detail_source = DB::table('section_sources')
+        ->where('basic_id', '=', $request->basic_id)
+        ->get();
+
+        if (count($detail_source) > 0) {
+            $detail['sourceData'] = $detail_source;
+
+            $db_section_id = 3;
+
+            $detail_tag_collection = detail_tag($request, $db_section_id);
+
+            if (isset($detail_tag_collection)) {
+                $detail['sourceData']['tag'] = $detail_tag_collection;
+            }
+            // dd('ok');
+
+            $detail_reference_parents_collection = detail_reference_parents($detail, $request, $db_section_id);
+            // dd($detail_reference_parents_collection);
+            if (isset($detail_reference_parents_collection)) {
+                $detail['sourceData']['reference_parents'] = $detail_reference_parents_collection;
+            }
+
+            $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
+            // dd($detail_reference_children_collection);
+            if (isset($detail_reference_children_collection)) {
+                $detail['sourceData']['reference_children'] = $detail_reference_children_collection;
+            }
+        }
 
         // dd($section_raw);
 
         // $section_collection = array_slice($section_raw, 3);
 
         // dd($section_collection);
+
+        // dd($detail);
+
+        return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
     }
 
     // store
@@ -107,7 +405,9 @@ class RicoAssistant extends Controller {
 
             foreach ($request->$db_name['tag'][$index] as $key => $value) {
 
-                $content_check = DB::table('tag_categories')->where('content', '=', $value[0])->get();
+                $content_check = DB::table('tag_categories')
+                ->where('content', '=', $value[0])
+                ->get();
 
                 // dd($content_check);
                 // dd($value);
@@ -346,7 +646,7 @@ class RicoAssistant extends Controller {
                     // dd($request->activityData['tag']);
                     if (isset($request->activityData['tag'])) {
                         // dd($db_name);
-                        tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);
+                        tagData($request, $i, $basics, $db_section_id, $db_section_id, $db_name);
 
                         // $request, $index, $basics, $id2, $db_name, $db_section_id
                     }
@@ -395,7 +695,7 @@ class RicoAssistant extends Controller {
             //     tagData($db_section_id, $db_name, $request, $basics,$sources->id, $index);
             // }
             if (isset($request->sourceData['reference'])) {
-                reference($db_section_id, $db_name, $request, $basics, $sources->id, 0);
+                reference($db_section_id, $db_name, $request, $basics, $sources->basic_id, 0);
             };
             // reference($db_section_id, $db_name, $request, $basics, $activities_id, $i);
 

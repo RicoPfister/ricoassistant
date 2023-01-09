@@ -89,6 +89,8 @@ function dataChild(data) {
 
         form.value = ({});
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
+
+        form.value['componentCollection'] = componentCollection;
     };
 
     //? store form
@@ -155,6 +157,7 @@ function dataChild(data) {
 
         //? v-for trigger
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
+        form.value['componentCollection'] = componentCollection;
     };
 
     // build collection: form manager
@@ -172,6 +175,8 @@ function dataChild(data) {
         componentCollection.splice(data.delete, 1);
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
+
+    form.value['componentCollection'] = componentCollection;
 }
 
 // basic title response

@@ -105,7 +105,7 @@
     <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
 </div> -->
 
-<div class="border-l border-r border-b border-black h-[31px]">
+<div v-if="!props.toChild.componentCollection.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
     <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
