@@ -132,6 +132,8 @@ class RicoAssistant extends Controller {
             // get reference parents data
             // dd($detail['basicData']['id']);
 
+            // $detail[$db_name]['reference_parents'] = [];
+
             $i = 0;
             do {
 
@@ -169,7 +171,9 @@ class RicoAssistant extends Controller {
 
                     // dd($section_id);
 
-                    $detail[$db_name]['reference_parents'] = $_reference_parents_id[0];
+                    // dd($_reference_parents_id);
+
+                    $detail['reference_parents'][0] = $_reference_parents_id[0];
 
                     // dd($detail[$db_name]['reference_parents']);
 
@@ -187,7 +191,7 @@ class RicoAssistant extends Controller {
             } while (count($reference_id) > 0);
 
             // dd($detail[$db_name]['reference_parents'][1]);
-            if (isset($detail[$db_name]['reference_parents'])) return $detail[$db_name]['reference_parents'];
+            if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
         function detail_reference_children($detail, $request, $section_id) {

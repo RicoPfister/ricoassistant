@@ -43,8 +43,8 @@
     <div v-else class="">Main Entry</div>
 
     <!-- get reference children -->
-    <div class="font-bold mt-2">Reference Children:</div>
-    <div v-if="typeof detailData?.statementData.reference_children!== 'undefined'" class="flex flex-col">
+    <div v-if="typeof detailData?.statementData.reference_children !== 'undefined'" class="flex flex-col">
+        <div class="font-bold mt-2">Reference Children:</div>
         <div v-for="(item, index) in detailData?.statementData.reference_children" class="flex flex-row">
             {{ item[0]['ref_db_name'] + '&nbsp;' +  item[0]['title'] + '&nbsp;' + item[0]['ref_date'] }}
             <div v-if="typeof item[0]?.['ref_id']?.[0]?.['activityTime'] !== 'undefined'">{{  '&nbsp;' + item[0]['ref_id'][0]['activityTime'] +'min'}}</div>
@@ -86,17 +86,21 @@
     </div>
 
     <!-- get reference parents -->
-    <div class="font-bold">Reference Parents:</div>
-    <div v-if="typeof detailData?.sourceData.reference_parents !== 'undefined'" class="flex flex-row">
-        <div v-for="(item, index) in detailData?.sourceData.reference_parents[1]">
-            <b>{{ item['title'] }}</b>{{ (index !== detailData?.sourceData.reference_parents[1].length-1  ? '>' : '') }}
+    <div v-if="typeof detailData?.sourceData?.reference_parents !== 'undefined'" class="flex flex-col">
+        <div class="font-bold mt-2">Reference Parents:</div>
+        <!-- {{ detailData?.sourceData.reference_parents['title'] }} -->
+        <div class="flex flex-row">
+            <div v-for="(item, index) in detailData?.sourceData.reference_parents">
+                <b>{{ item['title'] }}</b>{{ (index !== detailData?.sourceData.reference_parents.length-1  ? '>' : '') }}
+            </div>
         </div>
+
     </div>
     <div v-else class="">Main Entry</div>
 
     <!-- get reference children -->
-    <div class="font-bold mt-2">Reference Children:</div>
-    <div v-if="typeof detailData?.sourceData.reference_children!== 'undefined'" class="flex flex-col">
+    <div v-if="typeof detailData?.sourceData?.reference_children !== 'undefined'" class="flex flex-col">
+        <div class="font-bold mt-2">Reference Children:</div>
         <div v-for="(item, index) in detailData?.sourceData.reference_children" class="flex flex-row">
 
             {{ item[0]['ref_db_name'] + '&nbsp;' +  item[0]['title'] + '&nbsp;' + item[0]['ref_date'] }}
@@ -106,9 +110,14 @@
         </div>
     </div>
     <!-- {{ detailData.sourceData[0].extension }} -->
-    <div v-if="detailData.sourceData[0].extension == 'jpg' || detailData.sourceData[0].extension == 'png'"><img :src="'/storage/inventory/' + detailData.sourceData[0].path" /></div>
+
+    <div v-if="detailData.sourceData[0].extension == 'jpg' || detailData.sourceData[0].extension == 'png'">
+        <div class="font-bold mt-2">Images:</div>
+        <img :src="'/storage/inventory/' + detailData.sourceData[0].path" />
+    </div>
 
     <div v-if="detailData.sourceData[0].extension == 'mp4'">
+        <div class="font-bold mt-2">Videos:</div>
         <video width="320" height="240" controls>
             <source :src="'/storage/inventory/' + detailData.sourceData[0].path" type="video/mp4">
             Your browser does not support the video tag.
