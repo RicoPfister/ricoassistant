@@ -73,7 +73,7 @@ let test123 = props.data + 100;
 
 function detailOpen(n) {
     // alert(n);
-    console.log('ok');
+    // console.log('ok');
     Inertia.get('detail', {basic_id: n}, {replace: false,  preserveState: true, preserveScroll: true});
 }
 

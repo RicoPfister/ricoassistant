@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Redirect;
 use Illuminate\Http\Request;
+// use Illuminate\Http\Response;
 use Illuminate\Http\Post;
+use Symfony\Component\HttpFoundation\Response;
 // use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +63,7 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function detail(Request $request) {
 
+        // dd($request);
         // dd($request);
 
         $user = Auth::user();
@@ -135,13 +138,14 @@ class RicoAssistant extends Controller {
             // $detail[$db_name]['reference_parents'] = [];
 
             $i = 0;
+            $basic_ref = $detail['basicData']['id'];
             do {
 
                 // dd($detail);
 
                 // get reference id
                 $reference_id = DB::table('refs')
-                ->where('basic_id', '=', $detail['basicData']['id'])
+                ->where('basic_id', '=', $basic_ref)
                 // ->join('section_basic', 'section_basic.id', '=', )
                 ->get();
 
@@ -173,7 +177,7 @@ class RicoAssistant extends Controller {
 
                     // dd($_reference_parents_id);
 
-                    $detail['reference_parents'][0] = $_reference_parents_id[0];
+                    $detail['reference_parents'][$i] = $_reference_parents_id[0];
 
                     // dd($detail[$db_name]['reference_parents']);
 
@@ -182,7 +186,7 @@ class RicoAssistant extends Controller {
 
                     // dd($reference_id[0]->basic_ref);
 
-                    $detail['basicData']['id'] = $reference_id[0]->basic_ref;
+                    $basic_ref = $reference_id[0]->basic_ref;
 
 
                 }
@@ -205,6 +209,7 @@ class RicoAssistant extends Controller {
             $db_name = $form_section_name [0].'Data';
 
             // dd($request->basic_id);
+            // dd($form_section_name);
 
             // get reference children data
             $reference_children_id = DB::table('refs')
@@ -223,10 +228,9 @@ class RicoAssistant extends Controller {
                 ->get();
 
                 // dd($reference_children_title);
+                // dd($detail);
 
-
-
-                $detail[$db_name]['reference_children'][$key] = $reference_children_title;
+                $detail_reference_children[$key] = $reference_children_title;
                 // $detail[$db_name]['reference_children'][0]->put('test', 123);
                 // $detail[$db_name]['reference_children'][0]['test'] = [123];
                 // dd($value->ref_db_index);
@@ -234,7 +238,7 @@ class RicoAssistant extends Controller {
 
                 // check and get activity data
                 if ($value->ref_db_id == 4) {
-                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_activities')
+                    $detail_reference_children[$key][0]->ref_id = DB::table('section_activities')
                     ->where('id', '=', $value->ref_db_index)
                     ->get();
 
@@ -242,22 +246,24 @@ class RicoAssistant extends Controller {
 
                 else if ($value->ref_db_id == 3) {
                     // check and get source data
-                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_sources')
+                    $detail_reference_children[$key][0]->ref_id = DB::table('section_sources')
                     ->where('basic_id', '=', $value->ref_db_index)
                     ->get();
 
                 }
 
-                $detail[$db_name]['reference_children'][$key][0]->ref_db_id = $value->ref_db_id;
+                $detail_reference_children[$key][0]->ref_db_id = $value->ref_db_id;
 
                 // dd($form_section_name);
                 // dd($detail[$db_name]['reference_children'][$key][0]);
 
                 $ref_db_name  = DB::table('index_databases')
-                ->where('id', '=', $detail[$db_name]['reference_children'][$key][0]->ref_db_id)
+                ->where('id', '=', $detail_reference_children[$key][0]->ref_db_id)
                 ->pluck('db_name');
 
-                $detail[$db_name]['reference_children'][$key][0]->ref_db_name = $ref_db_name[0];
+                // dd($ref_db_name[0]);
+
+                $detail_reference_children[$key][0]->ref_db_name = $ref_db_name[0];
                 // $detail[$db_name]['reference_children'][0][0][1] = 123;
                 // dd($detail);
                 // array_push($detail[$db_name]['reference_children'][1][$key], ['test' => 123]);
@@ -265,7 +271,9 @@ class RicoAssistant extends Controller {
                 // dd($detail[$db_name]['reference_children'][1]);
             };
 
-            if (isset($detail[$db_name]['reference_children'])) return $detail[$db_name]['reference_children'];
+            // dd($detail_reference_children[$key]);
+            // dd($detail_reference_children);
+            if (isset($detail_reference_children)) return $detail_reference_children;
         }
 
         // create basic collection
@@ -351,7 +359,7 @@ class RicoAssistant extends Controller {
         ->get();
 
         if (count($detail_source) > 0) {
-            $detail['sourceData'] = $detail_source;
+            $detail['sourceData']['files'] = $detail_source;
 
             $db_section_id = 3;
 
@@ -384,6 +392,8 @@ class RicoAssistant extends Controller {
         // dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
+
+        // return Inertia::render('TabManager/TabManager', ['detail' => $detail])->toResponse($request)->setStatusCode(206);;
     }
 
     // store
