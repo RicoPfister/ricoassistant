@@ -13,15 +13,15 @@
         <div class="border-b-2 border-black font-bold">File List</div>
 
         <div class="py-1">
-            <div  v-for="(item, index) in controllerFiles.image" :class="{'border-b border-gray-300': index != controllerFiles.image.length-1}" class="flex flex-col w-full">
+            <div  v-for="(item, index) in controllerFilesImage" :class="{'border-b border-gray-300': index != controllerFilesImage.length-1}" class="flex flex-col w-full">
                 <div class="flex justify-between w-full">
 
                     <!-- index/file name -->
-                    <!-- <div class="truncate grow"><span class="bg-black text-white px-1 font-bold">{{ index+1 }}</span> {{ item.path }}</div> -->
+                    <div class="truncate grow"><span class="bg-black text-white px-1 font-bold">{{ index+1 }}</span> {{ item.path }}</div>
 
                     <!-- size/tag/remove -->
                     <div class="flex flex-row items-center min-w-fit">
-                        <!-- <div class="">{{ Math.round(item.size/1000/1000 * 1000)/1000 + ' MB' }}</div> -->
+                        <div class="">{{ Math.round(item.size/1000/1000 * 1000)/1000 + ' MB' }}</div>
 
                             <!-- tag button -->
                             <!-- <button class="" type="button">
@@ -44,23 +44,23 @@
         <div v-for="(item, index) in props.detailData.sourceData.tag" class="flex flex-row flex-wrap">
 
             <!-- tag index -->
-            <!-- <div class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ index+1 }}</span> {{ item.path }}</div> -->
+            <div class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ index+1 }}</span> {{ item.path }}</div>
 
-            <!-- <div v-for="(item2, index2) in item" class="mb-1 mr-1"> -->
+            <div v-for="(item2, index2) in item" class="mb-1 mr-1">
                 <!-- tag groups -->
-                <!-- <div class="truncate bg-lime-200 rounded-xl px-2 w-fit"> {{ '@'+item2[0] + ':' + item2[1] + ':' + item2[2] + '(' + item2[3] + ')' }} </div> -->
-            <!-- </div> -->
+                <div class="truncate bg-lime-200 rounded-xl px-2 w-fit"> {{ '@'+item2[0] + ':' + item2[1] + ':' + item2[2] + '(' + item2[3] + ')' }} </div>
+            </div>
         </div>
     </div>
 
     <!-- source preview-->
     <div class="border-black border-b-2 font-bold my-1">File Preview (if available)</div>
     <div class="flex flex-wrap mt-1 gap-1">
-        <div v-for="(item, index) in controllerFiles.image" class="">
+        <div v-for="(item, index) in controllerFilesImage" class="">
 
                 <div class="relative border-2 h-36">
                     <!-- <img :src="preview[index]" class="w-[214px] max-h-full"> -->
-                    <!-- <img class="w-[214px] max-h-full" :ref="fullscreen.image" :src="'/storage/inventory/' + item.path" /> -->
+                    <img class="w-[214px] max-h-full" :ref="fullscreen.image" :src="'/storage/inventory/' + item.path" />
 
 
 
@@ -128,21 +128,14 @@ const props = defineProps(['detailData']);
 
 let fullscreen = {'image': ref()};
 
-// let controllerFilesImage = ref([]);
-// let controllerFilesSound = ref([]);
-// let controllerFilesVideo = ref([]);
-// let controllerFilesPDF = ref([]);
-// let controllerFilesZIP = ref([]);
-// let controllerFilesOther = ref([]);
+let controllerFilesImage = ref([]);
+let controllerFilesSound = ref([]);
+let controllerFilesVideo = ref([]);
+let controllerFilesPDF = ref([]);
+let controllerFilesZIP = ref([]);
+let controllerFilesOther = ref([]);
 
-let controllerFiles = {
-    image: ref([{}]),
-    sound: ref([{}]),
-    video: ref([{}]),
-    doucument: ref([{}]),
-    paackage: ref([{}]),
-    other: ref([{}]),
-}
+
 
 function controller_collection_processing() {
 
@@ -150,21 +143,25 @@ function controller_collection_processing() {
 
     if (props?.detailData?.sourceData?.files) {
 
+        controllerFilesImage.value = [];
+        controllerFilesSound.value = [];
+        controllerFilesVideo.value = [];
+        controllerFilesPDF.value = [];
+        controllerFilesZIP.value = [];
+        controllerFilesOther.value = [];
+
         props?.detailData?.sourceData?.files.forEach((item, index) => controller_files_processing(item, index));
 
         function controller_files_processing(item, index) {
-
-            // console.log(index);
-            // console.log(item.extension);
-
-            if (item.extension == 'jpg' || item.extension == 'png' || item.extension == 'gif') controllerFiles.image.value.push({'item': item, 'index': index});
-            else if (item.extension == 'mp3' || item.extension == 'ogg') controllerFiles.sound.value.push({'item': item, 'index': index});
-            else if (item.extension == 'mp4') controllerFiles.video.value.push({'item': item, 'index': index});
-            else if (item.extension == 'pdf' || item.extension == 'txt') controllerFiles.pdf.value.push({'item': item, 'index': index});
-            else if (item.extension == 'zip' || item.extension == 'rar' || item.extension == '7z') controllerFiles.zip.value.push({'item': item, 'index': index});
-            else controllerFiles.other.value.push({'item': item, 'index': index});
+            console.log(item);
+            console.log(item.extension);
+            if (item.extension == 'jpg' || item.extension == 'png' || item.extension == 'gif') controllerFilesImage.value.push(item);
+            else if (item.extension == 'mp3' || item.extension == 'ogg') controllerFilesSound.value.push(item);
+            else if (item.extension == 'mp4') controllerFilesVideo.value.push(item);
+            else if (item.extension == 'pdf' || item.extension == 'txt') controllerFilesPDF.value.push(item);
+            else if (item.extension == 'zip' || item.extension == 'rar' || item.extension == '7z') controllerFilesZIP.value.push(item);
+            else controllerFilesOther.value.push(item);
         }
-        console.log(controllerFiles);
     }
 }
 
