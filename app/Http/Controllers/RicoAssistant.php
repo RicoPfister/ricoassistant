@@ -75,6 +75,7 @@ class RicoAssistant extends Controller {
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
             ->pluck('db_name');
+
             $db_name = $form_section_name [0].'Data';
 
             // get tag groups
@@ -82,7 +83,9 @@ class RicoAssistant extends Controller {
             ->where('basic_id', '=', $request->basic_id)
             ->where('section_table', '=', $section_id)
             ->get()
-            ->groupBy('tag_id');
+            ->groupBy(['section_table_id', 'tag_id']);
+
+            // ->groupBy();
 
             // dd($tag_rawdata);
 
@@ -90,38 +93,59 @@ class RicoAssistant extends Controller {
 
                 // tag array definition
                 $detail[$db_name]['tag'] = [];
+
                 $i = 0;
-
-                // create tag groups content
+                // create tag groups per file content
                 foreach ($tag_rawdata as $key => $value) {
-                    $detail[$db_name]['tag'][$i] = [];
+
                     // dd($value);
-                    // array_push($detail['statementData']['tag'], []);
 
+                    $detail[$db_name]['tag'][$i] = [];
+                    $i2 = 0;
+                    // create tag groups content
                     foreach ($value as $key2 => $value2) {
-                        // dd($value2);
-                        if ($value2->tag_table == 1) $tag_table = 'tag_categories';
-                        if ($value2->tag_table == 2) $tag_table = 'tag_contexts';
-                        if ($value2->tag_table == 3) $tag_table = 'tag_values';
-                        if ($value2->tag_table == 4) $tag_table = 'tag_details';
-
-                        $value2->content= DB::table($tag_table)
-                        ->where('id', '=', $value2->tag_table_id)
-                        ->pluck('content')[0];
 
                         // dd($value2);
 
+                        // dd($value);
+                        // array_push($detail['statementData']['tag'], []);
 
 
-                        // array_push($value2, ['test' => 123]);
-                        array_push($detail[$db_name]['tag'][$i], $value2);
-                    }
-                    // $detail['statementData']['tag'].push()
-                    $i++;
+                        $detail[$db_name]['tag'][$i][$i2] = [];
+                        foreach ($value2 as $key3 => $value3) {
+
+                            // dd($value3);
+
+
+
+                            // dd($detail);
+                            // dd($value2);
+                            if ($value3->tag_table == 1) $tag_table = 'tag_categories';
+                            if ($value3->tag_table == 2) $tag_table = 'tag_contexts';
+                            if ($value3->tag_table == 3) $tag_table = 'tag_values';
+                            if ($value3->tag_table == 4) $tag_table = 'tag_details';
+
+                            $tag_group_content = DB::table($tag_table)
+                            ->where('id', '=', $value3->tag_table_id)
+                            ->pluck('content')[0];
+
+                            // dd($detail);
+
+                            // array_push($value2, ['test' => 123]);
+                            array_push($detail[$db_name]['tag'][$i][$i2], $tag_group_content);
+
+                        }
+                        // dd($detail);
+                        $i2++;
+                        // $detail['statementData']['tag'].push()
+
+                        }
+                        $i++;
                 }
+                // dd($detail);
                 return $detail[$db_name]['tag'];
             }
-            // dd($detail);
+
         }
 
         function detail_reference_parents($detail, $request, $section_id) {

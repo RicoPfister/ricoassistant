@@ -68,27 +68,13 @@
 <!-- console.log('ok'); -->
 
 <div v-if="typeof detailData?.sourceData?.files !== 'undefined'">
+    <div class="font-bold mt-2 bg-black text-white w-full">Source</div>
 
-<!-- get tag list -->
-<div class="font-bold">Tags:</div>
-    <div v-if="typeof detailData?.sourceData.tag !== 'undefined'" class="flex flex-row">
-        <div v-for="(item, index) in detailData.sourceData.tag">
 
-            <!-- {{ item }} -->
 
-            <div class="flex fle-row">
-                <div v-for="(item2, index2) in item">
-                    <!-- {{  item2['content'] }} -->
-                    {{ index2 == 0 ? '@' + item2['content'] : index2 < 4 ? ':' + item2['content'] : '' }}
-
-                </div>
-                <div>&nbsp;</div>
-            </div>
-        </div>
-    </div>
 
     <!-- get reference parents -->
-    <div class="font-bold mt-2">Reference Parents:</div>
+    <div class="font-bold mt-2 bg-gray-300 w-full mb-1">Reference Parents</div>
     <div v-if="typeof detailData?.sourceData?.reference_parents !== 'undefined'" class="flex flex-col">
         <!-- {{ detailData?.sourceData.reference_parents['title'] }} -->
         <div class="flex flex-row">
@@ -114,37 +100,41 @@
 
     <!-- {{ detailData.sourceData.files }} -->
 
-    <!-- image viewer -->
-    <div class="flex flex-col">
-        <div v-for="(item, index) in controllerFilesImage">
-            <div v-if="index == 0" class="mt-2"><b>Images:</b> [{{ controllerFilesImage.length }}]</div>
-            <div class="relative border">
-                <img class="w-fit max-w-full" ref="fullscreen" :src="'/storage/inventory/' + item.path" />
-
-                <!-- image menu bar -->
-                <div>
-
-                <!-- index number -->
-                <div class="absolute bottom-0 left-0 m-2">
-                    1
-                </div>
-
-                <!-- full screen button -->
-                <div class="absolute bottom-0 right-0 m-2">
-                    <button v-if="volumeActive == 0" @click.prevent="openFullscreen" class="w-5 h-5 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-7 -mt-[0px]">
-                            <path fill-rule="evenodd" d="M15 3.75a.75.75 0 01.75-.75h4.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V5.56l-3.97 3.97a.75.75 0 11-1.06-1.06l3.97-3.97h-2.69a.75.75 0 01-.75-.75zm-12 0A.75.75 0 013.75 3h4.5a.75.75 0 010 1.5H5.56l3.97 3.97a.75.75 0 01-1.06 1.06L4.5 5.56v2.69a.75.75 0 01-1.5 0v-4.5zm11.47 11.78a.75.75 0 111.06-1.06l3.97 3.97v-2.69a.75.75 0 011.5 0v4.5a.75.75 0 01-.75.75h-4.5a.75.75 0 010-1.5h2.69l-3.97-3.97zm-4.94-1.06a.75.75 0 010 1.06L5.56 19.5h2.69a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75v-4.5a.75.75 0 011.5 0v2.69l3.97-3.97a.75.75 0 011.06 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-
-                </div>
 
 
-            </div>
-        </div>
+    <SourceImage v-if="controllerFilesImage.length > 0" :detail="props.detail" :controllerFilesImage="controllerFilesImage" :volumeActive="volumeActive"/>
 
-    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- music player -->
     <div class="flex flex-col">
@@ -163,7 +153,7 @@
 
     <!-- video player -->
     <div class="flex flex-col">
-        <div v-for="(item, index) in controllerFilesVideo" class="h-96">
+        <div v-for="(item, index) in controllerFilesVideo" class="h-96 mb-7">
             <div v-if="index == 0" class="mt-2"><b>Videos:</b>[{{ controllerFilesVideo.length }}]</div>
 
 
@@ -339,6 +329,7 @@
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue'
+import SourceImage from '../Components/Detail/Source/Images.vue'
 
 const props = defineProps(['detail']);
 
@@ -369,7 +360,7 @@ let audioControlData = ref();
 let currentTime = ref(0);
 let currentTimeTotal = ref(0);
 let slider = ref();
-let fullscreen = ref();
+let fullscreen = {'image': ref()};
 
 onMounted(() => {
     console.log(audioControl.value);
@@ -440,7 +431,9 @@ function controller_collection_processing() {
     // console.log(audioControlData2?.value[0]?.readyState);
 
     detailData.value = props?.detail;
-    // console.log(detailData.value.sourceData.files)
+    // console.log(props.detail.sourceData.files);
+
+
 
     if (props?.detail?.sourceData?.files) {
         // console.log('ok');
@@ -617,14 +610,13 @@ function humanTime(d) {
   }
 
 //   fullscreen function
-function openFullscreen() {
+// function openFullscreen() {
 
-    console.log(navigator.userAgent );
-    console.log(fullscreen.value);
+//     console.log(navigator.userAgent );
+//     console.log(fullscreen.image.value);
 
-    fullscreen.value[0].requestFullscreen();
-    // fullscreen.value.requestFullscreen();
+//     fullscreen.image.value[0].requestFullscreen();
 
-}
+// }
 
 </script>
