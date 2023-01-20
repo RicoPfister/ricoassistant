@@ -1,9 +1,8 @@
 <template>
 
-<div class="flex flex-col">
-    <div v-for="(item, index) in controllerFilesVideo" class="h-96 mb-7">
-        <div v-if="index == 0" class="mt-2"><b>Videos:</b>[{{ controllerFilesVideo.length }}]</div>
-
+<div class="flex flex-col h-fit">
+    <div v-for="(item, index) in props.video" class="">
+        <div v-if="index == 0" class="mt-2"><b>Videos:</b>[{{ props.video.length }}]</div>
 
             <div ref="fullscreen" class="w-fit max-w-full">
 
@@ -11,7 +10,7 @@
 
                 <div class="relative" @mouseover="videoOverlay = 1" @mouseleave="videoOverlay = 0">
                     <video class="w-full" ref="audioControl" @loadedmetadata="audioControlFunction('loadedmetadata')" @timeupdate="audioControlFunction('timeupdate')" disablePictureInPicture >
-                        <source :src="'/storage/inventory/' + item.path" type="video/mp4">
+                        <source :src="'/storage/inventory/' + item.item.path" type="video/mp4">
                         <!-- <source src="test.mp4" type="video/mp4"></source> -->
                         Your browser does not support the video tag.
                     </video>
@@ -59,10 +58,10 @@
                         </svg>
                     </button>
 
-                    <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ humanTime(currentTime) }}</div>
+                    <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ Date.humanTime(currentTime) }}</div>
 
                     <!-- custom html slider -->
-                    <div @change.prevent="videoControlAction('slider')" class="relative slidecontainer flex items-center ml-1 h-full w-5 mt-[2px]">
+                    <div @change.prevent="videoControlAction('slider')" class="relative slidecontainer flex items-center ml-1 w-5 mt-[2px]">
                         <input ref="slider" type="range" min="0" max="100" value="0" class="slider w-5 z-20" id="myRange">
                         <div class="absolute w-full pointer-events-none z-10">
                             <div class="bg-gray-300 h-[4px] pointer-events-none w-full"></div>
@@ -71,19 +70,16 @@
                         </div>
                     </div>
 
-                    <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ humanTime(audioControlData?.[0]?.duration)}}</div>
+                    <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ Date.humanTime(audioControlData?.[0]?.duration)}}</div>
 
                     <!-- fullscreen button -->
-                    <button v-if="volumeActive == 0" @click.prevent="openFullscreen" class="w-10 h-5 ml-1 flex items-center">
+                    <button v-if="volumeActive == 0" @click.prevent="openFullscreen(index)" class="w-10 h-5 ml-1 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-7 -mt-[0px]">
                             <path fill-rule="evenodd" d="M15 3.75a.75.75 0 01.75-.75h4.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V5.56l-3.97 3.97a.75.75 0 11-1.06-1.06l3.97-3.97h-2.69a.75.75 0 01-.75-.75zm-12 0A.75.75 0 013.75 3h4.5a.75.75 0 010 1.5H5.56l3.97 3.97a.75.75 0 01-1.06 1.06L4.5 5.56v2.69a.75.75 0 01-1.5 0v-4.5zm11.47 11.78a.75.75 0 111.06-1.06l3.97 3.97v-2.69a.75.75 0 011.5 0v4.5a.75.75 0 01-.75.75h-4.5a.75.75 0 010-1.5h2.69l-3.97-3.97zm-4.94-1.06a.75.75 0 010 1.06L5.56 19.5h2.69a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75v-4.5a.75.75 0 011.5 0v2.69l3.97-3.97a.75.75 0 011.06 0z" clip-rule="evenodd" />
                         </svg>
                     </button>
                 </div>
             </div>
-
-
-
     </div>
 </div>
 
@@ -117,6 +113,7 @@
   height: 12px;
   border-radius: 0;
   border: none;
+  top: 0;
   background: #000000;
   cursor: pointer;
   position: absolute;
@@ -127,6 +124,7 @@
   height: 12px;
   border-radius: 0;
   border: none;
+  top: 0;
   background: #000000;
   cursor: pointer;
   position: absolute;
@@ -137,13 +135,17 @@
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 
+import * as Date from '../../../Scripts/date.js'
+
+const props = defineProps(['video']);
+
 let audioControl = ref();
 let playPauseStatus = ref(0);
 let audioControlData = ref();
 let currentTime = ref(0);
 let currentTimeTotal = ref(0);
 let slider = ref();
-let fullscreen = {'image': ref()};
+let fullscreen = ref();
 
 let IndexSubHeadingOpen = ref([]);
 let indexMenuOpen = ref(0);
@@ -159,10 +161,10 @@ currentTimeTotal.value = audioControl.value[0].currentTime;
 
 // change current time to new value bases on user selection
 currentTimeTotal.value += command;
-console.log(command);
+// console.log(command);
 
-console.log(currentTimeTotal.value);
-console.log(audioControlData.value[0].duration);
+// console.log(currentTimeTotal.value);
+// console.log(audioControlData.value[0].duration);
 
 if (currentTimeTotal.value > audioControlData.value[0].duration) {
     currentTimeTotal.value = audioControlData.value[0].duration;
@@ -219,10 +221,10 @@ if (command == 'mute') {
 
 if (command == 'playPause') {
 
-    console.log(currentTime.value);
-    console.log(currentTimeTotal.value);
-    console.log(audioControlData.value[0].duration);
-    console.log(playPauseStatus.value);
+    // console.log(currentTime.value);
+    // console.log(currentTimeTotal.value);
+    // console.log(audioControlData.value[0].duration);
+    // console.log(playPauseStatus.value);
 
     console.log(playPauseStatus.value);
 
@@ -307,25 +309,15 @@ else if (command == 'timeupdate') {
 }
 
 // console.log(audioControlData.value);
+
+
+}
+
+function openFullscreen(data) {
+    fullscreen.value[data].requestFullscreen();
 }
 
 
 
-
-
-
-
-function humanTime(d) {
-
-var h = Math.floor(d / 3600);
-var m = Math.floor((d % 3600) / 60);
-var s = Math.floor((d % 3600) % 60);
-
-var hDisplay = h + ":";
-var mDisplay = m.toString().padStart(2, '0') + ":";
-var sDisplay = s.toString().padStart(2, '0');
-
-return hDisplay + mDisplay + sDisplay;
-}
 
 </script>

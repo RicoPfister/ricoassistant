@@ -23,11 +23,11 @@
     <div class="font-bold mt-2 bg-black text-white w-full">Source</div>
 
     <!-- media list -->
-    <SourceMediaList :detailData="detailData"/>
+    <SourceMediaList :detailData="detailData" />
 
     <!-- Lists -->
-    <TagList :tag="props.detail.sourceData.tag"/>
-    <ReferenceList :reference="props.detail.sourceData"/>
+    <TagList :tag="props.detail.sourceData.tag" />
+    <ReferenceList :reference="props.detail.sourceData" />
 </div>
 
 </template>
