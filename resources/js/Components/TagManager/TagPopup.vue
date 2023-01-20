@@ -34,7 +34,7 @@
             </button>
 
             <!-- add tag dropdown -->
-            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 2}" @click="categoryPopupOpen = !categoryPopupOpen; popupId = 2" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 2}" @click="categoryPopupActive" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between">
 
                     <div class="flex flex-row">
@@ -46,7 +46,8 @@
                             </svg>
                         </div>
 
-                        <div class="ml-1">Single</div>
+                        <div v-if="(props?.fromController?.tagCollection.length > 0)" class="ml-1">Single</div>
+                        <div v-else class="ml-1">Create</div>
                     </div>
 
                     <div class="">
@@ -397,6 +398,21 @@ function tagPresetPopupFunction() {
     categoryPopupOpen.value = !categoryPopupOpen.value;
     popupId.value = 1;
 }
+
+function categoryPopupActive() {
+
+
+    if (props.fromController.tagCollection.length > 0) {
+        console.log('ok');
+        categoryPopupOpen.value = !categoryPopupOpen.value;
+        popupId.value = 2;
+    } else {
+        tagSelection.value = [['', '']];
+        keyid.value++;
+    }
+
+}
+
 
 </script>
 

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Redirect;
 use Illuminate\Http\Request;
+// use Illuminate\Http\Response;
 use Illuminate\Http\Post;
+use Symfony\Component\HttpFoundation\Response;
 // use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +64,7 @@ class RicoAssistant extends Controller {
     public function detail(Request $request) {
 
         // dd($request);
+        // dd($request);
 
         $user = Auth::user();
 
@@ -72,6 +75,7 @@ class RicoAssistant extends Controller {
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
             ->pluck('db_name');
+
             $db_name = $form_section_name [0].'Data';
 
             // get tag groups
@@ -79,7 +83,9 @@ class RicoAssistant extends Controller {
             ->where('basic_id', '=', $request->basic_id)
             ->where('section_table', '=', $section_id)
             ->get()
-            ->groupBy('tag_id');
+            ->groupBy(['section_table_id', 'tag_id']);
+
+            // ->groupBy();
 
             // dd($tag_rawdata);
 
@@ -87,38 +93,59 @@ class RicoAssistant extends Controller {
 
                 // tag array definition
                 $detail[$db_name]['tag'] = [];
+
                 $i = 0;
-
-                // create tag groups content
+                // create tag groups per file content
                 foreach ($tag_rawdata as $key => $value) {
-                    $detail[$db_name]['tag'][$i] = [];
+
                     // dd($value);
-                    // array_push($detail['statementData']['tag'], []);
 
+                    $detail[$db_name]['tag'][$i] = [];
+                    $i2 = 0;
+                    // create tag groups content
                     foreach ($value as $key2 => $value2) {
-                        // dd($value2);
-                        if ($value2->tag_table == 1) $tag_table = 'tag_categories';
-                        if ($value2->tag_table == 2) $tag_table = 'tag_contexts';
-                        if ($value2->tag_table == 3) $tag_table = 'tag_values';
-                        if ($value2->tag_table == 4) $tag_table = 'tag_details';
-
-                        $value2->content= DB::table($tag_table)
-                        ->where('id', '=', $value2->tag_table_id)
-                        ->pluck('content')[0];
 
                         // dd($value2);
 
+                        // dd($value);
+                        // array_push($detail['statementData']['tag'], []);
 
 
-                        // array_push($value2, ['test' => 123]);
-                        array_push($detail[$db_name]['tag'][$i], $value2);
-                    }
-                    // $detail['statementData']['tag'].push()
-                    $i++;
+                        $detail[$db_name]['tag'][$i][$i2] = [];
+                        foreach ($value2 as $key3 => $value3) {
+
+                            // dd($value3);
+
+
+
+                            // dd($detail);
+                            // dd($value2);
+                            if ($value3->tag_table == 1) $tag_table = 'tag_categories';
+                            if ($value3->tag_table == 2) $tag_table = 'tag_contexts';
+                            if ($value3->tag_table == 3) $tag_table = 'tag_values';
+                            if ($value3->tag_table == 4) $tag_table = 'tag_details';
+
+                            $tag_group_content = DB::table($tag_table)
+                            ->where('id', '=', $value3->tag_table_id)
+                            ->pluck('content')[0];
+
+                            // dd($detail);
+
+                            // array_push($value2, ['test' => 123]);
+                            array_push($detail[$db_name]['tag'][$i][$i2], $tag_group_content);
+
+                        }
+                        // dd($detail);
+                        $i2++;
+                        // $detail['statementData']['tag'].push()
+
+                        }
+                        $i++;
                 }
+                // dd($detail);
                 return $detail[$db_name]['tag'];
             }
-            // dd($detail);
+
         }
 
         function detail_reference_parents($detail, $request, $section_id) {
@@ -132,14 +159,17 @@ class RicoAssistant extends Controller {
             // get reference parents data
             // dd($detail['basicData']['id']);
 
+            // $detail[$db_name]['reference_parents'] = [];
+
             $i = 0;
+            $basic_ref = $detail['basicData']['id'];
             do {
 
                 // dd($detail);
 
                 // get reference id
                 $reference_id = DB::table('refs')
-                ->where('basic_id', '=', $detail['basicData']['id'])
+                ->where('basic_id', '=', $basic_ref)
                 // ->join('section_basic', 'section_basic.id', '=', )
                 ->get();
 
@@ -169,7 +199,9 @@ class RicoAssistant extends Controller {
 
                     // dd($section_id);
 
-                    $detail[$db_name]['reference_parents'] = $_reference_parents_id[0];
+                    // dd($_reference_parents_id);
+
+                    $detail['reference_parents'][$i] = $_reference_parents_id[0];
 
                     // dd($detail[$db_name]['reference_parents']);
 
@@ -178,7 +210,7 @@ class RicoAssistant extends Controller {
 
                     // dd($reference_id[0]->basic_ref);
 
-                    $detail['basicData']['id'] = $reference_id[0]->basic_ref;
+                    $basic_ref = $reference_id[0]->basic_ref;
 
 
                 }
@@ -187,7 +219,7 @@ class RicoAssistant extends Controller {
             } while (count($reference_id) > 0);
 
             // dd($detail[$db_name]['reference_parents'][1]);
-            if (isset($detail[$db_name]['reference_parents'])) return $detail[$db_name]['reference_parents'];
+            if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
         function detail_reference_children($detail, $request, $section_id) {
@@ -201,6 +233,7 @@ class RicoAssistant extends Controller {
             $db_name = $form_section_name [0].'Data';
 
             // dd($request->basic_id);
+            // dd($form_section_name);
 
             // get reference children data
             $reference_children_id = DB::table('refs')
@@ -219,10 +252,9 @@ class RicoAssistant extends Controller {
                 ->get();
 
                 // dd($reference_children_title);
+                // dd($detail);
 
-
-
-                $detail[$db_name]['reference_children'][$key] = $reference_children_title;
+                $detail_reference_children[$key] = $reference_children_title;
                 // $detail[$db_name]['reference_children'][0]->put('test', 123);
                 // $detail[$db_name]['reference_children'][0]['test'] = [123];
                 // dd($value->ref_db_index);
@@ -230,7 +262,7 @@ class RicoAssistant extends Controller {
 
                 // check and get activity data
                 if ($value->ref_db_id == 4) {
-                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_activities')
+                    $detail_reference_children[$key][0]->ref_id = DB::table('section_activities')
                     ->where('id', '=', $value->ref_db_index)
                     ->get();
 
@@ -238,22 +270,24 @@ class RicoAssistant extends Controller {
 
                 else if ($value->ref_db_id == 3) {
                     // check and get source data
-                    $detail[$db_name]['reference_children'][$key][0]->ref_id = DB::table('section_sources')
+                    $detail_reference_children[$key][0]->ref_id = DB::table('section_sources')
                     ->where('basic_id', '=', $value->ref_db_index)
                     ->get();
 
                 }
 
-                $detail[$db_name]['reference_children'][$key][0]->ref_db_id = $value->ref_db_id;
+                $detail_reference_children[$key][0]->ref_db_id = $value->ref_db_id;
 
                 // dd($form_section_name);
                 // dd($detail[$db_name]['reference_children'][$key][0]);
 
                 $ref_db_name  = DB::table('index_databases')
-                ->where('id', '=', $detail[$db_name]['reference_children'][$key][0]->ref_db_id)
+                ->where('id', '=', $detail_reference_children[$key][0]->ref_db_id)
                 ->pluck('db_name');
 
-                $detail[$db_name]['reference_children'][$key][0]->ref_db_name = $ref_db_name[0];
+                // dd($ref_db_name[0]);
+
+                $detail_reference_children[$key][0]->ref_db_name = $ref_db_name[0];
                 // $detail[$db_name]['reference_children'][0][0][1] = 123;
                 // dd($detail);
                 // array_push($detail[$db_name]['reference_children'][1][$key], ['test' => 123]);
@@ -261,7 +295,9 @@ class RicoAssistant extends Controller {
                 // dd($detail[$db_name]['reference_children'][1]);
             };
 
-            if (isset($detail[$db_name]['reference_children'])) return $detail[$db_name]['reference_children'];
+            // dd($detail_reference_children[$key]);
+            // dd($detail_reference_children);
+            if (isset($detail_reference_children)) return $detail_reference_children;
         }
 
         // create basic collection
@@ -347,7 +383,7 @@ class RicoAssistant extends Controller {
         ->get();
 
         if (count($detail_source) > 0) {
-            $detail['sourceData'] = $detail_source;
+            $detail['sourceData']['files'] = $detail_source;
 
             $db_section_id = 3;
 
@@ -380,6 +416,8 @@ class RicoAssistant extends Controller {
         // dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
+
+        // return Inertia::render('TabManager/TabManager', ['detail' => $detail])->toResponse($request)->setStatusCode(206);;
     }
 
     // store
