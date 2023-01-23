@@ -349,7 +349,7 @@ class RicoAssistant extends Controller {
             if (isset($detail_tag_collection)) {
 
                 foreach ($detail_tag_collection as $key => $value) {
-                    $detail['statementData']['tag'] = $value;
+                    $detail['statementData']['tag'][0] = $value;
                 }
             }
 
@@ -375,20 +375,42 @@ class RicoAssistant extends Controller {
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
+        // dd($detail_activity);
+
         if (count($detail_activity) > 0) {
             $detail['activityData']['activityTime'] = $detail_activity;
 
             $db_section_id = 4;
 
-            $detail_tag_collection = detail_tag($request, $db_section_id);
+            $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
 
             // dd($detail_tag_collection);
 
+            // dd($detail_tag_collection, $detail_source);
+            // dd(array_key_exists(3, $detail_tag_collection[0]));
+
+
             if (isset($detail_tag_collection)) {
-                $detail['activityData']['tag'] = $detail_tag_collection;
+
+                foreach ($detail_activity as $key => $value) {
+                    // dd($key);
+                    // dd($value);
+
+
+
+                        if (array_key_exists($value->id, $detail_tag_collection)) {
+                            $detail['activityData']['tag'][$key] = $detail_tag_collection[$value->id];
+                        }
+
+
+                }
             }
 
             // dd('ok');
+
+            $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
+
+            // dd($detail_tag_collection);
 
             $detail_reference_parents_collection = detail_reference_parents($detail, $request, $db_section_id);
             // dd($detail_reference_parents_collection);
@@ -473,7 +495,7 @@ class RicoAssistant extends Controller {
 
         // dd($section_collection);
 
-        // dd($detail);
+        dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
 
@@ -505,7 +527,7 @@ class RicoAssistant extends Controller {
 
             foreach ($request->$db_name['tag'][$index] as $key => $value) {
 
-                // dd($value);
+                // dd($value[0]);
 
                 $content_check = DB::table('tag_categories')
                 ->where('content', '=', $value[0])
@@ -514,10 +536,12 @@ class RicoAssistant extends Controller {
                 // dd($content_check);
                 // dd($value);
 
-                // check data availability and db uniqueness and store tag category
+                // check data availability. db uniqueness and store tag category
                 if (isset ($value[0])) {
 
                     // dd('ok');
+
+                    // dd($content_check);
 
                     if (count($content_check) > 0) {
                         // dd('ok');
@@ -748,7 +772,7 @@ class RicoAssistant extends Controller {
                     // dd($request->activityData['tag']);
                     if (isset($request->activityData['tag'])) {
                         // dd($db_name);
-                        tagData($request, $i, $basics, $db_section_id, $db_section_id, $db_name);
+                        tagData($request, $i, $basics, $activites->id, $db_section_id, $db_name);
 
                         // $request, $index, $basics, $id2, $db_name, $db_section_id
                     }
