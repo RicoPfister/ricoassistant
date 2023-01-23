@@ -177,85 +177,59 @@ class RicoAssistant extends Controller {
             ->pluck('db_name');
             $db_name = $form_section_name [0].'Data';
 
-            // get reference parents data
-            // dd($detail['basicData']['id']);
-
-            // $detail[$db_name]['reference_parents'] = [];
-
             $i = 0;
             $basic_ref = $detail['basicData']['id'];
-            do {
 
+            // get reference id
+            $reference_id = DB::table('refs')
+            ->where('basic_id', '=', $basic_ref)
+            // ->join('section_basic', 'section_basic.id', '=', )
+            ->get();
 
-                // dd($detail);
+            // dd($reference_id);
 
-                // get reference id
-                $reference_id = DB::table('refs')
-                ->where('basic_id', '=', $basic_ref)
-                // ->join('section_basic', 'section_basic.id', '=', )
-                ->get()
-                ->groupBy(['ref_db_index']);
+            // if (count(reference_id) > 0) {
 
-                // dd($reference_id);
-                // dd(count($reference_id));
-                // dd($reference_id[0]->id);
+                foreach ($reference_id as $key => $value) {
 
-                // get all reference content data until main entry
-                if (count($reference_id) > 0) {
+                    // dd($key);
+                    // dd($value);
 
-                    // $detail[$db_name]['reference_parents'] = [];
-                    // // dd($detail[$db_name]['reference_parents'] );
-                    // $detail[$db_name]['reference_parents'][1] = [];
-                    // $detail[$db_name]['reference_parents'][1][$i] = [];
-
-                    // dd($detail['statementData']['reference'][0]->id);
-
-                    $i2 = 0;
-                    foreach ($reference_id as $key => $value) {
-
-                        // dd($key);
-                        // dd($value);
-
+                    $i = 0;
+                    do {
                         $_reference_parents_id = DB::table('section_basics')
-                        ->where('id', '=', $value[0]->basic_ref)
+                        ->where('id', '=', $value->basic_ref)
                         ->get();
 
-                        // if (isset($_reference_parents_id)){
-
                         // dd($_reference_parents_id);
 
-                        // $detail[$db_name]['reference_parents'] = [];
+                        $detail['reference_parents'][$key][$i] = $_reference_parents_id[0];
+                        // dd($detail);
+                        $i++;
 
-                        // dd($section_id);
+                        // $value->
 
-                        // dd($_reference_parents_id);
+                        $basic_ref = $value->basic_ref;
 
-                        $detail['reference_parents'][$i2][$i] = $_reference_parents_id[0];
-                        $i2++;
-                    }
+                        // dd($basic_ref);
 
-                    // dd($detail);
+                        $next_value = DB::table('refs')
+                        ->where('basic_id', '=', $basic_ref)
+                        // ->join('section_basic', 'section_basic.id', '=', )
+                        ->get();
+                        // dd($reference_id);
 
-                    // dd($detail[$db_name]['reference_parents']);
-
-                    // $detail[$db_name]['reference_children'][$key] = $reference_children_title;
-
-
-                    // dd($reference_id);
-
-                    dd($reference_id);
+                        if (count($next_value) > 0)  {
+                            $value = $next_value[0];
+                        }
 
 
-                        $basic_ref = $reference_id[0]->basic_ref;
+                        // dd($value);
+                        // dd(count($value) > 0);
 
-                    // dd($reference_id[0]->basic_ref);
+                    } while (count($next_value) > 0);
                 }
-                // dd($key);
-                $i++;
-                // dd(count($reference_id));
-            } while (count($reference_id) > 0);
-
-            dd($detail);
+            // }
             if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
@@ -511,7 +485,7 @@ class RicoAssistant extends Controller {
 
         // dd($section_collection);
 
-        dd($detail);
+        // dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
 

@@ -12,8 +12,9 @@
     <pre>{{ detailData?.statementData?.statement[0]?.statement }}</pre>
 
     <!-- Lists -->
-    <TagList :tag="props?.detail?.statementData?.tag"/>
-    <ReferenceList :reference="detailData.statementData"/>
+    <TagList v-if="props.detail.statementData.tag" :tag="props.detail.statementData.tag"/>
+    <ReferenceParentsList :reference="detailData.statementData"/>
+    <ReferenceChildrenList :reference="detailData.statementData"/>
 </div>
 
 <!-- *****section activity***** -->
@@ -22,12 +23,12 @@
     <!-- source title -->
     <div class="font-bold mt-2 bg-black text-white w-full">Activity</div>
 
-    <!-- media list -->
-    <ActivityList :detailData="detailData" />
+    <!-- time list -->
+    <ActivityList :detailData="detailData.activityData" />
 
     <!-- Lists -->
-    <TagList :tag="props.detail.activityData.tag" />
-    <ReferenceList :reference="props.detail.activityData" />
+    <TagList v-if="props.detail.activityData.tag" :tag="props.detail.activityData.tag" />
+    <ReferenceChildrenList :reference="detailData.activityData"/>
 </div>
 
 <!-- *****section source***** -->
@@ -40,8 +41,9 @@
     <SourceMediaList :detailData="detailData" />
 
     <!-- Lists -->
-    <TagList :tag="props.detail.sourceData.tag" />
-    <ReferenceList :reference="props.detail.sourceData" />
+    <TagList v-if="props.detail.sourceData.tag" :tag="props.detail.sourceData.tag" />
+    <ReferenceParentsList :reference="detailData.sourceData"/>
+    <ReferenceChildrenList :reference="detailData.sourceData"/>
 </div>
 
 </template>
@@ -51,7 +53,8 @@
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue';
 import SourceMediaList from '../Components/Detail/Source/MediaList.vue';
-import ReferenceList from '../Components/Detail/ReferenceList.vue';
+import ReferenceChildrenList from '../Components/Detail/ReferenceChildrenList.vue';
+import ReferenceParentsList from '../Components/Detail/ReferenceParentsList.vue';
 import TagList from '../Components/Detail/TagList.vue';
 import ActivityList from '../Components/Detail/ActivityList.vue';
 

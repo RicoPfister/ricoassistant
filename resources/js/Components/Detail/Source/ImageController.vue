@@ -4,12 +4,12 @@
 <div class="flex flex-wrap mt-1 gap-1">
     <div v-for="(item, index) in props.image" class="">
 
-        <div @mouseover="overlayIsOpen = 1" @mouseleave="overlayIsOpen = 0" class="relative border-2 h-36">
+        <div @mouseover="overlayIsOpen[index] = 1" @mouseleave="overlayIsOpen[index] = 0" class="relative border-2 h-36">
 
             <img class="w-[214px] max-h-full" ref="fullscreen" :src="'/storage/inventory/' + item.item.path" />
 
             <!-- overlay menu -->
-            <div v-if="overlayIsOpen">
+            <div v-if="overlayIsOpen[index]">
                 <!-- index indicator -->
                 <div class="absolute bottom-0 left-0 bg-black text-white m-2 p-1 leading-none">
                     {{ item.index+1 }}
@@ -37,7 +37,7 @@ import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted
 const props = defineProps(['image']);
 
 let fullscreen = ref();
-let overlayIsOpen = ref(0);
+let overlayIsOpen = ref([0]);
 
 //   fullscreen function
 function openFullscreen(data) {
