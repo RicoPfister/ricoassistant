@@ -1,12 +1,12 @@
 <template>
 
-<div class="border-black border-b-2 font-bold mt-2">Image Preview (if available)</div>
+<div class="mt-2"><b>PDFs:</b>[{{ document.length }}]</div>
 <div class="flex flex-wrap mt-1 gap-1">
-    <div v-for="(item, index) in props.image" class="">
+    <div v-for="(item, index) in props.document" class="w-full">
 
-        <div @mouseover="overlayIsOpen = 1" @mouseleave="overlayIsOpen = 0" class="relative border-2 h-36">
+        <div @mouseover="overlayIsOpen = 1" @mouseleave="overlayIsOpen = 0" class="relative border-2 h-96 w-full">
 
-            <img class="w-[214px] max-h-full" ref="fullscreen" :src="'/storage/inventory/' + item.item.path" />
+            <iframe class="w-full h-full" ref="fullscreen" :src="'/storage/inventory/' + item.item.path"></iframe>
 
             <!-- overlay menu -->
             <div v-if="overlayIsOpen">
@@ -34,7 +34,7 @@
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 
-const props = defineProps(['image']);
+const props = defineProps(['document']);
 
 let fullscreen = ref();
 let overlayIsOpen = ref(0);

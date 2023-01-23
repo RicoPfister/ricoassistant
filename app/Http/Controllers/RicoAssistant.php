@@ -69,7 +69,11 @@ class RicoAssistant extends Controller {
         $user = Auth::user();
 
         // get detail tags
-        function detail_tag($request, $section_id) {
+        function detail_tag($basic_id, $section_id) {
+
+            // dd($detail);
+            // dd($basic_id);
+            // dd($section_content);
 
             // get database name based on section id
             $form_section_name  = DB::table('index_databases')
@@ -80,7 +84,7 @@ class RicoAssistant extends Controller {
 
             // get tag groups
             $tag_rawdata = DB::table('tags')
-            ->where('basic_id', '=', $request->basic_id)
+            ->where('basic_id', '=', $basic_id)
             ->where('section_table', '=', $section_id)
             ->get()
             ->groupBy(['section_table_id', 'tag_id']);
@@ -92,7 +96,6 @@ class RicoAssistant extends Controller {
             if (count($tag_rawdata) > 0) {
 
                 // tag array definition
-                $detail[$db_name]['tag'] = [];
 
                 $i = 0;
                 // create tag groups per file content
@@ -100,7 +103,7 @@ class RicoAssistant extends Controller {
 
                     // dd($value);
 
-                    $detail[$db_name]['tag'][$i] = [];
+                    // $detail[$db_name]['tag'][$i] = [];
                     $i2 = 0;
                     // create tag groups content
                     foreach ($value as $key2 => $value2) {
@@ -110,11 +113,12 @@ class RicoAssistant extends Controller {
                         // dd($value);
                         // array_push($detail['statementData']['tag'], []);
 
+                        $detail[$db_name]['tag'][$key][$i2] = [];
 
-                        $detail[$db_name]['tag'][$i][$i2] = [];
                         foreach ($value2 as $key3 => $value3) {
 
                             // dd($value3);
+                            // dd($key);
 
 
 
@@ -131,8 +135,25 @@ class RicoAssistant extends Controller {
 
                             // dd($detail);
 
-                            // array_push($value2, ['test' => 123]);
-                            array_push($detail[$db_name]['tag'][$i][$i2], $tag_group_content);
+                            // tag push to dedicated collection
+
+                            // dd($detail);
+                            // dd($db_name == 'sourceData');
+                            // dd($detail[$db_name]['files'][0]);
+
+                            // if ($db_name == 'sourceData') {
+                            //     $detail[$db_name]['files'][0]->test = 123;
+                            // }
+
+
+                                // if (!issset($detail[$db_name]['tag'])) $detail[$db_name]['tag'] = [];
+                                // dd($section_content[$i2]->id, $value3->section_table_id);
+
+                                // if ($section_content[$i2]->id == $value3->section_table_id) array_push($detail[$db_name]['tag'][$i][$i2], $tag_group_content);
+
+                                // if (array_key_exists($value3->section_table_id, $section_content)) {
+                                array_push($detail[$db_name]['tag'][$key][$i2], $tag_group_content);
+                                // }
 
                         }
                         // dd($detail);
@@ -203,6 +224,8 @@ class RicoAssistant extends Controller {
 
                     $detail['reference_parents'][$i] = $_reference_parents_id[0];
 
+                    // dd($detail);
+
                     // dd($detail[$db_name]['reference_parents']);
 
                     // $detail[$db_name]['reference_children'][$key] = $reference_children_title;
@@ -212,13 +235,13 @@ class RicoAssistant extends Controller {
 
                     $basic_ref = $reference_id[0]->basic_ref;
 
-
+                    // dd($reference_id[0]->basic_ref);
                 }
 
                 $i++;
             } while (count($reference_id) > 0);
 
-            // dd($detail[$db_name]['reference_parents'][1]);
+            // dd($detail['reference_parents']);
             if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
@@ -319,10 +342,15 @@ class RicoAssistant extends Controller {
 
             $db_section_id = 2;
 
-            $detail_tag_collection = detail_tag($request, $db_section_id);
+            $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
+
+            // dd($detail_tag_collection);
 
             if (isset($detail_tag_collection)) {
-                $detail['statementData']['tag'] = $detail_tag_collection;
+
+                foreach ($detail_tag_collection as $key => $value) {
+                    $detail['statementData']['tag'] = $value;
+                }
             }
 
             // dd('ok');
@@ -382,24 +410,56 @@ class RicoAssistant extends Controller {
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
+        // dd($detail_source);
+
         if (count($detail_source) > 0) {
             $detail['sourceData']['files'] = $detail_source;
 
             $db_section_id = 3;
 
-            $detail_tag_collection = detail_tag($request, $db_section_id);
+            // dd($detail);
+
+            // fire 'create tags' function
+            $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
+
+            // dd($detail_tag_collection, $detail_source);
+            // dd(array_key_exists(3, $detail_tag_collection[0]));
+
 
             if (isset($detail_tag_collection)) {
-                $detail['sourceData']['tag'] = $detail_tag_collection;
+
+                foreach ($detail_source as $key => $value) {
+                    // dd($key);
+                    // dd($value);
+
+
+
+                        if (array_key_exists($value->id, $detail_tag_collection)) {
+                            $detail['sourceData']['tag'][$key] = $detail_tag_collection[$value->id];
+                        }
+
+
+                }
             }
+
+
+
+
+            // dd($detail);
+
+            // if (isset($detail_tag_collection)) {
+            //
+            // }
             // dd('ok');
 
+            // fire 'create parents reference' function
             $detail_reference_parents_collection = detail_reference_parents($detail, $request, $db_section_id);
             // dd($detail_reference_parents_collection);
             if (isset($detail_reference_parents_collection)) {
                 $detail['sourceData']['reference_parents'] = $detail_reference_parents_collection;
             }
 
+            // fire 'create children reference' function
             $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
             // dd($detail_reference_children_collection);
             if (isset($detail_reference_children_collection)) {
@@ -441,7 +501,11 @@ class RicoAssistant extends Controller {
 
             // dd($request, $index, $basics, $id2, $db_section_id, $db_name);
 
+            // dd($request->$db_name['tag']);
+
             foreach ($request->$db_name['tag'][$index] as $key => $value) {
+
+                // dd($value);
 
                 $content_check = DB::table('tag_categories')
                 ->where('content', '=', $value[0])
@@ -721,7 +785,7 @@ class RicoAssistant extends Controller {
 
                 // fire tag function
                 // dd($request->activityData['tag']);
-                if (isset($request->sourceData['tag'])) {
+                if (isset($request->sourceData['tag'][$index])) {
                     // dd($db_name);
                     tagData($request, $index, $basics, $sources->id, $db_section_id, $db_name);
                     // tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);

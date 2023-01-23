@@ -16,6 +16,20 @@
     <ReferenceList :reference="detailData.statementData"/>
 </div>
 
+<!-- *****section activity***** -->
+<div v-if="typeof detailData?.activityData !== 'undefined'">
+
+    <!-- source title -->
+    <div class="font-bold mt-2 bg-black text-white w-full">Activity</div>
+
+    <!-- media list -->
+    <ActivityList :detailData="detailData" />
+
+    <!-- Lists -->
+    <TagList :tag="props.detail.activityData.tag" />
+    <ReferenceList :reference="props.detail.activityData" />
+</div>
+
 <!-- *****section source***** -->
 <div v-if="typeof detailData?.sourceData !== 'undefined'">
 
@@ -37,8 +51,9 @@
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue';
 import SourceMediaList from '../Components/Detail/Source/MediaList.vue';
-import TagList from '../Components/Detail/TagList.vue';
 import ReferenceList from '../Components/Detail/ReferenceList.vue';
+import TagList from '../Components/Detail/TagList.vue';
+import ActivityList from '../Components/Detail/ActivityList.vue';
 
 const props = defineProps(['detail']);
 

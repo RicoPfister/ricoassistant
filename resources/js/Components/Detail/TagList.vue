@@ -5,7 +5,7 @@
     <div v-for="(item, index) in props.tag" class="flex flex-row flex-wrap">
 
         <!-- tag index -->
-        <div v-if="props.tag.length > 1" class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ index+1 }}</span> {{ item.path }}</div>
+        <div class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ parseInt(index)+1 }}</span> {{ item.path }}</div>
 
         <div v-for="(item2, index2) in item" class="mb-1 mr-1">
             <!-- tag groups -->

@@ -15,7 +15,7 @@
             <div v-for="(item2, index2) in controllerFiles[controllerFiles.listGroup[index]].value" :class="{'border-b border-gray-300': index != controllerFiles.image.length-1}" class="flex flex-col w-full">
                 <div class="flex flex-row justify-between w-full items-center">
 
-                    <div v-if="props?.detailData?.sourceData?.files.length > 1" class="flex items-center bg-black text-white h-[16px] px-1 font-bold w-fit text-sm mr-1">{{ item2.index+1 }}</div>
+                    <div class="flex items-center bg-black text-white h-[16px] px-1 font-bold w-fit text-sm mr-1">{{ item2.index+1 }}</div>
 
                     <div class="w-[24px]">
                         <TagList :check="index"/>
@@ -33,9 +33,9 @@
             </div>
         </div>
         <ImageController v-if="controllerFiles.image.value.length > 0" :image="controllerFiles.image.value"/>
-        <!-- <SoundController /> -->
+        <MusicController v-if="controllerFiles.music.value.length > 0" :music="controllerFiles.music.value"/>
         <VideoController v-if="controllerFiles.video.value.length > 0" :video="controllerFiles.video.value"/>
-        <!-- <DocumentController /> -->
+        <DocumentController v-if="controllerFiles.document.value.length > 0" :document="controllerFiles.document.value"/>
     </div>
 </div>
 
@@ -51,6 +51,8 @@ import TagList from '../TagIcons.vue';
 
 import ImageController from './ImageController.vue';
 import VideoController from './VideoController.vue';
+import DocumentController from './DocumentController.vue';
+import MusicController from './MusicController.vue';
 
 // import * as Fullscreen from '../../../Scripts/fullscreen.js'
 
@@ -65,12 +67,12 @@ const props = defineProps(['detailData']);
 
 let controllerFiles = {
     image: ref([]),
-    sound: ref([]),
+    music: ref([]),
     video: ref([]),
     document: ref([]),
     package: ref([]),
     other: ref([]),
-    listGroup: ['image', 'sound', 'video', 'document', 'package', 'other'],
+    listGroup: ['image', 'music', 'video', 'document', 'package', 'other'],
 }
 
 function controller_collection_processing() {
@@ -87,7 +89,7 @@ function controller_collection_processing() {
             // console.log(item.extension);
 
             if (item.extension == 'jpg' || item.extension == 'png' || item.extension == 'gif' || item.extension == 'webp') controllerFiles.image.value.push({'item': item, 'index': index});
-            else if (item.extension == 'mp3' || item.extension == 'ogg') controllerFiles.sound.value.push({'item': item, 'index': index});
+            else if (item.extension == 'mp3' || item.extension == 'ogg') controllerFiles.music.value.push({'item': item, 'index': index});
             else if (item.extension == 'mp4') controllerFiles.video.value.push({'item': item, 'index': index});
             else if (item.extension == 'pdf' || item.extension == 'txt') controllerFiles.document.value.push({'item': item, 'index': index});
             else if (item.extension == 'zip' || item.extension == 'rar' || item.extension == '7z') controllerFiles.package.value.push({'item': item, 'index': index});

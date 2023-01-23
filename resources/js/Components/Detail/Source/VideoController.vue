@@ -27,9 +27,14 @@
                             </svg>
                         </div>
                         <div @click.prevent="videoOverlayFunction(5)" class="flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">+5sec</div>
-                        <div @click.prevent="videoOverlayFunction(1800)" class="flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">+30min</div>
+                        <div @click.prevent="videoOverlayFunction(1800)"  class="relative flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">
+                            <div>+30min</div>
+                            <div class="absolute bottom-0 left-0 bg-black text-white m-2 p-1 leading-none">{{ item.index+1 }}</div>
+                        </div>
                         <div @click.prevent="videoOverlayFunction(600)" class="flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">+10min</div>
-                        <div @click.prevent="videoOverlayFunction(60)"  class="flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">+1min</div>
+                        <div @click.prevent="videoOverlayFunction(60)"  class="flex items-center justify-center bg-gray-50 opacity-50 hover:opacity-75" type="button">
+                            +1min
+                        </div>
                     </div>
                 </div>
 
