@@ -186,20 +186,21 @@ class RicoAssistant extends Controller {
             $basic_ref = $detail['basicData']['id'];
             do {
 
+
                 // dd($detail);
 
                 // get reference id
                 $reference_id = DB::table('refs')
                 ->where('basic_id', '=', $basic_ref)
                 // ->join('section_basic', 'section_basic.id', '=', )
-                ->get();
+                ->get()
+                ->groupBy(['ref_db_index']);
 
                 // dd($reference_id);
+                // dd(count($reference_id));
                 // dd($reference_id[0]->id);
 
-
-
-                // get reference content data if reference id was found
+                // get all reference content data until main entry
                 if (count($reference_id) > 0) {
 
                     // $detail[$db_name]['reference_parents'] = [];
@@ -208,40 +209,53 @@ class RicoAssistant extends Controller {
                     // $detail[$db_name]['reference_parents'][1][$i] = [];
 
                     // dd($detail['statementData']['reference'][0]->id);
-                    $_reference_parents_id = DB::table('section_basics')
-                    ->where('id', '=', $reference_id[0]->basic_ref)
-                    ->get();
 
-                    if (isset($_reference_parents_id)){
+                    $i2 = 0;
+                    foreach ($reference_id as $key => $value) {
 
-                    // dd($_reference_parents_id);
+                        // dd($key);
+                        // dd($value);
 
-                    // $detail[$db_name]['reference_parents'] = [];
+                        $_reference_parents_id = DB::table('section_basics')
+                        ->where('id', '=', $value[0]->basic_ref)
+                        ->get();
 
-                    // dd($section_id);
+                        // if (isset($_reference_parents_id)){
 
-                    // dd($_reference_parents_id);
+                        // dd($_reference_parents_id);
 
-                    $detail['reference_parents'][$i] = $_reference_parents_id[0];
+                        // $detail[$db_name]['reference_parents'] = [];
+
+                        // dd($section_id);
+
+                        // dd($_reference_parents_id);
+
+                        $detail['reference_parents'][$i2][$i] = $_reference_parents_id[0];
+                        $i2++;
+                    }
 
                     // dd($detail);
 
                     // dd($detail[$db_name]['reference_parents']);
 
                     // $detail[$db_name]['reference_children'][$key] = $reference_children_title;
-                    }
 
-                    // dd($reference_id[0]->basic_ref);
 
-                    $basic_ref = $reference_id[0]->basic_ref;
+                    // dd($reference_id);
+
+                    dd($reference_id);
+
+
+                        $basic_ref = $reference_id[0]->basic_ref;
 
                     // dd($reference_id[0]->basic_ref);
                 }
-
+                // dd($key);
                 $i++;
+                // dd(count($reference_id));
             } while (count($reference_id) > 0);
 
-            // dd($detail['reference_parents']);
+            dd($detail);
             if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
@@ -391,6 +405,8 @@ class RicoAssistant extends Controller {
 
 
             if (isset($detail_tag_collection)) {
+
+                // dd($detail_activity);
 
                 foreach ($detail_activity as $key => $value) {
                     // dd($key);
@@ -736,6 +752,9 @@ class RicoAssistant extends Controller {
 
             foreach ($request->activityData['activityTo'] as $i => $activity) {
 
+                // dd($i);
+                // dd($activity);
+
                 if (is_numeric($request->activityData['activityTo'][$i])) {
 
                     // store activity index data
@@ -770,7 +789,8 @@ class RicoAssistant extends Controller {
 
                     // fire tag function
                     // dd($request->activityData['tag']);
-                    if (isset($request->activityData['tag'])) {
+
+                    if (isset($request->activityData['tag'][$i])) {
                         // dd($db_name);
                         tagData($request, $i, $basics, $activites->id, $db_section_id, $db_name);
 
