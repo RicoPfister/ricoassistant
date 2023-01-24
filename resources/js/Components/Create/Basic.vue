@@ -145,4 +145,14 @@ watch(() => props.transfer, (curr, prev) => {
     }
 }, {deep: true}, 500);
 
+onMounted(() => {
+    console.log(props.dataParent);
+
+    form['basicMedium'] = props.toChild?.basicData?.medium;
+    form['basicTitle'] = props.toChild?.basicData?.title;
+    if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+
+
+});
+
 </script>

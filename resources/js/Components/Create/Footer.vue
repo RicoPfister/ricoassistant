@@ -50,7 +50,7 @@
     </div>
 
     <!-- next button -->
-    <button @click="submit" class="px-2 flex items-center bg-gray-200 h-full rounded-r-xl" type="button" >
+    <button v-if="!editCheck" @click="submit" class="px-2 flex items-center bg-gray-200 h-full rounded-r-xl" type="button" >
         <div class="flex flex-row items-center">
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
@@ -61,16 +61,33 @@
         </div>
     </button>
 
+    <button v-else @click="update" class="px-2 flex items-center bg-gray-200 h-full rounded-r-xl" type="button" >
+        <div class="flex flex-row items-center">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" color="green" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>Update</div>
+        </div>
+    </button>
+
 </div>
 
 </template>
 
 <script setup>
 
+let props = defineProps(['editCheck']);
 let emit = defineEmits(['dataChild', 'dataForm']);
 
 function submit() {
+    console.log('ok');
     emit('dataChild', {'submit': 1});
+}
+
+function update() {
+    emit('dataChild', {'update': 1});
 }
 
 function scrollToTop() {

@@ -832,17 +832,22 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function update(Request $request) {
 
-        foreach($request->all() as $key => $value) {
-
-            if ($key != 'id'){
-                $update = DB::table('ricoassistants')
-                ->where('id', $request->id)
-                ->update([$key => $value]);
-            }
-
-        }
-        return redirect()->route('/')->with('message', 'Entry Successfully Updated');
     }
+
+    // old update code
+    // public function update(Request $request) {
+
+    //     foreach($request->all() as $key => $value) {
+
+    //         if ($key != 'id'){
+    //             $update = DB::table('ricoassistants')
+    //             ->where('id', $request->id)
+    //             ->update([$key => $value]);
+    //         }
+
+    //     }
+    //     return redirect()->route('/')->with('message', 'Entry Successfully Updated');
+    // }
 
     public function delete(Request $request) {
 
@@ -1522,5 +1527,24 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Create');
         // return redirect()->route('tag')->with('message', 'Entry Successfully Created');
+    }
+
+    public function edit(Request $request) {
+
+        // dd($request);
+        // $request_data = (object)[];
+
+        // if (isset($request->statementData)) {
+        //     $request_data->basicData = $request->basicData;
+        //     $request_data = $request;
+        // }
+
+        // dd($request_data);
+        // dd($request->statementData['tag']);
+        // $request_data = $request->statementData['tag'];
+        // dd($request_data);
+        // dd(count($request->statementData));
+        // return Inertia::render('Create', ['tag'=> $request['statementData']['tag']]);
+        return Inertia::render('Create', ['edit' => $request]);
     }
 }

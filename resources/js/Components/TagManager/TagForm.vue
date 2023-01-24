@@ -53,7 +53,7 @@ let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fr
 
 let tagPopupOpen = ref(0);
 let tagCollectionInputIndex = ref(0);
-let tagCollectionInputFormat = ref({});
+let tagCollectionInputFormat = ref([]);
 let tagCollectionGroupFormat = ref({});
 let controllerDataArrived = ref(0);
 let fromController = ref('');
@@ -170,17 +170,114 @@ watch(() => props.fromController, (curr, prev) => {
 }, {deep: true}, 500);
 
 onMounted(() => {
-console.log(props.toChild);
+    console.log(props.toChild);
 
-if (props?.fromController) {
-    fromController.value = props.fromController;
-};
+    if (props?.fromController) {
+        fromController.value = props.fromController;
+    };
 
-if (typeof props.toChild?.tagInputShow !== 'undefined') {
-    // console.log(data);
-    tagInputShow.value = props.toChild.tagInputShow;
+    if (typeof props.toChild?.tagInputShow !== 'undefined') {
+        // console.log(data);
+        tagInputShow.value = props.toChild.tagInputShow;
+    }
+    // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
+
+    if (props?.toChild?.formTags) {
+
+
+
+
+
+// console.log(props.toChild.formTags);
+// console.log(tagCollectionInputFormat.value );
+
+
+
+
+// tagCollectionInputFormat.value= [];
+// console.log(tagCollectionInputFormat.value);
+tagCollectionInputFormat.value = [''];
+props.toChild.formTags[0].forEach(createTagInputGroup);
+
+function createTagInputGroup(item, index1) {
+
+    item.forEach(createTagInputString);
+
+    function createTagInputString(item2, index2) {
+
+        if (item2 != null) {
+            let item2Trimmed = item2.toString().trim();
+
+            // console.log(index2);
+            // console.log(item2);
+            // console.log(item2Trimmed);
+            // console.log(tagCollectionInputFormat.value);
+
+            switch (index2) {
+
+                case 0:
+                    // console.log(item2Trimmed);
+                    // console.log(tagCollectionInputFormat.value);
+                    // console.log(item2);
+                    tagCollectionInputFormat.value[0] += '@'+item2Trimmed;
+                    // console.log(tagCollectionInputFormat.value);
+                    break;
+
+                case 3:
+                    tagCollectionInputFormat.value[0] += '('+item2Trimmed+')';
+                    // console.log(tagCollectionInputFormat.value);
+                    break;
+
+                default:
+                    if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
+                    // console.log(tagCollectionInputFormat.value);
+            }
+        }
+    }
+    // prevent space at the end of the string
+    if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
+
 }
-// tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// console.log(tagCollectionInputFormat.value);
+
+// tagCollectionInputFormat.value = [];
+// tagCollectionInputFormat.value[0] = tagCollectionInputFormat.value;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
 })
 
 </script>

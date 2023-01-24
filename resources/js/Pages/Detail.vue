@@ -3,7 +3,16 @@
 <!-- title -->
 <div class="text-center">
     <h1 class="text-2xl border-b border-black">{{ detailData.basicData?.title }}</h1>
-    <div class="text-gray-400 text-sm">Video Game |</div>
+    <div class="flex flex-row justify-between">
+        <div class=""></div>
+        <div class="text-gray-400 text-sm">Video Game |</div>
+        <button @click="edit" type="button" class="">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+        </button>
+    </div>
+
 </div>
 
 <!-- *****section statement***** -->
@@ -51,6 +60,8 @@
 <script setup>
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+import { Inertia, Method } from "@inertiajs/inertia";
+
 import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue';
 import SourceMediaList from '../Components/Detail/Source/MediaList.vue';
 import ReferenceChildrenList from '../Components/Detail/ReferenceChildrenList.vue';
@@ -62,8 +73,6 @@ const props = defineProps(['detail']);
 
 let detailData = ref(['']);
 
-
-
 onMounted(() => {
     detailData.value = props?.detail;
 });
@@ -72,5 +81,9 @@ watch(() => props.detail, _.debounce( (curr, prev) => {
     detailData.value = props?.detail;
     }, 500)
 );
+
+function edit() {
+    Inertia.post('edit', detailData.value);
+}
 
 </script>

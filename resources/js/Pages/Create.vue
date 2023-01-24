@@ -22,7 +22,7 @@
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
-                    <Footer @data-child="dataChild"/>
+                    <Footer :editCheck="editCheck" @data-child="dataChild"/>
                 </div>
             </div>
         </div>
@@ -51,10 +51,11 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
 
-let form = ref({'basicData': ''});
+let form = ref({});
+let editCheck = ref('');
 
 let dataParent = ref({});
 
@@ -65,7 +66,7 @@ let scrollArea = ref();
 
 // process received child data
 function dataChild(data) {
-    // console.log('ok');
+    console.log('ok');
 
     // scroll to top
     if (data.scrollToTop) {
@@ -97,6 +98,7 @@ function dataChild(data) {
     //------------------------------------------------
     if (data.submit == 1) {
 
+        // convert activity timeTo to minutes
         if (form.value.activityData?.activityTo) {
             form.value.activityData.activityTime = [];
 
@@ -135,10 +137,15 @@ function dataChild(data) {
             };
         };
 
-        // console.log(form.value);
+        console.log('ok');
 
         Inertia.post('store', form.value);
+        console.log('ok');
     };
+
+    if (data.update == 1) {
+        Inertia.post('update', form.value);
+    }
 
     // build form based on selected component
     if (data.componentSelected) {
@@ -278,5 +285,30 @@ function fromChild(data) {
 //         Inertia.post('tag');
 //     };
 // }, {deep: true}, 500);
+// let form_transfer = ref();
+onMounted(() => {
+   console.log(props.edit);
+
+   if (props?.edit) {
+        // form_transfer = props.edit;
+        // console.log(form_transfer);
+        // form_transfer.value = props.edit;
+        componentCollection.splice(0, componentCollection.length);
+        componentCollection.push(1, 4);
+        // form.value = '';
+        // console.log(form.value);
+        form.value = props.edit;
+        // console.log(form.value);
+        // form.value.statementData.tag = props.tag[0];
+        // form_transfer = props.edit;
+        // console.log(form_transfer);
+        editCheck.value = 1;
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
+    }
+
+    // if (props?.tag) {
+    //     form.value.statementData.tag = props.tag[0];
+    // }
+});
 
 </script>

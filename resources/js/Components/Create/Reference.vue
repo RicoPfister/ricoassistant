@@ -153,10 +153,16 @@ watch(() => props.fromController, (curr, prev) => {
 //
 // }, {deep: true}, 500);
 
-// onMounted(() => {
+onMounted(() => {
+    if (props.toChild.formParentReference) {
+        console.log(props.toChild.formParentReference);
+        // console.log(form.reference.referenceTitle);
+        form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
+
+    }
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;
-// })
+})
 
 </script>
 
