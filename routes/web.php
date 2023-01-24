@@ -47,8 +47,7 @@ Route::middleware([
 });
 
 Route::get('/create', function () {
-    return Inertia::render('Create', [
-    ]);
+    return Inertia::render('Create', []);
 });
 
 Route::post('/store', [RicoAssistant::class, 'store'])->name('store');

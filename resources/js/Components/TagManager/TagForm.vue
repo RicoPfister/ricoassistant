@@ -170,7 +170,7 @@ watch(() => props.fromController, (curr, prev) => {
 }, {deep: true}, 500);
 
 onMounted(() => {
-    console.log(props.toChild);
+    // console.log(props.toChild);
 
     if (props?.fromController) {
         fromController.value = props.fromController;

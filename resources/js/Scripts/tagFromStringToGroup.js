@@ -69,12 +69,12 @@ export function tagFromStringToGroup(tagData) {
 
         // regular tag input
         } else {
-            console.log('ok');
+            // console.log('ok');
             // split category, context and detail
             tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
             // console.log(tagGroupSplitmain[index]);
             tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != '');
-            console.log(tagGroupSplitmainFilter[index]);
+            // console.log(tagGroupSplitmainFilter[index]);
 
             // add single tag group to tagArray
 
@@ -86,8 +86,8 @@ export function tagFromStringToGroup(tagData) {
             }
 
             // console.log(tagArray);
-            console.log(tagGroupSplitmainFilter);
-            console.log(tagGroupSplitFilter);
+            // console.log(tagGroupSplitmainFilter);
+            // console.log(tagGroupSplitFilter);
 
             // add comment tag to tagArray
             if (tagGroupSplitFilter[index][1]) {

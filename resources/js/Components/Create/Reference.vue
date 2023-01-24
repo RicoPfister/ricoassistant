@@ -155,7 +155,7 @@ watch(() => props.fromController, (curr, prev) => {
 
 onMounted(() => {
     if (props.toChild.formParentReference) {
-        console.log(props.toChild.formParentReference);
+        // console.log(props.toChild.formParentReference);
         // console.log(form.reference.referenceTitle);
         form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
 

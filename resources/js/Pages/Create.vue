@@ -66,7 +66,7 @@ let scrollArea = ref();
 
 // process received child data
 function dataChild(data) {
-    console.log('ok');
+    // console.log('ok');
 
     // scroll to top
     if (data.scrollToTop) {
@@ -144,6 +144,28 @@ function dataChild(data) {
     };
 
     if (data.update == 1) {
+
+        // let formIndex = Object.keys(form.value);
+
+        // formIndex.forEach(element => formIndexFunction(element))
+
+        // function formIndexFunction(item) {
+        //     console.log(item);
+        //     if (!Object.hasOwn(formBeforeUpdate, item)) formToUpdate[item] = form.value[item];
+
+        //     let formIndexIndex = Object.keys(form.value[item]);
+        //     console.log(formIndexIndex);
+        // }
+
+        // let formBeforeUpdate = {};
+        // let formToUpdate = {};
+        // let formToDelete = {};
+
+        // form.value
+        // formBeforeUpdate
+        // formToUpdate
+        // formToDelete
+
         Inertia.post('update', form.value);
     }
 
@@ -287,7 +309,7 @@ function fromChild(data) {
 // }, {deep: true}, 500);
 // let form_transfer = ref();
 onMounted(() => {
-   console.log(props.edit);
+//    console.log(props.edit);
 
    if (props?.edit) {
         // form_transfer = props.edit;
@@ -297,6 +319,8 @@ onMounted(() => {
         componentCollection.push(1, 4);
         // form.value = '';
         // console.log(form.value);
+        // formBeforeUpdate = props.edit;
+        // console.log(formBeforeUpdate);
         form.value = props.edit;
         // console.log(form.value);
         // form.value.statementData.tag = props.tag[0];

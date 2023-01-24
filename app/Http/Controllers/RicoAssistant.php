@@ -830,8 +830,37 @@ class RicoAssistant extends Controller {
 
     // update
     // -------------------------------------------------------
-    public function update(Request $request) {
+    public function update (Request $request) {
+        // dd($request->statementData['statement']);
 
+        // update basic data
+        $update_basic_dbdata = DB::table('section_basics')
+        ->where('id', '=', $request->basicData['id'])
+        ->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'], 'medium' => $request->basicData['medium']]);
+
+        // update statement data
+        $update_basic_dbdata = DB::table('section_statements')
+        ->where('id', '=', $request->basicData['id'])
+        ->update(['statement' => $request->statementData['statement']]);
+
+        // update tag data
+        $update_basic_dbdata = DB::table('tags')
+        ->where('id', '=', $request->basicData['id'])
+        ->update(['statement' => $request->statementData['statement']]);
+
+        // update parent reference data
+        $update_basic_dbdata = DB::table('section_statements')
+        ->where('id', '=', $request->basicData['id'])
+        ->update(['statement' => $request->statementData['statement']]);
+
+        // dd($update_basic_dbdata);
+
+        // DB::table('section_basics')
+        // ->updateOrInsert(
+        //     ['id' => 3],
+        //     ['title' => 'Test123']
+        // );
+        return Inertia::render('Create', []);
     }
 
     // old update code
