@@ -138,7 +138,6 @@ function dataChild(data) {
         };
 
         console.log('ok');
-
         Inertia.post('store', form.value);
         console.log('ok');
     };
@@ -167,6 +166,10 @@ function dataChild(data) {
         // formToDelete
 
         Inertia.post('update', form.value);
+    }
+
+    if (data.deleteEntry == 1) {
+        Inertia.post('update', {'delete': 'deleteEntry_@HuZ-345-pLk'});
     }
 
     // build form based on selected component
