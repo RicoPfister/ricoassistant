@@ -845,9 +845,11 @@ class RicoAssistant extends Controller {
         ->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'], 'medium' => $request->basicData['medium']]);
 
         // *****update statement data*****
-        $update_statement_db_data = DB::table('section_statements')
-        ->where('basic_id', '=', $request->basicData['id'])
-        ->update(['statement' => $request->statementData['statement']]);
+        if (isset($request->statementData)) {
+            $update_statement_db_data = DB::table('section_statements')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['statement' => $request->statementData['statement']['statement']]);
+        }
 
         // *****update tag data*****
 
@@ -1087,13 +1089,7 @@ class RicoAssistant extends Controller {
                     $tag[$i2]->tracking = $request->ip();
                     $tag[$i2]->save();
 
-                    // dd($tag);
-                    // dd($tag[0]['id']);
-
-
                     $tag[$i2]->tag_id = $tag[0]['id'];
-
-                    // dd($tag);
 
                     $tag[$i2]->save();
                 }
@@ -1101,7 +1097,7 @@ class RicoAssistant extends Controller {
                 // if name was not found
                 else {
 
-                    dd('ok');
+                    // dd('ok');
 
                     // $test = new TagCategory();
 
@@ -1110,20 +1106,23 @@ class RicoAssistant extends Controller {
                     $tag_category->tracking = $request->ip();
                     $tag_category->save();
 
-                    $tag_id = DB::table('tags')
-                    ->where('basic_id', '=', $request->basicData['id'])
-                    ->limit(1)
-                    ->get();
+                    // $tag_id = DB::table('tags')
+                    // ->where('basic_id', '=', $request->basicData['id'])
+                    // ->limit(1)
+                    // ->get();
 
-                    $tag = New Tag();
-                    $tag->basic_id = $request->basicData['id'];
-                    $tag->section_table = 2;
-                    $tag->section_table_id = $request->statementData['statement']['id'];
-                    $tag->tag_id = $tag_id[0]->id;
-                    $tag->tag_table = $i2;
-                    $tag->tag_table_id = $tag_category->id;
-                    $tag->tracking = $request->ip();
-                    $tag->save();
+                    $tag[$i2] = New Tag();
+                    $tag[$i2]->basic_id = $request->basicData['id'];
+                    $tag[$i2]->section_table = 2;
+                    $tag[$i2]->section_table_id = $request->statementData['statement']['id'];
+                    $tag[$i2]->tag_table = $i2+1;
+                    $tag[$i2]->tag_table_id = $tag_category->id;
+                    $tag[$i2]->tracking = $request->ip();
+                    $tag[$i2]->save();
+
+                    $tag[$i2]->tag_id = $tag[0]['id'];
+
+                    $tag[$i2]->save();
                 }
 
 
