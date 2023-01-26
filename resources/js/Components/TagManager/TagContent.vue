@@ -184,7 +184,7 @@ onMounted(() => {
 
 // listen to tag collection changes and emit to tagPopup.vue
 watch(() => tagArray.value, (curr, prev) => {
-    console.log(tagArray.value);
+    // console.log(tagArray.value);
     emit('fromChild', {'tagSelectionListGroup': tagArray.value});
 }, {deep: true}, 500);
 

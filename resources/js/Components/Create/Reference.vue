@@ -157,17 +157,25 @@ watch(() => props.fromController, (curr, prev) => {
 
 // }, {deep: true}, 500);
 
-// listen to form and send changes to Create.vue
-// watch(() => form, (curr, prev) => {
-//
-// }, {deep: true}, 500);
+
+watch(() => props.toChild, (curr, prev) => {
+    if (props?.toChild?.parents_reference) form.reference.referenceTitle = props.toChild.parents_reference;
+}, {deep: true}, 500);
 
 onMounted(() => {
-    if (props.toChild.formParentReference) {
+
+    if (props?.toChild?.formParentReference) {
         // console.log(props.toChild.formParentReference);
         // console.log(form.reference.referenceTitle);
         form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
+    }
 
+    if (props?.toChild?.parents_reference) {
+        // console.log('ok');
+        // console.log(props.toChild.parents_reference);
+        // console.log(form.reference.referenceTitle);
+        // form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
+        form.reference.referenceTitle = props.toChild.parents_reference;
     }
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;

@@ -1243,21 +1243,6 @@ class RicoAssistant extends Controller {
         return Inertia::render('Create', []);
     }
 
-    // old update code
-    // public function update(Request $request) {
-
-    //     foreach($request->all() as $key => $value) {
-
-    //         if ($key != 'id'){
-    //             $update = DB::table('ricoassistants')
-    //             ->where('id', $request->id)
-    //             ->update([$key => $value]);
-    //         }
-
-    //     }
-    //     return redirect()->route('/')->with('message', 'Entry Successfully Updated');
-    // }
-
     public function delete(Request $request) {
 
         DB::table('basics')->where('id', '=', $request->id)->delete();
@@ -1913,24 +1898,24 @@ class RicoAssistant extends Controller {
         // set status to 2 (delete) for preset name
         if (isset($request->tagPresetDelete)) {
 
-        $preset_delete_id = DB::table('index_tag_presets')
-        ->where('preset_name', '=', $request->tagPresetDelete)
-        // ->update(['status' => 2]);
-        ->get();
+            $preset_delete_id = DB::table('index_tag_presets')
+            ->where('preset_name', '=', $request->tagPresetDelete)
+            // ->update(['status' => 2]);
+            ->get();
 
-        DB::table('index_tag_presets')
-        ->where('preset_name', '=', $request->tagPresetDelete)
-        ->update(['status' => 2]);
-        // ->get();
+            DB::table('index_tag_presets')
+            ->where('preset_name', '=', $request->tagPresetDelete)
+            ->update(['status' => 2]);
+            // ->get();
 
-        // dd($preset_delete_id);
-        // $preset_delete_id->update(['status' => 22]);
+            // dd($preset_delete_id);
+            // $preset_delete_id->update(['status' => 22]);
 
-        // set status to 2 (delete) for preset name
-        DB::table('tag_presets')
-        ->where('group_id', '=', $preset_delete_id[0]->id)
-        ->update(['status' => 2]);
-    }
+            // set status to 2 (delete) for preset name
+            DB::table('tag_presets')
+            ->where('group_id', '=', $preset_delete_id[0]->id)
+            ->update(['status' => 2]);
+        }
 
         // dd($preset_delete_id[0]->id);
 

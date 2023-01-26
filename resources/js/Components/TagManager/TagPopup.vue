@@ -319,19 +319,20 @@ onMounted(() => {
     if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log(props.fromParentTagString);
         // tagCollectionInputFormat.value = props.toChild;
+        console.log('ok');
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }
     tagCollection.value = props.fromController.tagCollection;
 
     if (props?.fromController) {
-        console.log('ok');
+        // console.log('ok');
         fromController.value = props.fromController;
     }
 
     // console.log();
     if (props.fromController?.tagPresetCollection) {
-        console.log('ok');
+        // console.log('ok');
         tagPresetCollection.value = props.fromController.tagPresetCollection;
     }
 });
@@ -373,7 +374,7 @@ function saveTagPopup() {
     }
 
 function cancelTagPopup() {
-    console.log('ok');
+    // console.log('ok');
     emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
 }
 
