@@ -851,6 +851,39 @@ class RicoAssistant extends Controller {
             ->update(['statement' => $request->statementData['statement']['statement']]);
         }
 
+        // *****update parent reference data*****
+        if (isset($request->statementData['reference_parents'])) {
+            $rererence_db_data = DB::table('refs')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->get();
+
+            // dd($rererence_db_data);
+            // dd($rererence_db_data[0]->basic_ref);
+
+            $reference_basic_db_data = DB::table('section_basics')
+            ->where('id', '=', $rererence_db_data[0]->basic_ref)
+            ->get();
+
+            // dd($reference_basic_db_data[0]->title);
+            // dd($request->statementData['reference_parents'][0][0]['title']);
+
+            if ($reference_basic_db_data[0]->title != $request->statementData['reference'][0]['referenceTitle']) {
+                // dd('ok');
+
+                $basic_ref = DB::table('section_basics')
+                ->where('title', '=', $request->statementData['reference'][0]['referenceTitle'])
+                ->get();
+
+                // dd($basic_ref[0]->id);
+                // dd($request->basicData['id']);
+
+                $ref = DB::table('refs')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->update(['basic_ref' => $basic_ref[0]->id]);
+            }
+
+        ;}
+
         // *****update tag data*****
 
         // get tag table id by basic id

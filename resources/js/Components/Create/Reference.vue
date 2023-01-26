@@ -4,16 +4,19 @@
         <div class="relative flex flex-row items-center h-full">
 
             <!-- select reference button -->
-            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="relative w-[36px] flex h-full items-center
+            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="relative
+            w-[36px] flex h-full items-center
             bg-gray-100 border-r border-gray-300 leading-none pl-1" type="button">
 
                 <!-- item counter -->
-                <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">0</div>
+                <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all
+                items-center">0</div>
 
                 <!-- tag icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[18px] h-fit">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25
-                    0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="w-[18px] h-fit">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25
+                    2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                 </svg>
             </button>
 
@@ -25,8 +28,10 @@
                 </div>
 
                 <!-- reference input -->
-                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0 focus:ring-0 focus:border-black
-                border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"  type="text"
+                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0
+                focus:ring-0 focus:border-black
+                border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
+                type="text"
                 :placeholder="placeholderText" v-model="form.reference.referenceTitle">
             </div>
         </div>
@@ -49,7 +54,8 @@ import ReferencePopup from "../ReferenceManager/ReferencePopup.vue"
 let referenceDOM = ref('');
 let placeholderText = ref("Insert existing title as reference");
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'dataToParent', 'transfer', 'toParent', 'toChild', 'fromChild', 'fromController', 'transferCreate']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'dataToParent', 'transfer', 'toParent', 'toChild',
+'fromChild', 'fromController', 'transferCreate']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'fromChild', 'toChild']);
 
 let form = useForm({
@@ -60,6 +66,7 @@ let form = useForm({
 });
 
 // check database Sreference
+// send to parent: statement input data
 function referenceCheckerFunction(index, id, check) {
     // console.log(index);
     // console.log(id);
@@ -84,7 +91,8 @@ function referenceCheckerFunction(index, id, check) {
         form.reference.referenceTitle.length > 2) {
             // console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference.referenceTitle, row: index, parentId: id}, {replace: false,  preserveState: true, preserveScroll: true});
+                Inertia.post('refcheck', { reference: form.reference.referenceTitle, row: index, parentId: id}, {replace: false,
+                preserveState: true, preserveScroll: true});
             }, 500);
         }
     }
@@ -104,7 +112,8 @@ function referenceCheckerFunction(index, id, check) {
 function fromChild(data) {
     console.log(data);
     form.reference = data.referenceData;
-    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component': 'reference'});
+    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component':
+    'reference'});
 
     // console.log(props.toChild.parentIndex);
     form.referencePickerOpen = 0;
@@ -163,6 +172,11 @@ onMounted(() => {
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;
 })
+
+
+// function InputData() {
+//     emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
+// }
 
 </script>
 

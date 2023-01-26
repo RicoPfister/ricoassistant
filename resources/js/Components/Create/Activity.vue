@@ -87,7 +87,7 @@
                         <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
                     </div>
                     <div class="w-fit">
-                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild.basicData.title, 'tagInputShow': 0}" :fromController="props.fromController" @fromChild="fromChild"/>
+                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0}" :fromController="props.fromController" @fromChild="fromChild"/>
                     </div>
                 </div>
 

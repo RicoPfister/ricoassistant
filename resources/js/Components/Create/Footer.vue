@@ -101,6 +101,10 @@ function update() {
     emit('dataChild', {'update': 1});
 }
 
+function deleteEntry() {
+    emit('dataChild', {'deleteEntry': 1});
+}
+
 function scrollToTop() {
     emit('dataChild', {'scrollToTop': 1});
 }
@@ -112,11 +116,6 @@ function deleteSections() {
 function addSection() {
     emit('dataChild', {'formDataEdit': 1});
 }
-
-function deleteEntry() {
-    emit('dataChild', {'deleteEntry': 1});
-}
-
 
 </script>
 
