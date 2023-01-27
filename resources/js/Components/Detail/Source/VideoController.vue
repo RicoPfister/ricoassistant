@@ -284,7 +284,7 @@ else if (command == 'slider') {
 
 function audioControlFunction(command) {
 
-console.log(command);
+// console.log(command);
 
 if (command == 'loadedmetadata') {
     audioControlData.value =  audioControl.value;

@@ -497,7 +497,7 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        // dd($request);
+        dd($request);
 
         // get user data
         $user = Auth::user();
@@ -796,10 +796,12 @@ class RicoAssistant extends Controller {
             // store file meta data
             foreach($request->sourceData['filelist'] as $index => $dataString) {
 
+                // dd($dataString->type);
+
                 $sources = new SectionSource();
                 $sources->basic_id = $basics->id;
                 $sources->path = $dataString['file']->hashName();
-                $sources->extension = $dataString['file']->extension();
+                $sources->extension = $dataString['type'];
                 $sources->size = $dataString['file']->getSize();
                 $sources->tracking = $request->ip();
                 $sources->save();
@@ -1785,9 +1787,6 @@ class RicoAssistant extends Controller {
             ->where('tag_table', '=', 1)
             ->where('tag_table_id', '=', $tag_category_id[0])
             ->get();
-
-
-
 
             // $tags_context_id
 

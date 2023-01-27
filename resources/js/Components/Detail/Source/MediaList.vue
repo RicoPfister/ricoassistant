@@ -26,7 +26,7 @@
                     <div class="lex justify-end flex flex-row w-[270px] grow">
                         <!-- index/file name -->
                         <div class="w-fit">{{ Date.DBToList(item2.item.created_at) }}</div>
-                        <div class="flex justify-center w-10 ml-1">{{ item2.item.extension }}</div>
+                        <div class="flex justify-center w-10 ml-1">{{ item2.item.extension.split('/')[1].length <= 4 ? item2.item.extension.split('/')[1] : '' }}</div>
                         <div class="flex justify-end w-[70px]">{{ Number.fileSize(item2.item.size) }}</div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ let controllerFiles = {
 
 function controller_collection_processing() {
 
-    console.log('ok');
+    // console.log('ok');
 
     if (props?.detailData?.sourceData?.files) {
 
@@ -88,11 +88,11 @@ function controller_collection_processing() {
             // console.log(index);
             // console.log(item.extension);
 
-            if (item.extension == 'jpg' || item.extension == 'png' || item.extension == 'gif' || item.extension == 'webp') controllerFiles.image.value.push({'item': item, 'index': index});
-            else if (item.extension == 'mp3' || item.extension == 'ogg') controllerFiles.music.value.push({'item': item, 'index': index});
-            else if (item.extension == 'mp4') controllerFiles.video.value.push({'item': item, 'index': index});
-            else if (item.extension == 'pdf' || item.extension == 'txt') controllerFiles.document.value.push({'item': item, 'index': index});
-            else if (item.extension == 'zip' || item.extension == 'rar' || item.extension == '7z') controllerFiles.package.value.push({'item': item, 'index': index});
+            if (item.extension == 'image/jpeg' || item.extension == 'image/png' || item.extension == 'image/gif' || item.extension == 'image/webp') controllerFiles.image.value.push({'item': item, 'index': index});
+            else if (item.extension == 'audio/mpeg' || item.extension == 'audio/ogg') controllerFiles.music.value.push({'item': item, 'index': index});
+            else if (item.extension == 'video/mp4') controllerFiles.video.value.push({'item': item, 'index': index});
+            else if (item.extension == 'application/pdf' || item.extension == 'application/txt') controllerFiles.document.value.push({'item': item, 'index': index});
+            else if (item.extension == 'application/zip' || item.extension == 'application/rar' || item.extension == '7z') controllerFiles.package.value.push({'item': item, 'index': index});
             else controllerFiles.other.value.push({'item': item, 'index': index});
         }
     }

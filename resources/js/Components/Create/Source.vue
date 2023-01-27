@@ -74,18 +74,18 @@
 
                 <!-- source tags -->
                 <!-- ------------------------------------------------------ -->
-                <div class="border-b-2 border-black font-bold">Tags</div>
-                <div class="pt-2 space-y-[2px] w-full">
+                <div v-if="1" class="border-b-2 border-black font-bold">Tags</div>
+                <div v-if="1" class="pt-2 space-y-[2px] w-full">
                     <div v-for="(item, index) in InputData" class="border border-black w-full">
                         <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" @fromChild="fromChild"/></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- source preview-->
-                <div class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
-                <div class="flex flex-wrap mt-1 gap-x-2">
+                <div v-if="1" class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
+                <div v-if="1" class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
                         <div v-if="item.type.split('/')[0] == 'image'" class="py-1">
                             <div class="relative border-2 border-black h-36">
@@ -105,7 +105,7 @@
     <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
 </div> -->
 
-<div v-if="!props.toChild.componentCollection.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
+<div v-if="!props?.toChild?.componentCollection?.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
     <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
@@ -130,7 +130,7 @@ let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);
 let InputData = ref([]);
-
+let previewPath = '';
 
 
 // file preview
@@ -151,6 +151,20 @@ onMounted(() => {
     if (props.dataForm.filelist) {
         InputData.value = props.dataForm.filelist;
         preview.value = props.dataForm.previewlist;
+    }
+
+    if (props?.toChild?.sourceData) {
+
+        // console.log(props.toChild.sourceData.files);
+
+        props.toChild.sourceData.files.forEach((item, index) => soureDataFilesGroup(item, index));
+
+        function soureDataFilesGroup(item, index) {
+            // console.log(item);
+            InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value++});
+            previewPath = '/storage/inventory/' + item.path;
+            preview.value.push(previewPath);
+        }
     }
   })
 

@@ -322,7 +322,7 @@ onMounted(() => {
         componentCollection.push(1);
         if (props?.edit?.statementData) componentCollection.push(4);
         if (props?.edit?.activityData) componentCollection.push(5);
-        if (props?.edit?.soourceData) componentCollection.push(7);
+        if (props?.edit?.sourceData) componentCollection.push(7);
 
         // form_transfer = props.edit;
         // console.log(form_transfer);
