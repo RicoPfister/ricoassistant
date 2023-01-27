@@ -78,7 +78,7 @@
                 <div v-if="1" class="pt-2 space-y-[2px] w-full">
                     <div v-for="(item, index) in InputData" class="border border-black w-full">
                         <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/></div>
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
 </div> -->
 
 <div v-if="!props?.toChild?.componentCollection?.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0, 'parents_reference': reference_db_data?.[0]?.[0]?.title}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
 </template>
@@ -131,7 +131,8 @@ let tagPopupOpen = ref();
 let uniqueKey = ref(1);
 let InputData = ref([]);
 let previewPath = '';
-
+let tag_db_data = ref({});
+let reference_db_data = ref({});
 
 // file preview
 let preview = ref([]);
@@ -164,6 +165,15 @@ onMounted(() => {
             InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value++});
             previewPath = '/storage/inventory/' + item.path;
             preview.value.push(previewPath);
+        }
+
+        if (props?.toChild?.sourceData?.tag) {
+            console.log('ok');
+            tag_db_data.value = props?.toChild?.sourceData?.tag;
+        }
+
+        if (props?.toChild?.sourceData?.reference_parents) {
+            reference_db_data.value = props?.toChild?.sourceData?.reference_parents;
         }
     }
   })
@@ -216,6 +226,10 @@ watch(() => InputData, (curr, prev) => {
 
 //     // send formData
 //     emit('toParent', {'sourceTag': form.value});
+// }
+
+// function tag_db_data_function(data) {
+
 // }
 
 </script>

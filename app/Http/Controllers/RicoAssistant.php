@@ -64,7 +64,6 @@ class RicoAssistant extends Controller {
     public function detail(Request $request) {
 
         // dd($request);
-        // dd($request);
 
         $user = Auth::user();
 
@@ -329,7 +328,7 @@ class RicoAssistant extends Controller {
 
             // dd(detail_tag($request, $db_section_id, $db_name));
 
-            $db_section_id = 2;
+            // $db_section_id = 2;
 
             $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
 
@@ -349,6 +348,8 @@ class RicoAssistant extends Controller {
             if (isset($detail_reference_parents_collection)) {
                 $detail['statementData']['reference_parents'] = $detail_reference_parents_collection;
             }
+
+            dd($detail);
 
             $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
             // dd($detail_reference_children_collection);
@@ -486,7 +487,7 @@ class RicoAssistant extends Controller {
 
         // dd($section_collection);
 
-        // dd($detail);
+        dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
 
@@ -497,7 +498,7 @@ class RicoAssistant extends Controller {
     // -------------------------------------------------------
     public function store(Request $request) {
 
-        dd($request);
+        // dd($request);
 
         // get user data
         $user = Auth::user();
