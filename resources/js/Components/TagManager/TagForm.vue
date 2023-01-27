@@ -172,7 +172,7 @@ watch(() => props.fromController, (curr, prev) => {
 watch(() => props?.toChild?.formTags, (curr, prev) => {
     // console.log('ok');
     if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        console.log('ok');
+        // console.log('ok');
     tagCollectionInputFormat.value = [''];
     props.toChild.formTags.forEach(createTagInputGroup);
 };

@@ -105,7 +105,7 @@
     <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
 </div> -->
 
-<div v-if="!props?.toChild?.componentCollection?.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
+<div v-if="!props?.toChild?.componentCollection?.find(element => element == 4) && !props?.toChild?.statementData" class="border-l border-r border-b border-black h-[31px]">
     <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0, 'parents_reference': reference_db_data?.[0]?.[0]?.title}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
@@ -168,7 +168,7 @@ onMounted(() => {
         }
 
         if (props?.toChild?.sourceData?.tag) {
-            console.log('ok');
+            // console.log('ok');
             tag_db_data.value = props?.toChild?.sourceData?.tag;
         }
 
@@ -184,11 +184,11 @@ onMounted(() => {
 function fromChild(data) {
 
     // console.log(data);
-    console.log(data.component);
-    console.log(data?.reference?.reference.referenceTitle);
+    // console.log(data.component);
+    // console.log(data?.reference?.reference.referenceTitle);
 
     if (data.component == "tag" && data.parentId == 3) {
-        console.log(data);
+        // console.log(data);
         emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
 

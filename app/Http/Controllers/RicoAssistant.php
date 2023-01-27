@@ -183,6 +183,7 @@ class RicoAssistant extends Controller {
             // get reference id
             $reference_id = DB::table('refs')
             ->where('basic_id', '=', $basic_ref)
+            ->where('ref_db_id', '=', $section_id)
             // ->join('section_basic', 'section_basic.id', '=', )
             ->get();
 
@@ -328,7 +329,7 @@ class RicoAssistant extends Controller {
 
             // dd(detail_tag($request, $db_section_id, $db_name));
 
-            // $db_section_id = 2;
+            $db_section_id = 2;
 
             $detail_tag_collection = detail_tag($request->basic_id, $db_section_id);
 
@@ -349,7 +350,7 @@ class RicoAssistant extends Controller {
                 $detail['statementData']['reference_parents'] = $detail_reference_parents_collection;
             }
 
-            dd($detail);
+            // dd($detail);
 
             $detail_reference_children_collection = detail_reference_children($detail, $request,  $db_section_id);
             // dd($detail_reference_children_collection);
@@ -487,7 +488,7 @@ class RicoAssistant extends Controller {
 
         // dd($section_collection);
 
-        dd($detail);
+        // dd($detail);
 
         return Inertia::render('TabManager/TabManager', ['detail' => $detail]);
 
