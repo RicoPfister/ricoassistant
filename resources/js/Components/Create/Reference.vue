@@ -159,7 +159,11 @@ watch(() => props.fromController, (curr, prev) => {
 
 
 watch(() => props.toChild, (curr, prev) => {
-    if (props?.toChild?.parents_reference) form.reference.referenceTitle = props.toChild.parents_reference;
+    if (props?.toChild?.parents_reference && !form?.reference?.referenceTitle) {
+        console.log(props.toChild.parents_reference);
+        form.reference.referenceTitle = props.toChild.parents_reference
+    };
+
 }, {deep: true}, 500);
 
 onMounted(() => {

@@ -215,6 +215,7 @@ onMounted(() => {
 // if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
 if (props?.toChild?.formTags) {
     tagCollectionInputFormat.value = [''];
+    // console.log(props.toChild.formTags);
     props.toChild.formTags.forEach(createTagInputGroup)
 };
 
@@ -263,9 +264,13 @@ if (props?.toChild?.formTags) {
 
 function createTagInputGroup(item, index1) {
 
+    console.log(item);
+
 item.forEach(createTagInputString);
 
 function createTagInputString(item2, index2) {
+
+    console.log(item2);
 
     if (item2 != null) {
         let item2Trimmed = item2.toString().trim();
@@ -291,6 +296,7 @@ function createTagInputString(item2, index2) {
                 break;
 
             default:
+                console.log('ok');
                 if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
                 // console.log(tagCollectionInputFormat.value);
         }
@@ -298,6 +304,8 @@ function createTagInputString(item2, index2) {
 }
 // prevent space at the end of the string
 if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
+
+console.log(tagCollectionInputFormat.value);
 
 }
 

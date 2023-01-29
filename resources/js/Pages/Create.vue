@@ -51,8 +51,11 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
+
+// variable collection
+// -------------------------
 
 let form = ref({});
 let editCheck = ref('');
@@ -63,6 +66,40 @@ const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
+
+let activityTimeTotal = 0;
+let activityTimeHourString = 0;
+let activityTimeHourMinute = 0;
+let activityTime = 0;
+
+// function collection
+// -------------------------
+
+function activityTimeConvert(item, index) {
+
+    // console.log(item, index);
+
+
+        activityTimeHourString = item.toString().slice(0, -2);
+        activityTimeHourMinute = item.toString().slice(-2);
+
+        activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
+
+        console.log(activityTime);
+
+        activityTime -= activityTimeTotal;
+
+        console.log(activityTime);
+
+        if (typeof form?.value?.activityData?.activityTime == 'undefined') form.value.activityData.activityTime = [];
+
+        console.log(activityTime);
+
+        form.value.activityData.activityTime[index] = activityTime;
+
+        activityTimeTotal += activityTime;
+
+    };
 
 // process received child data
 function dataChild(data) {
@@ -104,39 +141,14 @@ function dataChild(data) {
 
             console.log(form.value.activityData.activityTo);
 
-            let activityTimeTotal = 0;
-            let activityTimeHourString = 0;
-            let activityTimeHourMinute = 0;
-            let activityTime = 0;
+
 
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
 
-            function activityTimeConvert(item, index) {
-                // console.log(item);
 
-                activityTimeHourString = item.toString().slice(0, -2);
-                activityTimeHourMinute = item.toString().slice(-2);
-
-                activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
-
-                // console.log(activityTime);
-
-                activityTime -= activityTimeTotal;
-
-                form.value.activityData.activityTime[index] = activityTime;
-                // console.log(activityTime);
-
-                activityTimeTotal += activityTime;
-
-                // console.log(activityTimeTotal);
-
-                // console.log(activityTimeHourString);
-                // console.log(activityTimeHourMinute);
-
-                // form.value.activityData.activityTime[index] = item.slice(2);
-            };
         };
 
+        console.log(form.value);
         console.log('ok');
         Inertia.post('store', form.value);
         console.log('ok');
@@ -165,7 +177,13 @@ function dataChild(data) {
         // formToUpdate
         // formToDelete
 
+        // console.log(form.value.activityData.activityTo);
+        form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+
+
+
         Inertia.post('update', form.value);
+        // console.log(form.value);
     }
 
     if (data.deleteEntry == 1) {
@@ -267,14 +285,16 @@ let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
-    // console.log(data);
     if (data.form != 'undefined') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
             form.value[data.section][data.subSection][data.index]  = {};
             form.value[data.section][data.subSection][data.index] = data.form;
+            // console.log(data);
+            // console.log(form.value[data.section][data.subSection][data.index]);
         } else {
+            // console.log(data);
             form.value[data.section][data.subSection]= data.form;
         }
     }
@@ -316,7 +336,7 @@ onMounted(() => {
 
    if (props?.edit) {
 
-        // console.log(props?.edit);
+        // console.log(props.edit.activityData.reference[0]);
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);

@@ -619,7 +619,7 @@ function tagTooltipShow(index, data) {
 
 // send to parent: reference selection
 function fromChild(data) {
-    // console.log(data);
+    console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -656,9 +656,9 @@ onMounted(() => {
     // console.log(props.toChild.activityData['tag']);
 
     if (props?.toChild?.activityData) {
-        props.toChild.activityData['activityTime'].forEach((item, index) => edittimeToTo(item, index));
+        props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));
 
-        props.toChild.activityData['reference_parents'].forEach((item, index) => editParentReference(item, index));
+        props.toChild.activityData['reference'].forEach((item, index) => editParentReference(item, index));
 
         if (props?.toChild?.activityData?.['tag']) editTag(props.toChild.activityData['tag']);
 
@@ -671,24 +671,24 @@ let convertTimeToTOTotal = 0;
 let TimeMinutes = 0;
 
 function edittimeToTo(item, index) {
-    let parseActivityTime = parseInt(item.activityTime);
-    // console.log(props.toChild.activityData['activityTime']);
+    let parseactivityTo = parseInt(item.activityTime);
+    // console.log(props.toChild.activityData['activityTo']);
     // console.log(data);
-    // console.log(item.activityTime);
+    // console.log(item.activityTo);
     // console.log(convertTimeToTOTotal);
-    // console.log(item.activityTime.slice(-2));
+    // console.log(item.activityTo.slice(-2));
 
-    // TimeMinutes = parseInt(item.activityTime.slice(-2));
+    // TimeMinutes = parseInt(item.activityTo.slice(-2));
     TimeMinutes = (parseInt(item.activityTime)+convertTimeToTOTotal) % 60;
     // console.log(TimeMinutes);
-    // console.log(item.activityTime);
-    convertTimeToTO = ((parseActivityTime+convertTimeToTOTotal)-TimeMinutes)/60*100+TimeMinutes;
+    // console.log(item.activityTo);
+    convertTimeToTO = ((parseactivityTo+convertTimeToTOTotal)-TimeMinutes)/60*100+TimeMinutes;
     // console.log(convertTimeToTO);
     form.activityTo.push(convertTimeToTO);
     convertTimeToTOTotal += parseInt(item.activityTime);
     // console.log(convertTimeToTOTotal);
 
-    if (index != props.toChild.activityData['activityTime'].length-1) activityTotalRow.value++;
+    if (index != props.toChild.activityData['activityTo'].length-1) activityTotalRow.value++;
 
     // activityReference: [{title: '', medium: '', color: '', basic_id: ''}],
 }

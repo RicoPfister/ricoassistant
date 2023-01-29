@@ -77,7 +77,9 @@ emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.
 }, {deep: true}, 500);
 
 onMounted(() => {
+    form['statement'] = {};
     form['statement'] = props.toChild?.statementData?.statement?.statement;
+    form['id'] = props.toChild?.statementData?.statement?.id;
 });
 
 
