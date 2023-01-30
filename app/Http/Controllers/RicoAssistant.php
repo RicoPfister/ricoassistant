@@ -668,7 +668,7 @@ class RicoAssistant extends Controller {
             // foreach ($request->$db_name['reference'] as $key => $value) {
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
-                $ref->basic_ref = $request->$db_name['reference'][$i]['basic_id'];
+                $ref->basic_ref = $request->$db_name['reference'][$i][0]['basic_id'];
                 $ref->ref_db_id = $db_id;
                 $ref->ref_db_index = $section_data;
                 $ref->tracking = $request->ip();
@@ -847,11 +847,20 @@ class RicoAssistant extends Controller {
         // dd($request->statementData['statement']);
         // dd($request);
 
-        // dd($request);
 
         // *****update parent reference data*****
-        function update_reference($request, $index) {
-            if (isset($request->statementData['reference'])) {
+        function update_reference($request, $section_id, $index) {
+
+
+
+                $form_section_name  = DB::table('index_databases')
+                ->where('id', '=', $section_id)
+                ->pluck('db_name');
+
+                $db_name = $form_section_name[0].'Data';
+
+                // dd($request, $section_id, $index, $db_name, $request->$db_name['statement']['id']);
+
                 $rererence_db_data = DB::table('refs')
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->get();
@@ -859,29 +868,51 @@ class RicoAssistant extends Controller {
                 // dd($rererence_db_data);
                 // dd($rererence_db_data[0]->basic_ref);
 
-                $reference_basic_db_data = DB::table('section_basics')
-                ->where('id', '=', $rererence_db_data[0]->basic_ref)
-                ->get();
+                // create ref if no one was found
+                if (count($rererence_db_data) < 1) {
 
-                // dd($reference_basic_db_data[0]->title);
-                // dd($request->statementData['reference_parents'][0][0]['title']);
+                    $ref = New Ref();
+                    $ref->basic_id = $request->basicData['id'];
+                    $ref->basic_ref = $request->$db_name['reference'][0][0]['basic_id'];
+                    $ref->ref_db_id = $section_id;
+                    $ref->ref_db_index = $request->$db_name['statement']['id'];
+                    $ref->tracking = $request->ip();
+                    $ref->save();
 
-                if ($reference_basic_db_data[0]->title != $request->statementData['reference'][0]['referenceTitle']) {
-                    // dd('ok');
 
-                    $basic_ref = DB::table('section_basics')
-                    ->where('title', '=', $request->statementData['reference'][0]['referenceTitle'])
-                    ->get();
-
-                    // dd($basic_ref[0]->id);
-                    // dd($request->basicData['id']);
-
-                    $ref = DB::table('refs')
-                    ->where('basic_id', '=', $request->basicData['id'])
-                    ->update(['basic_ref' => $basic_ref[0]->id]);
                 }
 
-            }
+                foreach($rererence_db_data as $index => $item) {
+
+                    $reference_basic_db_data = DB::table('section_basics')
+                    ->where('id', '=', $rererence_db_data[$index]->basic_ref)
+                    ->get();
+
+                    // dd($reference_basic_db_data);
+                    // dd($request->statementData['reference_parents'][0][0]['title']);
+
+                    // dd($request);
+                    // dd($request->$db_name['reference'][$index][0]['title'], $reference_basic_db_data[0]->title);
+                    // dd();
+
+                    if ($reference_basic_db_data[0]->title !== $request->$db_name['reference'][$index][0]['title']) {
+                        // dd('ok');
+
+                        $basic_ref = DB::table('section_basics')
+                        ->where('title', '=', $request->$db_name['reference'][$index][0]['title'])
+                        ->get();
+
+                        // dd($basic_ref[0]->id);
+                        // dd($request->basicData['id']);
+
+                        $ref = DB::table('refs')
+                        ->where('basic_id', '=', $request->basicData['id'])
+                        ->update(['basic_ref' => $basic_ref[0]->id]);
+                    }
+
+                }
+
+
         }
 
 
@@ -1247,17 +1278,23 @@ $update_basic_db_data = DB::table('section_basics')
 
 // *****update statement data*****
 if (isset($request->statementData['statement']['statement'])) {
+
+    $section_id = 2;
+
     $update_statement_db_data = DB::table('section_statements')
     ->where('basic_id', '=', $request->basicData['id'])
     ->update(['statement' => $request->statementData['statement']['statement']]);
-    update_tag($request, 0);
-    update_reference($request, 0);
+    if (isset($request->statementData['tag'])) update_tag($request, $section_id, 0);
+    if (isset($request->statementData['reference'])) update_reference($request, $section_id, 0);
 } else if (isset($request->statementData['statement'])) {
+
+    $section_id = 2;
+
     $update_statement_db_data = DB::table('section_statements')
     ->where('basic_id', '=', $request->basicData['id'])
     ->update(['statement' => $request->statementData['statement']]);
-    update_tag($request, 0);
-    update_reference($request, 0);
+    if (isset($request->statementData['tag'])) update_tag($request, $section_id, 0);
+    if (isset($request->statementData['reference'])) update_reference($request, $section_id, 0);
 }
 
 // dd('ok');
@@ -1274,13 +1311,15 @@ if (isset($request->activityData)) {
     ->where('basic_id', '=', $request->basicData['id'])
     ->get();
 
+    // dd($update_statement_db_data);
+
     foreach ($request->activityData['activityTime'] as $index => $item) {
 
         // dd($index, $item);
 
         // dd($item, $index, $request->basicData['id']);
 
-        // dd($update_statement_db_data);
+
         // dd($update_statement_db_data[0]->id);
 
             // $update_statement_db_data[$index2]->update(['activityTime' => $item]);
@@ -1295,12 +1334,26 @@ if (isset($request->activityData)) {
             ->update(['activityTime' => $item]);
 
 
+            $section_id = 4;
 
-        // update_reference($request, $index);
+
+
+        update_reference($request, $section_id, $index);
 
         // if (0) update_tag($request);
 
     }
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

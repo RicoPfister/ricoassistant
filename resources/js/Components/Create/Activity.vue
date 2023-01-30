@@ -309,7 +309,10 @@ function activitybuttonBar(e, n) {
 
         if (e == 'hMinus') {
             if (form.activityTo[n-1] > 0) {
-                if (form.activityTo[n-1].toString().slice(-2) > 0) {
+
+                console.log(parseInt((form.activityTo[n-1].toString().slice(-2)))-30);
+
+                if (parseInt((form.activityTo[n-1].toString().slice(-2)))-30 >= 0) {
                     form.activityTo[n-1] -= 30;
                 } else {
 
@@ -627,7 +630,7 @@ function fromChild(data) {
     // console.log(activityDiagramColorTag.value);
 
     if (data.component == 'reference' && data.parentId == 4) {
-        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
+        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference});
     }
 
     // if () {
@@ -672,18 +675,19 @@ let TimeMinutes = 0;
 
 function edittimeToTo(item, index) {
     let parseactivityTo = parseInt(item.activityTime);
+    console.log(parseactivityTo);
     // console.log(props.toChild.activityData['activityTo']);
-    // console.log(data);
+    console.log(item);
     // console.log(item.activityTo);
-    // console.log(convertTimeToTOTotal);
+    console.log(convertTimeToTOTotal);
     // console.log(item.activityTo.slice(-2));
 
     // TimeMinutes = parseInt(item.activityTo.slice(-2));
     TimeMinutes = (parseInt(item.activityTime)+convertTimeToTOTotal) % 60;
-    // console.log(TimeMinutes);
+    console.log(TimeMinutes);
     // console.log(item.activityTo);
     convertTimeToTO = ((parseactivityTo+convertTimeToTOTotal)-TimeMinutes)/60*100+TimeMinutes;
-    // console.log(convertTimeToTO);
+    console.log(convertTimeToTO);
     form.activityTo.push(convertTimeToTO);
     convertTimeToTOTotal += parseInt(item.activityTime);
     // console.log(convertTimeToTOTotal);

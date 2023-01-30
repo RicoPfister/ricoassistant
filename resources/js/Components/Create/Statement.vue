@@ -50,8 +50,11 @@ function InputData() {
 // send to parent: reference selection OR tag list
 function fromChild(data) {
     if (data.component == 'reference' && data.parentId == 2) {
-        // console.log(data);
-        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+
+        console.log(data);
+        console.log(data.reference);
+
+        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference});
     }
 
     if (data.component == 'tag' && data.parentId == 2) {

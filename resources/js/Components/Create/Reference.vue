@@ -24,7 +24,7 @@
 
                 <!-- reference popup -->
                 <div class="absolute z-40 top-[31px] -left-[1px] w-[calc(100%+2px)]">
-                    <ReferencePopup v-if="form.referencePickerOpen" :fromController="props.fromController" @fromChild="fromChild"/>
+                    <ReferencePopup v-if="form.referencePickerOpen.value" :fromController="props.fromController" @fromChild="fromChild"/>
                 </div>
 
                 <!-- reference input -->
@@ -32,7 +32,7 @@
                 focus:ring-0 focus:border-black
                 border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
                 type="text"
-                :placeholder="placeholderText" v-model="form.reference.referenceTitle">
+                :placeholder="placeholderText" v-model="form.reference.value[0].title">
             </div>
         </div>
 
@@ -58,12 +58,16 @@ const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 
 'fromChild', 'fromController', 'transferCreate']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'fromChild', 'toChild']);
 
-let form = useForm({
-    reference: {'referenceTitle': '', 'basic_id': ''},
-    // fromController: {},
-    referencePickerOpen: 0,
-    key: 1,
-});
+// let form = useForm({
+//     reference: [{'referenceTitle': ''}],
+//     referencePickerOpen: 0,
+//     key: 1,
+// });
+
+let form = {
+    'reference': ref([{}]),
+    'referencePickerOpen': ref(0),
+};
 
 // check database Sreference
 // send to parent: statement input data
@@ -72,7 +76,7 @@ function referenceCheckerFunction(index, id, check) {
     // console.log(id);
     // console.log(check);
 
-    if (form.referencePickerOpen != 1) {
+    if (form.referencePickerOpen.value != 1) {
         // console.log('ok');
         // form.referenceChecker['rowIndex'] = index;
         // form.referenceChecker['parentId'] = id;
@@ -81,17 +85,17 @@ function referenceCheckerFunction(index, id, check) {
 
         // console.log(check);
         // check if reference popup ***selection*** has been fired and send request to controller
-        if (check == 'lastUsed' && ( form.referencePickerOpen == 0 || typeof form.referencePickerOpen == 'undefined')) {
+        if (check == 'lastUsed' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined')) {
             // console.log('ok');
             Inertia.post('refcheck', { reference: check, row: index, parentId: id}, {replace: true,  preserveState: true, preserveScroll: true});
         }
 
         // check if reference form ***input*** has been and send request to controller
-        else if (check == 'inputCheck' && ( form.referencePickerOpen == 0 || typeof form.referencePickerOpen == 'undefined' ) &&
-        form.reference.referenceTitle.length > 2) {
+        else if (check == 'inputCheck' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined' ) &&
+        form.reference.value[0].title.length > 2) {
             // console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference.referenceTitle, row: index, parentId: id}, {replace: false,
+                Inertia.post('refcheck', { reference: form.reference.title, row: index, parentId: id}, {replace: false,
                 preserveState: true, preserveScroll: true});
             }, 500);
         }
@@ -110,13 +114,19 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
-    console.log(data);
-    form.reference = data.referenceData;
-    emit('fromChild', {'reference': form, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component':
+    console.log(data.referenceData);
+    // form.reference.value = [];
+    // console.log(form.reference.value);
+    // form.reference.value[0] = '';
+    console.log(form.reference.value);
+    form.reference.value[0] = data.referenceData;
+    console.log(form.reference.value);
+    emit('fromChild', {'reference': form.reference.value, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component':
     'reference'});
-
+    console.log(form.reference.value);
     // console.log(props.toChild.parentIndex);
-    form.referencePickerOpen = 0;
+    form.referencePickerOpen.value = 0;
+    console.log(form.reference.value);
 }
 
 // listen to title placeholder auto set
@@ -138,7 +148,7 @@ watch(() => props.fromController, (curr, prev) => {
     // console.log(props.toChild);
 
     if(props.fromController.misc?.parentId == props.toChild?.parentId && props.fromController?.misc.row == props.toChild?.parentIndex) {
-        form.referencePickerOpen = 1;
+        form.referencePickerOpen.value = 1;
     }
 
 }, {deep: true}, 500);
@@ -159,9 +169,10 @@ watch(() => props.fromController, (curr, prev) => {
 
 
 watch(() => props.toChild, (curr, prev) => {
-    if (props?.toChild?.parents_reference && !form?.reference?.referenceTitle) {
+    if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
         console.log(props.toChild.parents_reference);
-        form.reference.referenceTitle = props.toChild.parents_reference
+        form.reference.value = [{}];
+        form.reference.value[0].title = props.toChild.parents_reference
     };
 
 }, {deep: true}, 500);
@@ -171,7 +182,7 @@ onMounted(() => {
     if (props?.toChild?.formParentReference) {
         // console.log(props.toChild.formParentReference);
         // console.log(form.reference.referenceTitle);
-        form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
+        form.reference.value[0].title = props.toChild.formParentReference[0][0].title;
     }
 
     if (props?.toChild?.parents_reference) {
@@ -179,7 +190,7 @@ onMounted(() => {
         // console.log(props.toChild.parents_reference);
         // console.log(form.reference.referenceTitle);
         // form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
-        form.reference.referenceTitle = props.toChild.parents_reference;
+        form.reference.value[0].title = props.toChild.parents_reference;
     }
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;

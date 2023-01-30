@@ -4,16 +4,16 @@
 
 <!-- get reference parents list -->
 <div class="font-bold mt-1">Reference Parents:</div>
-<div v-if="typeof props?.reference?.reference !== 'undefined'" class="flex flex-col">
+<div v-if="typeof props?.reference?.reference_parents !== 'undefined'" class="flex flex-col">
 
     <!-- reference group -->
-    <div v-for="(item, index) in props.reference.reference">
+    <div v-for="(item, index) in props.reference.reference_parents">
 
         <!-- {{ item }} -->
 
         <div class="flex flex-row">
             <!-- index indicator -->
-            <div class="truncate"><span v-if="props.reference.reference.length > 1" class="bg-black text-white px-1 mr-1 font-bold">{{ parseInt(index)+1 }}</span></div>
+            <div class="truncate"><span v-if="props.reference.reference_parents.length > 1" class="bg-black text-white px-1 mr-1 font-bold">{{ parseInt(index)+1 }}</span></div>
 
             <div class="flex flex-row">
                 <!-- group reference path -->

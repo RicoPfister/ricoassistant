@@ -184,7 +184,10 @@ function dataChild(data) {
         // formToDelete
 
         // console.log(form.value.activityData.activityTo);
-        form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+        if (form?.value?.activityData) {
+            form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+        }
+
 
 
 
@@ -291,6 +294,9 @@ let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
+
+    console.log(data);
+
     if (data.form != 'undefined') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
