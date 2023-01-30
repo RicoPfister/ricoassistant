@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('basic_id')->references('id')->on('section_basics');
             $table->bigInteger('ref_id')->nullable();
 
-            $table->string('activityTime', 5);
+            $table->smallInteger('activityTime');
 
             $table->string('tracking', 50);
             $table->timestamps();

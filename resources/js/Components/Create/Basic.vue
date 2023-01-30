@@ -104,7 +104,7 @@ watch(() => form, (curr, prev) => {
     // console.log(form);
     // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
     // console.log('ok');
-    emit('fromChild', {'section':'basicData', 'subSection':'refDate', 'form': form.basicRefDate});
+    emit('fromChild', {'section':'basicData', 'subSection':'ref_date', 'form': form.basicRefDate});
     emit('fromChild', {'section':'basicData', 'subSection':'medium', 'form': form.basicMedium});
     emit('fromChild', {'section':'basicData', 'subSection':'title', 'form': form.basicTitle});
 }, {deep: true}, 500);
@@ -144,5 +144,15 @@ watch(() => props.transfer, (curr, prev) => {
         form['basicMedium'] = props.transfer.basicMedium;
     }
 }, {deep: true}, 500);
+
+onMounted(() => {
+    // console.log(props.dataParent);
+
+    form['basicMedium'] = props.toChild?.basicData?.medium;
+    form['basicTitle'] = props.toChild?.basicData?.title;
+    if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+
+
+});
 
 </script>

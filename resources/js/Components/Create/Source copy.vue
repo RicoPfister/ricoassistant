@@ -9,7 +9,7 @@
 
             <label class="" aria-label="Statement Input" for="statement">Source*: </label>
 
-            <MenuEntry @data-child="dataChildMenuEntry"/>
+            <!-- <MenuEntry @data-child="dataChildMenuEntry"/> -->
 
         </div>
 
@@ -74,12 +74,18 @@
 
                 <!-- source tags -->
                 <!-- ------------------------------------------------------ -->
-                <div class="border-b-2 border-black font-bold">Tags</div>
-                <TagForm />
+                <div v-if="0" class="border-b-2 border-black font-bold">Tags</div>
+                <div v-if="0" class="pt-2 space-y-[2px] w-full">
+                    <div v-for="(item, index) in InputData" class="border border-black w-full">
+                        <div class="w-full">
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ index+1 }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- source preview-->
-                <div class="border-black border-b-2 font-bold">Source Preview (if available)</div>
-                <div class="flex flex-wrap mt-1 gap-x-2">
+                <div v-if="0" class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
+                <div v-if="0" class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
                         <div v-if="item.type.split('/')[0] == 'image'" class="py-1">
                             <div class="relative border-2 border-black h-36">
@@ -94,6 +100,15 @@
     </div>
 </div>
 
+<!-- open popup -->
+<!-- <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
+    <TagPopup :fromParentTagString="tagCollectionInputFormat[tagCollectionInputIndex]" :data-common="props.dataCommon" @tag-popup-open="tagPopupOpen = 0" :data-form="props.dataForm" @fromChild="fromChild"/>
+</div> -->
+
+<div v-if="!props?.toChild?.componentCollection?.find(element => element == 4)" class="border-l border-r border-b border-black h-[31px]">
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+</div>
+
 </template>
 
 <script setup>
@@ -102,8 +117,10 @@ import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuEntry from "../Create/MenuEntry.vue";
+import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue"
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
+import Reference from "./Reference.vue";
 
 let dataChild = ref({'statement': ''});
 
@@ -114,16 +131,7 @@ let tagPopupOpen = ref();
 let uniqueKey = ref(1);
 let InputData = ref([]);
 
-// emit form
-watch(() => dataChild, (curr, prev) => {
 
-    emit('dataChild', {'formData': dataChild.value});
-
-}, {deep: true}, 500);
-
-function dataChildMenuEntry(n) {
-    emit('dataChild', {'formDataEdit': n['formDataEdit']});
-}
 
 // file preview
 let preview = ref([]);
@@ -138,69 +146,77 @@ function FileChange(event, index) {
     }
 }
 
-// emit form
-watch(() => InputData, (curr, prev) => {
-
-emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
-
-}, {deep: true}, 500);
-
 // fill in already extisting data
 onMounted(() => {
     if (props.dataForm.filelist) {
         InputData.value = props.dataForm.filelist;
         preview.value = props.dataForm.previewlist;
     }
+
+    if (props?.toChild?.sourceData) {
+
+        // console.log(props.toChild.sourceData.files);
+
+        props.toChild.sourceData.files.forEach((item, index) => soureDataFilesGroup(item, index));
+
+        function soureDataFilesGroup(item, index) {
+            // console.log(item);
+            InputData.value.push({'file': item, 'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value++});
+        }
+
+        // InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value++});
+        // preview.value.push(URL.createObjectURL(item));
+    }
   })
 
-//   tag popup
-// ---------------------------------------------------------
+// send changes to parent
 
-// let emit = defineEmits(['dataForm']);
-
-// onMounted(() => {
-//     console.log(props.dataForm.basicTitle);
-
-//     if (typeof props.dataParent.title != 'undefined') {
-//         // console.log(props.dataForm.statement);
-//         title = props.dataParent.title;
-//     } else title = 'No title found';
-// })
-
-// send tag string to tag popup
-let tagCollectionInputFormat = ref([]);
-let tagCollectionInputIndex = ref('');
-
+// send to parent: tag data from child
 function fromChild(data) {
 
     // console.log(data);
+    console.log(data.component);
+    console.log(data?.reference?.reference.referenceTitle);
 
-    if (data.tagCollection) {
+    if (data.component == "tag" && data.parentId == 3) {
+        console.log(data);
+        emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+    }
 
-        // console.log(data.tagCollection);
-        tagCollectionInputFormat.value[tagCollectionInputIndex.value] = data.tagCollection;
-        tagPopupOpen.value = 0;
+    if (data.component == 'reference' && data.parentId == 3) {
+        console.log(data);
+        emit('fromChild', {'section':'sourceData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
     }
 }
 
-function tagPopupOpenData(index) {
+// send to parent: file upload
+watch(() => InputData, (curr, prev) => {
+    // emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
+    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+    emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
+}, {deep: true}, 500);
 
-    tagCollectionInputIndex.value = index;
-    tagPopupOpen.value = 1;
-    // console.log(tagCollectionInputIndex.value);
-}
+// send to parent:
+// watch(() => dataChild, (curr, prev) => {
+// emit('dataChild', {'formData': dataChild.value});
+// }, {deep: true}, 500);
+
+// send to parent: box menu
+// function dataChildMenuEntry(n) {
+// emit('dataChild', {'formDataEdit': n['formDataEdit']});
+// }
 
 // emit formData
-let form = ref({});
-function toParentTagDataGroup(index) {
-    tagCollectionInputIndex.value = index;
+// let form = ref({});
+// function toParentTagDataGroup(index) {
+//     tagCollectionInputIndex.value = index;
 
-    form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
+//     form.value[index] = TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[tagCollectionInputIndex.value]);
 
-    // console.log(form.value);
+//     // console.log(form.value);
 
-    // send formData
-    emit('toParent', {'sourceTag': form.value});
-}
+//     // send formData
+//     emit('toParent', {'sourceTag': form.value});
+// }
 
 </script>

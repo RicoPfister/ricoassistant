@@ -22,7 +22,7 @@
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
-                    <Footer @data-child="dataChild"/>
+                    <Footer :editCheck="editCheck" @data-child="dataChild"/>
                 </div>
             </div>
         </div>
@@ -51,10 +51,14 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
 
-let form = ref({'basicData': ''});
+// variable collection
+// -------------------------
+
+let form = ref({});
+let editCheck = ref('');
 
 let dataParent = ref({});
 
@@ -62,6 +66,46 @@ const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
+
+let activityTimeTotal = 0;
+let activityTimeHourString = 0;
+let activityTimeHourMinute = 0;
+let activityTime = 0;
+
+// function collection
+// -------------------------
+
+function activityTimeConvert(item, index) {
+
+    console.log(item, index);
+
+    if (item >= 100) {
+        activityTimeHourString = parseInt(item.toString().slice(0, -2));
+        activityTimeHourMinute = parseInt(item.toString().slice(-2));
+    } else {
+        activityTimeHourMinute = item;
+    }
+
+        console.log(item, index, activityTimeHourString, activityTimeHourMinute);
+
+        activityTime = parseInt(activityTimeHourString ) * 60 + parseInt(activityTimeHourMinute);
+
+        console.log(activityTime);
+
+        activityTime -= activityTimeTotal;
+
+        console.log(activityTime, activityTimeTotal);
+
+        if (typeof form?.value?.activityData?.activityTime == 'undefined') form.value.activityData.activityTime = [];
+
+        console.log(activityTime);
+
+        form.value.activityData.activityTime[index] = activityTime;
+
+        activityTimeTotal += activityTime;
+        if (index >= form.value.activityData.activityTo.length-1) activityTimeTotal = 0;
+
+    };
 
 // process received child data
 function dataChild(data) {
@@ -97,48 +141,63 @@ function dataChild(data) {
     //------------------------------------------------
     if (data.submit == 1) {
 
+        // convert activity timeTo to minutes
         if (form.value.activityData?.activityTo) {
             form.value.activityData.activityTime = [];
 
             console.log(form.value.activityData.activityTo);
 
-            let activityTimeTotal = 0;
-            let activityTimeHourString = 0;
-            let activityTimeHourMinute = 0;
-            let activityTime = 0;
+
 
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
 
-            function activityTimeConvert(item, index) {
-                // console.log(item);
 
-                activityTimeHourString = item.toString().slice(0, -2);
-                activityTimeHourMinute = item.toString().slice(-2);
-
-                activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
-
-                // console.log(activityTime);
-
-                activityTime -= activityTimeTotal;
-
-                form.value.activityData.activityTime[index] = activityTime;
-                // console.log(activityTime);
-
-                activityTimeTotal += activityTime;
-
-                // console.log(activityTimeTotal);
-
-                // console.log(activityTimeHourString);
-                // console.log(activityTimeHourMinute);
-
-                // form.value.activityData.activityTime[index] = item.slice(2);
-            };
         };
 
-        // console.log(form.value);
-
+        console.log(form.value);
+        console.log('ok');
         Inertia.post('store', form.value);
+        console.log('ok');
     };
+
+    if (data.update == 1) {
+
+        // let formIndex = Object.keys(form.value);
+
+        // formIndex.forEach(element => formIndexFunction(element))
+
+        // function formIndexFunction(item) {
+        //     console.log(item);
+        //     if (!Object.hasOwn(formBeforeUpdate, item)) formToUpdate[item] = form.value[item];
+
+        //     let formIndexIndex = Object.keys(form.value[item]);
+        //     console.log(formIndexIndex);
+        // }
+
+        // let formBeforeUpdate = {};
+        // let formToUpdate = {};
+        // let formToDelete = {};
+
+        // form.value
+        // formBeforeUpdate
+        // formToUpdate
+        // formToDelete
+
+        // console.log(form.value.activityData.activityTo);
+        if (form?.value?.activityData) {
+            form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
+        }
+
+
+
+
+        Inertia.post('update', form.value);
+        // console.log(form.value);
+    }
+
+    if (data.deleteEntry == 1) {
+        Inertia.post('update', {'delete': 'deleteEntry_@HuZ-345-pLk'});
+    }
 
     // build form based on selected component
     if (data.componentSelected) {
@@ -235,14 +294,19 @@ let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
-    // console.log(data);
+
+    console.log(data);
+
     if (data.form != 'undefined') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
             form.value[data.section][data.subSection][data.index]  = {};
             form.value[data.section][data.subSection][data.index] = data.form;
+            // console.log(data);
+            // console.log(form.value[data.section][data.subSection][data.index]);
         } else {
+            // console.log(data);
             form.value[data.section][data.subSection]= data.form;
         }
     }
@@ -278,5 +342,39 @@ function fromChild(data) {
 //         Inertia.post('tag');
 //     };
 // }, {deep: true}, 500);
+// let form_transfer = ref();
+onMounted(() => {
+//    console.log(props.edit);
+
+   if (props?.edit) {
+
+        // console.log(props.edit.activityData.reference[0]);
+
+        componentCollection.splice(0, componentCollection.length);
+        componentCollection.push(1);
+        if (props?.edit?.statementData) componentCollection.push(4);
+        if (props?.edit?.activityData) componentCollection.push(5);
+        if (props?.edit?.sourceData) componentCollection.push(7);
+
+        // form_transfer = props.edit;
+        // console.log(form_transfer);
+        // form_transfer.value = props.edit;
+        // form.value = '';
+        // console.log(form.value);
+        // formBeforeUpdate = props.edit;
+        // console.log(formBeforeUpdate);
+        form.value = props.edit;
+        // console.log(form.value);
+        // form.value.statementData.tag = props.tag[0];
+        // form_transfer = props.edit;
+        // console.log(form_transfer);
+        editCheck.value = 1;
+        componentCollectionUpdate.value = !componentCollectionUpdate.value;
+    }
+
+    // if (props?.tag) {
+    //     form.value.statementData.tag = props.tag[0];
+    // }
+});
 
 </script>

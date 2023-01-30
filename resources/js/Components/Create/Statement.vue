@@ -11,11 +11,11 @@
 </div>
 
 <div class="border-l border-r border-b border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild.basicData.title}" :fromController="props.fromController" @fromChild="fromChild"/>
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag}" :fromController="props.fromController" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
 </template>
@@ -50,7 +50,11 @@ function InputData() {
 // send to parent: reference selection OR tag list
 function fromChild(data) {
     if (data.component == 'reference' && data.parentId == 2) {
-        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+
+        console.log(data);
+        console.log(data.reference);
+
+        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference});
     }
 
     if (data.component == 'tag' && data.parentId == 2) {
@@ -74,6 +78,13 @@ function dataChildMenuEntry(n) {
 watch(() => props.fromChild, (curr, prev) => {
 emit('fromChild', {'section':'statementData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
 }, {deep: true}, 500);
+
+onMounted(() => {
+    form['statement'] = {};
+    form['statement'] = props.toChild?.statementData?.statement?.statement;
+    form['id'] = props.toChild?.statementData?.statement?.id;
+});
+
 
 </script>
 

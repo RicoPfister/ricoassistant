@@ -53,8 +53,8 @@ let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fr
 
 let tagPopupOpen = ref(0);
 let tagCollectionInputIndex = ref(0);
-let tagCollectionInputFormat = ref({});
-let tagCollectionGroupFormat = ref({});
+let tagCollectionInputFormat = ref([]);
+let tagCollectionGroupFormat = ref([]);
 let controllerDataArrived = ref(0);
 let fromController = ref('');
 let tagInputShow = ref(1);
@@ -108,16 +108,16 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
-    console.log(data.tagSelectionListString);
+    // console.log(data.tagSelectionListString);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
     if (typeof data.tagSelectionListString !== 'undefined') {
 
-        console.log('ok');
+        // console.log('ok');
 
         if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
-            console.log('ok');
+            // console.log('ok');
             // console.log(data.tagCollection);
             // tagCollectionInputFormat.value = data.tagCollection;
 
@@ -129,7 +129,7 @@ function fromChild(data) {
     }
 
     if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
-    console.log(data);
+    // console.log(data);
 }
 
 // function tagPopupOpenData(index) {
@@ -165,23 +165,149 @@ watch(() => props.fromController, (curr, prev) => {
     // console.log('ok');
     // console.log(props?.fromController);
     if (props?.fromController) {
-        console.log('ok');
+        // console.log('ok');
         fromController.value = props.fromController};
 }, {deep: true}, 500);
 
-onMounted(() => {
-console.log(props.toChild);
-
-if (props?.fromController) {
-    fromController.value = props.fromController;
+watch(() => props?.toChild?.formTags, (curr, prev) => {
+    // console.log('ok');
+    if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
+        // console.log('ok');
+    tagCollectionInputFormat.value = [''];
+    props.toChild.formTags.forEach(createTagInputGroup);
 };
 
-if (typeof props.toChild?.tagInputShow !== 'undefined') {
-    // console.log(data);
-    tagInputShow.value = props.toChild.tagInputShow;
-}
-// tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
+}, {deep: true}, 500);
+
+onMounted(() => {
+    // console.log(props.toChild);
+
+    // if (props?.toChild?.editTag) {
+    //     console.log(props.toChild.editTag);
+    //     props.toChild.editTag[0].forEach(createTagInputGroup);
+    // }
+
+    if (props?.fromController) {
+        fromController.value = props.fromController;
+    };
+
+    if (typeof props.toChild?.tagInputShow !== 'undefined') {
+        // console.log(data);
+        tagInputShow.value = props.toChild.tagInputShow;
+    }
+    // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
+
+    if (props?.toChild?.formTags) {
+
+
+
+
+
+// console.log(props.toChild.formTags);
+// console.log(tagCollectionInputFormat.value );
+
+
+
+
+// tagCollectionInputFormat.value= [];
+// console.log(tagCollectionInputFormat.value);
+
+// if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
+if (props?.toChild?.formTags) {
+    tagCollectionInputFormat.value = [''];
+    // console.log(props.toChild.formTags);
+    props.toChild.formTags.forEach(createTagInputGroup)
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// console.log(tagCollectionInputFormat.value);
+
+// tagCollectionInputFormat.value = [];
+// tagCollectionInputFormat.value[0] = tagCollectionInputFormat.value;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
 })
+
+function createTagInputGroup(item, index1) {
+
+    console.log(item);
+
+item.forEach(createTagInputString);
+
+function createTagInputString(item2, index2) {
+
+    console.log(item2);
+
+    if (item2 != null) {
+        let item2Trimmed = item2.toString().trim();
+
+        // console.log(index2);
+        // console.log(item2);
+        // console.log(item2Trimmed);
+        // console.log(tagCollectionInputFormat.value);
+
+        switch (index2) {
+
+            case 0:
+                // console.log(item2Trimmed);
+                // console.log(tagCollectionInputFormat.value);
+                // console.log(item2);
+                tagCollectionInputFormat.value[0] += '@'+item2Trimmed;
+                // console.log(tagCollectionInputFormat.value);
+                break;
+
+            case 3:
+                tagCollectionInputFormat.value[0] += '('+item2Trimmed+')';
+                // console.log(tagCollectionInputFormat.value);
+                break;
+
+            default:
+                console.log('ok');
+                if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
+                // console.log(tagCollectionInputFormat.value);
+        }
+    }
+}
+// prevent space at the end of the string
+if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
+
+console.log(tagCollectionInputFormat.value);
+
+}
 
 </script>
 

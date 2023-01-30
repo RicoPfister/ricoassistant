@@ -84,10 +84,10 @@
 
                 <div class="w-full h-[30px] flex flex-row">
                     <div class="grow">
-                        <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                        <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
                     </div>
                     <div class="w-fit">
-                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild.basicData.title, 'tagInputShow': 0}" :fromController="props.fromController" @fromChild="fromChild"/>
+                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0, 'formTags': form?.activityTag?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/>
                     </div>
                 </div>
 
@@ -262,7 +262,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 
 const form = useForm({
     activityTo: [],
-    activityReference: [{title: '', medium: '', color: '', basic_id: ''}],
+    activityReference: [],
     activityTag: {},
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
     fromController: {},
@@ -286,6 +286,8 @@ let tagTooltipShowTimer = '';
 
 let fromController = ref(0);
 
+let convertTimeToTO = '';
+
 // button functions
 //----------------------------------------
 
@@ -307,7 +309,10 @@ function activitybuttonBar(e, n) {
 
         if (e == 'hMinus') {
             if (form.activityTo[n-1] > 0) {
-                if (form.activityTo[n-1].toString().slice(-2) > 0) {
+
+                console.log(parseInt((form.activityTo[n-1].toString().slice(-2)))-30);
+
+                if (parseInt((form.activityTo[n-1].toString().slice(-2)))-30 >= 0) {
                     form.activityTo[n-1] -= 30;
                 } else {
 
@@ -382,7 +387,7 @@ function activitybuttonBar(e, n) {
     if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
         activityTotalRow.value++;
         form.activityTo[n] = '';
-        form.activityReference[n] = {title: '', id: ''};
+        form.activityReference[n] = '';
     }
 
     else if (form.activityTo[n-1] == 2400 && activiteTolimitReached.value == 1 && document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n] == '' && (typeof form.activityReference[n].title == 'undefined' || form.activityReference[n].title == '')) {
@@ -625,7 +630,7 @@ function fromChild(data) {
     // console.log(activityDiagramColorTag.value);
 
     if (data.component == 'reference' && data.parentId == 4) {
-        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference.reference});
+        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference});
     }
 
     // if () {
@@ -648,5 +653,61 @@ function dataChildMenuEntry(n) {
 //         console.log('ok');
 //         fromController.value = props.fromController};
 // }, {deep: true}, 500);
+
+onMounted(() => {
+
+    // console.log(props.toChild.activityData['tag']);
+
+    if (props?.toChild?.activityData) {
+        props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));
+
+        props.toChild.activityData['reference'].forEach((item, index) => editParentReference(item, index));
+
+        if (props?.toChild?.activityData?.['tag']) editTag(props.toChild.activityData['tag']);
+
+
+    }
+
+});
+
+let convertTimeToTOTotal = 0;
+let TimeMinutes = 0;
+
+function edittimeToTo(item, index) {
+    let parseactivityTo = parseInt(item.activityTime);
+    console.log(parseactivityTo);
+    // console.log(props.toChild.activityData['activityTo']);
+    console.log(item);
+    // console.log(item.activityTo);
+    console.log(convertTimeToTOTotal);
+    // console.log(item.activityTo.slice(-2));
+
+    // TimeMinutes = parseInt(item.activityTo.slice(-2));
+    TimeMinutes = (parseInt(item.activityTime)+convertTimeToTOTotal) % 60;
+    console.log(TimeMinutes);
+    // console.log(item.activityTo);
+    convertTimeToTO = ((parseactivityTo+convertTimeToTOTotal)-TimeMinutes)/60*100+TimeMinutes;
+    console.log(convertTimeToTO);
+    form.activityTo.push(convertTimeToTO);
+    convertTimeToTOTotal += parseInt(item.activityTime);
+    // console.log(convertTimeToTOTotal);
+
+    if (index != props.toChild.activityData['activityTo'].length-1) activityTotalRow.value++;
+
+    // activityReference: [{title: '', medium: '', color: '', basic_id: ''}],
+}
+
+function editParentReference(item, index) {
+    // console.log(index);
+    // console.log(item[0]['title']);
+    form.activityReference[index] = item[0]['title'];
+}
+
+function editTag(item) {
+    // console.log(item);
+    // console.log(item[0]['title']);
+    // form.activityReference[index] = item[0]['title'];
+    form.activityTag = item;
+}
 
 </script>

@@ -12,7 +12,7 @@
 
 <div class="py-1">
     <!-- activity group -->
-    <div v-for="(item, index) in props.detailData.activityTime">
+    <div v-for="(item, index) in props.detailData.activityTo">
         <!-- {{ item }} -->
         <div class="flex flex-row">
             <!-- index indicator -->
