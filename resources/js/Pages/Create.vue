@@ -77,19 +77,24 @@ let activityTime = 0;
 
 function activityTimeConvert(item, index) {
 
-    // console.log(item, index);
+    console.log(item, index);
 
+    if (item >= 100) {
+        activityTimeHourString = parseInt(item.toString().slice(0, -2));
+        activityTimeHourMinute = parseInt(item.toString().slice(-2));
+    } else {
+        activityTimeHourMinute = item;
+    }
 
-        activityTimeHourString = item.toString().slice(0, -2);
-        activityTimeHourMinute = item.toString().slice(-2);
+        console.log(item, index, activityTimeHourString, activityTimeHourMinute);
 
-        activityTime = parseInt(activityTimeHourString )*60+parseInt(activityTimeHourMinute);
+        activityTime = parseInt(activityTimeHourString ) * 60 + parseInt(activityTimeHourMinute);
 
         console.log(activityTime);
 
         activityTime -= activityTimeTotal;
 
-        console.log(activityTime);
+        console.log(activityTime, activityTimeTotal);
 
         if (typeof form?.value?.activityData?.activityTime == 'undefined') form.value.activityData.activityTime = [];
 
@@ -98,6 +103,7 @@ function activityTimeConvert(item, index) {
         form.value.activityData.activityTime[index] = activityTime;
 
         activityTimeTotal += activityTime;
+        if (index >= form.value.activityData.activityTo.length-1) activityTimeTotal = 0;
 
     };
 

@@ -1266,7 +1266,7 @@ if (isset($request->statementData['statement']['statement'])) {
 // *****update activity data*****
 if (isset($request->activityData)) {
 
-    dd($request);
+    // dd($request);
 
     // dd($request->activityData['activityTime']);
 
@@ -1281,12 +1281,17 @@ if (isset($request->activityData)) {
         // dd($item, $index, $request->basicData['id']);
 
         // dd($update_statement_db_data);
-
+        // dd($update_statement_db_data[0]->id);
 
             // $update_statement_db_data[$index2]->update(['activityTime' => $item]);
 
-            $update_statement_db_data = DB::table('section_activities')
-            ->where('id', '=', $index)
+            // dd(gettype($update_statement_db_data[1]->id));
+
+            // $test = $update_statement_db_data[0]->id;
+            // $test2 = $update_statement_db_data[0];
+
+            DB::table('section_activities')
+            ->where('id', '=', $update_statement_db_data[$index]->id)
             ->update(['activityTime' => $item]);
 
 
