@@ -44,7 +44,7 @@ let form = useForm({
 // send to parent: statement input data
 function InputData() {
     // console.log('ok');
-    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
+    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': {'statement': form.statement, 'id': props.toChild.statementData.statement.id}});
 }
 
 // send to parent: reference selection OR tag list

@@ -180,6 +180,7 @@ class RicoAssistant extends Controller {
 
             // get reference id
             $reference_id = DB::table('refs')
+            ->where('status', '=', null)
             ->where('basic_id', '=', $basic_ref)
             ->where('ref_db_id', '=', $section_id)
             // ->join('section_basic', 'section_basic.id', '=', )
@@ -321,10 +322,11 @@ class RicoAssistant extends Controller {
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
+        // dd($detail_statement);
+
         if (count($detail_statement) > 0) {
             // dd('ok');
             $detail['statementData']['statement'] = $detail_statement[0];
-
             // dd(detail_tag($request, $db_section_id, $db_name));
 
             $db_section_id = 2;
@@ -850,11 +852,30 @@ class RicoAssistant extends Controller {
 
             $db_name = $form_section_name[0].'Data';
 
-            if (isset($request->$db_name['reference'])) {
+            // get section data
+            switch($db_name) {
+                case 'statementData':
+                    $tag_section = 'section_statements';
+                    $tag_section_request = 'statement';
+                    break;
+
+                case 'activityData':
+                    $tag_section = 'section_activities';
+                    $tag_section_request = 'activityTo';
+                    break;
+
+                case 'sourceData':
+                    $tag_section = 'section_sources';
+                    $tag_section_request = 'placeholder';
+                    break;
+            }
+
+            if (isset($request->$db_name['reference_parents'])) {
 
                 // dd($request, $section_id, $index);
 
                 $rererence_db_data = DB::table('refs')
+                ->where('status', '=', null)
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->get();
 
@@ -863,9 +884,9 @@ class RicoAssistant extends Controller {
 
                     $ref = New Ref();
                     $ref->basic_id = $request->basicData['id'];
-                    $ref->basic_ref = $request->$db_name['reference'][0][0]['basic_id'];
+                    $ref->basic_ref = $request->$db_name['reference_parents'][0][0]['basic_id'];
                     $ref->ref_db_id = $section_id;
-                    $ref->ref_db_index = $request->$db_name['statement']['id'];
+                    $ref->ref_db_index = $request->$db_name[$tag_section_request]['id'];
                     $ref->tracking = $request->ip();
                     $ref->save();
                 }
@@ -879,10 +900,10 @@ class RicoAssistant extends Controller {
                     ->where('id', '=', $rererence_db_data[$index]->basic_ref)
                     ->get();
 
-                    if ($reference_basic_db_data[0]->title !== $request->$db_name['reference'][$index][0]['title']) {
+                    if ($reference_basic_db_data[0]->title !== $request->$db_name['reference_parents'][$index][0]['title']) {
 
                         $basic_ref = DB::table('section_basics')
-                        ->where('title', '=', $request->$db_name['reference'][$index][0]['title'])
+                        ->where('title', '=', $request->$db_name['reference_parents'][$index][0]['title'])
                         ->get();
 
                         $ref = DB::table('refs')
@@ -890,15 +911,28 @@ class RicoAssistant extends Controller {
                         ->update(['basic_ref' => $basic_ref[0]->id]);
                     }
 
+                    // dd($request->$db_name['reference_parents'][$index]);
+
                     // delete obsolete refs
-                    if (!isset($request->$db_name['reference'][$index])) {
+                    if (!isset($request->$db_name['reference_parents'][$index])) {
                         $ref = DB::table('refs')
                         ->where('basic_id', '=', $request->basicData['id'])
                         ->where('ref_db_id', '=', $section_id)
-                        ->where('ref_db_id_index', '=', $section_id)
+                        ->where('ref_db_index', '=',  $request->$db_name[$tag_section_request]['id'])
                         ->update(['status' => 2]);
                     }
                 }
+            } else {
+                // delete obsolete ref
+
+                    // dd($tag_section_request);
+                    // dd($request->$db_name[]);
+
+                    $ref = DB::table('refs')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->where('ref_db_id', '=', $section_id)
+                    ->where('ref_db_index', '=',  $request->$db_name[$tag_section_request]['id'])
+                    ->update(['status' => 2]);
             }
         }
 
@@ -911,6 +945,25 @@ class RicoAssistant extends Controller {
             ->pluck('db_name');
 
             $db_name = $form_section_name[0].'Data';
+
+
+            // get section data
+            switch($db_name) {
+                case 'statementData':
+                    $tag_section = 'section_statements';
+                    $tag_section_request = 'statement';
+                    break;
+
+                case 'activityData':
+                    $tag_section = 'section_activities';
+                    $tag_section_request = 'activityTo';
+                    break;
+
+                case 'sourceData':
+                    $tag_section = 'section_sources';
+                    $tag_section_request = 'placeholder';
+                    break;
+            }
 
             // get db tags collection
             $update_tag_db_data = DB::table('tags')
@@ -1073,20 +1126,6 @@ class RicoAssistant extends Controller {
                                 case 3:
                                     $tag_table = 'tag_details';
                                     $tag_table_model = New TagDetail();
-                                    break;
-                            }
-
-                            switch($db_name) {
-                                case 'statementData':
-                                    $tag_section = 'section_statements';
-                                    break;
-
-                                case 'activityData':
-                                    $tag_section = 'section_activities';
-                                    break;
-
-                                case 'sourceData':
-                                    $tag_section = 'section_sources';
                                     break;
                             }
 

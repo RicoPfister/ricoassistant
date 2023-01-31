@@ -109,7 +109,8 @@ function referenceCheckerFunction(index, id, check) {
     }
 
     if (typeof form?.reference.value[0]?.title != 'undefined') {
-        console.log('ok');
+        emit('fromChild', {'reference': '', 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex,
+        'color': '', 'component': 'reference'});
     }
 }
 
