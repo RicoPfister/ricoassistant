@@ -59,8 +59,6 @@ class RicoAssistant extends Controller {
         return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
 
-    // detail
-    // -------------------------------------------------------
     public function detail(Request $request) {
 
         // dd($request);
@@ -499,8 +497,6 @@ class RicoAssistant extends Controller {
         // return Inertia::render('TabManager/TabManager', ['detail' => $detail])->toResponse($request)->setStatusCode(206);;
     }
 
-    // store
-    // -------------------------------------------------------
     public function store(Request $request) {
 
         // dd($request);
@@ -665,15 +661,15 @@ class RicoAssistant extends Controller {
             // dd($db_id, $db_name, $request, $basics, $section_data, $i);
 
             // foreach ($request->activityTo as $i=>$activity) {
-            // foreach ($request->$db_name['reference'] as $key => $value) {
+            foreach ($request->$db_name['reference'] as $key => $value) {
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
                 $ref->basic_ref = $request->$db_name['reference'][$i][0]['basic_id'];
                 $ref->ref_db_id = $db_id;
-                $ref->ref_db_index = $section_data;
+                $ref->ref_db_index = $section_data->id;
                 $ref->tracking = $request->ip();
                 $ref->save();
-            // }
+            }
 
             // dd(['ref_id' => $ref->id]);
 
@@ -710,7 +706,7 @@ class RicoAssistant extends Controller {
 
             // fire reference function
             if (isset($request->statementData['reference'])) {
-                reference($db_section_id, $db_name, $request, $basics, $activities, 0);
+                reference($db_section_id, $db_name, $request, $basics, $statement, 0);
             }
 
             // fire tag function
@@ -841,32 +837,26 @@ class RicoAssistant extends Controller {
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
     }
 
-    // update
-    // -------------------------------------------------------
     public function update (Request $request) {
-        // dd($request->statementData['statement']);
-        // dd($request);
 
+        // dd($request);
 
         // *****update parent reference data*****
         function update_reference($request, $section_id, $index) {
 
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $section_id)
+            ->pluck('db_name');
 
+            $db_name = $form_section_name[0].'Data';
 
-                $form_section_name  = DB::table('index_databases')
-                ->where('id', '=', $section_id)
-                ->pluck('db_name');
+            if (isset($request->$db_name['reference'])) {
 
-                $db_name = $form_section_name[0].'Data';
-
-                // dd($request, $section_id, $index, $db_name, $request->$db_name['statement']['id']);
+                // dd($request, $section_id, $index);
 
                 $rererence_db_data = DB::table('refs')
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->get();
-
-                // dd($rererence_db_data);
-                // dd($rererence_db_data[0]->basic_ref);
 
                 // create ref if no one was found
                 if (count($rererence_db_data) < 1) {
@@ -878,153 +868,191 @@ class RicoAssistant extends Controller {
                     $ref->ref_db_index = $request->$db_name['statement']['id'];
                     $ref->tracking = $request->ip();
                     $ref->save();
-
-
                 }
 
+                // update db tags
                 foreach($rererence_db_data as $index => $item) {
+
+                    // dd($index, $item);
 
                     $reference_basic_db_data = DB::table('section_basics')
                     ->where('id', '=', $rererence_db_data[$index]->basic_ref)
                     ->get();
 
-                    // dd($reference_basic_db_data);
-                    // dd($request->statementData['reference_parents'][0][0]['title']);
-
-                    // dd($request);
-                    // dd($request->$db_name['reference'][$index][0]['title'], $reference_basic_db_data[0]->title);
-                    // dd();
-
                     if ($reference_basic_db_data[0]->title !== $request->$db_name['reference'][$index][0]['title']) {
-                        // dd('ok');
 
                         $basic_ref = DB::table('section_basics')
                         ->where('title', '=', $request->$db_name['reference'][$index][0]['title'])
                         ->get();
-
-                        // dd($basic_ref[0]->id);
-                        // dd($request->basicData['id']);
 
                         $ref = DB::table('refs')
                         ->where('basic_id', '=', $request->basicData['id'])
                         ->update(['basic_ref' => $basic_ref[0]->id]);
                     }
 
+                    // delete obsolete refs
+                    if (!isset($request->$db_name['reference'][$index])) {
+                        $ref = DB::table('refs')
+                        ->where('basic_id', '=', $request->basicData['id'])
+                        ->where('ref_db_id', '=', $section_id)
+                        ->where('ref_db_id_index', '=', $section_id)
+                        ->update(['status' => 2]);
+                    }
                 }
-
-
+            }
         }
 
-
-
-
-
-
-        // create db tag name collection
+        // update - tag function
         // ------------------------------------------
-        function update_tag($request) {
+        function update_tag($request, $section_id, $index) {
 
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $section_id)
+            ->pluck('db_name');
 
-// *****update tag data*****
+            $db_name = $form_section_name[0].'Data';
 
+            // get db tags collection
+            $update_tag_db_data = DB::table('tags')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->where('status', '=', null)
+            ->get()
+            ->groupBy('tag_id')
+            ->values();
 
+            // check if there are tags to be updated
+            if (isset($request->$db_name['tag'][0])) {
 
-        // get tag table id by basic id
-        $update_tag_db_data = DB::table('tags')
-        ->where('basic_id', '=', $request->basicData['id'])
-        ->where('status', '=', null)
-        ->get()
-        ->groupBy('tag_id')
-        ->values();
+                $db_tag_data = [];
+                $a = 0;
 
-        // dd($update_tag_db_data);
-        // dd($request->statementData['tag']);
+                // split db tags in groups
+                foreach ($update_tag_db_data as $i => $id) {
 
+                    // dd($i, $id);
 
-            $db_tag_data = [];
-
-            $a = 0;
-
-            // split db tags in groups
-            foreach ($update_tag_db_data as $i => $id) {
-
-                // dd($id);
-
-                $a2 = 0;
-                foreach ($id as $i2 => $id2) {
-
-                    // dd($i2, $id2);
-
-                    switch ($i2) {
-                        case 0:
-                            $tag_table = 'tag_categories';
-                            break;
-
-                        case 1:
-                            $tag_table = 'tag_contexts';
-                            break;
-
-                        case 2:
-                            $tag_table = 'tag_values';
-                            break;
-
-                        case 3:
-                            $tag_table = 'tag_details';
-                            break;
-                    }
-
-                    // get tag group section name by tag table id
-                    $tag_table_id = DB::table($tag_table)
-                    ->where('id', '=', $id2->tag_table_id)
-                    ->get();
-
-                    foreach ($tag_table_id as $i3 => $id3) {
-                        // dd($id3);
-                        $db_tag_data[$a][$a2] = $id3->content;
-                        $a2++;
-                    }
-
-                    // dd($tag_table_id[0]->content);
-
-                    // dd($tag_table_id[0]->content == $request);
-
-                }
-                $a++;
-
-            }
-
-// section update
-// +++++++++++++++++++++++++++++++++++++++++
-
-
-
-            // update db tags
-            // ------------------------------------------
-
-            // dd($request);
-
-            // split updated tags in groups
-            foreach ($request->statementData['tag'][0] as $i => $id) {
-
-                // dd($i, $id);
-
-                // check if tag group exists
-                if (isset($db_tag_data[$i])) {
-
-                    // dd('ok');
-
-                    // get tag group section
+                    $a2 = 0;
                     foreach ($id as $i2 => $id2) {
-                    // dd($id2);
 
-                        // fire when tag group section name changed
-                        // ---------------------------------
+                        switch ($i2) {
+                            case 0:
+                                $tag_table = 'tag_categories';
+                                break;
 
+                            case 1:
+                                $tag_table = 'tag_contexts';
+                                break;
 
+                            case 2:
+                                $tag_table = 'tag_values';
+                                break;
 
-                        if ($id2 != $db_tag_data[$i][$i2]) {
+                            case 3:
+                                $tag_table = 'tag_details';
+                                break;
+                        }
 
-                            // get tag section
+                        // get tag group section name by tag table id
+                        $tag_table_id = DB::table($tag_table)
+                        ->where('id', '=', $id2->tag_table_id)
+                        ->get();
+
+                        foreach ($tag_table_id as $i3 => $id3) {
+                            $db_tag_data[$a][$a2] = $id3->content;
+                            $a2++;
+                        }
+                    }
+                    $a++;
+
+                    // dd($request->$db_name['tag']);
+
+                    // set status of obsolete tags to 2 (deleted)
+                    if (!isset($request->$db_name['tag'][$index][$i])) {
+                        DB::table('tags')
+                        ->where('tag_id', '=', $id[0]->tag_id)
+                        ->update(['status' => 2]);
+                    }
+                }
+
+                // split updated tags in groups
+                foreach ($request->$db_name['tag'][0] as $i => $id) {
+
+                    //  dd($i, $id);
+
+                    // check if tag group exists
+                    if (isset($db_tag_data[$i])) {
+
+                        // get tag group section
+                        foreach ($id as $i2 => $id2) {
+                        // dd($id2);
+
+                            // fire when tag group section name changed
+                            // ---------------------------------
+
+                            if ($id2 != $db_tag_data[$i][$i2]) {
+
+                                // get tag section
+
+                                switch ($i2) {
+                                    case 0:
+                                        $tag_table = 'tag_categories';
+                                        $tag_table_model = New TagCategory();
+                                        break;
+
+                                    case 1:
+                                        $tag_table = 'tag_contexts';
+                                        $tag_table_model = New TagContext();
+                                        break;
+
+                                    case 2:
+                                        $tag_table = 'tag_values';
+                                        $tag_table_model = New TagValue();
+                                        break;
+
+                                    case 3:
+                                        $tag_table = 'tag_details';
+                                        $tag_table_model = New TagDetail();
+                                        break;
+                                }
+
+                                // check if tag group section name exists
+                                $tag_name_check = DB::table($tag_table)
+                                ->where('content', '=', $id2)
+                                ->get();
+
+                                // if name was found
+                                if (isset($tag_name_check[0])) {
+
+                                    $tag_name_check = DB::table('tags')
+                                    ->where('basic_id', '=', $update_tag_db_data[$i][$i2]->basic_id)
+                                    ->where('tag_id', '=', $update_tag_db_data[$i][$i2]->tag_id)
+                                    ->where('tag_table', '=', $update_tag_db_data[$i][$i2]->tag_table)
+                                    ->update(['tag_table_id' => $tag_name_check[0]->id]);
+                                }
+
+                                // if name was not found
+                                else {
+
+                                    // $test = new TagCategory();
+                                    $tag_category = $tag_table_model;
+                                    $tag_category->content = $id2;
+                                    $tag_category->tracking = $request->ip();
+                                    $tag_category->save();
+
+                                    $tag_name_check = DB::table('tags')
+                                    ->where('basic_id', '=', $update_tag_db_data[$i][$i2]->basic_id)
+                                    ->where('tag_id', '=', $update_tag_db_data[$i][$i2]->tag_id)
+                                    ->where('tag_table', '=', $update_tag_db_data[$i][$i2]->tag_table)
+                                    ->update(['tag_table_id' => $tag_category->id]);
+                                }
+                            }
+                        }
+                    } else {
+
+                        // edit tag group section
+                        foreach ($id as $i2 => $id2) {
+
+                            // dd($i2, $id2);
 
                             switch ($i2) {
                                 case 0:
@@ -1048,332 +1076,163 @@ class RicoAssistant extends Controller {
                                     break;
                             }
 
+                            switch($db_name) {
+                                case 'statementData':
+                                    $tag_section = 'section_statements';
+                                    break;
+
+                                case 'activityData':
+                                    $tag_section = 'section_activities';
+                                    break;
+
+                                case 'sourceData':
+                                    $tag_section = 'section_sources';
+                                    break;
+                            }
+
+                            // check if tag section name exists
+                            // -----------------------------------------------------
+
                             // check if tag group section name exists
                             $tag_name_check = DB::table($tag_table)
                             ->where('content', '=', $id2)
                             ->get();
 
+                            // get section table index
+                            $tag_section_table_id = DB::table($tag_section)
+                            ->where('basic_id', '=', $request->basicData['id'])
+                            ->get();
+
+                            // dd($tag_section_table_id);
+
                             // dd($tag_name_check[0]->id);
 
                             // if name was found
                             if (isset($tag_name_check[0])) {
-                                // dd('+');
 
-                                // dd($update_tag_db_data[$i][$i2]);
+                                    $tag[$i2] = New Tag();
+                                    $tag[$i2]->basic_id = $request->basicData['id'];
+                                    $tag[$i2]->section_table = 2;
+                                    $tag[$i2]->section_table_id = $tag_section_table_id[$index]->id;
+                                    $tag[$i2]->tag_table = $i2+1;
+                                    $tag[$i2]->tag_table_id = $tag_name_check[0]->id;
+                                    $tag[$i2]->tracking = $request->ip();
+                                    $tag[$i2]->save();
 
-                                $tag_name_check = DB::table('tags')
-                                ->where('basic_id', '=', $update_tag_db_data[$i][$i2]->basic_id)
-                                ->where('tag_id', '=', $update_tag_db_data[$i][$i2]->tag_id)
-                                ->where('tag_table', '=', $update_tag_db_data[$i][$i2]->tag_table)
-                                ->update(['tag_table_id' => $tag_name_check[0]->id]);
+                                    $tag[$i2]->tag_id = $tag[0]['id'];
+                                    $tag[$i2]->save();
                             }
 
                             // if name was not found
                             else {
-
-                                // $test = new TagCategory();
 
                                 $tag_category = $tag_table_model;
                                 $tag_category->content = $id2;
                                 $tag_category->tracking = $request->ip();
                                 $tag_category->save();
 
-                                $tag_name_check = DB::table('tags')
-                                ->where('basic_id', '=', $update_tag_db_data[$i][$i2]->basic_id)
-                                ->where('tag_id', '=', $update_tag_db_data[$i][$i2]->tag_id)
-                                ->where('tag_table', '=', $update_tag_db_data[$i][$i2]->tag_table)
-                                ->update(['tag_table_id' => $tag_category->id]);
+                                $tag[$i2] = New Tag();
+                                $tag[$i2]->basic_id = $request->basicData['id'];
+                                $tag[$i2]->section_table = 2;
+                                $tag[$i2]->section_table_id = $tag_section_table_id[$index]->id;
+                                $tag[$i2]->tag_table = $i2+1;
+                                $tag[$i2]->tag_table_id = $tag_category->id;
+                                $tag[$i2]->tracking = $request->ip();
+                                $tag[$i2]->save();
+
+                                $tag[$i2]->tag_id = $tag[0]['id'];
+                                $tag[$i2]->save();
                             }
                         }
                     }
-                } else {
-
-                // dd('ok');
-                // dd($id2);
-
-                // create new tag
-                // ********************************************
-
-
-
-
-
-
-                                    // edit tag group section
-                    foreach ($id as $i2 => $id2) {
-
-                        // dd($i2, $id2);
-
-                        switch ($i2) {
-                            case 0:
-                                $tag_table = 'tag_categories';
-                                $tag_table_model = New TagCategory();
-                                break;
-
-                            case 1:
-                                $tag_table = 'tag_contexts';
-                                $tag_table_model = New TagContext();
-                                break;
-
-                            case 2:
-                                $tag_table = 'tag_values';
-                                $tag_table_model = New TagValue();
-                                break;
-
-                            case 3:
-                                $tag_table = 'tag_details';
-                                $tag_table_model = New TagDetail();
-                                break;
-                        }
-
-
-
-
-
-
-
-
-                    // check if tag section name exists
-                    // -----------------------------------------------------
-
-                    // check if tag group section name exists
-                    $tag_name_check = DB::table($tag_table)
-                    ->where('content', '=', $id2)
-                    ->get();
-
-                    // dd($tag_name_check[0]->id);
-
-                    // if name was found
-                    if (isset($tag_name_check[0])) {
-                        // dd('+');
-
-                        // dd($update_tag_db_data[$i][$i2]);
-
-
-                        // dd($i2);
-
-                            $tag[$i2] = New Tag();
-                            $tag[$i2]->basic_id = $request->basicData['id'];
-                            $tag[$i2]->section_table = 2;
-                            $tag[$i2]->section_table_id = $request->statementData['statement']['id'];
-                            $tag[$i2]->tag_table = $i2+1;
-                            $tag[$i2]->tag_table_id = $tag_name_check[0]->id;
-                            $tag[$i2]->tracking = $request->ip();
-                            $tag[$i2]->save();
-
-                            $tag[$i2]->tag_id = $tag[0]['id'];
-
-                            $tag[$i2]->save();
-
-                    }
-
-                    // if name was not found
-                    else {
-
-                        // dd('ok');
-
-                        // $test = new TagCategory();
-
-                        $tag_category = $tag_table_model;
-                        $tag_category->content = $id2;
-                        $tag_category->tracking = $request->ip();
-                        $tag_category->save();
-
-                        // $tag_id = DB::table('tags')
-                        // ->where('basic_id', '=', $request->basicData['id'])
-                        // ->limit(1)
-                        // ->get();
-
-                        $tag[$i2] = New Tag();
-                        $tag[$i2]->basic_id = $request->basicData['id'];
-                        $tag[$i2]->section_table = 2;
-                        $tag[$i2]->section_table_id = $request->statementData['statement']['id'];
-                        $tag[$i2]->tag_table = $i2+1;
-                        $tag[$i2]->tag_table_id = $tag_category->id;
-                        $tag[$i2]->tracking = $request->ip();
-                        $tag[$i2]->save();
-
-                        $tag[$i2]->tag_id = $tag[0]['id'];
-
-                        $tag[$i2]->save();
-                    }
                 }
 
-
-
-
-
-
-
-
-                    // set tags main entry
-
-
-
-
-
-
-
-
-
-                    }
-
-
-
-                }
-
-
-
-
-
-            }
-
-
-
-            // dd('ok');
-
-                // get tag table id by basic id
-                $update_tag_db_data = DB::table('tags')
-                ->where('basic_id', '=', $request->basicData['id'])
-                ->where('status', '=', null)
-                ->get()
-                ->groupBy('tag_id')
-                ->values();
+            } else {
 
                 // dd($update_tag_db_data);
+                // dd($request->basicData['id']);
 
-                foreach ($update_tag_db_data as $i => $id) {
-
-                    if (!isset($request->statementData['tag'][0][$i])) {
-                        // dd($i);
-                        // dd($update_tag_db_data[$i]);
-                        // dd($update_tag_db_data[$i-1][0]->tag_id);
-
-                        $tag_collection_basic_id = DB::table('tags')
-                        ->where('basic_id', '=', $request->basicData['id'])
-                        ->where('tag_id', '=', $update_tag_db_data[$i][0]->tag_id)
-                        ->update(['status' => 2]);
-
-                        // dd($tag_collection_basic_id);
-
-                    }
+                // delete all entry tags (set to status 2)
+                if (count($update_tag_db_data) > 0) {
+                    DB::table('tags')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->update(['status' => 2]);
                 }
+            }
+        }
 
+        function delete_entry() {
 
+            // tag: set status 2 (deleted)
+            // get tag table id by basic id
+            $update_tag_db_data = DB::table('tags')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->where('status', '=', null)
+            ->get()
+            ->groupBy('tag_id')
+            ->values();
 
+            foreach ($update_tag_db_data as $i => $id) {
 
+                if (!isset($request->statementData['tag'][0][$i])) {
+                    $tag_collection_basic_id = DB::table('tags')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->where('tag_id', '=', $update_tag_db_data[$i][0]->tag_id)
+                    ->update(['status' => 2]);
+                }
+            }
+        }
 
+        // section update
+        // +++++++++++++++++++++++++++++++++++++++++
 
+        // *****update basic data*****
+        $update_basic_db_data = DB::table('section_basics')
+        ->where('id', '=', $request->basicData['id'])
+        ->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'],
+        'medium' => $request->basicData['medium']]);
 
+        // dd($request->statementData['statement']);
 
-// section update
-// +++++++++++++++++++++++++++++++++++++++++
+        // *****update statement data*****
+        if (isset($request->statementData['statement']['statement'])) {
 
-// *****update basic data*****
-$update_basic_db_data = DB::table('section_basics')
-->where('id', '=', $request->basicData['id'])
-->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'], 'medium' => $request->basicData['medium']]);
+            $section_id = 2;
 
-// dd($request->statementData['statement']);
+            $update_statement_db_data = DB::table('section_statements')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['statement' => $request->statementData['statement']['statement']]);
+            update_tag($request, $section_id, 0);
+            update_reference($request, $section_id, 0);
+        } else if (isset($request->statementData['statement'])) {
 
-// *****update statement data*****
-if (isset($request->statementData['statement']['statement'])) {
+            $section_id = 2;
 
-    $section_id = 2;
+            $update_statement_db_data = DB::table('section_statements')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['statement' => $request->statementData['statement']]);
+            update_tag($request, $section_id, 0);
+            update_reference($request, $section_id, 0);
+        }
 
-    $update_statement_db_data = DB::table('section_statements')
-    ->where('basic_id', '=', $request->basicData['id'])
-    ->update(['statement' => $request->statementData['statement']['statement']]);
-    if (isset($request->statementData['tag'])) update_tag($request, $section_id, 0);
-    if (isset($request->statementData['reference'])) update_reference($request, $section_id, 0);
-} else if (isset($request->statementData['statement'])) {
+        // *****update activity data*****
+        if (isset($request->activityData)) {
 
-    $section_id = 2;
+            $update_statement_db_data = DB::table('section_activities')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->get();
 
-    $update_statement_db_data = DB::table('section_statements')
-    ->where('basic_id', '=', $request->basicData['id'])
-    ->update(['statement' => $request->statementData['statement']]);
-    if (isset($request->statementData['tag'])) update_tag($request, $section_id, 0);
-    if (isset($request->statementData['reference'])) update_reference($request, $section_id, 0);
-}
+            foreach ($request->activityData['activityTime'] as $index => $item) {
 
-// dd('ok');
+                    DB::table('section_activities')
+                    ->where('id', '=', $update_statement_db_data[$index]->id)
+                    ->update(['activityTime' => $item]);
 
+                    $section_id = 4;
 
-// *****update activity data*****
-if (isset($request->activityData)) {
-
-    // dd($request);
-
-    // dd($request->activityData['activityTime']);
-
-    $update_statement_db_data = DB::table('section_activities')
-    ->where('basic_id', '=', $request->basicData['id'])
-    ->get();
-
-    // dd($update_statement_db_data);
-
-    foreach ($request->activityData['activityTime'] as $index => $item) {
-
-        // dd($index, $item);
-
-        // dd($item, $index, $request->basicData['id']);
-
-
-        // dd($update_statement_db_data[0]->id);
-
-            // $update_statement_db_data[$index2]->update(['activityTime' => $item]);
-
-            // dd(gettype($update_statement_db_data[1]->id));
-
-            // $test = $update_statement_db_data[0]->id;
-            // $test2 = $update_statement_db_data[0];
-
-            DB::table('section_activities')
-            ->where('id', '=', $update_statement_db_data[$index]->id)
-            ->update(['activityTime' => $item]);
-
-
-            $section_id = 4;
-
-
-
-        update_reference($request, $section_id, $index);
-
-        // if (0) update_tag($request);
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-
-        // dd($update_tag_db_data);
-
-        // *****update parent reference data*****
-        // $update_parent_reference_db_data = DB::table('refs')
-        // ->where('basic_id', '=', $request->basicData['id'])
-        // ->update(['statement' => $request->statementData['statement']]);
-
-        // dd($update_basic_dbdata);
-
-        // DB::table('section_basics')
-        // ->updateOrInsert(
-        //     ['id' => 3],
-        //     ['title' => 'Test123']
-        // );
+                update_reference($request, $section_id, $index);
+            }
+        }
         return Inertia::render('Create', []);
     }
 
@@ -1384,8 +1243,6 @@ if (isset($request->activityData)) {
         return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
     }
 
-    // reference
-    // -------------------------------------------------------
     public function reference(Request $request) {
 
         function reference_inheritance_list($id, $i, $user) {
@@ -1628,8 +1485,6 @@ if (isset($request->activityData)) {
         return Inertia::render('Create', ['fromController' => $result]);
     }
 
-    // basic titlecheck
-    // -------------------------------------------------------
     public function titlecheck(Request $request) {
 
         // user auth
@@ -1705,8 +1560,6 @@ if (isset($request->activityData)) {
         return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
     }
 
-    // get tag list for tag selection
-    // -------------------------------------------------------
     public function tag(Request $request) {
 
         // select all unique categories
@@ -1849,8 +1702,6 @@ if (isset($request->activityData)) {
         return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
     }
 
-    // get tag list for tag selection
-    // -------------------------------------------------------
     public function preset_store(Request $request) {
 
         // dd($request);

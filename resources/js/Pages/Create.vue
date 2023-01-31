@@ -295,9 +295,10 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data.form == 'undefined');
+    // console.log(data.form == '');
 
-    if (data.form != 'undefined') {
+    if (data.form != 'undefined' && data.form != '') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
@@ -305,10 +306,15 @@ function fromChild(data) {
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
             // console.log(form.value[data.section][data.subSection][data.index]);
-        } else {
+        }   else {
             // console.log(data);
             form.value[data.section][data.subSection]= data.form;
-        }
+            }
+    } else {
+            // console.log('ok');
+            if (form?.value?.[data.section]?.[data.subSection]) {
+                delete form.value[data.section]?.[data.subSection];
+            }
     }
 
     // if (data.tagPresetItemSelected) {
@@ -347,6 +353,8 @@ onMounted(() => {
 //    console.log(props.edit);
 
    if (props?.edit) {
+
+        // console.log(props.edit);
 
         // console.log(props.edit.activityData.reference[0]);
 

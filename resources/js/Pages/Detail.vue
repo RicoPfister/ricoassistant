@@ -124,7 +124,7 @@ function edit() {
     }
 
     // console.log(detailDataWithoutReference['activityData']['reference'][0]);
-    console.log(detailData.value);
+    // console.log(detailData.value);
 
     Inertia.post('edit', detailData.value);
 }
