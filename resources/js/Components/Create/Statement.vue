@@ -54,7 +54,7 @@ function fromChild(data) {
         // console.log(data);
         // console.log(data.reference);
 
-        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference});
+        emit('fromChild', {'section':'statementData', 'subSection':'reference_parents', 'index': 0, 'form': data.reference});
     }
 
     if (data.component == 'tag' && data.parentId == 2) {
