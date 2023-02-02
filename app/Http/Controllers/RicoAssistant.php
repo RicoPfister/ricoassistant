@@ -926,7 +926,7 @@ class RicoAssistant extends Controller {
             } else {
                 // delete obsolete ref
 
-                    dd($tag_section_request);
+                    // dd($tag_section_request);
                     // dd($request->$db_name[]);
 
                     $ref = DB::table('refs')
@@ -974,6 +974,8 @@ class RicoAssistant extends Controller {
             ->get()
             ->groupBy('id');
 
+            // dd($db_table_section_data);
+
             // get db tags collection
             $update_tag_db_data = DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
@@ -995,6 +997,8 @@ class RicoAssistant extends Controller {
                 $a++;
             }
 
+            // dd($update_tag_db_section);
+
             foreach($update_tag_db_section as $group_index => $group_item) {
 
                 // dd($group_index, $group_item);
@@ -1005,7 +1009,11 @@ class RicoAssistant extends Controller {
                 // $update_tag_db_group[$group_index]->all();
             }
 
-            // dd($group);
+            if (!isset($update_tag_db_group)) {
+                $update_tag_db_group = '';
+            }
+
+            // dd($update_tag_db_group);
 
             // update tag group section name
             function update_tag_ref($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3) {
