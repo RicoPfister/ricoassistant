@@ -311,11 +311,15 @@ function fromChild(data) {
             // console.log(data);
             form.value[data.section][data.subSection]= data.form;
             }
-    } else {
-            // console.log('ok');
-            if (form?.value?.[data.section]?.[data.subSection]) {
-                delete form.value[data.section]?.[data.subSection];
-            }
+    }
+
+    else {
+
+        // console.log('ok');
+        if (form?.value?.[data.section]?.[data.subSection]) {
+            // delete form.value[data.section]?.[data.subSection][data.index];
+            form.value[data.section][data.subSection].splice(data.index, 1);
+        }
     }
 
     // if (data.tagPresetItemSelected) {

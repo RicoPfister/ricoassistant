@@ -748,30 +748,10 @@ class RicoAssistant extends Controller {
                     $activites->updated_at = now();
                     $activites->save();
 
-                    // dd($activities);
-                    // $activities_id = DB::table('section_activities')->insertGetId($activities[$i]);
-                    // dd($$activities_id);
-
-                    // fire reference function
-                    // if (isset($request->activityData['reference'])) {
-                    //     $checkValue = $request->activityData['reference'];
-                    // }
-                    // else $checkValue = '';
-                    // dd($activities[0]);
-                    // dd(reference($db_section_id, $db_name, $request, $basics, $activities_id, $i));
-
-                    // dd($ref);
-
-                    // dd(reference($db_section_id, $db_name, $request, $basics, $activities_id, $i));
-
                     $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites, $i);
                     $activites->save();
 
-                    // $activities_reference = DB::table('section_activities')->insert(reference($db_section_id, $db_name, $request, $basics, $activites->id, $i));
-
                     // fire tag function
-                    // dd($request->activityData['tag']);
-
                     if (isset($request->activityData['tag'][$i])) {
                         // dd($db_name);
                         tagData($request, $i, $basics, $activites->id, $db_section_id, $db_name);
@@ -937,11 +917,13 @@ class RicoAssistant extends Controller {
             }
         }
 
-        // update - tag function
+        // update, create or delete tag group section names
         // ------------------------------------------
         function update_tag($request, $section_id) {
 
             // dd($request, $section_id, $index);
+
+            // step 1: defining basic meta data
 
             // get client update section name
             $form_section_name  = DB::table('index_databases')
@@ -1015,7 +997,7 @@ class RicoAssistant extends Controller {
 
             // dd($update_tag_db_group);
 
-            // update tag group section name
+            // step 3.1: update tag group section name
             function update_tag_ref($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3) {
 
                 // dd($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3);
@@ -1026,7 +1008,7 @@ class RicoAssistant extends Controller {
                 ->update(['tag_table_id' => $tag_name_check_array]);
             };
 
-            // create tag group section name
+            // step 3.2: create tag group section name
             function create_tag_ref($request, $section_id, $index, $index3, $tag_name_check_array, $tag_section, $tag_id) {
 
                 // dd($request, $section_id, $index, $index3, $tag_name_check_array);
@@ -1057,6 +1039,7 @@ class RicoAssistant extends Controller {
 
             };
 
+            // step 3: check if tag group section names must be updated or created
             function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section) {
 
                 // get tag groups
@@ -1138,7 +1121,7 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            // check if there are any tags from client to be updated if not delete all basic_id related tags
+            // step 2: check if there are any tags from client to be updated if not delete all basic_id related tags
             if (isset($request->$db_name['tag'])) {
 
                 // $i = 0;
@@ -1153,6 +1136,7 @@ class RicoAssistant extends Controller {
                 }
             }
 
+            // step 2.1: delete groups with no content
             else {
                     // dd($update_tag_db_data);
                     // dd($request->basicData['id']);
@@ -1229,14 +1213,63 @@ class RicoAssistant extends Controller {
             ->where('basic_id', '=', $request->basicData['id'])
             ->get();
 
+            // dd($update_statement_db_data);
+
+            // dd($request->activityData['activityTime']);
+
             foreach ($request->activityData['activityTime'] as $index => $item) {
+
+                // dd($index, $item);
+
+                if (isset($update_statement_db_data[$index])) {
 
                     DB::table('section_activities')
                     ->where('id', '=', $update_statement_db_data[$index]->id)
                     ->update(['activityTime' => $item]);
+                }
 
-                    $section_id = 4;
+                // create missing activity entry
+                else {
+
+                    dd('activity not found. code under construction');
+
+                    // create reference function
+                    function reference($db_id, $db_name, $request, $basics, $section_data, $i) {
+
+                        // dd($db_id, $db_name, $request, $basics, $section_data, $i);
+
+                        // dd($request->$db_name['reference'][$i][0]['basic_id']);
+
+                        foreach ($request->$db_name['reference_parents'] as $key => $value) {
+                            $ref = new Ref();
+                            $ref->basic_id = $basics->id;
+                            $ref->basic_ref = $request->$db_name['reference_parents'][$i][0]['basic_id'];
+                            $ref->ref_db_id = $db_id;
+                            $ref->ref_db_index = $section_data->id;
+                            $ref->tracking = $request->ip();
+                            $ref->save();
+                        }
+
+                        // dd(['ref_id' => $ref->id]);
+
+                        return $ref->id;
+                    }
+
+                    $activites = new SectionActivity();
+                    $activites->basic_id = $basics->id;
+                    $activites->activityTime = $request->activityData['activityTime'][$i];
+                    $activites->tracking = $request->ip();
+                    $activites->created_at = now();
+                    $activites->updated_at = now();
+                    $activites->save();
+
+                    $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites, $i);
+                    $activites->save();
+                }
             }
+
+            $section_id = 4;
+
             update_tag($request, $section_id);
             update_reference($request, $section_id);
         }

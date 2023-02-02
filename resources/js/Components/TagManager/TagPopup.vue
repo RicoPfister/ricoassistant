@@ -319,7 +319,7 @@ onMounted(() => {
     if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log(props.fromParentTagString);
         // tagCollectionInputFormat.value = props.toChild;
-        console.log('ok');
+        // console.log('ok');
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }

@@ -622,7 +622,7 @@ function tagTooltipShow(index, data) {
 
 // send to parent: reference selection
 function fromChild(data) {
-    console.log(data);
+    // console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -675,19 +675,19 @@ let TimeMinutes = 0;
 
 function edittimeToTo(item, index) {
     let parseactivityTo = parseInt(item.activityTime);
-    console.log(parseactivityTo);
+    // console.log(parseactivityTo);
     // console.log(props.toChild.activityData['activityTo']);
-    console.log(item);
+    // console.log(item);
     // console.log(item.activityTo);
-    console.log(convertTimeToTOTotal);
+    // console.log(convertTimeToTOTotal);
     // console.log(item.activityTo.slice(-2));
 
     // TimeMinutes = parseInt(item.activityTo.slice(-2));
     TimeMinutes = (parseInt(item.activityTime)+convertTimeToTOTotal) % 60;
-    console.log(TimeMinutes);
+    // console.log(TimeMinutes);
     // console.log(item.activityTo);
     convertTimeToTO = ((parseactivityTo+convertTimeToTOTotal)-TimeMinutes)/60*100+TimeMinutes;
-    console.log(convertTimeToTO);
+    // console.log(convertTimeToTO);
     form.activityTo.push(convertTimeToTO);
     convertTimeToTOTotal += parseInt(item.activityTime);
     // console.log(convertTimeToTOTotal);

@@ -172,11 +172,18 @@ watch(() => props.fromController, (curr, prev) => {
 }, {deep: true}, 500);
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
-    // console.log('ok');
-    if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        // console.log('ok');
-    tagCollectionInputFormat.value = [''];
-    props.toChild.formTags.forEach(createTagInputGroup);
+
+    console.log('ok');
+
+    if (typeof props?.toChild?.formTags == 'undefined') {
+        // console.log('empty');
+        tagCollectionInputFormat.value = [''];
+    }
+
+    else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
+        console.log('ok');
+        tagCollectionInputFormat.value = [''];
+        props.toChild.formTags.forEach(createTagInputGroup);
 };
 
 }, {deep: true}, 500);

@@ -177,7 +177,7 @@ watch(() => props.fromController, (curr, prev) => {
 
 watch(() => props.toChild, (curr, prev) => {
     if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
-        console.log(props.toChild.parents_reference);
+        // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
         form.reference.value[0].title = props.toChild.parents_reference
     };
