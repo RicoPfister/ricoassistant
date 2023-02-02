@@ -85,7 +85,7 @@ function fromChild(data){
     }
 
     if (data.tagContextSelected) {
-        console.log(tagCollection.value[data.index][1][data.subIndex]);
+        // console.log(tagCollection.value[data.index][1][data.subIndex]);
         emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': tagCollection.value[data.index][1][data.subIndex]});
     }
 }
@@ -97,7 +97,7 @@ function fromChild(data){
 onMounted(() => {
 
     if (props.fromController?.tagCollection) {
-        console.log(props.fromController?.tagCollection);
+        // console.log(props.fromController?.tagCollection);
         tagCollection.value = props.fromController.tagCollection
     };
     // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);

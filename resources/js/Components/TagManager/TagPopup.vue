@@ -404,7 +404,7 @@ function categoryPopupActive() {
 
 
     if (props.fromController.tagCollection.length > 0) {
-        console.log('ok');
+        // console.log('ok');
         categoryPopupOpen.value = !categoryPopupOpen.value;
         popupId.value = 2;
     } else {

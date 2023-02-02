@@ -100,14 +100,14 @@ let tagEditMenu = ref([]);
 // basic title response
 watch(() => props.toChild.tagSelection.keyid, _.debounce( (curr, prev) => {
 
-    console.log(props.toChild.tagSelection);
+    // console.log(props.toChild.tagSelection);
     // console.log(props.toChild);
 
     // console.log(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
     // tagArray.value.push(TagFromStringToGroup.tagFromStringToGroup(props.toChild.tagSelection));
     if (typeof props.toChild.tagSelection.tagSelection !== 'undefined') {
         props.toChild.tagSelection.tagSelection.forEach((item, index) => {
-            console.log(item);
+            // console.log(item);
             tagArray.value.push(item);
         });
     };
@@ -142,7 +142,7 @@ function removeTagFromList(index) {
 function duplicateTagRow(index) {
     // tagDuplication = tagArray.value[index];
     // console.log(tagDuplication);
-    console.log(tagArray.value[index]);
+    // console.log(tagArray.value[index]);
     tagArray.value.splice(index, 0, []);
     tagArray.value[index][0] = tagArray.value[index+1][0];
     tagArray.value[index][1] = tagArray.value[index+1][1];

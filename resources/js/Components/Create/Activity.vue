@@ -406,7 +406,7 @@ function onlyNumbers(e) {
 function activityRowAdd(n) {
 
     // add row
-    if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form.activityTo[n-1].match(/..[0-5][0-9]/) && document.getElementById("activityToRowNumber"+(n-1)).value.length == 4) activityTotalRow.value++;
+    if (!document.getElementById("activityToRowNumber"+(n)) && form.activityTo[n-1] < 2400 && form.activityTo[n-1] !='0000' && form?.activityTo?.[n-1]?.match(/..[0-5][0-9]/) && document?.getElementById("activityToRowNumber"+(n-1))?.value?.length == 4) activityTotalRow.value++;
 
     form.referencePickerOpen[n-1] = 0;
 }

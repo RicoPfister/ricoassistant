@@ -77,7 +77,7 @@ let activityTime = 0;
 
 function activityTimeConvert(item, index) {
 
-    console.log(item, index);
+    // console.log(item, index);
 
     if (item >= 100) {
         activityTimeHourString = parseInt(item.toString().slice(0, -2));
@@ -86,19 +86,19 @@ function activityTimeConvert(item, index) {
         activityTimeHourMinute = item;
     }
 
-        console.log(item, index, activityTimeHourString, activityTimeHourMinute);
+        // console.log(item, index, activityTimeHourString, activityTimeHourMinute);
 
         activityTime = parseInt(activityTimeHourString ) * 60 + parseInt(activityTimeHourMinute);
 
-        console.log(activityTime);
+        // console.log(activityTime);
 
         activityTime -= activityTimeTotal;
 
-        console.log(activityTime, activityTimeTotal);
+        // console.log(activityTime, activityTimeTotal);
 
         if (typeof form?.value?.activityData?.activityTime == 'undefined') form.value.activityData.activityTime = [];
 
-        console.log(activityTime);
+        // console.log(activityTime);
 
         form.value.activityData.activityTime[index] = activityTime;
 
@@ -295,7 +295,8 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(form.value);
+    // console.log(data);
     // console.log(data.form == 'undefined');
     // console.log(data.form == '');
 
@@ -318,7 +319,7 @@ function fromChild(data) {
         // console.log('ok');
         if (form?.value?.[data.section]?.[data.subSection]) {
             // delete form.value[data.section]?.[data.subSection][data.index];
-            form.value[data.section][data.subSection].splice(data.index, 1);
+            delete form.value[data.section][data.subSection][data.index];
         }
     }
 

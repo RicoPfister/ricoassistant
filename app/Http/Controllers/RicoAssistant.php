@@ -921,7 +921,7 @@ class RicoAssistant extends Controller {
         // ------------------------------------------
         function update_tag($request, $section_id) {
 
-            // dd($request, $section_id, $index);
+            // dd($request, $section_id);
 
             // step 1: defining basic meta data
 
@@ -970,7 +970,6 @@ class RicoAssistant extends Controller {
             // dd($update_tag_db_data);
 
             // create db tag table index collection
-            // $update_tag_db_section = [];
             $a = 0;
 
             $update_tag_db_section = collect([]);
@@ -1039,90 +1038,118 @@ class RicoAssistant extends Controller {
 
             };
 
+            function delete_tag_group_sections() {
+
+            }
+
             // step 3: check if tag group section names must be updated or created
-            function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section) {
+            function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section) {
 
-                // get tag groups
-                foreach($item as $index2 => $item2) {
+                // dd(isset($item));
 
-                    // dd($index, $item, $index2, $item2);
+                // check if client tag group exists if not set the group to 2 (deleted)
+                if (isset($item)) {
 
-                    // get tag group section name
+                    // get tag groups
+                    foreach($item as $index2 => $item2) {
 
-                    $tag_id = 0;
+                        // dd($index, $item, $index2, $item2);
 
-                    // get tag group section
-                    foreach($item2 as $index3 => $item3) {
+                        // get tag group section name
 
-                        // dd($index3, $item3);
+                        $tag_id = 0;
 
-                        // set tag section name table
-                        switch ($index3) {
-                            case 0:
-                                $tag_table = 'tag_categories';
-                                $tag_table_model = New TagCategory();
-                                break;
+                        // get tag group section
+                        foreach($item2 as $index3 => $item3) {
 
-                            case 1:
-                                $tag_table = 'tag_contexts';
-                                $tag_table_model = New TagContext();
-                                break;
+                            // dd($index3, $item3);
 
-                            case 2:
-                                $tag_table = 'tag_values';
-                                $tag_table_model = New TagValue();
-                                break;
+                            // set tag section name table
+                            switch ($index3) {
+                                case 0:
+                                    $tag_table = 'tag_categories';
+                                    $tag_table_model = New TagCategory();
+                                    break;
 
-                            case 3:
-                                $tag_table = 'tag_details';
-                                $tag_table_model = New TagDetail();
-                                break;
+                                case 1:
+                                    $tag_table = 'tag_contexts';
+                                    $tag_table_model = New TagContext();
+                                    break;
+
+                                case 2:
+                                    $tag_table = 'tag_values';
+                                    $tag_table_model = New TagValue();
+                                    break;
+
+                                case 3:
+                                    $tag_table = 'tag_details';
+                                    $tag_table_model = New TagDetail();
+                                    break;
+                            }
+
+                            // check if tag group section name exists
+                            $tag_name_check = DB::table($tag_table)
+                            ->where('content', '=', $item3)
+                            ->get()
+                            ->all();
+
+                            // update tag group section name reference (tag_table_id)
+                            // ----------------------------------------
+
+                            // if tag name was not found create it
+                            if (!isset($tag_name_check[0])) {
+                                $tag_category = $tag_table_model;
+                                $tag_category->content = $item3;
+                                $tag_category->tracking = $request->ip();
+                                $tag_category->save();
+
+                                $tag_name_check_array = '';
+                                $tag_name_check_array = $tag_category->id;
+
+                            } else {
+                                $tag_name_check_array = '';
+                                $tag_name_check_array = $tag_name_check[0]->id;
+                            }
+
+                            // client update tag data process
+                            // dd($request->activityData['tag'], $index, $item, $index2, $item2, $index3, $item3, $update_tag_db_group);
+
+                            // if tag ref was found
+                            if (isset($update_tag_db_group[$index][$index2])) {
+                                // dd('update', $index, $index2, $index3);
+                                update_tag_ref($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3);
+                            }
+
+                            // if tag ref was not found create it
+                            else {
+                                // dd('create', $index, $index2, $index3);
+                                create_tag_ref($request, $section_id, $index, $index3, $tag_name_check_array, $tag_section, $tag_id);
+                            }
                         }
+                    }
+                }
 
-                        // check if tag group section name exists
-                        $tag_name_check = DB::table($tag_table)
-                        ->where('content', '=', $item3)
-                        ->get()
-                        ->all();
+                else {
+                    // dd('del', $index, $update_tag_db_section);
 
-                        // update tag group section name reference (tag_table_id)
-                        // ----------------------------------------
+                    foreach ($update_tag_db_section[$index] as $index2 => $item2) {
 
-                        // if tag name was not found create it
-                        if (!isset($tag_name_check[0])) {
-                            $tag_category = $tag_table_model;
-                            $tag_category->content = $item3;
-                            $tag_category->tracking = $request->ip();
-                            $tag_category->save();
+                        // dd($item2);
 
-                            $tag_name_check_array = '';
-                            $tag_name_check_array = $tag_category->id;
-
-                        } else {
-                            $tag_name_check_array = '';
-                            $tag_name_check_array = $tag_name_check[0]->id;
-                        }
-
-                        // client update tag data process
-                        // dd($request->activityData['tag'], $index, $item, $index2, $item2, $index3, $item3, $update_tag_db_group);
-
-                        // if tag ref was found
-                        if (isset($update_tag_db_group[$index][$index2])) {
-                            // dd('update', $index, $index2, $index3);
-                            update_tag_ref($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3);
-                        }
-
-                        // if tag ref was not found create it
-                        else {
-                            // dd('create', $index, $index2, $index3);
-                            create_tag_ref($request, $section_id, $index, $index3, $tag_name_check_array, $tag_section, $tag_id);
-                        }
+                        // deletee db tags collection
+                        DB::table('tags')
+                        ->where('id', '=', $item2->id)
+                        ->update(['status' => 2]);
                     }
                 }
             }
 
+            // dd('OK');
+
             // step 2: check if there are any tags from client to be updated if not delete all basic_id related tags
-            if (isset($request->$db_name['tag'])) {
+            if (isset($request->$db_name['tag']) && $request->$db_name['tag'] != null) {
+
+                // dd('OK');
 
                 // $i = 0;
                 foreach($request->$db_name['tag'] as $index => $item) {
@@ -1130,24 +1157,38 @@ class RicoAssistant extends Controller {
                     // dd($index, $item, $request->$db_name['tag'], $update_tag_db_data, $db_table_section_data);
 
                     // update each section name separately
-                    // dd('ok');
-                    update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section);
-                    // dd('ok');
+                    // if (isset($request->$db_name['tag'][$index])) {
+                        update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section);
+                    // }
+
+                    // else {
+                    //     $update_tag_db_data = DB::table('tags')
+                    //     ->where('basic_id', '=', $request->basicData['id'])
+                    //     ->where('status', '=', null)
+                    //     ->where('section_table', '=',  $section_id)
+                    //     ->get()
+                    //     ->groupBy('section_table_id');
+                    // }
                 }
             }
 
             // step 2.1: delete groups with no content
             else {
-                    // dd($update_tag_db_data);
-                    // dd($request->basicData['id']);
+                // dd($update_tag_db_data);
+                // dd($request->basicData['id']);
 
-                    // delete all entry tags (set to status 2)
-                    if (count($update_tag_db_data) > 0) {
-                        DB::table('tags')
-                        ->where('basic_id', '=', $request->basicData['id'])
-                        ->update(['status' => 2]);
-                    }
+                // delete all entry tags (set to status 2)
+                if (count($update_tag_db_data) > 0) {
+                    DB::table('tags')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->update(['status' => 2]);
+                }
             }
+
+            // set status of all empty tag groups to 2 (delete)
+            // foreach() {
+
+            // }
 
             // dd('ok');
         }
@@ -1240,6 +1281,7 @@ class RicoAssistant extends Controller {
 
                         // dd($request->$db_name['reference'][$i][0]['basic_id']);
 
+                        // duplicated command
                         foreach ($request->$db_name['reference_parents'] as $key => $value) {
                             $ref = new Ref();
                             $ref->basic_id = $basics->id;
@@ -1255,6 +1297,7 @@ class RicoAssistant extends Controller {
                         return $ref->id;
                     }
 
+                    // duplicated command
                     $activites = new SectionActivity();
                     $activites->basic_id = $basics->id;
                     $activites->activityTime = $request->activityData['activityTime'][$i];
