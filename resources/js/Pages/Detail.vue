@@ -107,16 +107,16 @@ function edit() {
         // console.log(detailData.value.activityData.reference[0]);
         let refCollection = {};
         refCollection['activityData'] = {};
-        refCollection['activityData']['reference'] = [];
+        refCollection['activityData']['reference_parents'] = [];
         console.log(detailData.value.activityData.reference);
-        detailData.value.activityData.reference.forEach((item, index) => convertFormReference(item, index));
+        detailData.value.activityData.reference_parents.forEach((item, index) => convertFormReference(item, index));
 
             function convertFormReference(item, index) {
 
                 console.log(item);
 
                 // dd(detailData.value.activityData.reference[index][0]);
-                refCollection['activityData']['reference'].push(detailData.value.activityData.reference[index][0]);
+                refCollection['activityData']['reference_parents'].push(detailData.value.activityData.reference_parents[index][0]);
             }
 
             console.log(refCollection);

@@ -630,7 +630,7 @@ function fromChild(data) {
     // console.log(activityDiagramColorTag.value);
 
     if (data.component == 'reference' && data.parentId == 4) {
-        emit('fromChild', {'section':'activityData', 'subSection':'reference', 'index': data.parentIndex, 'form': data.reference});
+        emit('fromChild', {'section':'activityData', 'subSection':'reference_parents', 'index': data.parentIndex, 'form': data.reference});
     }
 
     // if () {
@@ -661,7 +661,7 @@ onMounted(() => {
     if (props?.toChild?.activityData) {
         props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));
 
-        props.toChild.activityData['reference'].forEach((item, index) => editParentReference(item, index));
+        props.toChild.activityData['reference_parents'].forEach((item, index) => editParentReference(item, index));
 
         if (props?.toChild?.activityData?.['tag']) editTag(props.toChild.activityData['tag']);
 
