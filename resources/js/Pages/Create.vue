@@ -296,7 +296,7 @@ let transferCreate = ref({});
 function fromChild(data) {
 
     // console.log(form.value);
-    // console.log(data);
+    console.log(data);
     // console.log(data.form == 'undefined');
     // console.log(data.form == '');
 

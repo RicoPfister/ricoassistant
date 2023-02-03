@@ -1045,7 +1045,7 @@ class RicoAssistant extends Controller {
             // step 3: check if tag group section names must be updated or created
             function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section) {
 
-                // dd(isset($item));
+                // dd($item);
 
                 // check if client tag group exists if not set the group to 2 (deleted)
                 if (isset($item)) {
@@ -1170,6 +1170,28 @@ class RicoAssistant extends Controller {
                     //     ->groupBy('section_table_id');
                     // }
                 }
+
+                // dd($update_tag_db_group);
+
+                // set status of all empty client tag groups to 2 (delete)
+                foreach($update_tag_db_group as  $db_tag_group_index => $db_tag_group_item) {
+
+                    // dd($db_tag_group_index, $db_tag_group_item);
+
+                    // delete tag if thre is no tag client update found
+                    foreach($db_tag_group_item as $db_tag_group_section_index => $db_tag_group_section_item) {
+
+                        // dd($tag_dclient_group_index, $tag_dclient_group_item);
+                        if (!isset($request->$db_name['tag'][$db_tag_group_index][$db_tag_group_section_index])) {
+
+                            // dd($update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index]);
+
+                            DB::table('tags')
+                            ->where('tag_id', '=', $update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index][0]->tag_id)
+                            ->update(['status' => 2]);
+                        };
+                    }
+                }
             }
 
             // step 2.1: delete groups with no content
@@ -1184,11 +1206,6 @@ class RicoAssistant extends Controller {
                     ->update(['status' => 2]);
                 }
             }
-
-            // set status of all empty tag groups to 2 (delete)
-            // foreach() {
-
-            // }
 
             // dd('ok');
         }
@@ -1314,8 +1331,19 @@ class RicoAssistant extends Controller {
             $section_id = 4;
 
             update_tag($request, $section_id);
-            update_reference($request, $section_id);
+            // update_reference($request, $section_id);
         }
+
+        if (isset($request->sourceData)) {
+
+            $section_id = 3;
+
+            // dd($request);
+
+            update_tag($request, $section_id);
+            // update_reference($request, $section_id);
+        }
+
         return Inertia::render('Create', []);
     }
 

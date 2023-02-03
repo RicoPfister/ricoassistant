@@ -113,7 +113,8 @@ function fromChild(data) {
 
     if (typeof data.tagSelectionListString !== 'undefined') {
 
-        // console.log('ok');
+        console.log(data.tagSelectionListString != '');
+        console.log(tagCollectionInputFormat.value[0]);
 
         if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
@@ -121,8 +122,10 @@ function fromChild(data) {
             // console.log(data.tagCollection);
             // tagCollectionInputFormat.value = data.tagCollection;
 
-            if (data.tagSelectionListString !== '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
-            if (data.tagSelectionListGroup !== '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+            if (data.tagSelectionListString != '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+            if (data.tagSelectionListGroup != '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+
+            console.log(tagCollectionInputFormat.value[0]);
 
             tagPopupOpen.value = 0;
         }
@@ -150,17 +153,17 @@ function tagPopupOpenData() {
 // console.log(tagCollectionGroupFormat.value);
 watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
     // console.log(tagCollectionGroupFormat.value[0]);
-    // console.log('ok');
     emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 
-    // console.log(tagCollectionInputFormat.value[0] == '');
+    // console.log('ok');
 
-    if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
+    // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
+        // console.log(tagCollectionInputFormat.value[0]);
         emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
-    }
+    // }
 }, {deep: true}, 500);
 
 // listen to fromController and save it in fromController
@@ -178,7 +181,7 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
 
     if (typeof props?.toChild?.formTags == 'undefined') {
         // console.log('empty');
-        tagCollectionInputFormat.value = [''];
+        // tagCollectionInputFormat.value = [''];
     }
 
     else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
@@ -224,6 +227,7 @@ onMounted(() => {
 
 // if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
 if (props?.toChild?.formTags) {
+    console.log('ok');
     tagCollectionInputFormat.value = [''];
     // console.log(props.toChild.formTags);
     props.toChild.formTags.forEach(createTagInputGroup)
