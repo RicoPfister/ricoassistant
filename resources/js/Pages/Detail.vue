@@ -51,7 +51,7 @@
 
     <!-- Lists -->
     <TagList v-if="props.detail.sourceData.tag" :tag="props.detail.sourceData.tag" />
-    <ReferenceParentsList v-if="!props?.detail?.sourceData" :reference="detailData.sourceData"/>
+    <ReferenceParentsList v-if="props?.detail?.sourceData" :reference="detailData.sourceData"/>
     <ReferenceChildrenList :reference="detailData.sourceData"/>
 </div>
 

@@ -664,7 +664,7 @@ class RicoAssistant extends Controller {
 
             // dd($request->$db_name['reference'][$i][0]['basic_id']);
 
-            foreach ($request->$db_name['reference_parents'] as $key => $value) {
+            // foreach ($request->$db_name['reference_parents'] as $key => $value) {
                 $ref = new Ref();
                 $ref->basic_id = $basics->id;
                 $ref->basic_ref = $request->$db_name['reference_parents'][$i][0]['basic_id'];
@@ -672,7 +672,7 @@ class RicoAssistant extends Controller {
                 $ref->ref_db_index = $section_data->id;
                 $ref->tracking = $request->ip();
                 $ref->save();
-            }
+            // }
 
             // dd(['ref_id' => $ref->id]);
 
@@ -804,8 +804,8 @@ class RicoAssistant extends Controller {
             // if (isset ($request->sourceData['tag'])){
             //     tagData($db_section_id, $db_name, $request, $basics,$sources->id, $index);
             // }
-            if (isset($request->sourceData['reference'])) {
-                reference($db_section_id, $db_name, $request, $basics, $sources->basic_id, 0);
+            if (isset($request->sourceData['reference_parents'])) {
+                reference($db_section_id, $db_name, $request, $basics, $sources, 0);
             };
             // reference($db_section_id, $db_name, $request, $basics, $activities_id, $i);
 
@@ -851,28 +851,43 @@ class RicoAssistant extends Controller {
                     break;
             }
 
+            // check if client reference is found if not delete reference
             if (isset($request->$db_name['reference_parents'])) {
 
                 // dd($request, $section_id, $index);
 
+                // ref section data
+                $rererence_db_section_data = DB::table($tag_section)
+                ->where('status', '=', null)
+                ->where('basic_id', '=', $request->basicData['id'])
+                // ->wehre('ref_db_index', '=', )
+                // ->limit(1)
+                ->get();
+
+                // dd($rererence_db_section_data);
+
                 $rererence_db_data = DB::table('refs')
                 ->where('status', '=', null)
                 ->where('basic_id', '=', $request->basicData['id'])
+                ->where('ref_db_id', '=', $section_id)
+                // ->wehre('ref_db_index', '=', )
                 ->get();
+
+                // dd($rererence_db_data);
 
                 // create ref if no one was found
                 if (count($rererence_db_data) < 1) {
 
                     $ref = New Ref();
                     $ref->basic_id = $request->basicData['id'];
-                    $ref->basic_ref = $request->$db_name['reference_parents'][0][0]['basic_id'];
+                    $ref->basic_ref = $request->$db_name['reference_parents'][0]['id'];
                     $ref->ref_db_id = $section_id;
-                    $ref->ref_db_index = $request->$db_name[$tag_section_request]['id'];
+                    $ref->ref_db_index = $rererence_db_data[0]->ref_db_index;
                     $ref->tracking = $request->ip();
                     $ref->save();
                 }
 
-                // update db tags
+                //
                 foreach($rererence_db_data as $index => $item) {
 
                     // dd($index, $item);
@@ -881,15 +896,39 @@ class RicoAssistant extends Controller {
                     ->where('id', '=', $rererence_db_data[$index]->basic_ref)
                     ->get();
 
+                    // dd('ok');
+
                     if ($reference_basic_db_data[0]->title !== $request->$db_name['reference_parents'][$index][0]['title']) {
+
+                        // dd('ok');
 
                         $basic_ref = DB::table('section_basics')
                         ->where('title', '=', $request->$db_name['reference_parents'][$index][0]['title'])
                         ->get();
 
-                        $ref = DB::table('refs')
-                        ->where('basic_id', '=', $request->basicData['id'])
-                        ->update(['basic_ref' => $basic_ref[0]->id]);
+                        // dd($basic_ref[0]->id);
+                        // dd($request->$db_name);
+
+                        if (isset($request['sourceData'])) {
+                            // dd('ok');
+                            $ref = DB::table('refs')
+                            ->where('basic_id', '=', $request->basicData['id'])
+                            ->where('ref_db_id', '=', $section_id)
+                            ->update(['basic_ref' => $basic_ref[0]->id]);
+                        }
+
+                        else {
+                            // dd('ok');
+                            $ref = DB::table('refs')
+                            ->where('basic_id', '=', $request->basicData['id'])
+                            ->where('ref_db_id', '=', $section_id)
+                            ->where('ref_db_index', '=', $rererence_db_section_data[$index]->id)
+                            ->update(['basic_ref' => $basic_ref[0]->id]);
+
+                        }
+                        // ->get();
+
+                        // dd($ref);
                     }
 
                     // dd($request->$db_name['reference_parents'][$index]);
@@ -1093,6 +1132,8 @@ class RicoAssistant extends Controller {
                             ->get()
                             ->all();
 
+                            // dd($tag_name_check);
+
                             // update tag group section name reference (tag_table_id)
                             // ----------------------------------------
 
@@ -1174,7 +1215,7 @@ class RicoAssistant extends Controller {
                 // dd($update_tag_db_group);
 
                 // set status of all empty client tag groups to 2 (delete)
-                foreach($update_tag_db_group as  $db_tag_group_index => $db_tag_group_item) {
+                foreach($update_tag_db_group as $db_tag_group_index => $db_tag_group_item) {
 
                     // dd($db_tag_group_index, $db_tag_group_item);
 
@@ -1244,6 +1285,8 @@ class RicoAssistant extends Controller {
         // dd($request->statementData['statement']);
 
         // *****update statement data*****
+        //-----------------------------------
+
         if (isset($request->statementData['statement']['statement'])) {
 
             $section_id = 2;
@@ -1265,24 +1308,25 @@ class RicoAssistant extends Controller {
         }
 
         // *****update activity data*****
+        //-----------------------------------
+
         if (isset($request->activityData)) {
 
-            $update_statement_db_data = DB::table('section_activities')
+            $update_activity_db_data = DB::table('section_activities')
             ->where('basic_id', '=', $request->basicData['id'])
             ->get();
 
             // dd($update_statement_db_data);
-
             // dd($request->activityData['activityTime']);
 
             foreach ($request->activityData['activityTime'] as $index => $item) {
 
                 // dd($index, $item);
 
-                if (isset($update_statement_db_data[$index])) {
+                if (isset($update_activity_db_data[$index])) {
 
                     DB::table('section_activities')
-                    ->where('id', '=', $update_statement_db_data[$index]->id)
+                    ->where('id', '=', $update_activity_db_data[$index]->id)
                     ->update(['activityTime' => $item]);
                 }
 
@@ -1331,8 +1375,11 @@ class RicoAssistant extends Controller {
             $section_id = 4;
 
             update_tag($request, $section_id);
-            // update_reference($request, $section_id);
+            update_reference($request, $section_id);
         }
+
+        // *****update source data*****
+        //-----------------------------------
 
         if (isset($request->sourceData)) {
 
@@ -1341,7 +1388,7 @@ class RicoAssistant extends Controller {
             // dd($request);
 
             update_tag($request, $section_id);
-            // update_reference($request, $section_id);
+            update_reference($request, $section_id, 0);
         }
 
         return Inertia::render('Create', []);

@@ -183,7 +183,7 @@ onMounted(() => {
 // send to parent: tag data from child
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.component);
     // console.log(data?.reference?.reference.referenceTitle);
 
@@ -194,7 +194,7 @@ function fromChild(data) {
 
     if (data.component == 'reference' && data.parentId == 3) {
         console.log(data);
-        emit('fromChild', {'section':'sourceData', 'subSection':'reference', 'index': 0, 'form': data.reference.reference});
+        emit('fromChild', {'section':'sourceData', 'subSection':'reference_parents', 'index': 0, 'form': data.reference});
     }
 }
 

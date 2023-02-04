@@ -54,7 +54,7 @@
 
                             <div class="text-sm"><b>Found in Database:</b></div>
 
-                            <div v-for="(item, index) in props.fromController[0].basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
+                            <div v-for="(item, index) in props?.fromController?.[0]?.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
                                 <button>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
