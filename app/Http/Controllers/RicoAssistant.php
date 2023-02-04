@@ -51,7 +51,12 @@ class RicoAssistant extends Controller {
 
         // dd($publicAuth);
 
-        if (isset($user)) {$userAuth = SectionBasic::all()->where('user_id', '=', $user->id)->take(20)->sortByDesc('updated_at'); $listAuth = $publicAuth->merge($userAuth);}
+        if (isset($user)) {$userAuth = SectionBasic::all()
+            ->where('user_id', '=', $user->id)
+            ->where('status', '=', null)
+            ->take(20)->sortByDesc('updated_at');
+
+            $listAuth = $publicAuth->merge($userAuth);}
         else {$listAuth = $publicAuth;};
 
         // dd($listAuth);
@@ -169,6 +174,8 @@ class RicoAssistant extends Controller {
 
         function detail_reference_parents($detail, $request, $section_id) {
 
+            // dd('ok');
+
             // get database name based on section id
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
@@ -177,6 +184,8 @@ class RicoAssistant extends Controller {
 
             $i = 0;
             $basic_ref = $detail['basicData']['id'];
+
+            // dd($basic_ref);
 
             // get reference id
             $reference_id = DB::table('refs')
@@ -192,37 +201,49 @@ class RicoAssistant extends Controller {
 
                 foreach ($reference_id as $key => $value) {
 
-                    // dd($key);
-                    // dd($value);
+                    // dd($reference_id, $key, $value);
+
+                    $basic_ref = $value->basic_ref;
 
                     $i = 0;
                     do {
                         $_reference_parents_id = DB::table('section_basics')
                         ->where('id', '=', $value->basic_ref)
+                        ->where('status', '=', null)
                         ->get();
 
+                        // dd($value->basic_ref);
                         // dd($_reference_parents_id);
+
+                        if ($i == 99) dd($_reference_parents_id);
+
+                        if (count($_reference_parents_id) < 1) {
+                            break;
+                        }
 
                         $detail['reference_parents'][$key][$i] = $_reference_parents_id[0];
                         // dd($detail);
                         $i++;
 
-                        // $value->
-
-                        $basic_ref = $value->basic_ref;
-
                         // dd($basic_ref);
 
                         $next_value = DB::table('refs')
-                        ->where('basic_id', '=', $basic_ref)
+                        ->where('basic_id', '=', $value->basic_ref)
+                        ->where('status', '=', null)
                         // ->join('section_basic', 'section_basic.id', '=', )
                         ->get();
+
                         // dd($reference_id);
+                        // dd($next_value);
 
-                        if (count($next_value) > 0)  {
+                        // if ref was not found (parent entry deleted?) set blank parent reference value
+                        // if (count($next_value) < 1) {
+                        //     break;
+                        // }
+
+                        if (count($next_value) > 0 && $next_value[0]->basic_ref != $basic_ref)  {
                             $value = $next_value[0];
-                        }
-
+                        } else $next_value = [];
 
                         // dd($value);
                         // dd(count($value) > 0);
@@ -230,6 +251,7 @@ class RicoAssistant extends Controller {
                     } while (count($next_value) > 0);
                 }
             // }
+            // dd('ok');
             if (isset($detail['reference_parents'])) return $detail['reference_parents'];
         }
 
@@ -240,6 +262,7 @@ class RicoAssistant extends Controller {
             // get database name based on section id
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
+            ->where('status', '=', null)
             ->pluck('db_name');
             $db_name = $form_section_name [0].'Data';
 
@@ -427,6 +450,7 @@ class RicoAssistant extends Controller {
 
         $detail_source = DB::table('section_sources')
         ->where('basic_id', '=', $request->basic_id)
+        ->where('status', '=', null)
         ->get();
 
         // dd($detail_source);
@@ -451,18 +475,11 @@ class RicoAssistant extends Controller {
                     // dd($key);
                     // dd($value);
 
-
-
-                        if (array_key_exists($value->id, $detail_tag_collection)) {
-                            $detail['sourceData']['tag'][$key] = $detail_tag_collection[$value->id];
-                        }
-
-
+                    if (array_key_exists($value->id, $detail_tag_collection)) {
+                        $detail['sourceData']['tag'][$key] = $detail_tag_collection[$value->id];
+                    }
                 }
             }
-
-
-
 
             // dd($detail);
 
@@ -676,6 +693,7 @@ class RicoAssistant extends Controller {
 
             // dd(['ref_id' => $ref->id]);
 
+            // dd($ref);
             return $ref->id;
         }
 
@@ -690,6 +708,8 @@ class RicoAssistant extends Controller {
 
         // create statement
         if (isset($request->statementData)){
+
+            // dd('ok');
 
             $statement = new SectionStatement();
             $statement->basic_id = $basics->id;
@@ -708,7 +728,8 @@ class RicoAssistant extends Controller {
             $db_name = $form_section_name [0].'Data';
 
             // fire reference function
-            if (isset($request->statementData['reference'])) {
+            if (isset($request->statementData['reference_parents'])) {
+                // dd('ok');
                 reference($db_section_id, $db_name, $request, $basics, $statement, 0);
             }
 
@@ -880,9 +901,9 @@ class RicoAssistant extends Controller {
 
                     $ref = New Ref();
                     $ref->basic_id = $request->basicData['id'];
-                    $ref->basic_ref = $request->$db_name['reference_parents'][0]['id'];
+                    $ref->basic_ref = $request->$db_name['reference_parents'][0][0]['basic_id'];
                     $ref->ref_db_id = $section_id;
-                    $ref->ref_db_index = $rererence_db_data[0]->ref_db_index;
+                    $ref->ref_db_index = $rererence_db_section_data[0]->id;
                     $ref->tracking = $request->ip();
                     $ref->save();
                 }
@@ -1276,11 +1297,8 @@ class RicoAssistant extends Controller {
         // section update
         // +++++++++++++++++++++++++++++++++++++++++
 
-        // *****update basic data*****
-        $update_basic_db_data = DB::table('section_basics')
-        ->where('id', '=', $request->basicData['id'])
-        ->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'],
-        'medium' => $request->basicData['medium']]);
+        $delete_basic_check = 0;
+        $delete_basic_check2 = 0;
 
         // dd($request->statementData['statement']);
 
@@ -1289,6 +1307,8 @@ class RicoAssistant extends Controller {
 
         if (isset($request->statementData['statement']['statement'])) {
 
+            if ($request->statementData['statement']['statement'] != []) {
+
             $section_id = 2;
 
             $update_statement_db_data = DB::table('section_statements')
@@ -1296,99 +1316,233 @@ class RicoAssistant extends Controller {
             ->update(['statement' => $request->statementData['statement']['statement']]);
             update_tag($request, $section_id, 0);
             update_reference($request, $section_id, 0);
-        } else if (isset($request->statementData['statement'])) {
 
-            $section_id = 2;
-
-            $update_statement_db_data = DB::table('section_statements')
-            ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['statement' => $request->statementData['statement']]);
-            update_tag($request, $section_id, 0);
-            update_reference($request, $section_id, 0);
+            $delete_basic_check2 += 1;
+            }
         }
+
+        // else if (isset($request->statementData['statement'])) {
+
+        //     if ($request->statementData['statement'] != []) {
+
+        //         $section_id = 2;
+
+        //         $update_statement_db_data = DB::table('section_statements')
+        //         ->where('basic_id', '=', $request->basicData['id'])
+        //         ->update(['statement' => $request->statementData['statement']]);
+
+        //         update_tag($request, $section_id, 0);
+        //         update_reference($request, $section_id, 0);
+
+        //         $delete_basic_check += 1;
+        //     }
+        // }
 
         // *****update activity data*****
         //-----------------------------------
 
         if (isset($request->activityData)) {
+            // dd($request->activityData['activityTo'][0] == '');
 
-            $update_activity_db_data = DB::table('section_activities')
-            ->where('basic_id', '=', $request->basicData['id'])
-            ->get();
+            if ($request->activityData['activityTo'][0] != '') {
 
-            // dd($update_statement_db_data);
-            // dd($request->activityData['activityTime']);
+                $update_activity_db_data = DB::table('section_activities')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->get();
 
-            foreach ($request->activityData['activityTime'] as $index => $item) {
+                // dd($update_statement_db_data);
+                // dd($request->activityData['activityTime']);
 
-                // dd($index, $item);
+                foreach ($request->activityData['activityTime'] as $index => $item) {
 
-                if (isset($update_activity_db_data[$index])) {
+                    // dd($index, $item);
 
-                    DB::table('section_activities')
-                    ->where('id', '=', $update_activity_db_data[$index]->id)
-                    ->update(['activityTime' => $item]);
-                }
+                    if (isset($update_activity_db_data[$index])) {
 
-                // create missing activity entry
-                else {
-
-                    dd('activity not found. code under construction');
-
-                    // create reference function
-                    function reference($db_id, $db_name, $request, $basics, $section_data, $i) {
-
-                        // dd($db_id, $db_name, $request, $basics, $section_data, $i);
-
-                        // dd($request->$db_name['reference'][$i][0]['basic_id']);
-
-                        // duplicated command
-                        foreach ($request->$db_name['reference_parents'] as $key => $value) {
-                            $ref = new Ref();
-                            $ref->basic_id = $basics->id;
-                            $ref->basic_ref = $request->$db_name['reference_parents'][$i][0]['basic_id'];
-                            $ref->ref_db_id = $db_id;
-                            $ref->ref_db_index = $section_data->id;
-                            $ref->tracking = $request->ip();
-                            $ref->save();
-                        }
-
-                        // dd(['ref_id' => $ref->id]);
-
-                        return $ref->id;
+                        DB::table('section_activities')
+                        ->where('id', '=', $update_activity_db_data[$index]->id)
+                        ->update(['activityTime' => $item]);
                     }
 
-                    // duplicated command
-                    $activites = new SectionActivity();
-                    $activites->basic_id = $basics->id;
-                    $activites->activityTime = $request->activityData['activityTime'][$i];
-                    $activites->tracking = $request->ip();
-                    $activites->created_at = now();
-                    $activites->updated_at = now();
-                    $activites->save();
+                    // create missing activity entry
+                    else {
 
-                    $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites, $i);
-                    $activites->save();
+                        dd('activity not found. code under construction');
+
+                        // create reference function
+                        function reference($db_id, $db_name, $request, $basics, $section_data, $i) {
+
+                            // dd($db_id, $db_name, $request, $basics, $section_data, $i);
+
+                            // dd($request->$db_name['reference'][$i][0]['basic_id']);
+
+                            // duplicated command
+                            foreach ($request->$db_name['reference_parents'] as $key => $value) {
+                                $ref = new Ref();
+                                $ref->basic_id = $basics->id;
+                                $ref->basic_ref = $request->$db_name['reference_parents'][$i][0]['basic_id'];
+                                $ref->ref_db_id = $db_id;
+                                $ref->ref_db_index = $section_data->id;
+                                $ref->tracking = $request->ip();
+                                $ref->save();
+                            }
+
+                            // dd(['ref_id' => $ref->id]);
+
+                            return $ref->id;
+                        }
+
+                        // duplicated command
+                        $activites = new SectionActivity();
+                        $activites->basic_id = $basics->id;
+                        $activites->activityTime = $request->activityData['activityTime'][$i];
+                        $activites->tracking = $request->ip();
+                        $activites->created_at = now();
+                        $activites->updated_at = now();
+                        $activites->save();
+
+                        $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites, $i);
+                        $activites->save();
+                    }
                 }
+
+                $section_id = 4;
+
+                update_tag($request, $section_id);
+                update_reference($request, $section_id);
+
+                $delete_basic_check += 1;
             }
-
-            $section_id = 4;
-
-            update_tag($request, $section_id);
-            update_reference($request, $section_id);
-        }
+        };
 
         // *****update source data*****
         //-----------------------------------
 
         if (isset($request->sourceData)) {
 
-            $section_id = 3;
+            if ($request->sourceData['filelist'] != []) {
 
-            // dd($request);
+                $section_id = 3;
 
-            update_tag($request, $section_id);
-            update_reference($request, $section_id, 0);
+                // dd($request->sourceData['filelist']);
+
+                if ($request->sourceData['filelist'] != []) {
+
+                    // dd('ok');
+                    // dd($request->sourceData);
+
+                    // update files
+                    foreach ($request->sourceData['filelist'] as $files_index => $files_item) {
+
+                        // dd($files_index, $files_item);
+                        // dd($request->$db_name['filelist'][$files_index]);
+                        // dd($request->sourceData['filelist'][$files_index]['filename']);
+
+                        // link existing file
+                        if (isset($request->sourceData['files'][$files_index])) {
+
+                            DB::table('section_sources')
+                            ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
+                            ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
+                        }
+
+                        // create new file
+                        else {
+                            // dd('file', $files_index);
+
+                            // store file meta data
+                            $sources = new SectionSource();
+                            $sources->basic_id = $request->basicData['id'];
+                            $sources->path = $request->sourceData['filelist'][$files_index]['file']->hashName();
+                            $sources->extension = $request->sourceData['filelist'][$files_index]['type'];
+                            $sources->size = $request->sourceData['filelist'][$files_index]['file']->getSize();
+                            $sources->tracking = $request->ip();
+                            $sources->save();
+
+                            // store file data
+                            Storage::disk('local')->put('public/images/inventory/', $request->sourceData['filelist'][$files_index]['file']);
+                        }
+                    }
+
+                    // delete obsolete file data
+                    $db_file_collection = DB::table('section_sources')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->get();
+
+                    if (count($db_file_collection) > 0) {
+
+                        // dd( $db_file_collection);
+
+                        foreach($db_file_collection as $db_file_index => $db_file_item) {
+
+                            // dd($db_file_index, $db_file_item);
+
+                            if (!isset($request->sourceData['filelist'][$db_file_index])) {
+
+                                DB::table('section_sources')
+                                ->where('id', '=', $db_file_item->id)
+                                ->update(['status' => 2]);
+                            }
+                        }
+                    }
+                }
+
+                else {
+
+                    // dd($request->basicData['id']);
+
+                    // delete entry in section sources
+                    DB::table('section_sources')
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->update(['status' => 2]);
+
+                }
+
+                update_tag($request, $section_id);
+                update_reference($request, $section_id, 0);
+
+                $delete_basic_check += 1;
+            }
+        }
+
+        // dd($request);
+        // dd($delete_basic_check);
+
+        // delete entry or update basic
+        if ($delete_basic_check2 == 0 && $delete_basic_check == 0) {
+            // dd('delete basic');
+            // delete entry in section basics
+            DB::table('section_basics')
+            ->where('id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+
+            DB::table('section_statements')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+
+            DB::table('section_activities')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+
+            DB::table('section_sources')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+
+            DB::table('refs')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+
+            DB::table('tags')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['status' => 2]);
+        }
+
+        else {
+            // *****update basic data*****
+            $update_basic_db_data = DB::table('section_basics')
+            ->where('id', '=', $request->basicData['id'])
+            ->update(['title' => $request->basicData['title'], 'ref_date' => $request->basicData['ref_date'],
+            'medium' => $request->basicData['medium']]);
         }
 
         return Inertia::render('Create', []);
@@ -1402,6 +1556,8 @@ class RicoAssistant extends Controller {
     }
 
     public function reference(Request $request) {
+
+        // dd($request);
 
         function reference_inheritance_list($id, $i, $user) {
 

@@ -84,7 +84,7 @@
 
                                     <!-- inheritance title -->
                                     <div class="pl-0 h-[15px] flex items-center truncate min-w-0">
-                                        <div class="truncate min-w-0 items-center">{{ item2.title }}</div>
+                                        <div class="truncate min-w-0 items-center">{{ item2?.title }}</div>
                                     </div>
 
                                     <!-- separator -->
