@@ -296,7 +296,7 @@ let transferCreate = ref({});
 function fromChild(data) {
 
     // console.log(form.value);
-    // console.log(data);
+    console.log(data);
     // console.log(data.form == 'undefined');
     // console.log(data.form == '');
 
@@ -319,7 +319,10 @@ function fromChild(data) {
         // console.log('ok');
         if (form?.value?.[data.section]?.[data.subSection]) {
             // delete form.value[data.section]?.[data.subSection][data.index];
+            console.log('ok');
             delete form.value[data.section][data.subSection][data.index];
+            console.log(data.index);
+            // form.value[data.section][data.subSection].splice(data.index, 1);
         }
     }
 

@@ -184,8 +184,8 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
         // tagCollectionInputFormat.value = [''];
     }
 
-    else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        // console.log('ok');
+    else if (props?.toChild?.formTags) {
+        console.log('ok');
         tagCollectionInputFormat.value = [''];
         props.toChild.formTags.forEach(createTagInputGroup);
 };
@@ -234,44 +234,10 @@ if (props?.toChild?.formTags) {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // console.log(tagCollectionInputFormat.value);
 
 // tagCollectionInputFormat.value = [];
 // tagCollectionInputFormat.value[0] = tagCollectionInputFormat.value;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 })

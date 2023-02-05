@@ -23,7 +23,7 @@
                 </div>
 
                 <!-- clear list -->
-                <button v-if="InputData != ''" @click.prevent="InputData.splice(0, InputData.length); preview.splice(0, InputData.length); uniqueKey = 1" class="flex flex-row items-center group hover:text-red-500" type="button">
+                <button v-if="InputData != ''" @click.prevent="deleteFile('all')" class="flex flex-row items-center group hover:text-red-500" type="button">
                     <div class="">Reset List</div>
                     <svg xmlns="http://www.w3.org/2000/svg" color="none" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 group-hover:stroke-red-500">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -61,7 +61,7 @@
                                         </button> -->
 
                                     <!-- remove button -->
-                                    <button class="" @click="InputData.splice(index, 1); preview.splice(index, 1)" type="button">
+                                    <button class="" @click="deleteFile(index)" type="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" color="darkred" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-red-400">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
@@ -76,9 +76,9 @@
                 <!-- ------------------------------------------------------ -->
                 <div v-if="1" class="border-b-2 border-black font-bold">Tags</div>
                 <div v-if="1" class="pt-2 space-y-[2px] w-full">
-                    <div v-for="(item, index) in InputData" class="border border-black w-full">
+                    <div v-for="(item, index) in tag_db_data" class="border border-black w-full">
                         <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController" @fromChild="fromChild"/></div>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ let tagPopupOpen = ref();
 let uniqueKey = ref(1);
 let InputData = ref([]);
 let previewPath = '';
-let tag_db_data = ref({});
+let tag_db_data = ref([]);
 let reference_db_data = ref({});
 
 // file preview
@@ -142,8 +142,10 @@ function FileChange(event, index) {
     [...event.target.files].forEach((item, index) => InputDataArray(item, index))
 
     function InputDataArray(item, index) {
-        InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value++});
+        InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value});
         preview.value.push(URL.createObjectURL(item));
+        tag_db_data.value.push({['tag']: '', 'key': uniqueKey.value});
+        uniqueKey.value++;
     }
 }
 
@@ -162,14 +164,25 @@ onMounted(() => {
 
         function soureDataFilesGroup(item, index) {
             // console.log(item);
-            InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value++});
+            InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value});
+            tag_db_data.value[index] = {};
+            tag_db_data.value[index]['key'] = uniqueKey.value;
+            uniqueKey.value++;
             previewPath = '/storage/inventory/' + item.path;
             preview.value.push(previewPath);
         }
 
+        // tag_db_data.value
+
         if (props?.toChild?.sourceData?.tag) {
-            // console.log('ok');
-            tag_db_data.value = props?.toChild?.sourceData?.tag;
+
+            // console.log(props.toChild.sourceData.tag);
+
+            // tag_db_data.value = props?.toChild?.sourceData?.tag;
+
+            props?.toChild?.sourceData?.tag.forEach((element, index) => {
+                tag_db_data.value[index]['tag'] = element;
+            });
         }
 
         if (props?.toChild?.sourceData?.reference_parents) {
@@ -231,5 +244,39 @@ watch(() => InputData, (curr, prev) => {
 // function tag_db_data_function(data) {
 
 // }
+
+function deleteFile(data) {
+
+    if (data == 'all') {
+
+        // console.log(props.fromChild);
+
+        InputData.value.splice(0, InputData.value.length);
+        preview.value.splice(0, InputData.value.length);
+        uniqueKey = 1
+
+        tag_db_data.value.forEach((element, index) => {
+            console.log(element);
+            console.log(index);
+            uniqueKey.value = 1;
+            emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': index, 'form': ''});
+        });
+
+        // array.forEach(element => {
+
+        // });
+    }
+
+    else {
+        // InputData.value.splice(data, 1);
+        // tag_db_data.value.splice(data, 1);
+        // delete InputData.value.splice[data];
+        // delete tag_db_data.value[data];
+
+        preview.value.splice(data, 1);
+        // uniqueKey = 1;
+        // emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data, 'form': ''});
+    }
+}
 
 </script>
