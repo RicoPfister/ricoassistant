@@ -1211,7 +1211,8 @@ class RicoAssistant extends Controller {
             // step 2: check if there are any tags from client to be updated if not delete all basic_id related tags
             if (isset($request->$db_name['tag']) && $request->$db_name['tag'] != null) {
 
-                // dd('OK');
+                // dd($request->$db_name['tag']);
+                // dd(count($request->$db_name['tag']));
 
                 // $i = 0;
                 foreach($request->$db_name['tag'] as $index => $item) {
@@ -1234,24 +1235,27 @@ class RicoAssistant extends Controller {
                 }
 
                 // dd($update_tag_db_group);
+                // dd(isset($update_tag_db_group));
 
-                // set status of all empty client tag groups to 2 (delete)
-                foreach($update_tag_db_group as $db_tag_group_index => $db_tag_group_item) {
+                if ($update_tag_db_group != '') {
+                    // set status of all empty client tag groups to 2 (delete)
+                    foreach($update_tag_db_group as $db_tag_group_index => $db_tag_group_item) {
 
-                    // dd($db_tag_group_index, $db_tag_group_item);
+                        // dd($db_tag_group_index, $db_tag_group_item);
 
-                    // delete tag if thre is no tag client update found
-                    foreach($db_tag_group_item as $db_tag_group_section_index => $db_tag_group_section_item) {
+                        // delete tag if thre is no tag client update found
+                        foreach($db_tag_group_item as $db_tag_group_section_index => $db_tag_group_section_item) {
 
-                        // dd($tag_dclient_group_index, $tag_dclient_group_item);
-                        if (!isset($request->$db_name['tag'][$db_tag_group_index][$db_tag_group_section_index])) {
+                            // dd($tag_dclient_group_index, $tag_dclient_group_item);
+                            if (!isset($request->$db_name['tag'][$db_tag_group_index][$db_tag_group_section_index])) {
 
-                            // dd($update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index]);
+                                // dd($update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index]);
 
-                            DB::table('tags')
-                            ->where('tag_id', '=', $update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index][0]->tag_id)
-                            ->update(['status' => 2]);
-                        };
+                                DB::table('tags')
+                                ->where('tag_id', '=', $update_tag_db_group[$db_tag_group_index][$db_tag_group_section_index][0]->tag_id)
+                                ->update(['status' => 2]);
+                            };
+                        }
                     }
                 }
             }

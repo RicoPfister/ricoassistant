@@ -108,20 +108,31 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
+    console.log(data);
     // console.log(data.tagSelectionListString);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
-    if (typeof data.tagSelectionListString !== 'undefined') {
+    if (data.tagSelectionListString == '' && data.tagSelectionListString != 'cancel') {
+        // console.log('empty');
+
+        tagCollectionInputFormat.value[0] = "";
+        tagCollectionGroupFormat.value[0] = "";
+        tagPopupOpen.value = 0;
+    }
+
+    else if (typeof data.tagSelectionListString !== 'undefined' && data.tagSelectionListString != 'cancel') {
 
         console.log(data.tagSelectionListString != '');
         console.log(tagCollectionInputFormat.value[0]);
 
         if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
-            // console.log('ok');
+            console.log('ok');
             // console.log(data.tagCollection);
             // tagCollectionInputFormat.value = data.tagCollection;
 
+            // if (data.tagSelectionListString != '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+            // if (data.tagSelectionListGroup != '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
             if (data.tagSelectionListString != '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
             if (data.tagSelectionListGroup != '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
 
@@ -130,6 +141,8 @@ function fromChild(data) {
             tagPopupOpen.value = 0;
         }
     }
+
+    else tagPopupOpen.value = 0;
 
     if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
     // console.log(data);
@@ -180,11 +193,11 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
     // console.log('ok');
 
     if (typeof props?.toChild?.formTags == 'undefined') {
-        // console.log('empty');
+        console.log('empty');
         // tagCollectionInputFormat.value = [''];
     }
 
-    else if (props?.toChild?.formTags) {
+    else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
         console.log('ok');
         tagCollectionInputFormat.value = [''];
         props.toChild.formTags.forEach(createTagInputGroup);
@@ -212,15 +225,8 @@ onMounted(() => {
 
     if (props?.toChild?.formTags) {
 
-
-
-
-
 // console.log(props.toChild.formTags);
 // console.log(tagCollectionInputFormat.value );
-
-
-
 
 // tagCollectionInputFormat.value= [];
 // console.log(tagCollectionInputFormat.value);
@@ -232,7 +238,6 @@ if (props?.toChild?.formTags) {
     // console.log(props.toChild.formTags);
     props.toChild.formTags.forEach(createTagInputGroup)
 };
-
 
 // console.log(tagCollectionInputFormat.value);
 

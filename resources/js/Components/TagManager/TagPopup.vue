@@ -375,7 +375,7 @@ function saveTagPopup() {
 
 function cancelTagPopup() {
     // console.log('ok');
-    emit('fromChild', {'tagSelectionListString': '', 'tagSelectionListGroup': ''});
+    emit('fromChild', {'tagSelectionListString': 'cancel', 'tagSelectionListGroup': 'cancel'});
 }
 
 // function newTag() {
@@ -383,8 +383,8 @@ function cancelTagPopup() {
 // }
 
 watch(() => props.fromController, (curr, prev) => {
-    console.log('ok');
-    console.log(props.fromController);
+    // console.log('ok');
+    // console.log(props.fromController);
     if (props?.fromController) {
         console.log('ok');
         //! reduce to one please

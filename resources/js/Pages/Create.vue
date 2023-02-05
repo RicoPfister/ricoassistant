@@ -316,13 +316,13 @@ function fromChild(data) {
 
     else {
 
-        // console.log('ok');
+        console.log('ok');
         if (form?.value?.[data.section]?.[data.subSection]) {
             // delete form.value[data.section]?.[data.subSection][data.index];
             console.log('ok');
-            delete form.value[data.section][data.subSection][data.index];
+            // delete form.value[data.section][data.subSection][data.index];
             console.log(data.index);
-            // form.value[data.section][data.subSection].splice(data.index, 1);
+            form.value[data.section][data.subSection].splice(data.index, 1);
         }
     }
 
