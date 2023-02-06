@@ -1191,7 +1191,9 @@ class RicoAssistant extends Controller {
                     }
                 }
 
-                else {
+                else if (isset($update_tag_db_section[$index])) {
+
+                    // dd($update_tag_db_section);
                     // dd('del', $index, $update_tag_db_section);
 
                     foreach ($update_tag_db_section[$index] as $index2 => $item2) {
@@ -1348,13 +1350,14 @@ class RicoAssistant extends Controller {
         if (isset($request->activityData)) {
             // dd($request->activityData['activityTo'][0] == '');
 
+            // check if time index 0 was found
             if ($request->activityData['activityTo'][0] != '') {
 
                 $update_activity_db_data = DB::table('section_activities')
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->get();
 
-                // dd($update_statement_db_data);
+                // dd($update_activity_db_data);
                 // dd($request->activityData['activityTime']);
 
                 foreach ($request->activityData['activityTime'] as $index => $item) {
@@ -1371,42 +1374,49 @@ class RicoAssistant extends Controller {
                     // create missing activity entry
                     else {
 
-                        dd('activity not found. code under construction');
+                        // dd('activity not found. code under construction');
+
 
                         // create reference function
-                        function reference($db_id, $db_name, $request, $basics, $section_data, $i) {
+                        function reference($index, $section_activity, $request) {
 
                             // dd($db_id, $db_name, $request, $basics, $section_data, $i);
 
                             // dd($request->$db_name['reference'][$i][0]['basic_id']);
 
                             // duplicated command
-                            foreach ($request->$db_name['reference_parents'] as $key => $value) {
+
                                 $ref = new Ref();
-                                $ref->basic_id = $basics->id;
-                                $ref->basic_ref = $request->$db_name['reference_parents'][$i][0]['basic_id'];
-                                $ref->ref_db_id = $db_id;
-                                $ref->ref_db_index = $section_data->id;
+                                $ref->basic_id = $request->basicData['id'];
+                                $ref->basic_ref = $request->activityData['reference_parents'][$index][0]['basic_id'];
+                                $ref->ref_db_id = 4;
+                                $ref->ref_db_index =$section_activity->id;
                                 $ref->tracking = $request->ip();
                                 $ref->save();
-                            }
+
 
                             // dd(['ref_id' => $ref->id]);
 
                             return $ref->id;
                         }
 
-                        // duplicated command
-                        $activites = new SectionActivity();
-                        $activites->basic_id = $basics->id;
-                        $activites->activityTime = $request->activityData['activityTime'][$i];
-                        $activites->tracking = $request->ip();
-                        $activites->created_at = now();
-                        $activites->updated_at = now();
-                        $activites->save();
+                        $section_activity = new SectionActivity();
+                        $section_activity->basic_id = $request->basicData['id'];
+                        $section_activity->activityTime = $request->activityData['activityTime'][$index];
+                        $section_activity->tracking = $request->ip();
+                        $section_activity->created_at = now();
+                        $section_activity->updated_at = now();
+                        $section_activity->save();
 
-                        $activites->ref_id = reference($db_section_id, $db_name, $request, $basics, $activites, $i);
-                        $activites->save();
+                        // dd($section_activity);
+
+                        $section_activity->ref_id = reference($index, $section_activity, $request);
+                        $section_activity->save();
+
+
+
+
+
                     }
                 }
 
