@@ -43,7 +43,7 @@
 
                     <div class="py-1">
                         <div  v-for="(item, index) in InputData" :class="{'border-b border-gray-300': index != InputData.length-1}" class="flex flex-col w-full">
-                            <div class="flex justify-between w-full">
+                            <div v-if="typeof item != 'undefined'" class="flex justify-between w-full">
 
                                 <!-- index/file name -->
                                 <div class="truncate grow"><span class="bg-black text-white px-1 font-bold">{{ item.key }}</span> {{ item.filename }}</div>
@@ -76,9 +76,11 @@
                 <!-- ------------------------------------------------------ -->
                 <div v-if="1" class="border-b-2 border-black font-bold">Tags</div>
                 <div v-if="1" class="pt-2 space-y-[2px] w-full">
-                    <div v-for="(item, index) in tag_db_data" class="border border-black w-full">
-                        <div class="w-full">
-                            <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                    <div v-for="(item, index) in tag_db_data">
+                        <div v-if="typeof item != 'undefined'" class="border border-black w-full">
+                            <div class="w-full">
+                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,7 +89,7 @@
                 <div v-if="1" class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
                 <div v-if="1" class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
-                        <div v-if="item.type.split('/')[0] == 'image'" class="py-1">
+                        <div v-if="typeof item != 'undefined'" class="py-1">
                             <div class="relative border-2 border-black h-36">
                                 <img :src="preview[index]" class="w-[214px] max-h-full">
                                 <div class="absolute bottom-0 px-1 bg-black text-white font-bold">{{ item.key }}</div>
@@ -134,6 +136,8 @@ let previewPath = '';
 let tag_db_data = ref([]);
 let reference_db_data = ref({});
 
+let tagListForDB = [];
+
 // file preview
 let preview = ref([]);
 
@@ -142,11 +146,28 @@ function FileChange(event, index) {
     [...event.target.files].forEach((item, index) => InputDataArray(item, index))
 
     function InputDataArray(item, index) {
+        // console.log('ok');
         InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value});
         preview.value.push(URL.createObjectURL(item));
         tag_db_data.value.push({['tag']: '', 'key': uniqueKey.value});
         uniqueKey.value++;
     }
+
+    // duplicate
+    // let dbTagData_collection = [];
+    //     tag_db_data.value.forEach((item, index) => {
+
+    //         console.log(index);
+    //         console.log(item);
+
+    //         dbTagData_collection[index] = item;
+
+    //     });
+
+
+    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+    emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
+    // emit('fromChild', {'section': 'sourceData', 'subSection': 'tagSource', 'form': tag_db_data});
 }
 
 // fill in already extisting data
@@ -163,7 +184,7 @@ onMounted(() => {
         props.toChild.sourceData.files.forEach((item, index) => soureDataFilesGroup(item, index));
 
         function soureDataFilesGroup(item, index) {
-            // console.log(item);
+            console.log(item);
             InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value});
             tag_db_data.value[index] = {};
             tag_db_data.value[index]['key'] = uniqueKey.value;
@@ -176,11 +197,13 @@ onMounted(() => {
 
         if (props?.toChild?.sourceData?.tag) {
 
+            console.log('ok');
             // console.log(props.toChild.sourceData.tag);
 
             // tag_db_data.value = props?.toChild?.sourceData?.tag;
 
             props?.toChild?.sourceData?.tag.forEach((element, index) => {
+                console.log('ok');
                 tag_db_data.value[index]['tag'] = element;
             });
         }
@@ -201,8 +224,19 @@ function fromChild(data) {
     // console.log(data?.reference?.reference.referenceTitle);
 
     if (data.component == "tag" && data.parentId == 3) {
-        // console.log(data);
-        emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
+        console.log(data);
+        tag_db_data.value[data.parentIndex]['tag'] = data.tagString;
+
+        console.log(data.tagList);
+
+        // cleaning taglist
+
+        // tag_db_data.value.forEach((element, index) => {
+        tagListForDB[data.parentIndex] = data.tagList;
+        // else if (data.tagList == '' && typeof tagListForDB[data.parentIndex] != 'undefined') tagListForDB.splice(data.parentIndex, 1);
+        // });
+
+        emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'form': tagListForDB});
     }
 
     if (data.component == 'reference' && data.parentId == 3) {
@@ -212,11 +246,10 @@ function fromChild(data) {
 }
 
 // send to parent: file upload
-watch(() => InputData, (curr, prev) => {
-    // emit('dataChild', {'formData': {'filelist': InputData.value, 'previewlist': preview.value}});
-    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
-    emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
-}, {deep: true}, 500);
+// watch(() => InputData, (curr, prev) => {
+//     emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+//     emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
+// }, {deep: true}, 500);
 
 // send to parent:
 // watch(() => dataChild, (curr, prev) => {
@@ -268,14 +301,28 @@ function deleteFile(data) {
     }
 
     else {
-        // InputData.value.splice(data, 1);
-        // tag_db_data.value.splice(data, 1);
-        // delete InputData.value.splice[data];
+        InputData.value.splice(data, 1);
+        tag_db_data.value.splice(data, 1);
+        // delete InputData.value[data];
         // delete tag_db_data.value[data];
 
         preview.value.splice(data, 1);
+        // delete preview.value[data];
         // uniqueKey = 1;
-        // emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': data, 'form': ''});
+
+        // set db tag collection index
+
+        // props.toChild.sourceData.files.forEach((item, index) => soureDataFilesGroup(item, index));
+        tagListForDB.splice(data, 1);
+
+
+
+        // console.log(tag_db_data.value);
+        // emit('fromChild', {'section': 'sourceData', 'subSection': 'tagSource', 'form': tag_db_data});
+        // emit('fromChild', tag_db_data.value);
+        // console.log(tag_db_data.value);
+        // emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'index': data, 'form': ''});
+        // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist', 'index': data, 'form': ''});
     }
 }
 

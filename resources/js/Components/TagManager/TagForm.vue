@@ -166,16 +166,17 @@ function tagPopupOpenData() {
 // console.log(tagCollectionGroupFormat.value);
 watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
     // console.log(tagCollectionGroupFormat.value[0]);
-    emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'tagString':tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
+// after split group to string send it back to parent as groups
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 
-    // console.log('ok');
+    console.log(tagCollectionInputFormat.value);
 
     // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
         // console.log(tagCollectionInputFormat.value[0]);
-        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'tagString': tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
     // }
 }, {deep: true}, 500);
 
@@ -190,7 +191,9 @@ watch(() => props.fromController, (curr, prev) => {
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
 
+    // console.log(props?.toChild?.parentId);
     // console.log('ok');
+    console.log(props?.toChild?.formTags);
 
     if (typeof props?.toChild?.formTags == 'undefined') {
         console.log('empty');
@@ -198,10 +201,16 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
     }
 
     else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        console.log('ok');
+        console.log(props?.toChild?.formTags);
         tagCollectionInputFormat.value = [''];
-        props.toChild.formTags.forEach(createTagInputGroup);
-};
+        // props.toChild.formTags.forEach(createTagInputGroup);
+        if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+    }
+
+    else if (props?.toChild?.parentId == 3) {
+        console.log('ok');
+        tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
+    }
 
 }, {deep: true}, 500);
 
@@ -233,10 +242,11 @@ onMounted(() => {
 
 // if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
 if (props?.toChild?.formTags) {
-    console.log('ok');
+    console.log(props.toChild.formTags);
     tagCollectionInputFormat.value = [''];
     // console.log(props.toChild.formTags);
-    props.toChild.formTags.forEach(createTagInputGroup)
+    if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+    if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
 };
 
 // console.log(tagCollectionInputFormat.value);
@@ -249,15 +259,15 @@ if (props?.toChild?.formTags) {
 
 function createTagInputGroup(item, index1) {
 
-    // console.log(index1);
-    // console.log(item);
+    console.log(index1);
+    console.log(item);
 
     item.forEach(createTagInputString);
 
     function createTagInputString(item2, index2) {
 
         // console.log(index2);
-        // console.log(item2);
+        console.log(item2);
         // console.log(tagCollectionInputFormat.value);
 
         if (item2 != null) {
@@ -292,9 +302,11 @@ function createTagInputGroup(item, index1) {
     // prevent space at the end of the string
     if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
 
-    // console.log(tagCollectionInputFormat.value);
+    console.log(tagCollectionInputFormat.value);
 
 }
+
+console.log(tagCollectionInputFormat.value);
 
 </script>
 

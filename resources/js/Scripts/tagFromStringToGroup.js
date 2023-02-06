@@ -1,9 +1,11 @@
 export function tagFromStringToGroup(tagData) {
 
+    console.log(tagData);
+
     let tagArray = [];
 
     let tagCollectionSplitInGroup = tagData.split(/[@]/);
-    // console.log(tagCollectionSplitInGroup);
+    console.log(tagCollectionSplitInGroup);
     let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
     // console.log(tagCollectionSplitInGroupFilter);
 
