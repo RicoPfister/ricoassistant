@@ -172,7 +172,7 @@ watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
 // after split group to string send it back to parent as groups
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 
-    console.log(tagCollectionInputFormat.value);
+    // console.log(tagCollectionInputFormat.value);
 
     // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
         // console.log(tagCollectionInputFormat.value[0]);
@@ -193,22 +193,22 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
 
     // console.log(props?.toChild?.parentId);
     // console.log('ok');
-    console.log(props?.toChild?.formTags);
+    // console.log(props?.toChild?.formTags);
 
     if (typeof props?.toChild?.formTags == 'undefined') {
-        console.log('empty');
+        // console.log('empty');
         // tagCollectionInputFormat.value = [''];
     }
 
     else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        console.log(props?.toChild?.formTags);
+        // console.log(props?.toChild?.formTags);
         tagCollectionInputFormat.value = [''];
         // props.toChild.formTags.forEach(createTagInputGroup);
         if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
     }
 
     else if (props?.toChild?.parentId == 3) {
-        console.log('ok');
+        // console.log('ok');
         tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
     }
 
@@ -242,7 +242,7 @@ onMounted(() => {
 
 // if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
 if (props?.toChild?.formTags) {
-    console.log(props.toChild.formTags);
+    // console.log(props.toChild.formTags);
     tagCollectionInputFormat.value = [''];
     // console.log(props.toChild.formTags);
     if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
@@ -259,15 +259,15 @@ if (props?.toChild?.formTags) {
 
 function createTagInputGroup(item, index1) {
 
-    console.log(index1);
-    console.log(item);
+    // console.log(index1);
+    // console.log(item);
 
     item.forEach(createTagInputString);
 
     function createTagInputString(item2, index2) {
 
         // console.log(index2);
-        console.log(item2);
+        // console.log(item2);
         // console.log(tagCollectionInputFormat.value);
 
         if (item2 != null) {
@@ -302,11 +302,11 @@ function createTagInputGroup(item, index1) {
     // prevent space at the end of the string
     if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
 
-    console.log(tagCollectionInputFormat.value);
+    // console.log(tagCollectionInputFormat.value);
 
 }
 
-console.log(tagCollectionInputFormat.value);
+// console.log(tagCollectionInputFormat.value);
 
 </script>
 

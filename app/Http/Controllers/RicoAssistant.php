@@ -845,6 +845,9 @@ class RicoAssistant extends Controller {
 
     public function update (Request $request) {
 
+        // $delete_basic_check = 0;
+        // $delete_basic_check2 = 0;
+
         // dd($request);
 
         // *****update parent reference data*****
@@ -870,7 +873,7 @@ class RicoAssistant extends Controller {
 
                 case 'sourceData':
                     $tag_section = 'section_sources';
-                    $tag_section_request = 'placeholder';
+                    $tag_section_request = 'filelist';
                     break;
             }
 
@@ -961,11 +964,13 @@ class RicoAssistant extends Controller {
                         $ref = DB::table('refs')
                         ->where('basic_id', '=', $request->basicData['id'])
                         ->where('ref_db_id', '=', $section_id)
-                        ->where('ref_db_index', '=',  $request->$db_name[$tag_section_request]['id'])
+                        ->where('ref_db_index', '=', $request->$db_name[$tag_section_request]['id'])
                         ->update(['status' => 2]);
                     }
                 }
-            } else {
+            }
+
+            else {
                 // delete obsolete ref
 
                     // dd($tag_section_request);
@@ -977,6 +982,9 @@ class RicoAssistant extends Controller {
                     ->where('ref_db_index', '=',  $request->$db_name[$tag_section_request]['id'])
                     ->update(['status' => 2]);
             }
+
+            // dd('ok');
+            // return $delete_basic_check += 1;
         }
 
         // update, create or delete tag group section names
@@ -1276,8 +1284,6 @@ class RicoAssistant extends Controller {
                     ->update(['status' => 2]);
                 }
             }
-
-            // dd('ok');
         }
 
         function delete_entry() {
@@ -1305,9 +1311,6 @@ class RicoAssistant extends Controller {
         // section update
         // +++++++++++++++++++++++++++++++++++++++++
 
-        $delete_basic_check = 0;
-        $delete_basic_check2 = 0;
-
         // dd($request->statementData['statement']);
 
         // *****update statement data*****
@@ -1322,11 +1325,15 @@ class RicoAssistant extends Controller {
             $update_statement_db_data = DB::table('section_statements')
             ->where('basic_id', '=', $request->basicData['id'])
             ->update(['statement' => $request->statementData['statement']['statement']]);
-            update_tag($request, $section_id, 0);
-            update_reference($request, $section_id, 0);
+            update_tag($request, $section_id);
+            update_reference($request, $section_id);
 
-            $delete_basic_check2 += 1;
+
             }
+
+            // else {
+            //     $delete_basic_check2 = 1;
+            // }
         }
 
         // else if (isset($request->statementData['statement'])) {
@@ -1466,18 +1473,26 @@ class RicoAssistant extends Controller {
                 update_tag($request, $section_id);
                 update_reference($request, $section_id);
 
-                $delete_basic_check += 1;
             }
+
+            // else {
+            //     $delete_basic_check = 1;
+            // }
         };
+
+
+
+
 
         // *****update source data*****
         //-----------------------------------
 
         if (isset($request->sourceData)) {
 
-            if ($request->sourceData['filelist'] != []) {
+            $section_id = 3;
 
-                $section_id = 3;
+            // empty entry: filelist = []; no file changes: filelist is missing
+            if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] != []) {
 
                 // dd($request->sourceData['filelist']);
 
@@ -1553,18 +1568,42 @@ class RicoAssistant extends Controller {
 
                 }
 
-                update_tag($request, $section_id);
-                update_reference($request, $section_id, 0);
+                // update_tag($request, $section_id);
+                // update_reference($request, $section_id);
 
-                $delete_basic_check += 1;
+                // $delete_basic_check = 1;
             }
+
+            // else if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] == []) {
+            //     $delete_basic_check = 1;
+            // }
+
+            // if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] == []) {
+            update_tag($request, $section_id);
+            update_reference($request, $section_id);
+            // }
+            // else if (isset($request->sourceData)) {
+                // dd($request->sourceData['files']);
+
+            // }
+
         }
+
+        // dd($request->statementData['statement']['statement'] == []);
+        // dd (isset($request->statementData['statement']));
+
+        $delete_check = 0;
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] == []) $delete_check = 1;
+        if (isset($request->activityData['activityTo']) && $request->activityData['activityTo'][0] == '') $delete_check = 1;
+        if (isset($request->statementData['statement']) && $request->statementData['statement']['statement'] == []) $delete_check = 1;
+
+        // dd($delete_check);
 
         // dd($request);
         // dd($delete_basic_check);
 
         // delete entry or update basic
-        if ($delete_basic_check2 == 0 && $delete_basic_check == 0) {
+        if ($delete_check == 1) {
             // dd('delete basic');
             // delete entry in section basics
             DB::table('section_basics')

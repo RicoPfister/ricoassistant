@@ -295,9 +295,8 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(form.value);
-    // console.log(form.value);
     // console.log(data);
+    // console.log(form.value);
     // console.log(data.form == 'undefined');
     // console.log(data.form == '');
 

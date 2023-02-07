@@ -184,7 +184,7 @@ onMounted(() => {
         props.toChild.sourceData.files.forEach((item, index) => soureDataFilesGroup(item, index));
 
         function soureDataFilesGroup(item, index) {
-            console.log(item);
+            // console.log(item);
             InputData.value.push({'filename': item.path, 'size': item.size, 'type': item.extension, 'key': uniqueKey.value});
             tag_db_data.value[index] = {};
             tag_db_data.value[index]['key'] = uniqueKey.value;
@@ -197,13 +197,13 @@ onMounted(() => {
 
         if (props?.toChild?.sourceData?.tag) {
 
-            console.log('ok');
+            // console.log('ok');
             // console.log(props.toChild.sourceData.tag);
 
             // tag_db_data.value = props?.toChild?.sourceData?.tag;
 
             props?.toChild?.sourceData?.tag.forEach((element, index) => {
-                console.log('ok');
+                // console.log('ok');
                 tag_db_data.value[index]['tag'] = element;
             });
         }
@@ -219,15 +219,15 @@ onMounted(() => {
 // send to parent: tag data from child
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
     // console.log(data.component);
     // console.log(data?.reference?.reference.referenceTitle);
 
     if (data.component == "tag" && data.parentId == 3) {
-        console.log(data);
+        // console.log(data);
         tag_db_data.value[data.parentIndex]['tag'] = data.tagString;
 
-        console.log(data.tagList);
+        // console.log(data.tagList);
 
         // cleaning taglist
 
@@ -240,7 +240,7 @@ function fromChild(data) {
     }
 
     if (data.component == 'reference' && data.parentId == 3) {
-        console.log(data);
+        // console.log(data);
         emit('fromChild', {'section':'sourceData', 'subSection':'reference_parents', 'index': 0, 'form': data.reference});
     }
 }
@@ -288,9 +288,11 @@ function deleteFile(data) {
         preview.value.splice(0, InputData.value.length);
         uniqueKey = 1
 
+        // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
+
         tag_db_data.value.forEach((element, index) => {
-            console.log(element);
-            console.log(index);
+            // console.log(element);
+            // console.log(index);
             uniqueKey.value = 1;
             emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': index, 'form': ''});
         });
@@ -323,6 +325,7 @@ function deleteFile(data) {
         // console.log(tag_db_data.value);
         // emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'index': data, 'form': ''});
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist', 'index': data, 'form': ''});
+        emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
     }
 }
 
