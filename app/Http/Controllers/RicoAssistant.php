@@ -342,6 +342,7 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_statement = DB::table('section_statements')
+        ->where('status', '=', null)
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
@@ -386,6 +387,7 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_activity = DB::table('section_activities')
+        ->where('status', '=', null)
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
@@ -449,8 +451,8 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_source = DB::table('section_sources')
-        ->where('basic_id', '=', $request->basic_id)
         ->where('status', '=', null)
+        ->where('basic_id', '=', $request->basic_id)
         ->get();
 
         // dd($detail_source);
@@ -1419,6 +1421,45 @@ class RicoAssistant extends Controller {
 
                     }
                 }
+
+                // delete obsolete group
+
+                // data from db
+                $update_activity_db_data = DB::table('section_activities')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->get();
+
+                // data from client
+                $update_activity_db_tag_data = DB::table('tags')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->get()
+                ->groupBy('section_table_id');
+
+                // dd($request->activityData['activityTo'], $update_activity_db_data, $update_activity_db_tag_data);
+
+                foreach ($update_activity_db_data as $client_activityto_data_index => $client_activityto_data_item) {
+                    if (!isset($request->activityData['activityTo'][$client_activityto_data_index])) {
+                        // dd($client_activityto_data_index);
+
+                        // dd($client_activityto_data_item->ref_id);
+
+                        $update_activity_db_data = DB::table('section_activities')
+                        ->where('id', '=', $client_activityto_data_item->id)
+                        ->update(['status' => 2]);
+
+                        DB::table('refs')
+                        ->where('id', '=', $client_activityto_data_item->ref_id)
+                        ->update(['status' => 2]);
+
+                        DB::table('tags')
+                        ->where('section_table_id', '=', $client_activityto_data_item->id)
+                        ->update(['status' => 2]);
+
+                    }
+                }
+                // dd('negativ');
+
+                // update tag and ref
 
                 $section_id = 4;
 
