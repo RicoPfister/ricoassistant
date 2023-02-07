@@ -108,25 +108,41 @@ watch(() => props.fromController, (curr, prev) => {
 
 function fromChild(data) {
 
+    console.log(data);
     // console.log(data.tagSelectionListString);
     // console.log(TagFromStringToGroup.tagFromStringToGroup(data.tagCollection));
 
-    if (typeof data.tagSelectionListString !== 'undefined') {
+    if (data.tagSelectionListString == '' && data.tagSelectionListString != 'cancel') {
+        // console.log('empty');
 
-        // console.log('ok');
+        tagCollectionInputFormat.value[0] = "";
+        tagCollectionGroupFormat.value[0] = "";
+        tagPopupOpen.value = 0;
+    }
+
+    else if (typeof data.tagSelectionListString !== 'undefined' && data.tagSelectionListString != 'cancel') {
+
+        console.log(data.tagSelectionListString != '');
+        console.log(tagCollectionInputFormat.value[0]);
 
         if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
-            // console.log('ok');
+            console.log('ok');
             // console.log(data.tagCollection);
             // tagCollectionInputFormat.value = data.tagCollection;
 
-            if (data.tagSelectionListString !== '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
-            if (data.tagSelectionListGroup !== '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+            // if (data.tagSelectionListString != '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+            // if (data.tagSelectionListGroup != '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+            if (data.tagSelectionListString != '') tagCollectionInputFormat.value[0] = data.tagSelectionListString;
+            if (data.tagSelectionListGroup != '') tagCollectionGroupFormat.value[0] = data.tagSelectionListGroup;
+
+            console.log(tagCollectionInputFormat.value[0]);
 
             tagPopupOpen.value = 0;
         }
     }
+
+    else tagPopupOpen.value = 0;
 
     if (data.tagPreset) emit('fromChild', {'tagPreset': data.tagPreset});
     // console.log(data);
@@ -150,14 +166,18 @@ function tagPopupOpenData() {
 // console.log(tagCollectionGroupFormat.value);
 watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
     // console.log(tagCollectionGroupFormat.value[0]);
-    emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'tagString':tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
+// after split group to string send it back to parent as groups
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
-    // console.log(tagCollectionInputFormat.value[0]);
-    if (typeof tagCollectionInputFormat.value[0] !== 'undefined') {
-        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
-    }
+
+    // console.log(tagCollectionInputFormat.value);
+
+    // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
+        // console.log(tagCollectionInputFormat.value[0]);
+        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'tagString': tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+    // }
 }, {deep: true}, 500);
 
 // listen to fromController and save it in fromController
@@ -170,12 +190,27 @@ watch(() => props.fromController, (curr, prev) => {
 }, {deep: true}, 500);
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
+
+    // console.log(props?.toChild?.parentId);
     // console.log('ok');
-    if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
+    // console.log(props?.toChild?.formTags);
+
+    if (typeof props?.toChild?.formTags == 'undefined') {
+        // console.log('empty');
+        // tagCollectionInputFormat.value = [''];
+    }
+
+    else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
+        // console.log(props?.toChild?.formTags);
+        tagCollectionInputFormat.value = [''];
+        // props.toChild.formTags.forEach(createTagInputGroup);
+        if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+    }
+
+    else if (props?.toChild?.parentId == 3) {
         // console.log('ok');
-    tagCollectionInputFormat.value = [''];
-    props.toChild.formTags.forEach(createTagInputGroup);
-};
+        tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
+    }
 
 }, {deep: true}, 500);
 
@@ -199,115 +234,79 @@ onMounted(() => {
 
     if (props?.toChild?.formTags) {
 
-
-
-
-
 // console.log(props.toChild.formTags);
 // console.log(tagCollectionInputFormat.value );
-
-
-
 
 // tagCollectionInputFormat.value= [];
 // console.log(tagCollectionInputFormat.value);
 
 // if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
 if (props?.toChild?.formTags) {
+    // console.log(props.toChild.formTags);
     tagCollectionInputFormat.value = [''];
     // console.log(props.toChild.formTags);
-    props.toChild.formTags.forEach(createTagInputGroup)
+    if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+    if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // console.log(tagCollectionInputFormat.value);
 
 // tagCollectionInputFormat.value = [];
 // tagCollectionInputFormat.value[0] = tagCollectionInputFormat.value;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 })
 
 function createTagInputGroup(item, index1) {
 
-    console.log(item);
+    // console.log(index1);
+    // console.log(item);
 
-item.forEach(createTagInputString);
+    item.forEach(createTagInputString);
 
-function createTagInputString(item2, index2) {
-
-    console.log(item2);
-
-    if (item2 != null) {
-        let item2Trimmed = item2.toString().trim();
+    function createTagInputString(item2, index2) {
 
         // console.log(index2);
         // console.log(item2);
-        // console.log(item2Trimmed);
         // console.log(tagCollectionInputFormat.value);
 
-        switch (index2) {
+        if (item2 != null) {
+            let item2Trimmed = item2.toString().trim();
 
-            case 0:
-                // console.log(item2Trimmed);
-                // console.log(tagCollectionInputFormat.value);
-                // console.log(item2);
-                tagCollectionInputFormat.value[0] += '@'+item2Trimmed;
-                // console.log(tagCollectionInputFormat.value);
-                break;
+            // console.log(index2);
+            // console.log(item2);
+            // console.log(item2Trimmed);
 
-            case 3:
-                tagCollectionInputFormat.value[0] += '('+item2Trimmed+')';
-                // console.log(tagCollectionInputFormat.value);
-                break;
+            switch (index2) {
 
-            default:
-                console.log('ok');
-                if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
-                // console.log(tagCollectionInputFormat.value);
+                case 0:
+                    // console.log(item2Trimmed);
+                    // console.log(tagCollectionInputFormat.value);
+                    // console.log(item2);
+                    tagCollectionInputFormat.value[0] += '@'+item2Trimmed;
+                    // console.log(tagCollectionInputFormat.value);
+                    break;
+
+                case 3:
+                    tagCollectionInputFormat.value[0] += '('+item2Trimmed+')';
+                    // console.log(tagCollectionInputFormat.value);
+                    break;
+
+                default:
+                    // console.log('ok');
+                    if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
+                    // console.log(tagCollectionInputFormat.value);
+            }
         }
     }
-}
-// prevent space at the end of the string
-if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
+    // prevent space at the end of the string
+    if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
 
-console.log(tagCollectionInputFormat.value);
+    // console.log(tagCollectionInputFormat.value);
 
 }
+
+// console.log(tagCollectionInputFormat.value);
 
 </script>
 

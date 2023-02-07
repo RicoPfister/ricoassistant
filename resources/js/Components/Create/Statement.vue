@@ -11,7 +11,7 @@
 </div>
 
 <div class="border-l border-r border-b border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag}" :fromController="props.fromController" @fromChild="fromChild"/>
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
@@ -44,17 +44,17 @@ let form = useForm({
 // send to parent: statement input data
 function InputData() {
     // console.log('ok');
-    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
+    emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': {'statement': form.statement, 'id': props?.toChild?.statementData?.statement?.id}});
 }
 
 // send to parent: reference selection OR tag list
 function fromChild(data) {
     if (data.component == 'reference' && data.parentId == 2) {
 
-        console.log(data);
-        console.log(data.reference);
+        // console.log(data);
+        // console.log(data.reference);
 
-        emit('fromChild', {'section':'statementData', 'subSection':'reference', 'index': 0, 'form': data.reference});
+        emit('fromChild', {'section':'statementData', 'subSection':'reference_parents', 'index': 0, 'form': data.reference});
     }
 
     if (data.component == 'tag' && data.parentId == 2) {

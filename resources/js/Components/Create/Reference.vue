@@ -72,6 +72,8 @@ let form = {
 // check database Sreference
 // send to parent: statement input data
 function referenceCheckerFunction(index, id, check) {
+
+    // console.log('ok');
     // console.log(index);
     // console.log(id);
     // console.log(check);
@@ -93,7 +95,7 @@ function referenceCheckerFunction(index, id, check) {
         // check if reference form ***input*** has been and send request to controller
         else if (check == 'inputCheck' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined' ) &&
         form.reference.value[0].title.length > 2) {
-            // console.log('ok');
+            console.log('ok');
             setTimeout(() => {
                 Inertia.post('refcheck', { reference: form.reference.title, row: index, parentId: id}, {replace: false,
                 preserveState: true, preserveScroll: true});
@@ -105,6 +107,11 @@ function referenceCheckerFunction(index, id, check) {
         // form.referenceChecker['check'] = '';
         form.referencePickerOpen = 0;
     }
+
+    if (typeof form?.reference.value[0]?.title != 'undefined') {
+        emit('fromChild', {'reference': '', 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex,
+        'color': '', 'component': 'reference'});
+    }
 }
 
 // watch(() => props.toChild, _.debounce( (curr, prev) => {
@@ -114,19 +121,19 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
-    console.log(data.referenceData);
+    // console.log(data.referenceData);
     // form.reference.value = [];
     // console.log(form.reference.value);
     // form.reference.value[0] = '';
-    console.log(form.reference.value);
+    // console.log(form.reference.value);
     form.reference.value[0] = data.referenceData;
-    console.log(form.reference.value);
+    // console.log(form.reference.value);
     emit('fromChild', {'reference': form.reference.value, 'parentId': data.parentId, 'parentIndex': data.parentIndex, 'color': data.color, 'component':
     'reference'});
-    console.log(form.reference.value);
+    // console.log(form.reference.value);
     // console.log(props.toChild.parentIndex);
     form.referencePickerOpen.value = 0;
-    console.log(form.reference.value);
+    // console.log(form.reference.value);
 }
 
 // listen to title placeholder auto set
@@ -170,7 +177,7 @@ watch(() => props.fromController, (curr, prev) => {
 
 watch(() => props.toChild, (curr, prev) => {
     if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
-        console.log(props.toChild.parents_reference);
+        // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
         form.reference.value[0].title = props.toChild.parents_reference
     };

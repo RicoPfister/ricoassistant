@@ -33,9 +33,9 @@
 
     <div class="flex flex-row">
         <!-- group reference path -->
-        <div class="" v-for="(item, index) in props.reference.reference[props.index]">
-            {{  props.reference.reference[0]['title'] }}
-            <span :class="{'font-bold': index == 0}">{{ item.title }}</span>{{ (index !== props.reference.reference[props.index].length-1  ? '>' : '') }}
+        <div class="" v-for="(item, index) in props.reference.reference_parents[props.index]">
+            {{  props.reference.reference_parents[0]['title'] }}
+            <span :class="{'font-bold': index == 0}">{{ item.title }}</span>{{ (index !== props.reference.reference_parents[props.index].length-1  ? '>' : '') }}
             <!-- {{ item }} -->
         </div>
     </div>

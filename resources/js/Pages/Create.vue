@@ -77,7 +77,7 @@ let activityTime = 0;
 
 function activityTimeConvert(item, index) {
 
-    console.log(item, index);
+    // console.log(item, index);
 
     if (item >= 100) {
         activityTimeHourString = parseInt(item.toString().slice(0, -2));
@@ -86,19 +86,19 @@ function activityTimeConvert(item, index) {
         activityTimeHourMinute = item;
     }
 
-        console.log(item, index, activityTimeHourString, activityTimeHourMinute);
+        // console.log(item, index, activityTimeHourString, activityTimeHourMinute);
 
         activityTime = parseInt(activityTimeHourString ) * 60 + parseInt(activityTimeHourMinute);
 
-        console.log(activityTime);
+        // console.log(activityTime);
 
         activityTime -= activityTimeTotal;
 
-        console.log(activityTime, activityTimeTotal);
+        // console.log(activityTime, activityTimeTotal);
 
         if (typeof form?.value?.activityData?.activityTime == 'undefined') form.value.activityData.activityTime = [];
 
-        console.log(activityTime);
+        // console.log(activityTime);
 
         form.value.activityData.activityTime[index] = activityTime;
 
@@ -295,9 +295,12 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
+    // console.log(form.value);
+    // console.log(data.form == 'undefined');
+    // console.log(data.form == '');
 
-    if (data.form != 'undefined') {
+    if (data.form != 'undefined' && data.form != '') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
@@ -305,9 +308,29 @@ function fromChild(data) {
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
             // console.log(form.value[data.section][data.subSection][data.index]);
-        } else {
+        }   else {
             // console.log(data);
-            form.value[data.section][data.subSection]= data.form;
+            form.value[data.section][data.subSection] = data.form;
+            }
+    }
+
+    else {
+
+        console.log('ok');
+        if (form?.value?.[data.section]?.[data.subSection]) {
+
+            console.log(form.value[data.section][data.subSection]);
+
+            // do not delete key, set value to 0
+            delete form.value[data.section]?.[data.subSection][data.index];
+
+            // delete key and value
+            // form.value[data.section][data.subSection].splice(data.index, 1);
+
+            console.log('ok');
+            // delete form.value[data.section][data.subSection][data.index];
+            console.log(data.index);
+
         }
     }
 
@@ -347,6 +370,8 @@ onMounted(() => {
 //    console.log(props.edit);
 
    if (props?.edit) {
+
+        // console.log(props.edit);
 
         // console.log(props.edit.activityData.reference[0]);
 
