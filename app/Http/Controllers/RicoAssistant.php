@@ -970,7 +970,7 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            else {
+            else if (isset($request->$db_name['reference_parents']) && $request->$db_name['reference_parents'] == '') {
                 // delete obsolete ref
 
                     // dd($tag_section_request);
