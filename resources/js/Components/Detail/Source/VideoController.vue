@@ -291,6 +291,8 @@ if (command == 'loadedmetadata') {
 }
 
 else if (command == 'timeupdate') {
+    console.log(audioControlData.value[0].duration);
+    console.log(audioControl.value[0].currentTime);
     // console.log(slider.value);
     // console.log(audioControlData.value[0].currentTime);
     currentTime.value = audioControl.value[0].currentTime;
