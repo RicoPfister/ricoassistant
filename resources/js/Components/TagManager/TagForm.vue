@@ -300,10 +300,8 @@ function createTagInputGroup(item, index1) {
         }
     }
     // prevent space at the end of the string
-    if (index1 !== props?.toChild?.formTags[0].length-1) tagCollectionInputFormat.value[0] += ' ';
-
-    // console.log(tagCollectionInputFormat.value);
-
+    // console.log(props?.toChild?.formTags.length);
+    if (index1 !== props?.toChild?.formTags.length-1) tagCollectionInputFormat.value[0] += ' ';
 }
 
 // console.log(tagCollectionInputFormat.value);

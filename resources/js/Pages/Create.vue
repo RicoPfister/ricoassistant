@@ -147,11 +147,7 @@ function dataChild(data) {
 
             console.log(form.value.activityData.activityTo);
 
-
-
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
-
-
         };
 
         console.log(form.value);
@@ -162,34 +158,10 @@ function dataChild(data) {
 
     if (data.update == 1) {
 
-        // let formIndex = Object.keys(form.value);
-
-        // formIndex.forEach(element => formIndexFunction(element))
-
-        // function formIndexFunction(item) {
-        //     console.log(item);
-        //     if (!Object.hasOwn(formBeforeUpdate, item)) formToUpdate[item] = form.value[item];
-
-        //     let formIndexIndex = Object.keys(form.value[item]);
-        //     console.log(formIndexIndex);
-        // }
-
-        // let formBeforeUpdate = {};
-        // let formToUpdate = {};
-        // let formToDelete = {};
-
-        // form.value
-        // formBeforeUpdate
-        // formToUpdate
-        // formToDelete
-
         // console.log(form.value.activityData.activityTo);
         if (form?.value?.activityData) {
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
         }
-
-
-
 
         Inertia.post('update', form.value);
         // console.log(form.value);
@@ -238,67 +210,18 @@ function dataChild(data) {
     form.value['componentCollection'] = componentCollection;
 }
 
-// basic title response
-// watch(() => props.basicResult, _.debounce( (curr, prev) => {
-
-//     dataParent.value.basicTitleData = props.basicResult;
-
-//     // console.log(props.basicResult);
-
-//     if (props.basicResult[0].warning == 2) {
-//         dataParent.value.basicTitelPickerOpen = 1;
-//     } else {
-//         dataParent.value.basicTitelPickerOpen = 0;
-//     }
-
-// }, {'deep': true}, 500));
-
-// // listen to form changes and emit them
-// watch(() => form, (curr, prev) => {
-//     emit('dataForm', {'dataForm': form});
-// }, {deep: true}, 500);
-
-// process component data
-function dataToParent() {
-    // if (data.tagSource) {
-    // }
-}
-
 function toParent(data) {
     // console.log('ok');
     // console.log(data);
     if (data.activityTo) {
         form.value['activityTo'] = data.activityTo;
     };
-
-    // if (data.activityReference) {
-    //     form.value['activityReference'] = data.activityReference;
-    // };
-
-    // if (data.referenceReference) {
-    //     form.value['referenceReference'] = data.referenceReference;
-    // };
-
-    // if (data.activityTag) {
-    //     form.value['tagData']['activityTag'] = [];
-    //     form.value['tagData']['activityTag'] = data.activityTag;
-    // };
-
-    // if (data.sourceTag) {
-    //     form.value['tagData']['sourceTag'] = [];
-    //     form.value['tagData']['sourceTag'] = data.sourceTag;
-    // };
 }
 
 let transferCreate = ref({});
 
 // process form data received from components
 function fromChild(data) {
-
-    // console.log(data);
-    // console.log(form.value);
-    // console.log(data.form == 'undefined');
-    // console.log(data.form == '');
 
     if (data.form != 'undefined' && data.form != '') {
         if (!form.value[data.section]) form.value[data.section] = {};
@@ -316,64 +239,29 @@ function fromChild(data) {
 
     else {
 
-        console.log('ok');
+        // console.log('ok');
         if (form?.value?.[data.section]?.[data.subSection]) {
 
-            console.log(form.value[data.section][data.subSection]);
+            // console.log(form.value[data.section][data.subSection]);
 
             // do not delete key, set value to 0
             delete form.value[data.section]?.[data.subSection][data.index];
 
             // delete key and value
-            // form.value[data.section][data.subSection].splice(data.index, 1);
 
-            console.log('ok');
+            // console.log('ok');
             // delete form.value[data.section][data.subSection][data.index];
             console.log(data.index);
-
         }
     }
-
-    // if (data.tagPresetItemSelected) {
-    //     if (!form.value[data.section]) form.value[data.section] = {};
-    //     if (typeof data.index !== 'undefined') {
-    //         if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
-    //         form.value[data.section][data.subSection][data.index]  = {};
-    //         form.value[data.section][data.subSection][data.index] = data.form;
-    //     } else {
-    //         form.value[data.section][data.subSection]= data.form;
-    //     }
-    // }
-
-    // if (data.presetCreate) {
-    //     if (!form.value[data.section]) form.value[data.section] = {};
-    //     if (typeof data.index !== 'undefined') {
-    //         if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
-    //         form.value[data.section][data.subSection][data.index]  = {};
-    //         form.value[data.section][data.subSection][data.index] = data.form;
-    //     } else {
-    //         form.value[data.section][data.subSection]= data.form;
-    //     }
-    // }
 
     transferCreate.value['title'] = form.value.basicData.title;
 }
 
-// watch(() => props.fromController, (curr, prev) => {
-//     if (props?.fromController?.database) {
-//         console.log('ok');
-//         Inertia.post('tag');
-//     };
-// }, {deep: true}, 500);
-// let form_transfer = ref();
 onMounted(() => {
-//    console.log(props.edit);
+   console.log(props.edit);
 
    if (props?.edit) {
-
-        // console.log(props.edit);
-
-        // console.log(props.edit.activityData.reference[0]);
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);
@@ -381,25 +269,11 @@ onMounted(() => {
         if (props?.edit?.activityData) componentCollection.push(5);
         if (props?.edit?.sourceData) componentCollection.push(7);
 
-        // form_transfer = props.edit;
-        // console.log(form_transfer);
-        // form_transfer.value = props.edit;
-        // form.value = '';
-        // console.log(form.value);
-        // formBeforeUpdate = props.edit;
-        // console.log(formBeforeUpdate);
         form.value = props.edit;
-        // console.log(form.value);
-        // form.value.statementData.tag = props.tag[0];
-        // form_transfer = props.edit;
-        // console.log(form_transfer);
+
         editCheck.value = 1;
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
-
-    // if (props?.tag) {
-    //     form.value.statementData.tag = props.tag[0];
-    // }
 });
 
 </script>

@@ -92,8 +92,6 @@ class RicoAssistant extends Controller {
             ->get()
             ->groupBy(['section_table_id', 'tag_id']);
 
-            // ->groupBy();
-
             // dd($tag_rawdata);
 
             if (count($tag_rawdata) > 0) {
@@ -121,12 +119,7 @@ class RicoAssistant extends Controller {
                         foreach ($value2 as $key3 => $value3) {
 
                             // dd($value3);
-                            // dd($key);
 
-
-
-                            // dd($detail);
-                            // dd($value2);
                             if ($value3->tag_table == 1) $tag_table = 'tag_categories';
                             if ($value3->tag_table == 2) $tag_table = 'tag_contexts';
                             if ($value3->tag_table == 3) $tag_table = 'tag_values';
@@ -136,28 +129,7 @@ class RicoAssistant extends Controller {
                             ->where('id', '=', $value3->tag_table_id)
                             ->pluck('content')[0];
 
-                            // dd($detail);
-
-                            // tag push to dedicated collection
-
-                            // dd($detail);
-                            // dd($db_name == 'sourceData');
-                            // dd($detail[$db_name]['files'][0]);
-
-                            // if ($db_name == 'sourceData') {
-                            //     $detail[$db_name]['files'][0]->test = 123;
-                            // }
-
-
-                                // if (!issset($detail[$db_name]['tag'])) $detail[$db_name]['tag'] = [];
-                                // dd($section_content[$i2]->id, $value3->section_table_id);
-
-                                // if ($section_content[$i2]->id == $value3->section_table_id) array_push($detail[$db_name]['tag'][$i][$i2], $tag_group_content);
-
-                                // if (array_key_exists($value3->section_table_id, $section_content)) {
-                                array_push($detail[$db_name]['tag'][$key][$i2], $tag_group_content);
-                                // }
-
+                            array_push($detail[$db_name]['tag'][$key][$i2], $tag_group_content);
                         }
                         // dd($detail);
                         $i2++;
@@ -991,6 +963,8 @@ class RicoAssistant extends Controller {
         // ------------------------------------------
         function update_tag($request, $section_id) {
 
+            $tag_id = '';
+
             // dd($request, $section_id);
 
             // step 1: defining basic meta data
@@ -1056,8 +1030,6 @@ class RicoAssistant extends Controller {
 
                 $group_collection = collect($group_item);
                 $update_tag_db_group[$group_index] =  $group_collection->groupBy('tag_id')->values();
-                // $update_tag_db_group[$group_index];
-                // $update_tag_db_group[$group_index]->all();
             }
 
             if (!isset($update_tag_db_group)) {
@@ -1078,16 +1050,25 @@ class RicoAssistant extends Controller {
             };
 
             // step 3.2: create tag group section name
-            function create_tag_ref($request, $section_id, $index, $index3, $tag_name_check_array, $tag_section, $tag_id) {
+            function create_tag_ref($request, $section_id, $index, $index2, $index3, $tag_name_check_array, $tag_section, $tag_id) {
 
-                // dd($request, $section_id, $index, $index3, $tag_name_check_array);
+                // dd($request, $section_id, $index, $index2, $index3, $tag_name_check_array);
 
                 // get section table index
                 $tag_section_table_id = DB::table($tag_section)
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->get();
 
+                $tag_section_id = DB::table('tags')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->where('status', '=', null)
+                ->get()
+                ->groupBy('tag_id')
+                ->values();
+
+                // dd($tag_section_id);
                 // dd($index3);
+                // dd($tag_section_table_id[$index]);
 
                 $tag = New Tag();
                 $tag->basic_id = $request->basicData['id'];
@@ -1098,24 +1079,36 @@ class RicoAssistant extends Controller {
                 $tag->tracking = $request->ip();
                 $tag->save();
 
+                // $GLOBALS['tag_id'] = $tag_id;
+
+                // $tag_id = $tag_section_id[0]->tag_id;
+
                 if ($index3 == 0) {
-                    $GLOBALS['$tag_id'] = $tag->id;
+                    $GLOBALS['tag_id'] = $tag->id;
                 }
 
+                if (!isset($GLOBALS['tag_id'])) {
+                    // dd($tag_section_id);
+                    $GLOBALS['tag_id'] = $tag_section_id[$index2][0]->tag_id;
+                }
 
-                $tag->tag_id = $GLOBALS['$tag_id'];
+                // if ($index3 == 1) dd($GLOBALS['tag_id']);
+                // dd($index3);
+
+                $tag->tag_id = $GLOBALS['tag_id'];
                 $tag->save();
 
+                return $tag_id;
             };
 
             function delete_tag_group_sections() {
 
             }
 
-            // step 3: check if tag group section names must be updated or created
-            function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section) {
+            // step 3: check if client tag group section names must be updated or created
+            function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section, $tag_id) {
 
-                // dd($item);
+                 // dd($item);
 
                 // check if client tag group exists if not set the group to 2 (deleted)
                 if (isset($item)) {
@@ -1123,16 +1116,8 @@ class RicoAssistant extends Controller {
                     // get tag groups
                     foreach($item as $index2 => $item2) {
 
-                        // dd($index, $item, $index2, $item2);
-
-                        // get tag group section name
-
-                        $tag_id = 0;
-
                         // get tag group section
                         foreach($item2 as $index3 => $item3) {
-
-                            // dd($index3, $item3);
 
                             // set tag section name table
                             switch ($index3) {
@@ -1185,9 +1170,10 @@ class RicoAssistant extends Controller {
 
                             // client update tag data process
                             // dd($request->activityData['tag'], $index, $item, $index2, $item2, $index3, $item3, $update_tag_db_group);
+                            // dd($update_tag_db_group[$index][$index2]);
 
                             // if tag ref was found
-                            if (isset($update_tag_db_group[$index][$index2])) {
+                            if (isset($update_tag_db_group[$index][$index2][$index3])) {
                                 // dd('update', $index, $index2, $index3);
                                 update_tag_ref($update_tag_db_group, $tag_name_check_array, $index, $index2, $index3);
                             }
@@ -1195,16 +1181,24 @@ class RicoAssistant extends Controller {
                             // if tag ref was not found create it
                             else {
                                 // dd('create', $index, $index2, $index3);
-                                create_tag_ref($request, $section_id, $index, $index3, $tag_name_check_array, $tag_section, $tag_id);
+                                create_tag_ref($request, $section_id, $index, $index2, $index3, $tag_name_check_array, $tag_section, $tag_id);
                             }
+                        }
+
+                        // dd($item2);
+
+                        if (!isset($item2[3]) && isset($update_tag_db_group[$index][$index2][3])) {
+                            // dd($update_tag_db_group)
+
+                            DB::table('tags')
+                            ->where('tag_id', '=', $update_tag_db_group[$index][$index2][3]->tag_id)
+                            ->where('tag_table', '=', $update_tag_db_group[$index][$index2][3]->tag_table)
+                            ->update(['status' => 2]);
                         }
                     }
                 }
 
                 else if (isset($update_tag_db_section[$index])) {
-
-                    // dd($update_tag_db_section);
-                    // dd('del', $index, $update_tag_db_section);
 
                     foreach ($update_tag_db_section[$index] as $index2 => $item2) {
 
@@ -1223,31 +1217,10 @@ class RicoAssistant extends Controller {
             // step 2: check if there are any tags from client to be updated if not delete all basic_id related tags
             if (isset($request->$db_name['tag']) && $request->$db_name['tag'] != null) {
 
-                // dd($request->$db_name['tag']);
-                // dd(count($request->$db_name['tag']));
-
-                // $i = 0;
                 foreach($request->$db_name['tag'] as $index => $item) {
 
-                    // dd($index, $item, $request->$db_name['tag'], $update_tag_db_data, $db_table_section_data);
-
-                    // update each section name separately
-                    // if (isset($request->$db_name['tag'][$index])) {
-                        update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section);
-                    // }
-
-                    // else {
-                    //     $update_tag_db_data = DB::table('tags')
-                    //     ->where('basic_id', '=', $request->basicData['id'])
-                    //     ->where('status', '=', null)
-                    //     ->where('section_table', '=',  $section_id)
-                    //     ->get()
-                    //     ->groupBy('section_table_id');
-                    // }
+                        update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section, $tag_id);
                 }
-
-                // dd($update_tag_db_group);
-                // dd(isset($update_tag_db_group));
 
                 if ($update_tag_db_group != '') {
                     // set status of all empty client tag groups to 2 (delete)
@@ -1274,8 +1247,6 @@ class RicoAssistant extends Controller {
 
             // step 2.1: delete groups with no content
             else {
-                // dd($update_tag_db_data);
-                // dd($request->basicData['id']);
 
                 // delete all entry tags (set to status 2)
                 if (count($update_tag_db_data) > 0) {
