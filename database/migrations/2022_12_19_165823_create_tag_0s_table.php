@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tag_contexts', function (Blueprint $table) {
+        Schema::create('tag_0s', function (Blueprint $table) {
             $table->id();
             $table->string('content', 50);
             $table->string('tracking', 50);
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tag_unique_contexts');
+        Schema::dropIfExists('tag_0');
     }
 };

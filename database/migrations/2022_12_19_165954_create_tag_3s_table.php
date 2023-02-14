@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tag_values', function (Blueprint $table) {
+        Schema::create('tag_3s', function (Blueprint $table) {
             $table->id();
-            $table->string('content', 255);
+            $table->text('content');
             $table->string('tracking', 50);
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tag_unique_values');
+        Schema::dropIfExists('tag_3');
     }
 };
