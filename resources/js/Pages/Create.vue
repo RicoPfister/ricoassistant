@@ -150,10 +150,10 @@ function dataChild(data) {
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
         };
 
-        console.log(form.value);
-        console.log('ok');
+        // console.log(form.value);
+        // console.log('ok');
         Inertia.post('store', form.value);
-        console.log('ok');
+        // console.log('ok');
     };
 
     if (data.update == 1) {
@@ -251,7 +251,7 @@ function fromChild(data) {
 
             // console.log('ok');
             // delete form.value[data.section][data.subSection][data.index];
-            console.log(data.index);
+            // console.log(data.index);
         }
     }
 
@@ -259,7 +259,7 @@ function fromChild(data) {
 }
 
 onMounted(() => {
-   console.log(props.edit);
+//    console.log(props.edit);
 
    if (props?.edit) {
 

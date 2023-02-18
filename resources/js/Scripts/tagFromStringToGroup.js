@@ -1,6 +1,6 @@
 export function tagFromStringToGroup(tagData) {
 
-    console.log(tagData);
+    // console.log(tagData);
 
     let tagArray = [];
 
@@ -31,7 +31,7 @@ export function tagFromStringToGroup(tagData) {
         // split comment
         tagGroupSplitComment[index] = item.split(/[(%)]/);
         tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != '');
-        console.log(tagGroupSplitFilter);
+        // console.log(tagGroupSplitFilter);
 
         // // split category/preset
         // tagGroupSplitPreset[index] = tagGroupSplitFilter[index][0].split(/[:preset]/);
@@ -80,7 +80,7 @@ export function tagFromStringToGroup(tagData) {
             tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
             // console.log(tagGroupSplitmain[index]);
             tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != '');
-            console.log(tagGroupSplitmainFilter);
+            // console.log(tagGroupSplitmainFilter);
 
             // add single tag group to tagArray
 
@@ -106,6 +106,6 @@ export function tagFromStringToGroup(tagData) {
         }
     }
 
-    console.log(tagArray);
+    // console.log(tagArray);
     return tagArray;
 }

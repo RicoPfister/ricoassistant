@@ -93,7 +93,7 @@ let props = defineProps(['editCheck']);
 let emit = defineEmits(['dataChild', 'dataForm']);
 
 function submit() {
-    console.log('ok');
+    // console.log('ok');
     emit('dataChild', {'submit': 1});
 }
 
