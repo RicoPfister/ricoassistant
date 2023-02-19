@@ -202,10 +202,15 @@ onMounted(() => {
 
             // tag_db_data.value = props?.toChild?.sourceData?.tag;
 
-            props?.toChild?.sourceData?.tag.forEach((element, index) => {
-                // console.log('ok');
-                tag_db_data.value[index]['tag'] = element;
-            });
+            for (let ii = 0; ii < props?.toChild?.sourceData?.tag.length; ii++) {
+                if (props?.toChild?.sourceData?.tag[ii] != []) {
+                    tag_db_data.value[ii]['tag'] = props?.toChild?.sourceData?.tag[ii];
+                }
+            }
+
+            // props?.toChild?.sourceData?.tag.forEach((element, index) => {
+            //     tag_db_data.value[index]['tag'] = element;
+            // });
         }
 
         if (props?.toChild?.sourceData?.reference_parents) {

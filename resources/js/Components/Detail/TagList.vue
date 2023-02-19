@@ -10,7 +10,7 @@
 
         <div v-for="(item2, index2) in item" class="mb-1 mr-1">
             <!-- tag groups -->
-              <div class="truncate bg-lime-200 rounded-xl px-2 w-fit"> {{ '@'+item2[0] + ':' + item2[1] + ':' + item2[2] + '(' + item2[3] + ')' }}
+              <div class="truncate bg-lime-200 rounded-xl px-2 w-fit"> {{ '@'+item2[0] + ':' + item2[1] + ':' + item2[2] + (item2[3] ? '(' + item2[3] + ')' : '')}}
             </div>
         </div>
     </div>

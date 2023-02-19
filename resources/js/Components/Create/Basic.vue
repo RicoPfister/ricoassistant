@@ -12,20 +12,26 @@
             <select class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
-                <optgroup label="Idea:">
-                    <option value="1">Sound</option>
-                    <option value="2">Picture</option>
-                    <option value="3">Video</option>
-                    <option value="4">Letter</option>
-                    <option value="5">Interactivity</option>
-                </optgroup>
                 <optgroup label="Identity:">
+                    <option value="1">External Motivation</option>
+                    <option value="2">External Activation</option>
+                    <option value="3">Self Reproduction</option>
+                    <option value="4">Self Awareness</option>
+                    <option value="5">Location</option>
                     <option value="6">System</option>
-                    <option value="7">Location</option>
-                    <option value="8">Self Awareness</option>
-                    <option value="9">Self Reproduction</option>
-                    <option value="10">External Activation</option>
-                    <option value="11">External Motivation</option>
+                </optgroup>
+                <optgroup label="Media:">
+                    <option value="7">Sound</option>
+                    <option value="8">Picture</option>
+                    <option value="9">Video</option>
+                    <option value="10">Interactivity</option>
+                </optgroup>
+                <optgroup label="Letter:">
+                    <option value="11">Administration</option>
+                    <option value="12">Fact</option>
+                    <option value="13">Opinion</option>
+                    <option value="14">Story</option>
+                    <option value="15">Analysis</option>
                 </optgroup>
             </select>
         </div>

@@ -4,31 +4,34 @@ export function tagFromStringToGroup(tagData) {
 
     let tagArray = [];
 
+    // split into tag groups
     let tagCollectionSplitInGroup = tagData.split(/[@]/);
     // console.log(tagCollectionSplitInGroup);
+
+    // removes empty indexes
     let tagCollectionSplitInGroupFilter = tagCollectionSplitInGroup.filter(element => element);
     // console.log(tagCollectionSplitInGroupFilter);
 
+    // variable definition
     let tagGroupSplitComment = [];
     let tagGroupSplitFilter = [];
     let tagGroupSplitmain = [];
     let tagGroupSplitPreset = [];
     let tagGroupSplitPresetFilter = [];
-    // let tagGroupSplitPresetFilter = [];
     let tagGroupSplitmainFilter = [];
 
+    // split into tag group sections
     tagCollectionSplitInGroupFilter.forEach(tagCollectionEdit);
 
     function tagCollectionEdit(item, index) {
 
-        //? set nested
         // console.log(tagCollectionSplitInGroupFilter);
         if (tagCollectionSplitInGroupFilter.length > 0) tagArray[index] = [];
 
         // split comment
         tagGroupSplitComment[index] = item.split(/[(%)]/);
         tagGroupSplitFilter[index] = tagGroupSplitComment[index].filter(element => element != '');
-        // console.log(tagGroupSplitFilter[index]);
+        // console.log(tagGroupSplitFilter);
 
         // // split category/preset
         // tagGroupSplitPreset[index] = tagGroupSplitFilter[index][0].split(/[:preset]/);
@@ -46,7 +49,8 @@ export function tagFromStringToGroup(tagData) {
 
             // split category, context and detail
             tagGroupSplitmain[index] = tagGroupSplitPresetFilter[index][1].split(/[:]/);
-            // console.log(tagGroupSplitmain[index]);
+            // console.log(tagGroupSplitmain);
+
             tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != '');
             // console.log(tagGroupSplitmainFilter[index]);
 
@@ -76,7 +80,7 @@ export function tagFromStringToGroup(tagData) {
             tagGroupSplitmain[index] = tagGroupSplitFilter[index][0].split(/[:]/);
             // console.log(tagGroupSplitmain[index]);
             tagGroupSplitmainFilter[index] = tagGroupSplitmain[index].filter(element => element != '');
-            // console.log(tagGroupSplitmainFilter[index]);
+            // console.log(tagGroupSplitmainFilter);
 
             // add single tag group to tagArray
 
@@ -84,7 +88,9 @@ export function tagFromStringToGroup(tagData) {
             for (let i = 0; i < 3; i++) {
                 if (tagGroupSplitmainFilter[index][i]) {
                     tagArray[index].push(tagGroupSplitmainFilter[index][i]);
-                } else tagArray[index].push('');
+                }
+                // set empty value
+                // else tagArray[index].push('');
             }
 
             // console.log(tagArray);
@@ -94,11 +100,12 @@ export function tagFromStringToGroup(tagData) {
             // add comment tag to tagArray
             if (tagGroupSplitFilter[index][1]) {
             tagArray[index].push(tagGroupSplitFilter[index][1]);
-            } else tagArray[index].push('');
+            }
+            // set empty value
+            // else tagArray[index].push('');
         }
     }
 
-
-
+    // console.log(tagArray);
     return tagArray;
 }

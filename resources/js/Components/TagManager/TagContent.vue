@@ -18,7 +18,7 @@
         <input class="px-1 flex items-center border-r border-b border-gray-400 w-[120px]" placeholder="Value" v-model="tagArray[index][2]">
 
         <div class="flex flex-row justify-between items-center border-r border-b border-gray-400 w-full grow h-6">
-            <input class="grow pl-1 truncate h-full" placeholder="Details" v-model="tagArray[index][3]">
+            <input @input="detailCheck(index)" class="grow pl-1 truncate h-full" placeholder="Details (optional)" v-model="tagArray[index][3]">
 
             <!-- edit menu button -->
             <div @mouseover="tagEditMenu[index] = 1" @mouseleave="tagEditMenu[index] = 0" class="relative border-l border-gray-400 h-full w-fit flex flex-row leading-none pr-1">
@@ -187,5 +187,13 @@ watch(() => tagArray.value, (curr, prev) => {
     // console.log(tagArray.value);
     emit('fromChild', {'tagSelectionListGroup': tagArray.value});
 }, {deep: true}, 500);
+
+function detailCheck(index){
+    // console.log(index);
+    if (tagArray.value[index][3] == '') {
+        tagArray.value[index].splice(3, 1);
+    }
+    // console.log(tagArray.value[index]);
+}
 
 </script>

@@ -12,7 +12,6 @@
             </svg>
         </button>
     </div>
-
 </div>
 
 <!-- *****section statement***** -->
@@ -86,45 +85,23 @@ watch(() => props?.detail, _.debounce( (curr, prev) => {
 
 function edit() {
     // send form with adjusted reference (only direct parent reference without the tree path)
-    // console.log(detailData.value.activityData.reference[0]);
-
-    // let detailDataWithoutReference = detailData.value;
-
-    // console.log(detailData.value.activityData.reference[0]);
-    // console.log(detailDataWithoutReference.activityData.reference[0]);
 
     if (typeof detailData?.value?.activityData !== 'undefined') {
-
-        // console.log(detailData.value.activityData.reference[0]);
-
-        // detailDataWithoutReference.activityData['reference'] = [];
-
-        // console.log(detailData.value.activityData.reference[0]);
-
-        // detailDataWithoutReference['activityData']['reference'] = [];
-        // console.log(detailDataWithoutReference);
 
         // console.log(detailData.value.activityData.reference[0]);
         let refCollection = {};
         refCollection['activityData'] = {};
         refCollection['activityData']['reference_parents'] = [];
-        // console.log(detailData.value.activityData.reference);
+
         detailData.value.activityData.reference_parents.forEach((item, index) => convertFormReference(item, index));
 
             function convertFormReference(item, index) {
 
                 // console.log(item);
 
-                // dd(detailData.value.activityData.reference[index][0]);
                 refCollection['activityData']['reference_parents'].push(detailData.value.activityData.reference_parents[index][0]);
             }
-
-            // console.log(refCollection);
-
     }
-
-    // console.log(detailDataWithoutReference['activityData']['reference'][0]);
-    // console.log(detailData.value);
 
     Inertia.post('edit', detailData.value);
 }
