@@ -35,7 +35,7 @@
     <ActivityList :detailData="detailData.activityData" />
 
     <!-- Lists -->
-    <TagList v-if="props.detail.activityData.tag" :tag="props.detail.activityData.tag" />
+    <TagList v-if="props.detail.activityData.tag.length > 0" :tag="props.detail.activityData.tag" />
     <ReferenceChildrenList :reference="detailData.activityData"/>
 </div>
 
@@ -50,7 +50,7 @@
 
     <!-- Lists -->
     <TagList v-if="props.detail.sourceData.tag" :tag="props.detail.sourceData.tag" />
-    <ReferenceParentsList v-if="props?.detail?.sourceData" :reference="detailData.sourceData"/>
+    <ReferenceParentsList v-if="props?.detail?.sourceData && !props?.detail?.statementData" :reference="detailData.sourceData"/>
     <ReferenceChildrenList :reference="detailData.sourceData"/>
 </div>
 

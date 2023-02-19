@@ -1265,7 +1265,6 @@ class RicoAssistant extends Controller {
             update_tag2($request, $section_id);
             update_reference($request, $section_id);
 
-
             }
 
             // else {

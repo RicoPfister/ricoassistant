@@ -3,42 +3,28 @@
 <div class="h-full">
     <div class="flex gap-3 flex-wrap w-full min-w-0 h-fit">
         <div class="flex flex-col">
-            <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Date*:</label>
+            <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
             <input class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
         </div>
 
         <div class="flex flex-col lg:max-w-fit">
-            <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Medium*:</label>
+            <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
             <select class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
-                <optgroup label="Identity:">
-                    <option value="1">External Motivation</option>
-                    <option value="2">External Activation</option>
-                    <option value="3">Self Reproduction</option>
-                    <option value="4">Self Awareness</option>
-                    <option value="5">Location</option>
-                    <option value="6">System</option>
-                </optgroup>
-                <optgroup label="Media:">
-                    <option value="7">Sound</option>
-                    <option value="8">Picture</option>
-                    <option value="9">Video</option>
-                    <option value="10">Interactivity</option>
-                </optgroup>
-                <optgroup label="Letter:">
-                    <option value="11">Administration</option>
-                    <option value="12">Fact</option>
-                    <option value="13">Opinion</option>
-                    <option value="14">Story</option>
-                    <option value="15">Analysis</option>
-                </optgroup>
+                    <option value="1">Fiction</option>
+                    <option value="2">Opinion</option>
+                    <option value="3">Administration</option>
+                    <option value="4">Media</option>
+                    <option value="5">Trade</option>
+                    <option value="6">Fact</option>
+                    <option value="7">Analysis</option>
             </select>
         </div>
 
         <div class="grow">
             <div class="relative flex flex-col grow">
-                <label class="font-bold" aria-label="Category Input" for="title">Title*:</label>
+                <label class="font-bold" aria-label="Category Input" for="title">Title:</label>
 
                 <!-- title input -->
                 <input @input="basicTitleChecker()" class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-9" id="title" type="text" v-model="form['basicTitle']">
