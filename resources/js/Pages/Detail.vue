@@ -12,7 +12,6 @@
             </svg>
         </button>
     </div>
-
 </div>
 
 <!-- *****section statement***** -->
