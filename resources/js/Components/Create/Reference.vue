@@ -32,7 +32,7 @@
                 focus:ring-0 focus:border-black
                 border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
                 type="text"
-                :placeholder="placeholderText" v-model="form.reference.value[0].title">
+                :placeholder="placeholderText" v-model="form.reference.value[0].title" :key="form.reference.value[0].title">
             </div>
         </div>
 
@@ -180,6 +180,7 @@ watch(() => props.toChild, (curr, prev) => {
         // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
         form.reference.value[0].title = props.toChild.parents_reference
+        console.log(form.reference.value[0].title);
     };
 
 }, {deep: true}, 500);
@@ -190,14 +191,15 @@ onMounted(() => {
         // console.log(props.toChild.formParentReference);
         // console.log(form.reference.referenceTitle);
         form.reference.value[0].title = props.toChild.formParentReference[0][0].title;
+        console.log(form.reference.value[0].title);
     }
 
     if (props?.toChild?.parents_reference) {
-        // console.log('ok');
         // console.log(props.toChild.parents_reference);
         // console.log(form.reference.referenceTitle);
         // form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
         form.reference.value[0].title = props.toChild.parents_reference;
+        console.log(form.reference.value[0].title);
     }
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;

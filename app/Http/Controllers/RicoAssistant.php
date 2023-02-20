@@ -79,7 +79,7 @@ class RicoAssistant extends Controller {
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
             ->pluck('db_name');
-            $db_name = $form_section_name [0].'Data';
+            $db_name = $form_section_name[0].'Data';
 
             switch($db_name) {
                 case 'statementData':
@@ -206,13 +206,36 @@ class RicoAssistant extends Controller {
                         // dd($value->basic_ref);
                         // dd($_reference_parents_id);
 
-                        if ($i == 99) dd($_reference_parents_id);
+                        // if ($i == 99) dd($_reference_parents_id);
 
                         if (count($_reference_parents_id) < 1) {
                             break;
                         }
 
                         $detail['reference_parents'][$key][$i] = $_reference_parents_id[0];
+
+                        // add color if exist
+
+
+                            $_tag_color_id = DB::table('tags')
+                            ->where('basic_id', '=', $value->basic_ref)
+                            ->where('status', '=', null)
+                            ->get();
+
+                            // dd($_tag_color_id);
+
+                            if (isset($_tag_color_id[0]->tag_2_id)) {
+
+                                $_tag_color_name = DB::table('tag_2s')
+                                ->where('id', '=', $_tag_color_id[0]->tag_2_id)
+                                // ->where('status', '=', null)
+                                ->get();
+
+                                // dd($_tag_color_name);
+
+                                $detail['reference_parents'][$key][$i]->color = $_tag_color_name[0]->content;
+                            }
+
                         // dd($detail);
                         $i++;
 
@@ -639,7 +662,7 @@ class RicoAssistant extends Controller {
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $db_section_id)
             ->pluck('db_name');
-            $db_name = $form_section_name [0].'Data';
+            $db_name = $form_section_name[0].'Data';
 
             // fire reference function
             if (isset($request->statementData['reference_parents'])) {
@@ -1660,16 +1683,17 @@ class RicoAssistant extends Controller {
                         $tag_value_id = DB::table('tags')
                         ->where('status', '=', null)
                         ->where('basic_id', '=', $id->id)
-                        ->where('tag_2_id', '=',  $activitydiagramcolor_id[0]->id)
+                        ->where('tag_1_id', '=',  $activitydiagramcolor_id[0]->id)
                         ->get();
 
                         // dd($tag_value_id);
 
-                        // get ActivityDiagramColor color name
-                        $tag_value_content = DB::table('tag_2s')
-                        ->where('id', '=', $tag_value_id[0]->tag_2_id)
-                        ->get();
-
+                        if (count($tag_value_id) > 0) {
+                            // get ActivityDiagramColor color name
+                            $tag_value_content = DB::table('tag_2s')
+                            ->where('id', '=', $tag_value_id[0]->tag_2_id)
+                            ->get();
+                        }
 
                         // dd($tag_value_content[0]->content);
                     } else $tag_value_content = '';
