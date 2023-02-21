@@ -12,13 +12,14 @@
             <select class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
-                    <option value="1">Fiction</option>
-                    <option value="2">Opinion</option>
-                    <option value="3">Administration</option>
-                    <option value="4">Media</option>
-                    <option value="5">Trade</option>
-                    <option value="6">Fact</option>
-                    <option value="7">Analysis</option>
+                    <option value="1">Story</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Media</option>
+                    <option value="4">Fact</option>
+                    <option value="5">Elaboration</option>
+                    <option value="6">Education</option>
+                    <option value="7">Exchange</option>
+                    <option value="8">Evaluation</option>
             </select>
         </div>
 
@@ -129,13 +130,20 @@ function basicTitleChecker() {
 }
 
 // listen if medium/title is auto set
-watch(() => props.transfer, (curr, prev) => {
-    // console.log(props.transfer);
-    if (!form['basicTitle'] && !form['basicMedium']) {
-        form['basicTitle'] = props.transfer.basicTitle;
-        form['basicMedium'] = props.transfer.basicMedium;
+watch(() => props.toChild, (curr, prev) => {
+
+    if (props?.toChild?.activityData) {
+        form['basicTitle'] = 'Activity ' +  Date.dateNow();
+        form['basicMedium'] = 2;
     }
+
 }, {deep: true}, 500);
+// watch(() => props.transfer, (curr, prev) => {
+//     if (!form['basicTitle'] && !form['basicMedium']) {
+//         form['basicTitle'] = props.transfer.basicTitle;
+//         form['basicMedium'] = props.transfer.basicMedium;
+//     }
+// }, {deep: true}, 500);
 
 onMounted(() => {
     // console.log(props.dataParent);

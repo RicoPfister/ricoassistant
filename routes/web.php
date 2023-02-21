@@ -65,12 +65,19 @@ Route::post('/preset_store', [RicoAssistant::class, 'preset_store'])->name('pres
 Route::post('/preset_update', [RicoAssistant::class, 'preset_update'])->name('preset_update');
 Route::post('/preset_delete', [RicoAssistant::class, 'preset_delete'])->name('preset_delete');
 
+Route::post('/backup_check', [RicoAssistant::class, 'backup'])->name('backup');
+
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
 });
 
 Route::get('/migrate', function () {
     Artisan::call('migrate:refresh');
+});
+
+Route::get('/backup', function () {
+    Artisan::call('database:backup_manual');
+    return Inertia::render('Backup');
 });
 
 

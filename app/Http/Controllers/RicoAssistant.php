@@ -352,6 +352,11 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
         $detail['basicData'] = SectionBasic::find($request->basic_id);
 
+        // increment view count
+        DB::table('section_basics')
+        ->where('id', '=', $request->basic_id)
+        ->increment('view_count');
+
         // create statement collection
         // ++++++++++++++++++++++++++++++++++++
 
@@ -2200,5 +2205,29 @@ class RicoAssistant extends Controller {
     public function edit(Request $request) {
         // dd($request);
         return Inertia::render('Create', ['edit' => $request]);
+    }
+
+    public function backup(Request $request) {
+
+        // dd('ok');
+
+        // Directory
+        $directory = $_SERVER['DOCUMENT_ROOT'].'/../storage/app/backup';
+        // Returns an array of files
+        $files = scandir($directory);
+
+        // Count the number of files and store them inside the variable..
+        // Removing 2 because we do not count '.' and '..'.
+        $num_files = count($files)-2;
+
+        // dd($files[count($files)-1]);
+
+        // filectime($files[count($files)-1]
+
+        $backup_date = date("F d Y H:i:s", filectime($directory . '/' . $files[count($files)-1]));
+
+        // dd($num_files, $files, date("F d Y H:i:s.", filectime($directory . '/' . $files[count($files)-1])));
+
+        return Inertia::render('Backup', ['backup' => ['date' => $backup_date, 'count' => $num_files]]);
     }
 }

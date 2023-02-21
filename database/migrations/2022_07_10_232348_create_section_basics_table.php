@@ -25,6 +25,7 @@ return new class extends Migration
 
             $table->string('tracking', 50);
             $table->tinyInteger('status')->nullable();
+            $table->bigInteger('view_count')->default(0);
 
             $table->timestamps();
         });
