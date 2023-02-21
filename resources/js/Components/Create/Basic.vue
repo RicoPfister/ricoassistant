@@ -132,7 +132,7 @@ function basicTitleChecker() {
 // listen if medium/title is auto set
 watch(() => props.toChild, (curr, prev) => {
 
-    if (props?.toChild?.activityData) {
+    if (props?.toChild?.activityData && (form['basicTitle'] == undefined || form['basicTitle'] == '') && (form['basicMedium'] == undefined || form['basicMedium'] == '')) {
         form['basicTitle'] = 'Activity ' +  Date.dateNow();
         form['basicMedium'] = 2;
     }
