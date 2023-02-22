@@ -32,7 +32,7 @@
                 focus:ring-0 focus:border-black
                 border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
                 type="text"
-                :placeholder="placeholderText" v-model="form.reference.value[0].title">
+                :placeholder="placeholderText" v-model="form.reference.value[0].title" :key="form.key.value">
             </div>
         </div>
 
@@ -67,6 +67,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 let form = {
     'reference': ref([{}]),
     'referencePickerOpen': ref(0),
+    'key': ref(0),
 };
 
 // check database Sreference
@@ -174,7 +175,8 @@ watch(() => props.toChild, (curr, prev) => {
         // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
         form.reference.value[0].title = props.toChild.parents_reference
-        console.log(form.reference.value[0].title);
+        form.key.value++;
+        // console.log(form.reference.value[0].title);
     };
 
 }, {deep: true}, 500);

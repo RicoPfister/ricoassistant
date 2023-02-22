@@ -1755,29 +1755,32 @@ class RicoAssistant extends Controller {
                         ->where('content', '=', 'ActivityDiagramColor')
                         ->get();
 
-                        // dd($activitydiagramcolor_id);
+                        // dd($id->id, $activitydiagramcolor_id);
 
                         if (count($activitydiagramcolor_id) > 0) {
                         // find ActivityDiagramColor id
                         $tag_id = DB::table('tags')
                         ->where('basic_id', '=', $id->id)
-                        ->where('tag_table', '=', 2)
-                        ->where('tag_table_id', '=', $activitydiagramcolor_id[0]->id)
+                        ->where('tag_1_id', '=', $activitydiagramcolor_id[0]->id)
                         ->get();
 
                         // dd($tag_id);
 
-
-                            $tag_value_id = DB::table('tags')
-                            ->where('tag_id', '=', $tag_id[0]->tag_id)
-                            ->where('tag_table', '=', 3)
-                            ->get();
+                            // $tag_value_id = DB::table('tags')
+                            // ->where('tag_id', '=', $tag_id[0]->tag_id)
+                            // ->where('tag_table', '=', 3)
+                            // ->get();
 
                             // dd($tag_value_id);
 
-                            $tag_value_content = DB::table('tag_values')
-                            ->where('id', '=', $tag_value_id[0]->tag_table_id)
-                            ->get();
+                            if (count($tag_id)) {
+
+                                $tag_value_content = DB::table('tag_2s')
+                                ->where('id', '=', $tag_id[0]->tag_2_id)
+                                ->get();
+                            }
+
+                            else $tag_value_content = '';
 
                             // dd($tag_value_content[0]->content);
                         } else $tag_value_content = '';
