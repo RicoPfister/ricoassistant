@@ -1,30 +1,31 @@
 <template>
 
 <div class="h-full">
-    <div class="flex gap-3 flex-wrap w-full min-w-0 h-fit">
+    <div class="relative flex gap-3 flex-wrap w-full min-w-0 h-fit">
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
-            <input class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <input @change="basicTitleChecker" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
         </div>
 
         <div class="flex flex-col lg:max-w-fit">
             <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
-            <select class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
+            <select @change="basicTitleChecker" class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
-                    <option value="1">Story</option>
-                    <option value="2">Admin</option>
-                    <option value="3">Media</option>
-                    <option value="4">Fact</option>
-                    <option value="5">Elaboration</option>
-                    <option value="6">Education</option>
-                    <option value="7">Exchange</option>
-                    <option value="8">Evaluation</option>
+                <option value="9">Evaluation</option>
+                <option value="8">Exchange</option>
+                <option value="7">Education</option>
+                <option value="6">Elaboration</option>
+                <option value="5">Fact</option>
+                <option value="4">Admin</option>
+                <option value="3">Media</option>
+                <option value="2">Story</option>
+                <option value="1">Idle</option>
             </select>
         </div>
 
         <div class="grow">
-            <div class="relative flex flex-col grow">
+            <div class="flex flex-col grow">
                 <label class="font-bold" aria-label="Category Input" for="title">Title:</label>
 
                 <!-- title input -->
@@ -39,13 +40,13 @@
                 </button>
 
                 <!-- titel instant search popup -->
-                <div v-if="basicTitelPickerOpen" class="absolute z-50 -top-[10px] left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-white border-r border-b border-l border-gray-400 p-1 flex flex-col">
+                <div v-if="basicTitelPickerOpen" class="absolute z-50 -top-[6px] left-0 mt-[66px] h-fit w-full text-sm xl:text-lg bg-yellow-200 border-gray-400 p-1 flex flex-col">
 
                     <div class="flex flex-row items-center z-50">
 
                         <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
 
-                            <div class="text-sm"><b>Found in Database:</b></div>
+                            <div class="text-sm"><b>{{props.fromController[0].basicResult[0].warning == 2 ? 'Duplicate entry found in database. Please change one or more input.' : 'Similar titles found in database:'}}</b></div>
 
                             <div v-for="(item, index) in props?.fromController?.[0]?.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
@@ -58,7 +59,8 @@
                                 <!-- button title picker -->
                             <div class="flex justify-between w-full">
                                 <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left" :class="{'text-red-500': props.fromController[0].basicResult[0].warning == 2, 'hover:text-red-800': props.fromController.misc.parentID == 1 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.title }}</div></button>
-                                <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.ref_date }}</div></button>
+                                <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.medium }}</div></button>
+                                <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.refDate }}</div></button>
                             </div>
                         </div>
 
@@ -123,7 +125,7 @@ function basicTitleChecker() {
 
     if (form.basicTitle.length > 2) {
         setTimeout(() => {
-            Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, parentId:1},
+            Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1 },
             {replace: false,  preserveState: true, preserveScroll: true});
         }, 500);
     };
@@ -151,8 +153,6 @@ onMounted(() => {
     form['basicMedium'] = props.toChild?.basicData?.medium;
     form['basicTitle'] = props.toChild?.basicData?.title;
     if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
-
-
 });
 
 </script>

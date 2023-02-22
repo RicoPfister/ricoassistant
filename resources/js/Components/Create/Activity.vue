@@ -682,7 +682,7 @@ function dataChildMenuEntry(n) {
 
 onMounted(() => {
 
-    console.log(props.toChild.activityData);
+    // console.log(props.toChild.activityData);
 
     if (props?.toChild?.activityData) {
         props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));

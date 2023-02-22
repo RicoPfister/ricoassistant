@@ -24,7 +24,7 @@
 
                 <!-- reference popup -->
                 <div class="absolute z-40 top-[31px] -left-[1px] w-[calc(100%+2px)]">
-                    <ReferencePopup v-if="form.referencePickerOpen.value" :fromController="props.fromController" @fromChild="fromChild"/>
+                    <ReferencePopup v-if="form.referencePickerOpen.value == 1" :key="form.referencePickerOpen.value" :fromController="props.fromController" @fromChild="fromChild"/>
                 </div>
 
                 <!-- reference input -->
@@ -32,7 +32,7 @@
                 focus:ring-0 focus:border-black
                 border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
                 type="text"
-                :placeholder="placeholderText" v-model="form.reference.value[0].title" :key="form.reference.value[0].title">
+                :placeholder="placeholderText" v-model="form.reference.value[0].title">
             </div>
         </div>
 
@@ -73,40 +73,34 @@ let form = {
 // send to parent: statement input data
 function referenceCheckerFunction(index, id, check) {
 
-    // console.log('ok');
-    // console.log(index);
-    // console.log(id);
-    // console.log(check);
+    console.log(form.referencePickerOpen.value);
 
-    if (form.referencePickerOpen.value != 1) {
+    // if (form.referencePickerOpen.value != 1) {
         // console.log('ok');
-        // form.referenceChecker['rowIndex'] = index;
-        // form.referenceChecker['parentId'] = id;
-        // form.referenceChecker['check'] = check;
-        // form.referenceChecker['key']++;
 
-        // console.log(check);
         // check if reference popup ***selection*** has been fired and send request to controller
         if (check == 'lastUsed' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined')) {
-            // console.log('ok');
+            console.log('ok');
             Inertia.post('refcheck', { reference: check, row: index, parentId: id}, {replace: true,  preserveState: true, preserveScroll: true});
         }
 
         // check if reference form ***input*** has been and send request to controller
-        else if (check == 'inputCheck' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined' ) &&
-        form.reference.value[0].title.length > 2) {
+        else if (check == 'inputCheck' && form.reference.value[0].title.length > 2) {
             console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference.title, row: index, parentId: id}, {replace: false,
+                Inertia.post('refcheck', { reference: form.reference.value[0].title, row: index, parentId: id}, {replace: false,
                 preserveState: true, preserveScroll: true});
             }, 500);
         }
-    }
 
-    else {
+        else {
         // form.referenceChecker['check'] = '';
-        form.referencePickerOpen = 0;
-    }
+            console.log('ok');
+            form.referencePickerOpen.value = 0;
+        }
+    // }
+
+
 
     if (typeof form?.reference.value[0]?.title != 'undefined') {
         emit('fromChild', {'reference': '', 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex,
@@ -158,7 +152,7 @@ watch(() => props.fromController, (curr, prev) => {
         form.referencePickerOpen.value = 1;
     }
 
-}, {deep: true}, 500);
+});
 
 // listen to reference controller data and save data to form
 // watch(() => props.fromController, (curr, prev) => {
