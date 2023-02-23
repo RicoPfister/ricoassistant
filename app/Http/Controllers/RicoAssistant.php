@@ -45,21 +45,25 @@ class RicoAssistant extends Controller {
         $publicAuth = DB::table('section_basics')
             ->where('status', '=', 1)
             ->select('id', 'medium', 'title', 'ref_date')
-            ->limit(20)
             ->latest('updated_at')
-            ->get();
+            ->paginate(20);
 
         // dd($publicAuth);
 
-        if (isset($user)) {$userAuth = SectionBasic::all()
+        if (isset($user)) {
+            $userAuth = DB::table('section_basics')
             ->where('user_id', '=', $user->id)
             ->where('status', '=', null)
-            ->take(20)->sortByDesc('updated_at');
+            ->latest('updated_at')
+            ->paginate(20);
 
-            $listAuth = $publicAuth->merge($userAuth);}
+            $listAuth = $publicAuth->merge($userAuth);
+        }
         else {$listAuth = $publicAuth;};
 
         // dd($listAuth);
+
+        // $listAuth->paginate(5);
 
         return Inertia::render('TabManager/TabManager', ['list' => $listAuth]);
     }
@@ -987,13 +991,13 @@ class RicoAssistant extends Controller {
 
             //  dd($item);
 
-            // check if client tag group exists if not set the group to 2 (deleted)
+            // check if client tag group exists if not set the group to 2 (delete)
             if (isset($item)) {
 
-                // get tag section tag groups
+                // get client tag section tag groups
                 foreach($item as $index2 => $item2) {
 
-                    // get tag section group section
+                    // get client tag section group section
                     foreach($item2 as $index3 => $item3) {
 
                         // dd($request, $index, $item, $index2, $item2, $index3, $item3);
@@ -1065,12 +1069,7 @@ class RicoAssistant extends Controller {
                         }
                     }
 
-                    // dd($update_tag_db_group, $item2);
-                    // dd(isset($update_tag_db_group[0][0][4]->tag_3_id));
-                    // if ($index2 == 1) dd($update_tag_db_group, $item2, !isset($item2[3]));
-
-                    // check and create tag reference id
-                    // if ($index == 0 && $index2 == 4) dd($update_tag_db_group[$index][0]);
+                    // if tag group is missing create it
                     if (!isset($update_tag_db_group[$index][0][$index2]->tag_0_id)) {
                         // dd($index2, $item2, $update_tag_db_group[$index]);
                         // dd('create', $index, $index2, $index3, $item, $item2, $item3);
@@ -1160,7 +1159,7 @@ class RicoAssistant extends Controller {
                     break;
             }
 
-            // get table section data
+            // get db tag section data
             $db_table_section_data = DB::table($tag_section)
             ->where('basic_id', '=', $request->basicData['id'])
             ->get()
@@ -1171,7 +1170,7 @@ class RicoAssistant extends Controller {
             $update_tag_db_data_indexed =  $db_table_section_data->values();
             // dd($update_tag_db_data_indexed);
 
-            // get db tags collection
+            // get db tag section groups
             $update_tag_db_data = DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
             ->where('section', '=', $section_id)
@@ -1205,9 +1204,6 @@ class RicoAssistant extends Controller {
 
             // dd($update_tag_db_group);
 
-
-
-
             // step 2: check if there are any tags from client to be updated if not delete all basic_id related tags
             if (isset($request->$db_name['tag']) && $request->$db_name['tag'] != null) {
 
@@ -1235,6 +1231,7 @@ class RicoAssistant extends Controller {
                             // dd($db_tag_group_section_index, $db_tag_group_section_item);
                             // dd($request->$db_name['tag'][1][3]);
 
+                            // if client tag equivalence not exists
                             if (!isset($request->$db_name['tag'][$db_tag_group_index][$db_tag_group_section_index])) {
 
                                 // dd($db_tag_group_index, $db_tag_group_section_index);

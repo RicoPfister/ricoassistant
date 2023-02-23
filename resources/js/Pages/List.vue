@@ -32,7 +32,7 @@
     </tr>
 
     <!-- table content rows -->
-    <tr v-for="(item, index) in data" :key="index" class="">
+    <tr v-for="(item, index) in data.data" :key="index" class="">
 
         <!-- symbol medium -->
         <td class="text-center">
@@ -50,6 +50,10 @@
     </tr>
 </table>
 
+<div class="flex justify-center py-1 w-full">
+    <Pagination v-if="data.total > 20" :data="data" />
+</div>
+
 </template>
 
 <script setup>
@@ -60,20 +64,13 @@ import { Inertia, Method } from "@inertiajs/inertia";
 
 import MenuBox from '../Components/Menu.vue';
 import ListIconsMedium from "../Components/ListIconsMedium.vue";
+import Pagination from "../Components/List/Pagination.vue";
 
 const props = defineProps(['list', 'detail']);
 
 let emit = defineEmits(['addtab']);
 
-let menuboxOpenActive = ref(0);
-
-// Inertia.get('filter', {title: form.basic.title, ref_date: form.basic.ref_date}, {replace: false,  preserveState: true, preserveScroll: true});
-
-let test123 = props.data + 100;
-
 function detailOpen(n) {
-    // alert(n);
-    // console.log('ok');
     Inertia.get('detail', {basic_id: n}, {replace: false,  preserveState: true, preserveScroll: true});
 }
 
