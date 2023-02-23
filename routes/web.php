@@ -50,6 +50,7 @@ Route::get('/create', function () {
     return Inertia::render('Create', []);
 });
 
+Route::get('/home', [RicoAssistant::class, 'home'])->name('home');
 Route::post('/store', [RicoAssistant::class, 'store'])->name('store');
 Route::get('/filter', [RicoAssistant::class, 'filter'])->name('filter');
 Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');

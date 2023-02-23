@@ -37,29 +37,164 @@ use App\Models\Tag_3;
 
 class RicoAssistant extends Controller {
 
+    public function home(Request $request) {
+
+        $db_basic_category_rawData = DB::table('section_basics')
+        ->select('medium')
+        ->get()
+        ->groupBy('medium');
+
+        // $db_basic_category_collection = [];
+        $db_basic_category_collection['story'][0] = count($db_basic_category_rawData[2]);
+        $db_basic_category_collection['story'][1] = [2];
+        $db_basic_category_collection['fact'][0] = count($db_basic_category_rawData[5]);
+        $db_basic_category_collection['fact'][1] = [5];
+        $db_basic_category_collection['admin'][0] = count($db_basic_category_rawData[3])+count($db_basic_category_rawData[4]);
+        $db_basic_category_collection['admin'][1] = [3, 4];
+        $db_basic_category_collection['exchange'][0] = count($db_basic_category_rawData[8]);
+        $db_basic_category_collection['exchange'][1] = [8];
+        $db_basic_category_collection['education'][0] = count($db_basic_category_rawData[6])
+        +count($db_basic_category_rawData[7])+count($db_basic_category_rawData[9]);
+        $db_basic_category_collection['education'][1] = [6, 7, 9];
+
+        // dd($db_basic_category_collection);
+
+        // dd($request);
+        return Inertia::render('Home', ['home' => $db_basic_category_collection]);
+    }
+
     // show filter (show default list view)
     public function filter(Request $request) {
 
+        // dd($request->category);
+
         $user = Auth::user();
 
-        $publicAuth = DB::table('section_basics')
+        // story
+        if ($request->category == 'story') {
+            $publicAuth = DB::table('section_basics')
             ->where('status', '=', 1)
+            ->where('medium', '=', 2)
             ->select('id', 'medium', 'title', 'ref_date')
             ->latest('updated_at')
             ->paginate(20);
 
-        // dd($publicAuth);
+            // dd($publicAuth);
 
-        if (isset($user)) {
-            $userAuth = DB::table('section_basics')
-            ->where('user_id', '=', $user->id)
-            ->where('status', '=', null)
+            if (isset($user)) {
+                $userAuth = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('medium', '=', 2)
+                ->where('status', '=', null)
+                ->latest('updated_at')
+                ->paginate(20);
+
+                $listAuth = $publicAuth->merge($userAuth);
+            }
+            else {$listAuth = $publicAuth;};
+        }
+
+        // fact
+        if ($request->category == 'fact') {
+            $publicAuth = DB::table('section_basics')
+            ->where('status', '=', 1)
+            ->where('medium', '=', 5)
+            ->select('id', 'medium', 'title', 'ref_date')
             ->latest('updated_at')
             ->paginate(20);
 
-            $listAuth = $publicAuth->merge($userAuth);
+            // dd($publicAuth);
+
+            if (isset($user)) {
+                $userAuth = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('medium', '=', 5)
+                ->where('status', '=', null)
+                ->latest('updated_at')
+                ->paginate(20);
+
+                $listAuth = $publicAuth->merge($userAuth);
+            }
+            else {$listAuth = $publicAuth;};
         }
-        else {$listAuth = $publicAuth;};
+
+        // education
+        if ($request->category == 'education') {
+            $publicAuth = DB::table('section_basics')
+            ->where('status', '=', 1)
+            ->where('medium', '=', 6)
+            ->orWhere('medium', '=', 7)
+            ->orWhere('medium', '=', 9)
+            ->select('id', 'medium', 'title', 'ref_date')
+            ->latest('updated_at')
+            ->paginate(20);
+
+            // dd($publicAuth);
+
+            if (isset($user)) {
+                $userAuth = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('medium', '=', 6)
+                ->orWhere('medium', '=', 7)
+                ->orWhere('medium', '=', 9)
+                ->where('status', '=', null)
+                ->latest('updated_at')
+                ->paginate(20);
+
+                $listAuth = $publicAuth->merge($userAuth);
+            }
+            else {$listAuth = $publicAuth;};
+        }
+
+        // exchange
+        if ($request->category == 'exchange') {
+            $publicAuth = DB::table('section_basics')
+            ->where('status', '=', 1)
+            ->where('medium', '=', 8)
+            ->select('id', 'medium', 'title', 'ref_date')
+            ->latest('updated_at')
+            ->paginate(20);
+
+            // dd($publicAuth);
+
+            if (isset($user)) {
+                $userAuth = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('medium', '=', 8)
+                ->where('status', '=', null)
+                ->latest('updated_at')
+                ->paginate(20);
+
+                $listAuth = $publicAuth->merge($userAuth);
+            }
+            else {$listAuth = $publicAuth;};
+        }
+
+        // admin
+        if ($request->category == 'admin') {
+            $publicAuth = DB::table('section_basics')
+            ->where('status', '=', 1)
+            ->where('medium', '=', 3)
+            ->orWhere('medium', '=', 4)
+            ->select('id', 'medium', 'title', 'ref_date')
+            ->latest('updated_at')
+            ->paginate(20);
+
+            // dd($publicAuth);
+
+            if (isset($user)) {
+                $userAuth = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('medium', '=', 3)
+                ->orWhere('medium', '=', 4)
+                ->where('status', '=', null)
+                ->latest('updated_at')
+                ->paginate(20);
+
+                $listAuth = $publicAuth->merge($userAuth);
+            }
+            else {$listAuth = $publicAuth;};
+        }
 
         // dd($listAuth);
 
