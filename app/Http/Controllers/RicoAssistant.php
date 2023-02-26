@@ -2339,4 +2339,69 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Backup', ['backup' => ['date' => $backup_date, 'count' => $num_files]]);
     }
+
+    public function statistic(Request $request) {
+
+        // dd($request);
+
+        $tag_db_rawdata = DB::table('tags')
+        ->get();
+
+        // dd($tag_db_rawdata);
+
+        $tag_db_tag_collection = collect([]);
+
+        foreach ($tag_db_rawdata as $index => $item) {
+
+            $tag_db_category_name = DB::table('tag_0s')
+            ->where('id', '=', $item->tag_0_id)
+            ->get();
+
+            $tag_db_context_name = DB::table('tag_1s')
+            ->where('id', '=', $item->tag_1_id)
+            ->get();
+
+            // dd($tag_db_category_name);
+
+            $tag_db_tag_collection->push(['category'=> $tag_db_category_name[0]->content, 'context'=> $tag_db_context_name[0]->content]);
+        }
+
+        // dd($tag_db_category);
+
+        // $tag_db_rawdata->only('tag_0_id');
+
+        $grouped = $tag_db_tag_collection->groupBy('category');
+
+        $grouped_tags = collect([]);
+
+        foreach ($grouped as $key => $value) {
+            // dd($value);
+            $grouped_tags[$key] = $value->groupBy('context');
+        }
+        // $grouped->all();
+
+        // dd($grouped_tags);
+
+        $group_tags_count = collect([]);
+
+        foreach ($grouped_tags as $key => $value) {
+
+            // dd($value);
+
+            foreach ($value as $key2 => $value2) {
+
+                // dd($value2);
+
+                $group_tags_count->push(['count' => $value2->count(), 'category' => $value2[0]['category'], 'context' => $value2[0]['context']]);
+            }
+        }
+
+        $group_tags_count_sorted = $group_tags_count->sortByDesc('count')->values();
+
+        // dd($group_tags_count_sorted);
+
+        // dd($group_tags_count->sortByDesc('count'));
+
+        return Inertia::render('Dashboard', ['statistic' => $group_tags_count_sorted]);
+    }
 }

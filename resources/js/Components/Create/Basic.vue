@@ -123,7 +123,7 @@ function basicTitleChecker() {
     basicTitelPickerOpen.value = 0;
     basicTitleWarning.value = 0;
 
-    if (form.basicTitle.length > 2) {
+    if (form?.basicTitle?.length > 2) {
         setTimeout(() => {
             Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1 },
             {replace: false,  preserveState: true, preserveScroll: true});

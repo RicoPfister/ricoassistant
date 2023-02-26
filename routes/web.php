@@ -66,7 +66,9 @@ Route::post('/preset_store', [RicoAssistant::class, 'preset_store'])->name('pres
 Route::post('/preset_update', [RicoAssistant::class, 'preset_update'])->name('preset_update');
 Route::post('/preset_delete', [RicoAssistant::class, 'preset_delete'])->name('preset_delete');
 
+// get summaries data
 Route::post('/backup_check', [RicoAssistant::class, 'backup'])->name('backup');
+Route::post('/statistic', [RicoAssistant::class, 'statistic'])->name('statistic');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
