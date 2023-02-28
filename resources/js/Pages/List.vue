@@ -32,7 +32,7 @@
     </tr>
 
     <!-- table content rows -->
-    <tr v-for="(item, index) in data.data" :key="index" class="">
+    <tr v-for="(item, index) in data?.data" :key="index" class="">
 
         <!-- symbol medium -->
         <td class="text-center">
@@ -51,7 +51,7 @@
 </table>
 
 <div class="flex justify-center py-1 w-full">
-    <Pagination v-if="data.total > 20" :data="data" />
+    <Pagination v-if="data?.total > 20" :data="data" />
 </div>
 
 </template>

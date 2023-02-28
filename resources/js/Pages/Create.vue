@@ -223,7 +223,8 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    if (data.form != 'undefined' && data.form != '') {
+    // if data not undefined and public false-true
+    if ((data.form != 'undefined' && data.form != '') || data.subSection == 'public') {
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
@@ -239,7 +240,7 @@ function fromChild(data) {
 
     else {
 
-        // console.log('ok');
+        console.log(data);
         if (form?.value?.[data.section]?.[data.subSection]) {
 
             // console.log(form.value[data.section][data.subSection]);
@@ -253,6 +254,10 @@ function fromChild(data) {
             // delete form.value[data.section][data.subSection][data.index];
             // console.log(data.index);
         }
+
+        // if (data.subSection == 'public') {
+
+        // }
     }
 
     transferCreate.value['title'] = form.value.basicData.title;

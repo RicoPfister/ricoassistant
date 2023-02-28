@@ -104,7 +104,7 @@
             </div>
             <div class="pt-2">
                 <!-- <Component :is="" /> -->
-                <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" :key="componentSet[componentIndex]" @addtab="tabContainerAmount = 2" :list="props.list" />
+                <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" :key="componentSet[componentIndex]" @addtab="tabContainerAmount = 2" :list="props.filter" />
                 <Detail v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'Detail'" :detail="detailShow"/>
                 <NewTab v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'NewTab'" />
             </div>
@@ -125,7 +125,7 @@ import List from "../List.vue";
 import NewTab from "./NewTab.vue"
 import Detail from "../Detail.vue"
 
-const props = defineProps(['list', 'detail']);
+const props = defineProps(['filter', 'detail']);
 
 let data1 = 123;
 let data2 = "";
@@ -139,7 +139,7 @@ let totalTab = ref([0, 0]);
 let lastTab = ref([0, 0]);
 let lastTabDetails = ref([0, 0]);
 let tabContainerAmount = ref(1);
-// let listData = ref([props.list]);
+// let listData = ref([props.filter]);
 
 // add detail tab
 

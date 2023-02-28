@@ -2,12 +2,15 @@
 
 <div class="h-full">
     <div class="relative flex gap-3 flex-wrap w-full min-w-0 h-fit">
+
+        <!-- form date input -->
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
             <input @change="basicTitleChecker" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
         </div>
 
-        <div class="flex flex-col lg:max-w-fit">
+        <!-- form category selection -->
+        <div class="flex flex-col w-36">
             <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
             <select @change="basicTitleChecker" class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
@@ -24,13 +27,21 @@
             </select>
         </div>
 
+        <!-- form title input -->
         <div class="grow">
             <div class="flex flex-col grow">
-                <label class="font-bold" aria-label="Category Input" for="title">Title:</label>
+                <div class="flex justify-between">
+                    <label class="font-bold" aria-label="Category Input" for="title">Title:</label>
+                    <label class="font-bold" aria-label="Category Input" for="title">Public:</label>
+                </div>
 
                 <!-- title input -->
-                <input @input="basicTitleChecker()" class="focus:placeholder-white border border-black outline-0 focus:border-black focus:ring-0 leading-none h-9" id="title" type="text" v-model="form['basicTitle']">
-
+                <div class="flex flex-row">
+                    <input @input="basicTitleChecker()" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-9 grow" id="title" type="text" v-model="form['basicTitle']">
+                    <div class="form_public_background px-3 border-t border-r border-b border-black h-9 flex items-center">
+                        <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.public">
+                    </div>
+                </div>
                 <!-- warnings -->
                 <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[29px] right-0 pr-1 flex flex-row items-center">
                     <div class="text-xs text-gray-500"></div>
@@ -89,6 +100,7 @@ const form = useForm({
     'basicMedium': '',
     'basicTitle': '',
     'basicRefDate': Date.dateNow(),
+    'public': false,
 });
 
 const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild']);
@@ -102,6 +114,7 @@ watch(() => form, (curr, prev) => {
     emit('fromChild', {'section':'basicData', 'subSection':'ref_date', 'form': form.basicRefDate});
     emit('fromChild', {'section':'basicData', 'subSection':'medium', 'form': form.basicMedium});
     emit('fromChild', {'section':'basicData', 'subSection':'title', 'form': form.basicTitle});
+    emit('fromChild', {'section':'basicData', 'subSection':'public', 'form': form.public});
 }, {deep: true}, 500);
 
 // processing parent props

@@ -35,9 +35,9 @@
                 <br><p>*****</p><br>
                 <p>Das wird einmal deine Kommandozentrale werden.<p><br></p>Von hier aus hast du die volle Kontrolle über all deine Aktivitäten und Einträge.</p>
                 <br><p>*****</p><br>
-                <h2 class="font-bold">Tag Category and Context Counter</h2>
+                <h2 class="font-bold">User Tag Category and Context Counter</h2>
                 <br>
-                <div class="flex flex-col">
+                <div class="flex flex-col h-36 overflow-auto">
                     <p v-for="(item, key, index) in props?.statistic">{{ item.count + ' | ' + item.category + ':' + item.context }}</p>
                 </div>
             </div>
