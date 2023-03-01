@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('medium', 50);
 
             $table->string('tracking', 50);
-            $table->tinyInteger('restriction');
+            $table->tinyInteger('restriction')->default(1);
             $table->bigInteger('view_count')->default(0);
 
             $table->timestamps();

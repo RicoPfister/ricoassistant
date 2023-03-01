@@ -27,7 +27,7 @@ return new class extends Migration
             $table->bigInteger('tag_3_id')->nullable();
 
             $table->string('tracking', 50);
-            $table->tinyInteger('restriction');
+            $table->tinyInteger('restriction')->default(1);
 
             $table->timestamps();
         });

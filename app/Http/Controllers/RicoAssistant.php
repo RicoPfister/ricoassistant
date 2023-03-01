@@ -148,6 +148,7 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 5)
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
                     ->paginate(20);
@@ -157,7 +158,7 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('restriction', '=', 0)
                     ->where('medium', '=', 5)
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -169,6 +170,7 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 8)
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
                     ->paginate(20);
@@ -178,7 +180,7 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('restriction', '=', 0)
                     ->where('medium', '=', 8)
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -198,6 +200,7 @@ class RicoAssistant extends Controller {
                             ->where('restriction', '<', 2)
                             ->where('medium', '=', 4);
                     })
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -211,7 +214,7 @@ class RicoAssistant extends Controller {
                         ->where('restriction', '=', 0)
                             ->where('medium', '=', 4);
                     })
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -243,6 +246,7 @@ class RicoAssistant extends Controller {
                             ->where('restriction', '<', 2)
                             ->where('medium', '=', 9);
                     })
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -267,7 +271,7 @@ class RicoAssistant extends Controller {
                         ->where('restriction', '=', 0)
                         ->where('medium', '=', 9);
                     })
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
                     ->paginate(20);
                 }
@@ -280,7 +284,7 @@ class RicoAssistant extends Controller {
                 $db_basic_data = DB::table('section_basics')
                 ->where('user_id', '=', $user->id)
                 ->where('restriction', '<', 2)
-                ->select('id', 'ref_date', 'title', 'medium')
+                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
                 ->paginate(20);
@@ -289,7 +293,7 @@ class RicoAssistant extends Controller {
             else {
                 $db_basic_data = DB::table('section_basics')
                 ->where('restriction', '=', 0)
-                ->select('id', 'ref_date', 'title', 'medium')
+                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
                 ->paginate(20);
