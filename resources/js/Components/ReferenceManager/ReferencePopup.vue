@@ -31,7 +31,7 @@
                 <div class="flex flex-row border-t">
 
                     <!-- inheritance index -->
-                    <button class="flex justify-center pl-1 items-center pr-1 hover:text-black">{{ !showInheritanceIndexActive ? item.inheritance.length+1 : item.inheritance.length+1-showInheritanceIndexActive }}</button>
+                    <button class="flex justify-center pl-1 items-center pr-1 hover:text-black">{{ !showInheritanceIndexActive ? item?.inheritance?.length+1 : item.inheritance.length+1-showInheritanceIndexActive }}</button>
 
                     <!-- button previous reference -->
                     <button @click.prevent="showInheritanceSwitchher('previous', index)" class="border-l w-5 flex items-center justify-center text-center bg-slate-300">
@@ -48,11 +48,11 @@
                     </button>
 
                     <!-- updated at -->
-                    <div class="border-l flex w-fit px-1">{{ showInheritanceIndexActive == 0 ? item.updated_at.slice(0, 11) : props.fromController.referencesResult[showInheritanceIndexActive+1].updated_at.slice(0, 11) }}</div>
+                    <div class="border-l flex w-fit px-1">{{ showInheritanceIndexActive == 0 ? item.updated_at?.slice(0, 11) : props?.fromController?.referencesResult[showInheritanceIndexActive+1]?.updated_at?.slice(0, 11) }}</div>
 
                     <!-- medium-->
                     <!-- <div class="border-l flex w-fit pl-1">{{ props.fromController.referencesResult[showInheritanceIndexActive-1].medium_name[0] }}</div> -->
-                    <div class="border-l flex w-fit pl-1">{{ showInheritanceIndexActive == 0 ? item.medium_name[0] : props.fromController.referencesResult[showInheritanceIndexActive+1].medium_name[0] }}</div>
+                    <div class="border-l flex w-fit pl-1">{{ showInheritanceIndexActive == 0 ? item?.medium_name?.[0] : props.fromController.referencesResult[showInheritanceIndexActive+1]?.medium_name?.[0] }}</div>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                                 <div class="truncate max-w-full p-0 leading-none">{{ item.title }}</div>
                             </button>
 
-                            <div v-if="item.inheritance != ''" class="flex items-center w-fit">&nbsp;>&nbsp;</div>
+                            <div v-if="item.inheritance != null && item.inheritance != ''" class="flex items-center w-fit">&nbsp;>&nbsp;</div>
 
                             <div class="flex flex-row min-w-0 w-0 grow">
 

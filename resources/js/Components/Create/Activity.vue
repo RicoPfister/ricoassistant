@@ -651,7 +651,8 @@ function fromChild(data) {
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
-    else activityDiagramColorTag.value[data.parentIndex] = '';
+    else {
+        if (typeof activityDiagramColorTag.value[data.parentIndex] == 'undefined') activityDiagramColorTag.value[data.parentIndex] = ''};
     // console.log(activityDiagramColorTag.value);
 
     if (data.component == 'reference' && data.parentId == 4) {
@@ -681,7 +682,7 @@ function dataChildMenuEntry(n) {
 
 onMounted(() => {
 
-    // console.log(props.toChild.activityData['tag']);
+    // console.log(props.toChild.activityData);
 
     if (props?.toChild?.activityData) {
         props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));
@@ -689,10 +690,7 @@ onMounted(() => {
         props.toChild.activityData['reference_parents'].forEach((item, index) => editParentReference(item, index));
 
         if (props?.toChild?.activityData?.['tag']) editTag(props.toChild.activityData['tag']);
-
-
     }
-
 });
 
 let convertTimeToTOTotal = 0;
@@ -724,8 +722,13 @@ function edittimeToTo(item, index) {
 
 function editParentReference(item, index) {
     // console.log(index);
+    // console.log(item[0]['color']);
     // console.log(item[0]['title']);
+    if (item[0]['color']) activityDiagramColorTag.value[index] = item[0]['color'];
     form.activityReference[index] = item[0]['title'];
+    console.log(activityDiagramColorTag.value);
+
+    // if color are exist fill color array
 }
 
 function editTag(item) {

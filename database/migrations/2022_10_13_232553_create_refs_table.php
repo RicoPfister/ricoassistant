@@ -24,7 +24,7 @@ return new class extends Migration
             $table->tinyInteger('ref_db_heading')->nullable();
 
             $table->string('tracking', 50);
-            $table->tinyInteger('status')->nullable();
+            $table->tinyInteger('restriction');
 
             $table->timestamps();
         });

@@ -68,5 +68,21 @@ html {
     user-select: none; /* Standard syntax */
 }
 
+/* form check box*/
+
+.form_public_background {
+    background-image: repeating-linear-gradient(45deg,rgba(0,0,0,0.1)  0%,rgba(0,0,0,0.1) 4%, rgba(255,255,0,0.2) 4%, rgba(255,255,0,0.2) 10%,
+     rgba(0,0,0,0.1)  10%);
+}
+
+.form_public_background:hover {
+    background-image: repeating-linear-gradient(45deg,rgba(0,0,0,0.5)  0%,rgba(0,0,0,0.5) 4%, rgba(255,255,0,0.6) 4%, rgba(255,255,0.6) 10%,
+    rgba(0,0,0,0.5)  10%);
+}
+
+input[type="checkbox"] {
+    filter: sepia(100%) brightness(80%) hue-rotate(170deg) saturate(70%) contrast(300%);
+}
+
 /* html,body { height:100%; } */
 

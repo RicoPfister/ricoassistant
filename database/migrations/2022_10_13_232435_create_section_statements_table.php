@@ -22,7 +22,7 @@ return new class extends Migration
             $table->text('statement');
 
             $table->string('tracking', 50);
-            $table->tinyInteger('status')->nullable();
+            $table->tinyInteger('restriction');
 
             $table->timestamps();
         });

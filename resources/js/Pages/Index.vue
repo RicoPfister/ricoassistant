@@ -13,7 +13,9 @@
 </Head>
 
 <!-- <Home class="mx-auto"/> -->
-<Frame />
+<!-- <KeepAlive> -->
+    <Frame />
+<!-- </KeepAlive> -->
 
 </template>
 
