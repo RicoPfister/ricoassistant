@@ -50,58 +50,49 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Sound',
+            'medium_name' => 'Idle',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Picture',
+            'medium_name' => 'Story',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Video',
+            'medium_name' => 'Media',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Letter',
+            'medium_name' => 'Admin',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Interactivity',
+            'medium_name' => 'Fact',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'System',
+            'medium_name' => 'Elaboration',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Location',
+            'medium_name' => 'Education',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Self Awareness',
+            'medium_name' => 'Exchange',
             'tracking' => '127.0.0.1',
         ]);
 
         DB::table('index_mediums')->insert([
-            'medium_name' => 'Self Reproduction',
+            'medium_name' => 'Evaluation',
             'tracking' => '127.0.0.1',
         ]);
 
-        DB::table('index_mediums')->insert([
-            'medium_name' => 'External Activation',
-            'tracking' => '127.0.0.1',
-        ]);
-
-        DB::table('index_mediums')->insert([
-            'medium_name' => 'External Motivation',
-            'tracking' => '127.0.0.1',
-        ]);
     }
 }

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->string('tracking', 50);
-            $table->tinyInteger('status')->nullable();
+            $table->tinyInteger('restriction');
         });
     }
 

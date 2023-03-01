@@ -41,7 +41,7 @@
 
                         <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-96 w-full p-2 z-50 bg-gray-100">
 
-
+                        Search filter coming soon.
 
                         </div>
 

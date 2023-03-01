@@ -139,7 +139,8 @@ watch(() => props.transferCreate, (curr, prev) => {
     if (props.transferCreate.title != 'undefined') {
 
         // console.log(props.transfer.basicData.basicTitle);
-        if (props.transferCreate.title == '') referenceDOM.value.placeholder = placeholderText.value
+        // console.log('ok');
+        if (props.transferCreate.title == '' || typeof props.transferCreate.title == 'undefined') referenceDOM.value.placeholder = placeholderText.value
         else referenceDOM.value.placeholder = props.transferCreate.title;
     }
 }, {deep: true}, 500);

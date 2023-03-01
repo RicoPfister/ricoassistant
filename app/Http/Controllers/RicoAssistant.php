@@ -43,17 +43,18 @@ class RicoAssistant extends Controller {
         $user = Auth::user();
 
         if (isset($user)) {
+            // dd('ok');
             $db_basic_category_rawData = DB::table('section_basics')
-            ->where('status', '=', null)
-            ->orWhere('status', '=', 1)
+            ->where('restriction', '<', 2)
             ->select('medium')
             ->get()
             ->groupBy('medium');
         }
 
         else {
+            // dd('ok');
             $db_basic_category_rawData = DB::table('section_basics')
-            ->where('status', '=', 1)
+            ->where('restriction', '=', 0)
             ->select('medium')
             ->get()
             ->groupBy('medium');
@@ -76,9 +77,9 @@ class RicoAssistant extends Controller {
             }
 
             // create admin tag collection
-            if (isset($db_basic_category_rawData[3]) || isset($db_basic_category_rawData[4])) {
+            if (isset($db_basic_category_rawData[1]) || isset($db_basic_category_rawData[4])) {
                 $db_basic_category_collection['admin'][0] = 0;
-                if (isset($db_basic_category_rawData[3])) $db_basic_category_collection['admin'][0] += count($db_basic_category_rawData[3]);
+                if (isset($db_basic_category_rawData[1])) $db_basic_category_collection['admin'][0] += count($db_basic_category_rawData[1]);
                 if (isset($db_basic_category_rawData[4])) $db_basic_category_collection['admin'][0] += count($db_basic_category_rawData[4]);
                 $db_basic_category_collection['admin'][1] = [3, 4];
             }
@@ -90,8 +91,9 @@ class RicoAssistant extends Controller {
             }
 
             // create education tag collection
-            if (isset($db_basic_category_rawData[6]) || isset($db_basic_category_rawData[7]) || isset($db_basic_category_rawData[9])) {
+            if (isset($db_basic_category_rawData[3]) || isset($db_basic_category_rawData[6]) || isset($db_basic_category_rawData[7]) || isset($db_basic_category_rawData[9])) {
                 $db_basic_category_collection['education'][0] = 0;
+                if (isset($db_basic_category_rawData[3])) $db_basic_category_collection['education'][0] += count($db_basic_category_rawData[3]);
                 if (isset($db_basic_category_rawData[6])) $db_basic_category_collection['education'][0] += count($db_basic_category_rawData[6]);
                 if (isset($db_basic_category_rawData[7])) $db_basic_category_collection['education'][0] += count($db_basic_category_rawData[7]);
                 if (isset($db_basic_category_rawData[9])) $db_basic_category_collection['education'][0] += count($db_basic_category_rawData[9]);
@@ -125,20 +127,14 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 2)
-                    ->where('status', '=', null)
-                    ->orWhere(function($query) use ($user) {
-                        $query
-                            ->where('user_id', '=', $user->id)
-                            ->where('medium', '=', 2)
-                            ->where('status', '=', 1);
-                    })
+                    ->where('restriction', '<', 2)
                     ->latest('updated_at')
                     ->paginate(20);
                 }
 
                 else {
                     $listAuth = DB::table('section_basics')
-                    ->where('status', '=', 1)
+                    ->where('restriction', '=', 0)
                     ->where('medium', '=', 2)
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
@@ -152,20 +148,14 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 5)
-                    ->where('status', '=', null)
-                    ->orWhere(function($query) use ($user) {
-                        $query
-                            ->where('user_id', '=', $user->id)
-                            ->where('medium', '=', 5)
-                            ->where('status', '=', 1);
-                    })
+                    ->where('restriction', '<', 2)
                     ->latest('updated_at')
                     ->paginate(20);
                 }
 
                 else {
                     $listAuth = DB::table('section_basics')
-                    ->where('status', '=', 1)
+                    ->where('restriction', '=', 0)
                     ->where('medium', '=', 5)
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
@@ -179,20 +169,14 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 8)
-                    ->where('status', '=', null)
-                    ->orWhere(function($query) use ($user) {
-                        $query
-                            ->where('user_id', '=', $user->id)
-                            ->where('medium', '=', 8)
-                            ->where('status', '=', 1);
-                    })
+                    ->where('restriction', '<', 2)
                     ->latest('updated_at')
                     ->paginate(20);
                 }
 
                 else {
                     $listAuth = DB::table('section_basics')
-                    ->where('status', '=', 1)
+                    ->where('restriction', '=', 0)
                     ->where('medium', '=', 8)
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
@@ -204,16 +188,15 @@ class RicoAssistant extends Controller {
             else if ($request->category == 'admin') {
                 if (isset($user)) {
                     $listAuth = DB::table('section_basics')
+
                     ->where('user_id', '=', $user->id)
-                    ->where('medium', '=', 3)
-                    ->orWhere('medium', '=', 4)
-                    ->where('status', '=', null)
+                    ->where('restriction', '<', 2)
+                    ->where('medium', '=', 1)
                     ->orWhere(function($query) use ($user) {
                         $query
                             ->where('user_id', '=', $user->id)
-                            ->where('medium', '=', 3)
-                            ->orWhere('medium', '=', 4)
-                            ->where('status', '=', 1);
+                            ->where('restriction', '<', 2)
+                            ->where('medium', '=', 4);
                     })
                     ->latest('updated_at')
                     ->paginate(20);
@@ -221,9 +204,13 @@ class RicoAssistant extends Controller {
 
                 else {
                     $listAuth = DB::table('section_basics')
-                    ->where('status', '=', 1)
-                    ->where('medium', '=', 3)
-                    ->orWhere('medium', '=', 4)
+                    ->where('restriction', '=', 0)
+                    ->where('medium', '=', 1)
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                        ->where('restriction', '=', 0)
+                            ->where('medium', '=', 4);
+                    })
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
                     ->paginate(20);
@@ -233,30 +220,53 @@ class RicoAssistant extends Controller {
             // if tag category is education create collection
             else if ($request->category == 'education') {
                 if (isset($user)) {
+                    // dd($request);
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
-                    ->where('medium', '=', 6)
-                    ->orWhere('medium', '=', 7)
-                    ->orWhere('medium', '=', 9)
-                    ->where('status', '=', null)
+                    ->where('restriction', '<', 2)
+                    ->where('medium', '=', 3)
                     ->orWhere(function($query) use ($user) {
                         $query
                             ->where('user_id', '=', $user->id)
-                            ->where('medium', '=', 6)
-                            ->orWhere('medium', '=', 7)
-                            ->orWhere('medium', '=', 9)
-                            ->where('status', '=', 1);
+                            ->where('restriction', '<', 2)
+                            ->where('medium', '=', 6);
+                    })
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                            ->where('user_id', '=', $user->id)
+                            ->where('restriction', '<', 2)
+                            ->where('medium', '=', 7);
+                    })
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                            ->where('user_id', '=', $user->id)
+                            ->where('restriction', '<', 2)
+                            ->where('medium', '=', 9);
                     })
                     ->latest('updated_at')
                     ->paginate(20);
                 }
 
                 else {
+                    // dd($request);
                     $listAuth = DB::table('section_basics')
-                    ->where('status', '=', 1)
-                    ->where('medium', '=', 6)
-                    ->orWhere('medium', '=', 7)
-                    ->orWhere('medium', '=', 9)
+                    ->where('restriction', '=', 0)
+                    ->where('medium', '=', 3)
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                        ->where('restriction', '=', 0)
+                        ->where('medium', '=', 6);
+                    })
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                        ->where('restriction', '=', 0)
+                        ->where('medium', '=', 7);
+                    })
+                    ->orWhere(function($query) use ($user) {
+                        $query
+                        ->where('restriction', '=', 0)
+                        ->where('medium', '=', 9);
+                    })
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
                     ->paginate(20);
@@ -266,15 +276,31 @@ class RicoAssistant extends Controller {
 
         else if (isset($request->searchData)) {
             // dd($request->searchData);
-            $db_basic_data = DB::table('section_basics')
-            ->select('id', 'ref_date', 'title', 'medium')
-            ->where('title', 'LIKE', '%' . $request->searchData . '%')
-            ->orderByDesc('title')
-            ->paginate(20);
+            if (isset($user)) {
+                $db_basic_data = DB::table('section_basics')
+                ->where('user_id', '=', $user->id)
+                ->where('restriction', '<', 2)
+                ->select('id', 'ref_date', 'title', 'medium')
+                ->where('title', 'LIKE', '%' . $request->searchData . '%')
+                ->orderByDesc('title')
+                ->paginate(20);
+            }
+
+            else {
+                $db_basic_data = DB::table('section_basics')
+                ->where('restriction', '=', 0)
+                ->select('id', 'ref_date', 'title', 'medium')
+                ->where('title', 'LIKE', '%' . $request->searchData . '%')
+                ->orderByDesc('title')
+                ->paginate(20);
+            }
+
 
             if (count($db_basic_data) > 0) {
                 $listAuth = $db_basic_data;
             }
+
+            else $listAuth = ['result' => 0, 'search_string' => $request->searchData];;
 
             // dd($db_basic_data);
 
@@ -288,10 +314,12 @@ class RicoAssistant extends Controller {
                 $tag_0 = $db_basic_data;
             }
 
-            dd($db_tag_data);
+            else $tag_0 = ['result' => 0, 'search_string' => $request->searchData];
+
+            // dd($db_tag_data);
         }
 
-        else $listAuth = '';
+        else $listAuth = '0_result';
 
         // dd($listAuth);
 
@@ -345,7 +373,7 @@ class RicoAssistant extends Controller {
             $tag_rawdata = DB::table('tags')
             ->where('basic_id', '=', $basic_id)
             ->where('section', '=', $section_id)
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get()
             ->groupBy(['section_id']);
 
@@ -416,7 +444,7 @@ class RicoAssistant extends Controller {
 
             // get reference id
             $reference_id = DB::table('refs')
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->where('basic_id', '=', $basic_ref)
             ->where('ref_db_id', '=', $section_id)
             // ->join('section_basic', 'section_basic.id', '=', )
@@ -436,7 +464,7 @@ class RicoAssistant extends Controller {
                     do {
                         $_reference_parents_id = DB::table('section_basics')
                         ->where('id', '=', $value->basic_ref)
-                        ->where('status', '=', null)
+                        ->where('restriction', '<', 2)
                         ->get();
 
                         // dd($value->basic_ref);
@@ -455,7 +483,7 @@ class RicoAssistant extends Controller {
 
                             $_tag_color_id = DB::table('tags')
                             ->where('basic_id', '=', $value->basic_ref)
-                            ->where('status', '=', null)
+                            ->where('restriction', '<', 2)
                             ->get();
 
                             // dd($_tag_color_id);
@@ -464,7 +492,7 @@ class RicoAssistant extends Controller {
 
                                 $_tag_color_name = DB::table('tag_2s')
                                 ->where('id', '=', $_tag_color_id[0]->tag_2_id)
-                                // ->where('status', '=', null)
+                                // ->where('restriction', '<', 2)
                                 ->get();
 
                                 // dd($_tag_color_name);
@@ -479,7 +507,7 @@ class RicoAssistant extends Controller {
 
                         $next_value = DB::table('refs')
                         ->where('basic_id', '=', $value->basic_ref)
-                        ->where('status', '=', null)
+                        ->where('restriction', '<', 2)
                         // ->join('section_basic', 'section_basic.id', '=', )
                         ->get();
 
@@ -512,7 +540,6 @@ class RicoAssistant extends Controller {
             // get database name based on section id
             $form_section_name  = DB::table('index_databases')
             ->where('id', '=', $section_id)
-            ->where('status', '=', null)
             ->pluck('db_name');
             $db_name = $form_section_name [0].'Data';
 
@@ -611,7 +638,7 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_statement = DB::table('section_statements')
-        ->where('status', '=', null)
+        ->where('restriction', '<', 2)
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
@@ -656,7 +683,7 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_activity = DB::table('section_activities')
-        ->where('status', '=', null)
+        ->where('restriction', '<', 2)
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
@@ -723,7 +750,7 @@ class RicoAssistant extends Controller {
         // ++++++++++++++++++++++++++++++++++++
 
         $detail_source = DB::table('section_sources')
-        ->where('status', '=', null)
+        ->where('restriction', '<', 2)
         ->where('basic_id', '=', $request->basic_id)
         ->get();
 
@@ -899,7 +926,12 @@ class RicoAssistant extends Controller {
         $basics->save();
 
         if ($request->basicData['public'] == 'true') {
-            $basics->status =  1;
+            $basics->restriction =  0;
+            $basics->save();
+        }
+
+        else {
+            $basics->restriction =  1;
             $basics->save();
         }
 
@@ -1076,7 +1108,7 @@ class RicoAssistant extends Controller {
 
                 // ref section data
                 $rererence_db_section_data = DB::table($tag_section)
-                ->where('status', '=', null)
+                ->where('restriction', '<', 2)
                 ->where('basic_id', '=', $request->basicData['id'])
                 // ->wehre('ref_db_index', '=', )
                 // ->limit(1)
@@ -1085,7 +1117,7 @@ class RicoAssistant extends Controller {
                 // dd($rererence_db_section_data);
 
                 $rererence_db_data = DB::table('refs')
-                ->where('status', '=', null)
+                ->where('restriction', '<', 2)
                 ->where('basic_id', '=', $request->basicData['id'])
                 ->where('ref_db_id', '=', $section_id)
                 // ->wehre('ref_db_index', '=', )
@@ -1157,7 +1189,7 @@ class RicoAssistant extends Controller {
                         ->where('basic_id', '=', $request->basicData['id'])
                         ->where('ref_db_id', '=', $section_id)
                         ->where('ref_db_index', '=', $request->$db_name[$tag_section_request]['id'])
-                        ->update(['status' => 2]);
+                        ->update(['restriction' => 2]);
                     }
                 }
             }
@@ -1172,7 +1204,7 @@ class RicoAssistant extends Controller {
                     ->where('basic_id', '=', $request->basicData['id'])
                     ->where('ref_db_id', '=', $section_id)
                     ->where('ref_db_index', '=',  $request->$db_name[$tag_section_request]['id'])
-                    ->update(['status' => 2]);
+                    ->update(['restriction' => 2]);
             }
         }
 
@@ -1349,7 +1381,7 @@ class RicoAssistant extends Controller {
 
                         DB::table('tags')
                         ->where('id', '=', $update_tag_db_group[$index][0][$index2]->id)
-                        // ->where('status', '=', null)
+                        // ->where('restriction', '<', 2)
                         ->update(['tag_3_id' => $db_table_section_data_collection[0]->id]);
                     }
                 }
@@ -1365,7 +1397,7 @@ class RicoAssistant extends Controller {
                     // deletee db tags collection
                     DB::table('tags')
                     ->where('id', '=', $item2->id)
-                    ->update(['status' => 2]);
+                    ->update(['restriction' => 2]);
                 }
             }
         }
@@ -1419,7 +1451,7 @@ class RicoAssistant extends Controller {
             $update_tag_db_data = DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
             ->where('section', '=', $section_id)
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get()
             ->groupBy(['section_id']);
             // ->groupBy('tag_id');
@@ -1463,7 +1495,7 @@ class RicoAssistant extends Controller {
                 if ($update_tag_db_group != '') {
 
                     // dd($update_tag_db_group);
-                    // set status of all empty client tag groups to 2 (delete)
+                    // set restriction of all empty client tag groups to 2 (delete)
                     foreach($update_tag_db_group as $db_tag_group_index => $db_tag_group_item) {
 
                         // dd($db_tag_group_index, $db_tag_group_item);
@@ -1485,7 +1517,7 @@ class RicoAssistant extends Controller {
 
                                 DB::table('tags')
                                 ->where('id', '=', $update_tag_db_group[$db_tag_group_index][0][$db_tag_group_section_index]->id)
-                                ->update(['status' => 2]);
+                                ->update(['restriction' => 2]);
                             };
                         }
                     }
@@ -1495,22 +1527,22 @@ class RicoAssistant extends Controller {
             // step 2.1: delete groups with no content
             else {
 
-                // delete all entry tags (set to status 2)
+                // delete all entry tags (set to restriction 2)
                 if (count($update_tag_db_data) > 0) {
                     DB::table('tags')
                     ->where('basic_id', '=', $request->basicData['id'])
-                    ->update(['status' => 2]);
+                    ->update(['restriction' => 2]);
                 }
             }
         }
 
         function delete_entry() {
 
-            // tag: set status 2 (deleted)
+            // tag: set restriction 2 (deleted)
             // get tag table id by basic id
             $update_tag_db_data = DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get()
             ->groupBy('tag_id')
             ->values();
@@ -1521,7 +1553,7 @@ class RicoAssistant extends Controller {
                     $tag_collection_basic_id = DB::table('tags')
                     ->where('basic_id', '=', $request->basicData['id'])
                     ->where('tag_id', '=', $update_tag_db_data[$i][0]->tag_id)
-                    ->update(['status' => 2]);
+                    ->update(['restriction' => 2]);
                 }
             }
         }
@@ -1648,15 +1680,15 @@ class RicoAssistant extends Controller {
 
                         $update_activity_db_data = DB::table('section_activities')
                         ->where('id', '=', $client_activityto_data_item->id)
-                        ->update(['status' => 2]);
+                        ->update(['restriction' => 2]);
 
                         DB::table('refs')
                         ->where('id', '=', $client_activityto_data_item->ref_id)
-                        ->update(['status' => 2]);
+                        ->update(['restriction' => 2]);
 
                         DB::table('tags')
                         ->where('section_table_id', '=', $client_activityto_data_item->id)
-                        ->update(['status' => 2]);
+                        ->update(['restriction' => 2]);
 
                     }
                 }
@@ -1742,7 +1774,7 @@ class RicoAssistant extends Controller {
 
                                 DB::table('section_sources')
                                 ->where('id', '=', $db_file_item->id)
-                                ->update(['status' => 2]);
+                                ->update(['restriction' => 2]);
                             }
                         }
                     }
@@ -1755,7 +1787,7 @@ class RicoAssistant extends Controller {
                     // delete entry in section sources
                     DB::table('section_sources')
                     ->where('basic_id', '=', $request->basicData['id'])
-                    ->update(['status' => 2]);
+                    ->update(['restriction' => 2]);
 
                 }
 
@@ -1791,27 +1823,27 @@ class RicoAssistant extends Controller {
             // delete entry in section basics
             DB::table('section_basics')
             ->where('id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
 
             DB::table('section_statements')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
 
             DB::table('section_activities')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
 
             DB::table('section_sources')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
 
             DB::table('refs')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
 
             DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
         }
 
         else {
@@ -1846,7 +1878,7 @@ class RicoAssistant extends Controller {
 
             // check if there are children
             $parent_ref = DB::table('refs')
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->where('basic_id', '=', $id->id)
             ->first();
 
@@ -1860,7 +1892,7 @@ class RicoAssistant extends Controller {
                     if ($parent_ref->basic_id != $parent_ref->basic_ref) {
                         // get corresponding basic db entry data
                         $parent_basic = DB::table('section_basics')
-                        ->where('status', '=', null)
+                        ->where('restriction', '<', 2)
                         ->where('user_id', '=', $user->id)
                         ->where('id', '=', $parent_checker_next_value)
                         ->first();
@@ -1870,7 +1902,7 @@ class RicoAssistant extends Controller {
 
                         // check next ref db entry
                         $parent_ref = DB::table('refs')
-                        ->where('status', '=', null)
+                        ->where('restriction', '<', 2)
                         ->where('basic_id', '=', $parent_checker_next_value)
                         ->first();
 
@@ -1902,7 +1934,7 @@ class RicoAssistant extends Controller {
 
             // get last 10 references
             $referencedIds = DB::table('section_basics')
-                ->where('status', '=', null)
+                ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->orderByDesc('updated_at')
                 ->take(10)
@@ -1934,7 +1966,7 @@ class RicoAssistant extends Controller {
 
                         // find tag_2s id
                         $tag_value_id = DB::table('tags')
-                        ->where('status', '=', null)
+                        ->where('restriction', '<', 2)
                         ->where('basic_id', '=', $id->id)
                         ->where('tag_1_id', '=',  $activitydiagramcolor_id[0]->id)
                         ->get();
@@ -1970,7 +2002,7 @@ class RicoAssistant extends Controller {
         else {
 
             $referencesResultCheck = DB::table('section_basics')
-                ->where('status', '=', null)
+                ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
                 ->get();
@@ -2081,10 +2113,10 @@ class RicoAssistant extends Controller {
 
         // create instant search results
         $basicTitleResultCheck = DB::table('section_basics')
-                ->where('status', '=', null)
-                ->where('user_id', '=', $user->id)
-                ->where('title', '=', $request->basicTitle)
-                ->get();
+            ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
+            ->where('title', '=', $request->basicTitle)
+            ->get();
 
         $basic_medium_data = DB::table('index_mediums')
         ->get();
@@ -2184,7 +2216,7 @@ class RicoAssistant extends Controller {
         // preset collection
 
         $tag_preset_group = DB::table('tag_presets')
-        ->where('status', '=', null)
+        ->where('restriction', '<', 2)
         ->get()
         ->groupBy('tag_group');
 
@@ -2211,12 +2243,12 @@ class RicoAssistant extends Controller {
 
                 $tag_preset_category_name = DB::table('tag_0s')
                 ->where('id', '=', $value2->tag_category)
-                // ->where('status', '=', null)
+                // ->where('restriction', '<', 2)
                 ->pluck('content');
 
                 $tag_preset_context_name = DB::table('tag_1s')
                 ->where('id', '=', $value2->tag_context)
-                // ->where('status', '=', null)
+                // ->where('restriction', '<', 2)
                 ->pluck('content');
 
                 // dd($tag_preset_category_name[0]);
@@ -2268,7 +2300,7 @@ class RicoAssistant extends Controller {
 
             $presetNameCheck = DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->preset_group['preset_name'])
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get();
 
             // dd($presetNameCheck);
@@ -2353,15 +2385,15 @@ class RicoAssistant extends Controller {
 
             $preset_name_id = DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->tagPresetGroupDeleteIndex)
-            ->where('status', '=', null)
-            // ->update(['status' => 2]);
+            ->where('restriction', '<', 2)
+            // ->update(['restriction' => 2]);
             ->get();
 
             // dd($preset_name_id);
 
             $preset_group_total = DB::table('tag_presets')
             ->where('tag_group', '=', $preset_name_id[0]->id)
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get();
 
             $preset_group_deletion = $preset_group_total[$request->tagPresetGroupDeleteSubindex]->id;
@@ -2369,12 +2401,12 @@ class RicoAssistant extends Controller {
 
             DB::table('tag_presets')
             ->where('id', '=', $preset_group_deletion)
-            ->where('status', '=', null)
-            ->update(['status' => 2]);
+            ->where('restriction', '<', 2)
+            ->update(['restriction' => 2]);
 
             $preset_group_remaining = DB::table('tag_presets')
             ->where('tag_group', '=', $preset_name_id[0]->id)
-            ->where('status', '=', null)
+            ->where('restriction', '<', 2)
             ->get();
 
             // dd($preset_group_remaining);
@@ -2382,9 +2414,9 @@ class RicoAssistant extends Controller {
             if(count($preset_group_remaining) <= 0) {
                 DB::table('index_tag_presets')
                 ->where('preset_name', '=', $request->tagPresetGroupDeleteIndex)
-                ->where('status', '=', null)
-                // ->update(['status' => 2]);
-                ->update(['status' => 2]);
+                ->where('restriction', '<', 2)
+                // ->update(['restriction' => 2]);
+                ->update(['restriction' => 2]);
             }
 
             // dd($preset_group_remaining);
@@ -2393,26 +2425,26 @@ class RicoAssistant extends Controller {
 
         }
 
-        // set status to 2 (delete) for preset name
+        // set restriction to 2 (delete) for preset name
         if (isset($request->tagPresetDelete)) {
 
             $preset_delete_id = DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->tagPresetDelete)
-            // ->update(['status' => 2]);
+            // ->update(['restriction' => 2]);
             ->get();
 
             DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->tagPresetDelete)
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
             // ->get();
 
             // dd($preset_delete_id);
-            // $preset_delete_id->update(['status' => 22]);
+            // $preset_delete_id->update(['restriction' => 22]);
 
-            // set status to 2 (delete) for preset name
+            // set restriction to 2 (delete) for preset name
             DB::table('tag_presets')
             ->where('tag_group', '=', $preset_delete_id[0]->id)
-            ->update(['status' => 2]);
+            ->update(['restriction' => 2]);
         }
 
         // dd($preset_delete_id[0]->id);
