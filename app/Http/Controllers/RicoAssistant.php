@@ -45,6 +45,7 @@ class RicoAssistant extends Controller {
         if (isset($user)) {
             // dd('ok');
             $db_basic_category_rawData = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
             ->where('restriction', '<', 2)
             ->select('medium')
             ->get()
@@ -276,6 +277,14 @@ class RicoAssistant extends Controller {
                     ->paginate(20);
                 }
             }
+        }
+
+        else if ($request->user == 'all_user_entries') {
+            $listAuth = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+            ->latest('updated_at')
+            ->paginate(20);
         }
 
         else if (isset($request->searchData)) {
@@ -629,7 +638,6 @@ class RicoAssistant extends Controller {
         ->find($detail['basicData']['user_id'])
         ->name;
         // ->pluck('name');
-        // ->pluck('name');
 
         // dd($detail);
 
@@ -929,12 +937,14 @@ class RicoAssistant extends Controller {
         $basics->tracking = $request->ip();
         $basics->save();
 
-        if ($request->basicData['public'] == 'true') {
+        if ($request->basicData['public'] == true) {
+            // dd('ok');
             $basics->restriction =  0;
             $basics->save();
         }
 
         else {
+            // dd('ok');
             $basics->restriction =  1;
             $basics->save();
         }
@@ -1110,7 +1120,7 @@ class RicoAssistant extends Controller {
 
                 // dd($request, $section_id, $index);
 
-                // ref section data
+                // get form section data
                 $rererence_db_section_data = DB::table($tag_section)
                 ->where('restriction', '<', 2)
                 ->where('basic_id', '=', $request->basicData['id'])
@@ -2489,6 +2499,7 @@ class RicoAssistant extends Controller {
     public function statistic(Request $request) {
 
         // dd($request);
+        $user = Auth::user();
 
         $tag_db_rawdata = DB::table('tags')
         ->get();
@@ -2548,6 +2559,13 @@ class RicoAssistant extends Controller {
 
         // dd($group_tags_count->sortByDesc('count'));
 
-        return Inertia::render('Dashboard', ['statistic' => $group_tags_count_sorted]);
+        $user_entries = DB::table('section_basics')
+        ->where('user_id', '=', $user->id)
+        ->get()
+        ->count();
+
+        // dd($user_entries);
+
+        return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => $user_entries]]);
     }
 }

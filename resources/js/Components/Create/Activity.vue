@@ -726,7 +726,7 @@ function editParentReference(item, index) {
     // console.log(item[0]['title']);
     if (item[0]['color']) activityDiagramColorTag.value[index] = item[0]['color'];
     form.activityReference[index] = item[0]['title'];
-    console.log(activityDiagramColorTag.value);
+    // console.log(activityDiagramColorTag.value);
 
     // if color are exist fill color array
 }

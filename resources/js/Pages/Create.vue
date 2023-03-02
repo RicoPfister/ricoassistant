@@ -240,7 +240,7 @@ function fromChild(data) {
 
     else {
 
-        console.log(data);
+        // console.log(data);
         if (form?.value?.[data.section]?.[data.subSection]) {
 
             // console.log(form.value[data.section][data.subSection]);

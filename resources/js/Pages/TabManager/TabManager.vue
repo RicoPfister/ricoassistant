@@ -104,7 +104,7 @@
             </div>
             <div class="pt-2">
                 <!-- <Component :is="" /> -->
-                <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" :key="props.filter" @addtab="tabContainerAmount = 2" :list="list"/>
+                <List v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'List'" @addtab="tabContainerAmount = 2" :list="list" :key="list"/>
                 <Detail v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'Detail'" :detail="detailShow" :key="detailShow"/>
                 <NewTab v-if="component[componentSet[componentIndex][currentTab[componentIndex]-1]] === 'NewTab'" />
             </div>
@@ -179,12 +179,11 @@ watch(() => currentTab.value[1], _.debounce( (curr, prev) => {
 }, 500)
 );
 
-watch(() => props.list, (curr, prev) => {
+watch(() => props.filter, (curr, prev) => {
 
     if (props?.filter) list.value = props.filter;
 }
 );
-
 
 onMounted(() => {
 

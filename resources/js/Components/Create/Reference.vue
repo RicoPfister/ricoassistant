@@ -196,7 +196,7 @@ onMounted(() => {
         // console.log(form.reference.referenceTitle);
         // form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
         form.reference.value[0].title = props.toChild.parents_reference;
-        console.log(form.reference.value[0].title);
+        // console.log(form.reference.value[0].title);
     }
 //  form.parentId = props.toChild.parentId;
 //  form.referenceChecker.rowIndex = ;

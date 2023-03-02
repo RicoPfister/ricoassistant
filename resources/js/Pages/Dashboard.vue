@@ -33,12 +33,15 @@
                     Dashboard</h1><br>
                 <p>This will one day become your command center.<p><br></p>From here you have full control over all your activities and entries.</p>
                 <br><p>*****</p><br>
-                <p>Das wird einmal deine Kommandozentrale werden.<p><br></p>Von hier aus hast du die volle Kontrolle über all deine Aktivitäten und Einträge.</p>
-                <br><p>*****</p><br>
+                <!-- <p>Das wird einmal deine Kommandozentrale werden.<p><br></p>Von hier aus hast du die volle Kontrolle über all deine Aktivitäten und Einträge.</p>
+                <br><p>*****</p><br> -->
+                <Link :href="route('filter', {'user': 'all_user_entries'})"><u>Show your entries {{ '(' + props?.statistic?.user_entries + ')'}}</u></Link>
+                <!-- <Link :href="route('filter', {'category': 'fact'})" class="underline flex flex-row"><b>Fact</b><span class="hidden 2xl:block">{{data?.fact?.[0] ? '(' + data?.fact?.[0] + ')' : ''}} </span></Link> -->
+                <br><br><p>*****</p><br>
                 <h2 class="font-bold">User Tag Category and Context Counter</h2>
                 <br>
                 <div class="flex flex-col h-36 overflow-auto">
-                    <p v-for="(item, key, index) in props?.statistic">{{ item.count + ' | ' + item.category + ':' + item.context }}</p>
+                    <p v-for="(item, key, index) in props?.statistic?.tags">{{ item.count + ' | ' + item.category + ':' + item.context }}</p>
                 </div>
             </div>
 
