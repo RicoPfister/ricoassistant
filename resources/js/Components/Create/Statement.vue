@@ -1,16 +1,15 @@
 
 <template>
 
-<div>
-    <div class="flex flex-col">
-        <div class="flex flex-row justify-between items-center" type="button">
-            <MenuEntry @data-child="dataChildMenuEntry"/>
-        </div>
-        <textarea @change="InputData" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+<div class="flex flex-col">
+    <div class="flex flex-row justify-between items-center" type="button">
+        <MenuEntry @data-child="dataChildMenuEntry"/>
     </div>
+    <textarea @change="InputData" :class="{'border-red-500 focus:border-red-500 border-4': $page.props.errors['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+    <div v-if="$page.props.errors['statementData.statement']" class="text-red-500">{{ $page.props.errors['statementData.statement'] }}</div>
 </div>
 
-<div class="border-l border-r border-b border-black">
+<div :class="{'border-t': $page.props.errors['statementData.statement']}" class="border-r border-b border-l border-black">
     <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController" @fromChild="fromChild"/>
 </div>
 

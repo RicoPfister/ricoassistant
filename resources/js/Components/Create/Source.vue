@@ -18,7 +18,7 @@
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row">
                     <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
+                    <label :class="{'border-red-500 focus:border-red-500 border-4': $page.props.errors['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
                     <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
                 </div>
 
@@ -30,6 +30,8 @@
                     </svg>
                 </button>
             </div>
+
+            <div v-if="$page.props.errors['sourceData.filelist']" class="text-red-500">{{ $page.props.errors['sourceData.filelist'] }}</div>
 
             <!-- hidden file list/preview -->
             <div v-if="InputData[0]" class="flex flex-col my-2">

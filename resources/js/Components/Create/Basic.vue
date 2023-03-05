@@ -6,13 +6,14 @@
         <!-- form date input -->
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
-            <input @change="basicTitleChecker" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <input @change="basicTitleChecker" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.ref_date']}" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.ref_date']" class="text-red-500">{{ form2?.basic_errors?.['basicData.ref_date'] }}</div>
         </div>
 
         <!-- form category selection -->
         <div class="flex flex-col w-36">
             <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
-            <select @change="basicTitleChecker" class="border border-black outline-0 focus:border-black focus:ring-0 h-9 leading-none" id="medium" v-model="form['basicMedium']">
+            <select @change="basicTitleChecker" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
                 <option value="9">Evaluation</option>
@@ -25,6 +26,7 @@
                 <option value="2">Story</option>
                 <option value="1">Idle</option>
             </select>
+            <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.medium']" class="text-red-500">{{ form2?.basic_errors?.['basicData.medium'] }}</div>
         </div>
 
         <!-- form title input -->
@@ -37,8 +39,8 @@
 
                 <!-- title input -->
                 <div class="flex flex-row">
-                    <input @input="basicTitleChecker()" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-9 grow" id="title" type="text" v-model="form['basicTitle']">
-                    <div class="form_public_background px-3 border-t border-r border-b border-black h-9 flex items-center">
+                    <input @input="basicTitleChecker()" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
+                    <div class="form_public_background px-3 border-t border-r border-b border-black h-10 flex items-center">
                         <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.public">
                     </div>
                 </div>
@@ -77,6 +79,7 @@
                         </div>
                     </div>
                 </div>
+                <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.medium']" class="text-red-500">{{ form2?.basic_errors?.['basicData.title'] }}</div>
             </div>
         </div>
     </div>
@@ -94,6 +97,9 @@ import * as Date from "../../Scripts/date.js"
 
 let basicTitelPickerOpen = ref(0);
 let basicTitleWarning = ref(0);
+// let test123 = ref(usePage().props?.errors);
+// const test123 = computed(() => usePage().props.value.errors);
+
 
 const form = useForm({
     'basicMedium': '',
@@ -137,8 +143,8 @@ function basicTitleChecker() {
 
     if (form?.basicTitle?.length > 2) {
         setTimeout(() => {
-            Inertia.post('titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1 },
-            {replace: false,  preserveState: true, preserveScroll: true});
+            Inertia.get('/create/titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1},
+            {replace: false, preserveState: true, preserveScroll: true});
         }, 500);
     };
 }
@@ -152,6 +158,9 @@ watch(() => props.toChild, (curr, prev) => {
     }
 
 }, {deep: true}, 500);
+
+
+
 // watch(() => props.transfer, (curr, prev) => {
 //     if (!form['basicTitle'] && !form['basicMedium']) {
 //         form['basicTitle'] = props.transfer.basicTitle;
@@ -159,12 +168,40 @@ watch(() => props.toChild, (curr, prev) => {
 //     }
 // }, {deep: true}, 500);
 
+watch(() => usePage().rememberedState?.value?.key1?.data?.test, (curr, prev) => {
+    console.log('ok');
+}, {deep: true}, 500);
+
 onMounted(() => {
     // console.log(props.dataParent);
 
     form['basicMedium'] = props.toChild?.basicData?.medium;
     form['basicTitle'] = props.toChild?.basicData?.title;
     if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+});
+
+// let testppp = ref(usePage().rememberedState);
+// let data2 = Inertia.restore('key1');
+// const data2 = computed(() => Inertia.restore('key1'));
+
+const form2 = useForm('key1', {'test': null})
+
+// const form3 = useForm('CreateUser', data)
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+    // console.log(typeof usePage()?.props.value?.errors);
+    // console.log(Object.keys(usePage()?.props.value?.errors).length);
+
+    if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+
+
+        // console.log('ok');
+        // console.log(usePage().props.value.errors['basicData.medium']);
+        form2['basic_errors'] = usePage().props.value.errors;
+        // form123.validationErrors = usePage().props.value.errors;
+        // Inertia.remember(testabc, 'key1')
+    }
 });
 
 </script>

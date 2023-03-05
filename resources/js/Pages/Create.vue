@@ -34,7 +34,7 @@
 
 <script setup>
 
-import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
+import { useForm, usePage, Link, useRemember } from '@inertiajs/inertia-vue3';
 import { ref, markRaw, shallowRef, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
@@ -71,6 +71,9 @@ let activityTimeTotal = 0;
 let activityTimeHourString = 0;
 let activityTimeHourMinute = 0;
 let activityTime = 0;
+
+let testabc = ref('');
+// let validationErrors = ref();
 
 // function collection
 // -------------------------
@@ -152,7 +155,7 @@ function dataChild(data) {
 
         // console.log(form.value);
         // console.log('ok');
-        Inertia.post('store', form.value);
+        Inertia.post('/store/', form.value);
         // console.log('ok');
     };
 
@@ -223,8 +226,14 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
+    // console.log(data);
+    // console.log(data.form?.statement);
+
     // if data not undefined and public false-true
-    if ((data.form != 'undefined' && data.form != '') || data.subSection == 'public') {
+    if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public' || data.subSection == 'medium') {
+
+        // console.log(data);
+
         if (!form.value[data.section]) form.value[data.section] = {};
         if (typeof data.index !== 'undefined') {
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
@@ -232,16 +241,29 @@ function fromChild(data) {
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
             // console.log(form.value[data.section][data.subSection][data.index]);
-        }   else {
+
+        }
+
+        // else if (data.form == '') {
+        //     delete form.value[data.section]?.[data.subSection];
+        // }
+
+        else {
             // console.log(data);
             form.value[data.section][data.subSection] = data.form;
             }
     }
 
-    else {
+    else if (data.form?.statement == '') {
 
         // console.log(data);
-        if (form?.value?.[data.section]?.[data.subSection]) {
+
+        delete form.value[data.section][data.subSection];
+    }
+
+    else if (form?.value?.[data.section]?.[data.subSection]){
+
+        console.log(data);
 
             // console.log(form.value[data.section][data.subSection]);
 
@@ -253,7 +275,7 @@ function fromChild(data) {
             // console.log('ok');
             // delete form.value[data.section][data.subSection][data.index];
             // console.log(data.index);
-        }
+
 
         // if (data.subSection == 'public') {
 
@@ -280,5 +302,11 @@ onMounted(() => {
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
 });
+
+// const form123 = useRemember({
+//     validationErrors: null,
+// })
+
+
 
 </script>

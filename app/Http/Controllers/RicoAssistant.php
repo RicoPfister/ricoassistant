@@ -829,14 +829,35 @@ class RicoAssistant extends Controller {
         // get user data
         $user = Auth::user();
 
-        // validation
-        $validated = $request->validate([
-            'basicData.ref_date' => 'required',
-            'basicData.medium' => 'required',
-            'basicData.title' => 'required',
-        ]);
+        $validation_collection = [
+            'basicData.ref_date' => 'required|filled',
+            'basicData.medium' => 'required|filled',
+            'basicData.title' => 'required|filled',
+        ];
 
+        if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
+        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required|filled';
+
+        // dd($validation_collection);
+
+        // [
+        //     'basicData.ref_date' => 'required',
+        //     'basicData.medium' => 'required',
+        //     'basicData.title' => 'required',
+        //     $test123,
+        // ]
+
+        // validation
+
+        $validated = $request->validate($validation_collection);
         // dd($request);
+
+        // dd($validated);
+
+        // $validated = $request->validate([
+
+        // ]);
+
 
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {

@@ -57,7 +57,7 @@ Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');
 Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
 Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');
 Route::post('/refcheck', [RicoAssistant::class, 'reference'])->name('refcheck');
-Route::post('/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
+Route::get('/create/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
 Route::post('/tag', [RicoAssistant::class, 'tag'])->name('tag');
 Route::post('/edit', [RicoAssistant::class, 'edit'])->name('edit');
 // Route::get('/tag', [RicoAssistant::class, 'tag'])->name('tag');
