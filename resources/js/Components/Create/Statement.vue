@@ -5,8 +5,8 @@
     <div class="flex flex-row justify-between items-center" type="button">
         <MenuEntry @data-child="dataChildMenuEntry"/>
     </div>
-    <textarea @change="InputData" :class="{'border-red-500 focus:border-red-500 border-4': $page.props.errors['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
-    <div v-if="$page.props.errors['statementData.statement']" class="text-red-500">{{ $page.props.errors['statementData.statement'] }}</div>
+    <textarea @input="InputData" :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+    <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
 </div>
 
 <div :class="{'border-t': $page.props.errors['statementData.statement']}" class="border-r border-b border-l border-black">
@@ -84,6 +84,26 @@ onMounted(() => {
     form['id'] = props.toChild?.statementData?.statement?.id;
 });
 
+// validation error processing
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+// console.log(Object.keys(usePage()?.props.value?.errors).length);
+// console.log(Object.keys(form2['errors']).length);
+
+if (Object.keys(usePage()?.props.value?.errors).length) {
+
+        console.log('ok');
+        form2['errors'] = usePage().props.value.errors;
+}
+
+else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+        console.log('ok');
+        form2['errors'] = '';
+    }
+});
 
 </script>
 

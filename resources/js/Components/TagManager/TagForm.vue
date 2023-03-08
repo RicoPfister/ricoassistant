@@ -1,11 +1,14 @@
 <template>
 
-<div class="flex flex-col w-full">
+<div class="flex flex-col w-full h-full">
 
     <div class="flex flex-row items-center h-[30px]">
 
         <!-- add button -->
-        <button @click.prevent="tagPopupOpenData" class="relative w-[36px] flex h-full items-center bg-gray-100 border-r border-gray-300 leading-none pl-1" type="button">
+        <button @click.prevent="tagPopupOpenData"
+            :class="{'border-l': !tagInputShow, 'border-r': tagInputShow}"
+            class="relative w-[37px] flex h-full items-center bg-gray-200 border-gray-300 leading-none pl-1" type="button"
+        >
 
             <!-- item counter -->
             <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">0</div>

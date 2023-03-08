@@ -1,172 +1,183 @@
-
 <template>
 
 <!-- activity container -->
 <!-- ------------------------------------------------ -->
-<div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px]
-pb-3">
+<div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px] pb-3">
 
     <div class="relative -top-[16px]">
         <SectionTitle :Id="2"/>
     </div>
 
-
     <!-- time schedule box-->
     <!-- ------------------------------------------------ -->
-    <div class="flex flex-col items-center gap-1 w-full mt-1">
+    <div class="flex flex-col items-center gap-1 w-full">
 
-        <!-- time schedule list builder -->
-        <div class="flex flex-row lg:h-8 w-[722px]" v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
-        @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)"
-        @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
+        <div class="space-y-1">
 
-            <!-- input time -->
-            <input class="w-[41px] lg:w-[61px] text-sm lg:text-base text-center placeholder:text-black-400 focus:placeholder-white leading-none"
-            :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To"
-            v-model="form.activityTo[n-1]">
+            <!-- time schedule list builder -->
+            <div v-for="(n, index) in activityTotalRow" @input="activityRowAdd(n)"
+                @keyup.exact="activityKeyPressed($event, n)" @keyup.shift.arrow-up="activityKeyShUpPressed(1, n)"
+                @keyup.shift.arrow-down="activityKeyShDownPressed(1, n)">
 
-            <!-- button box -->
-            <div class="flex flex-row mx-1">
+                <div class="flex flex-row lg:h-8 w-[722px]">
+                    <!-- input time -->
+                    <input
+                    :class="{'border-red-500 bg-red-200 focus:border-red-500 border': form2?.errors?.['activityData.activityTo'] || form2?.errors?.['activityData.activityTo.' + index]}"
+                    class="w-[41px] lg:w-[61px] text-sm lg:text-base text-center placeholder:text-black focus:placeholder-white leading-none outline-0 focus:ring-0 focus:border-black focus:placeholder-transparent"
+                    :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To"
+                    v-model="form.activityTo[n-1]"
+                >
 
-                <!-- button 12h/clear-->
-                <div class="flex-col hidden lg:block">
+                    <!-- button box -->
+                    <div class="flex flex-row mx-1">
 
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="form.activityTo[n-1] = 1200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-3 h-3">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591
-                            1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                        </svg>
-                    </button>
+                        <!-- button 12h/clear-->
+                        <div class="flex-col hidden lg:block">
 
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="form.activityTo[n-1] = ''">
-                        <div class="text-xs flex items-center justify-center h-full">C</div>
-                    </button>
-                </div>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="form.activityTo[n-1] = 1200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-3 h-3">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591
+                                    1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                                </svg>
+                            </button>
 
-                <!-- button hours -->
-                <div class="flex flex-col h-full">
-                    <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
-                    @click="activitybuttonBar('h', n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                        </svg>
-                    </button>
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
-                    @click="activitybuttonBar('hMinus', n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
-                        </svg>
-                    </button>
-                </div>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="form.activityTo[n-1] = ''">
+                                <div class="text-xs flex items-center justify-center h-full">C</div>
+                            </button>
+                        </div>
 
-                <!-- button minutes -->
-                <div class="flex flex-col h-full">
-                    <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="activitybuttonBar('m', n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-3 h-3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                        </svg>
-                    </button>
+                        <!-- button hours -->
+                        <div class="flex flex-col h-full">
+                            <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
+                            @click="activitybuttonBar('h', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                </svg>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
+                            @click="activitybuttonBar('hMinus', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                </svg>
+                            </button>
+                        </div>
 
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="activitybuttonBar('mMinus', n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-3 h-3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+                        <!-- button minutes -->
+                        <div class="flex flex-col h-full">
+                            <button class="text-sm w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="activitybuttonBar('m', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-3 h-3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                </svg>
+                            </button>
 
-            <!-- reference box -->
-            <div class="w-full min-w-0 text-sm lg:text-lg h-8 border border-black flex flex-row">
-
-                <div class="w-full h-[30px] flex flex-row">
-                    <div class="grow">
-                        <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
-                        :toChild="{'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild" />
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="activitybuttonBar('mMinus', n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-3 h-3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="w-fit">
-                        <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0,
-                        'formTags': form?.activityTag?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/>
+
+                    <!-- reference box -->
+                    <div
+                    :class="{'border-red-500 focus:border-red-500 border': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
+                        class="w-full h-8 min-w-0 text-sm lg:text-lg border border-black flex flex-row"
+                    >
+
+                        <div class="w-full flex flex-row">
+                            <div class="grow">
+                                <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
+                                :toChild="{'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+                            </div>
+                            <div class="w-fit">
+                                <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0,
+                                'formTags': form?.activityTag?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/>
+                            </div>
+                        </div>
+
+                        <!-- tag buttons -->
+                        <!-- <div class="h-full flex items-center bg-gray-200 w-fit">
+                            <div class="border-l border-gray-400 p-1 w-auto h-full" @mouseover="tagTooltipShow(index)" @mouseleave="tagTooltipShow(index, 1)">
+                                <button type="button" @click.prevent="tagPopupOpenActive(index)" class="w-auto h-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-yellow-600': form.activityTag[index]}" class="w-auto h-full hover:stroke-black">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div> -->
                     </div>
-                </div>
 
-                <!-- tag buttons -->
-                <!-- <div class="h-full flex items-center bg-gray-200 w-fit">
-                    <div class="border-l border-gray-400 p-1 w-auto h-full" @mouseover="tagTooltipShow(index)" @mouseleave="tagTooltipShow(index, 1)">
-                        <button type="button" @click.prevent="tagPopupOpenActive(index)" class="w-auto h-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-yellow-600': form.activityTag[index]}" class="w-auto h-full hover:stroke-black">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
-                            </svg>
-                        </button>
+                    <!-- edit button box -->
+                    <div class="flex flex-row ml-1">
+                        <!-- button clear reference/ clear rating-->
+                        <div class="flex-col hidden lg:block">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="form.activityReference[n-1] = ''">
+                                <div class="text-xs flex items-center justify-center h-full">C</div>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="form.activityReference[n-1] = ''">
+                                <div class="text-xs flex items-center justify-center h-full">C</div>
+                            </button>
+                        </div>
+
+                        <!-- button duplicate row / remove row -->
+                        <div class="flex flex-col">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
+                            @click="activityRowDuplicate(n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button"
+                            @click="activityRowDelete(n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- button swap [hidden] -->
+                        <div class="flex-col hidden">
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="activityKeyShUpPressed(0, n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                </svg>
+                            </button>
+                            <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
+                            @click="activityKeyShDownPressed(0, n)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </div> -->
-
+                    <!-- tag tool tip -->
+                    <!-- <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-200 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div> -->
+                </div>
+                <div v-if="form2?.errors?.['activityData.activityTo.'+index]" class="text-red-500">{{ form2?.errors?.['activityData.activityTo.'+index] }}</div>
+                <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div>
+                <div v-else-if="form2?.errors?.['activityData.reference_parents.' + index]" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents.' + index] }}</div>
             </div>
-
-            <!-- edit button box -->
-            <div class="flex flex-row ml-1">
-                <!-- button clear reference/ clear rating-->
-                <div class="flex-col hidden lg:block">
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="form.activityReference[n-1] = ''">
-                        <div class="text-xs flex items-center justify-center h-full">C</div>
-                    </button>
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="form.activityReference[n-1] = ''">
-                        <div class="text-xs flex items-center justify-center h-full">C</div>
-                    </button>
-                </div>
-
-                <!-- button duplicate row / remove row -->
-                <div class="flex flex-col">
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-blue-100 hover:bg-blue-200" type="button"
-                    @click="activityRowDuplicate(n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                            </svg>
-                    </button>
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-red-100 hover:bg-red-200" type="button"
-                    @click="activityRowDelete(n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- button swap [hidden] -->
-                <div class="flex-col hidden">
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="activityKeyShUpPressed(0, n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                        </svg>
-                    </button>
-                    <button class="w-4 h-1/2 flex items-center justify-center bg-gray-200 hover:bg-gray-300" type="button"
-                    @click="activityKeyShDownPressed(0, n)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <!-- tag tool tip -->
-            <!-- <div v-if="tagTooltipOpen[index]" class="absolute w-[650px] p-2 h-fit bg-yellow-200 border border-black z-50">{{ form.activityTag[index] ? form.activityTag[index] : 'no tags set' }}</div> -->
+            <!-- <div v-if="form2?.errors?.['activityData.activityTo']" class="text-red-500">{{ form2?.errors?.['activityData.activityTo'] }}</div>
+            <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div> -->
         </div>
-
     </div>
 
     <!-- day overview box -->
@@ -283,8 +294,8 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 'toChild', 'fromChild', 'transferCreate']);
 
 const form = useForm({
-    activityTo: [],
-    activityReference: [],
+    activityTo: [''],
+    activityReference: [''],
     activityTag: {},
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
     fromController: {},
@@ -408,6 +419,8 @@ function activitybuttonBar(e, n) {
 
     if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
         activityTotalRow.value++;
+        form2.errors['activityData.activityTo.' + n] = '';
+        form2.errors['activityData.activityTo'] = '';
         form.activityTo[n] = '';
         form.activityReference[n] = '';
     }
@@ -647,7 +660,7 @@ function tagTooltipShow(index, data) {
 
 // send to parent: reference selection
 function fromChild(data) {
-    // console.log(data);
+    console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -655,7 +668,10 @@ function fromChild(data) {
         if (typeof activityDiagramColorTag.value[data.parentIndex] == 'undefined') activityDiagramColorTag.value[data.parentIndex] = ''};
     // console.log(activityDiagramColorTag.value);
 
+    console.log('ok');
+
     if (data.component == 'reference' && data.parentId == 4) {
+        console.log('ok');
         emit('fromChild', {'section':'activityData', 'subSection':'reference_parents', 'index': data.parentIndex, 'form': data.reference});
     }
 
@@ -664,6 +680,7 @@ function fromChild(data) {
     // }
 
     if (data.component == 'tag' && data.parentId == 4) {
+        console.log('ok');
         emit('fromChild', {'section':'activityData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
 }
@@ -737,5 +754,26 @@ function editTag(item) {
     // form.activityReference[index] = item[0]['title'];
     form.activityTag = item;
 }
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+// console.log(Object.keys(usePage()?.props.value?.errors).length);
+// console.log(Object.keys(form2['errors']).length);
+
+if (Object.keys(usePage()?.props.value?.errors).length) {
+
+        console.log('ok');
+        form2['errors'] = usePage().props.value.errors;
+}
+
+// else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+//         console.log('ok');
+//         form2['errors'] = '';
+//     }
+});
+
+
 
 </script>

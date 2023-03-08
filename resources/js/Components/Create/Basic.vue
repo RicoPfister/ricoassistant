@@ -6,14 +6,14 @@
         <!-- form date input -->
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
-            <input @change="basicTitleChecker" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.ref_date']}" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
-            <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.ref_date']" class="text-red-500">{{ form2?.basic_errors?.['basicData.ref_date'] }}</div>
+            <input :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.ref_date']}" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <div v-if="form2?.errors?.['basicData.ref_date']" class="text-red-500">{{ form2?.errors?.['basicData.ref_date'] }}</div>
         </div>
 
         <!-- form category selection -->
         <div class="flex flex-col w-36">
             <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
-            <select @change="basicTitleChecker" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="medium" v-model="form['basicMedium']">
+            <select :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
                 <option value="9">Evaluation</option>
@@ -26,7 +26,7 @@
                 <option value="2">Story</option>
                 <option value="1">Idle</option>
             </select>
-            <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.medium']" class="text-red-500">{{ form2?.basic_errors?.['basicData.medium'] }}</div>
+            <div v-if="form2?.errors?.['basicData.medium']" class="text-red-500">{{ form2?.errors?.['basicData.medium'] }}</div>
         </div>
 
         <!-- form title input -->
@@ -39,7 +39,7 @@
 
                 <!-- title input -->
                 <div class="flex flex-row">
-                    <input @input="basicTitleChecker()" :class="{'border-red-500 focus:border-red-500 border-4': form2?.basic_errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
+                    <input :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
                     <div class="form_public_background px-3 border-t border-r border-b border-black h-10 flex items-center">
                         <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.public">
                     </div>
@@ -47,7 +47,7 @@
                 <!-- warnings -->
                 <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[29px] right-10 pr-1 flex flex-row items-center">
                     <div class="text-xs text-gray-500"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-red-500': props.fromController.misc.parentId == 1 ? props.fromController[0].basicResult[0].warning == 2 : '', 'text-black': props.fromController.misc.parentId == 1 ? props.fromController[0].basicResult[0].warning == 2 : ''}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-red-500': usePage().props.value.flash.fromController.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : '', 'text-black': usePage().props.value.flash.fromController.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                     </svg>
                 </button>
@@ -59,9 +59,9 @@
 
                         <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
 
-                            <div class="text-sm"><b>{{props.fromController[0].basicResult[0].warning == 2 ? 'Duplicate entry found in database. Please change created at, category or title.' : 'Similar titles found in database:'}}</b></div>
+                            <div class="text-sm"><b>{{usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 ? 'Duplicate entry found in database. Please change created at, category or title.' : 'Similar titles found in database:'}}</b></div>
 
-                            <div v-for="(item, index) in props?.fromController?.[0]?.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
+                            <div v-for="(item, index) in usePage().props.value.flash.fromController?.[0]?.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
                                 <button>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-2">
@@ -71,15 +71,15 @@
 
                                 <!-- button title picker -->
                                 <div class="flex justify-between w-full">
-                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left" :class="{'text-red-500': props.fromController[0].basicResult[0].warning == 2, 'hover:text-red-800': props.fromController.misc.parentID == 1 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.title }}</div></button>
-                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.medium }}</div></button>
-                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': props.fromController.misc.parentID == 3 ? props.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.refDate }}</div></button>
+                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate grow text-left" :class="{'text-red-500': usePage().props.value.flash.fromController[0].basicResult[0].warning == 2, 'hover:text-red-800': usePage().props.value.flash.fromController.misc.parentID == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.title }}</div></button>
+                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': usePage().props.value.flash.fromController.misc.parentID == 3 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': usePage().props.value.flash.fromController.misc.parentID == 3 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.medium }}</div></button>
+                                    <button type="button" @click.prevent="" class="ml-1 text-gray-500 hover:text-black truncate" :class="{'text-red-500': usePage().props.value.flash.fromController.misc.parentID == 3 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : '', 'hover:text-red-800': usePage().props.value.flash.fromController.misc.parentID == 3 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" ><div class="truncate">{{ item.refDate }}</div></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-if="$page.rememberedState?.key1?.data?.test?.['basicData.medium']" class="text-red-500">{{ form2?.basic_errors?.['basicData.title'] }}</div>
+                <div v-if="form2?.errors?.['basicData.title']" class="text-red-500">{{ form2?.errors?.['basicData.title'] }}</div>
             </div>
         </div>
     </div>
@@ -100,38 +100,64 @@ let basicTitleWarning = ref(0);
 // let test123 = ref(usePage().props?.errors);
 // const test123 = computed(() => usePage().props.value.errors);
 
-
 const form = useForm({
     'basicMedium': '',
     'basicTitle': '',
     'basicRefDate': Date.dateNow(),
-    'public': false,
+    'basicPublic': false,
 });
 
 const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild']);
 let emit = defineEmits(['fromChild']);
 
+function emitRefDate() {
+    emit('fromChild', {'section':'basicData', 'subSection':'ref_date', 'form': form.basicRefDate});
+}
+
+function emitPublic() {
+    console.log('ok');
+    emit('fromChild', {'section':'basicData', 'subSection':'public', 'form': form.basicPublic});
+}
+
 // send input to Create.vue
-watch(() => form, (curr, prev) => {
+watch(() => form.basicRefDate, (curr, prev) => {
     // console.log(form);
     // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
     // console.log('ok');
-    emit('fromChild', {'section':'basicData', 'subSection':'ref_date', 'form': form.basicRefDate});
+    emitRefDate();
+});
+
+watch(() => form.basicMedium, (curr, prev) => {
+    // console.log(form);
+    // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
+    // console.log('ok');
     emit('fromChild', {'section':'basicData', 'subSection':'medium', 'form': form.basicMedium});
+});
+
+watch(() => form.basicTitle, (curr, prev) => {
+    // console.log(form);
+    // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
+    // console.log('ok');
     emit('fromChild', {'section':'basicData', 'subSection':'title', 'form': form.basicTitle});
-    emit('fromChild', {'section':'basicData', 'subSection':'public', 'form': form.public});
-}, {deep: true}, 500);
+});
+
+watch(() => form.basicPublic, (curr, prev) => {
+    // console.log(form);
+    // emit('fromChild', {'form': {'basicData': form, 'misc': {'parentId': 1}}});
+    // console.log('ok');
+    emitPublic();
+});
 
 // processing parent props
-watch(() => props.fromController, (curr, prev) => {
-    if (props.fromController?.misc?.parentId == 1) {
+watch(() => usePage().props.value.flash.fromController, (curr, prev) => {
+    if (usePage().props.value.flash.fromController?.misc?.parentId == 1) {
 
-        // console.log(props.fromController);
+        // console.log(usePage().props.value.flash.fromController);
         // cl(props.dataParent.basicTitleData[0].warning);
         // console.log(typeof props.dataParent.basicTitleData[0]);
-        if (props.fromController[0].basicResult[0].warning > 0) {
+        if (usePage().props.value.flash.fromController[0].basicResult[0].warning > 0) {
             basicTitleWarning.value = 1;
-            if (props.fromController[0].basicResult[0].warning == 2) basicTitelPickerOpen.value = 1;
+            if (usePage().props.value.flash.fromController[0].basicResult[0].warning == 2) basicTitelPickerOpen.value = 1;
         }
     }
 }, {deep: true}, 500);
@@ -175,33 +201,36 @@ watch(() => usePage().rememberedState?.value?.key1?.data?.test, (curr, prev) => 
 onMounted(() => {
     // console.log(props.dataParent);
 
-    form['basicMedium'] = props.toChild?.basicData?.medium;
-    form['basicTitle'] = props.toChild?.basicData?.title;
+    if (props.toChild?.basicData?.medium != undefined) form['basicMedium'] = props.toChild?.basicData?.medium;
+    if (props.toChild?.basicData?.title != undefined) form['basicTitle' ] = props.toChild?.basicData?.title;
+
     if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+
+    // send form date and public value to create
+    emitRefDate();
+    emitPublic();
 });
 
-// let testppp = ref(usePage().rememberedState);
-// let data2 = Inertia.restore('key1');
-// const data2 = computed(() => Inertia.restore('key1'));
+// validation error processing
 
-const form2 = useForm('key1', {'test': null})
-
-// const form3 = useForm('CreateUser', data)
+const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
 
-    // console.log(typeof usePage()?.props.value?.errors);
+    console.log(usePage().props.value.errors);
     // console.log(Object.keys(usePage()?.props.value?.errors).length);
+    // console.log(Object.keys(form2['errors']).length);
 
-    if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+    if (Object.keys(usePage()?.props.value?.errors).length) {
 
-
-        // console.log('ok');
-        // console.log(usePage().props.value.errors['basicData.medium']);
-        form2['basic_errors'] = usePage().props.value.errors;
-        // form123.validationErrors = usePage().props.value.errors;
-        // Inertia.remember(testabc, 'key1')
+            console.log('ok');
+            form2['errors'] = usePage().props.value.errors;
     }
+
+    // else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+    //         console.log('ok');
+    //         form2['errors'] = '';
+    //     }
 });
 
 </script>

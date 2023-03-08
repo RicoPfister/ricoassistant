@@ -1,6 +1,6 @@
 <template>
 
-    <Header :home="props.home" :toChild="{'tagQuickFilterBarOpen': 1}">
+    <Header :toChild="{'page_id': 'Home', 'tagQuickFilterBarOpen': 1, 'fromController': props.fromController}">
         <div class="flex flex-col h-full justify-center items-center xl:mt-0 xl:pb-10">
             <div class="h-16 w-full text-center justify-center flex items-center text-xl md:text-3xl text-white bg-red-400 rounded-3xl mb-3 xl:mb-5 flex-col md:flex-row">
                 <div class="whitespace-nowrap">This site is under construction -&nbsp;</div>
@@ -21,10 +21,10 @@
 <script setup>
 
     import { Inertia, Method } from "@inertiajs/inertia";
+    import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+
     import Header from "../Layouts/MainNav.vue";
 
-    if (!props?.home) Inertia.get('/home', {}, {replace: false,  preserveState: true, preserveScroll: true});
-
-    let props = defineProps(['home']);
+    let props = defineProps(['fromController']);
 
 </script>

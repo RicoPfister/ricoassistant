@@ -1,38 +1,51 @@
 <template>
 
-    <div class="flex flex-col h-full">
-        <div class="relative flex flex-row items-center h-full">
+    <div class="flex flex-col h-full min-h-0">
+        <div class="relative flex flex-row items-center h-full min-h-0">
 
-            <!-- select reference button -->
-            <button @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')" class="relative
-            w-[36px] flex h-full items-center
-            bg-gray-100 border-r border-gray-300 leading-none pl-1" type="button">
+            <div
+            :class="{'bg-red-200 border-r border-gray-400': props?.toChild?.warning}"
+            class="flex items-center h-full min-h-0 bg-gray-200 border-r border-gray-300"
+            >
+                <!-- select reference button -->
+                <button
 
-                <!-- item counter -->
-                <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all
-                items-center">0</div>
+                    @click.prevent="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'lastUsed')"
+                    class="relative w-[36px] h-8 min-h-0 flex items-center leading-none pl-1"
+                    type="button"
+                >
+                    <!-- item counter -->
+                    <div
+                        class="absolute text-[10px] top-0 right-0 pt-[0px] pr-[6px] flex justify-center w-2 break-all items-center h-full min-h-0">0
+                    </div>
 
-                <!-- tag icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                class="w-[18px] h-fit">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25
-                    2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                </svg>
-            </button>
+                    <!-- tag icon -->
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 min-h-0">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25
+                            2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
+                    </div>
+                </button>
+            </div>
 
-            <div class="grow">
+            <div class="h-full min-h-0 grow">
 
                 <!-- reference popup -->
                 <div class="absolute z-40 top-[31px] -left-[1px] w-[calc(100%+2px)]">
-                    <ReferencePopup v-if="form.referencePickerOpen.value == 1" :key="form.referencePickerOpen.value" :fromController="props.fromController" @fromChild="fromChild"/>
+                    <ReferencePopup v-if="form.referencePickerOpen.value == 1" :key="form.referencePickerOpen.value" :fromController="usePage().props.value.flash.fromController" @fromChild="fromChild"/>
                 </div>
 
                 <!-- reference input -->
-                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"  class="outline-0
-                focus:ring-0 focus:border-black
-                border-none focus:placeholder-transparent w-full bg-stone-50 pl-2 h-7 leading-none text-sm text-gray-500" ref="referenceDOM"
+                <input @input="referenceCheckerFunction(props.toChild.parentIndex, props.toChild.parentId, 'inputCheck')"
+                :class="{'bg-red-200': props?.toChild?.warning}"
+                class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent w-full flex items-center pl-2 h-full min-h-0
+                leading-none text-sm text-gray-500"
+                ref="referenceDOM"
                 type="text"
-                :placeholder="placeholderText" v-model="form.reference.value[0].title" :key="form.key.value">
+                :placeholder="placeholderText"
+                v-model="form.reference.value[0].title"
+                :key="form.key.value">
             </div>
         </div>
 
@@ -53,9 +66,10 @@ import ReferencePopup from "../ReferenceManager/ReferencePopup.vue"
 
 let referenceDOM = ref('');
 let placeholderText = ref("Insert existing title as reference");
+// let validationCheck = ref();
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'dataToParent', 'transfer', 'toParent', 'toChild',
-'fromChild', 'fromController', 'transferCreate']);
+'fromChild', 'fromController', 'transferCreate', 'warning']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'fromChild', 'toChild']);
 
 // let form = useForm({
@@ -74,23 +88,24 @@ let form = {
 // send to parent: statement input data
 function referenceCheckerFunction(index, id, check) {
 
-    console.log(form.referencePickerOpen.value);
+    // console.log('ok');
+
+    // console.log(form.referencePickerOpen.value);
 
     // if (form.referencePickerOpen.value != 1) {
         // console.log('ok');
 
         // check if reference popup ***selection*** has been fired and send request to controller
         if (check == 'lastUsed' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined')) {
-            console.log('ok');
-            Inertia.post('refcheck', { reference: check, row: index, parentId: id}, {replace: true,  preserveState: true, preserveScroll: true});
+            // console.log('ok');
+            Inertia.post('refcheck', { reference: check, row: index, parentId: id});
         }
 
         // check if reference form ***input*** has been and send request to controller
         else if (check == 'inputCheck' && form.reference.value[0].title.length > 2) {
-            console.log('ok');
+            // console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference.value[0].title, row: index, parentId: id}, {replace: false,
-                preserveState: true, preserveScroll: true});
+                Inertia.post('refcheck', { reference: form.reference.value[0].title, row: index, parentId: id});
             }, 500);
         }
 
@@ -100,8 +115,6 @@ function referenceCheckerFunction(index, id, check) {
             form.referencePickerOpen.value = 0;
         }
     // }
-
-
 
     if (typeof form?.reference.value[0]?.title != 'undefined') {
         emit('fromChild', {'reference': '', 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex,
@@ -116,6 +129,7 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
+    console.log('ok');
     // console.log(data.referenceData);
     // form.reference.value = [];
     // console.log(form.reference.value);
@@ -145,16 +159,25 @@ watch(() => props.transferCreate, (curr, prev) => {
     }
 }, {deep: true}, 500);
 
-watch(() => props.fromController, (curr, prev) => {
+// watch(() => usePage().props.value.fromController, (curr, prev) => {
 
+
+
+// });
+
+watch(() => usePage().props.value.fromController, (curr, prev) => {
+
+    // console.log('ok');
     // console.log(props.fromController);
     // console.log(props.toChild);
 
-    if(props.fromController.misc?.parentId == props.toChild?.parentId && props.fromController?.misc.row == props.toChild?.parentIndex) {
+    // console.log(usePage().props.value.flash.fromController.misc.row);
+
+    if(usePage().props.value.flash.fromController?.misc?.parentId == props.toChild?.parentId && usePage().props.value.flash.fromController?.misc.row == props.toChild?.parentIndex) {
         form.referencePickerOpen.value = 1;
     }
 
-});
+}, {deep: true}, 500);
 
 // listen to reference controller data and save data to form
 // watch(() => props.fromController, (curr, prev) => {

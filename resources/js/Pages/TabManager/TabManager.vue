@@ -1,5 +1,5 @@
 <template>
-<Header>
+<Header :toChild="{'page_id': 'TabManager/TabManager', 'tagQuickFilterBarOpen': 1, 'fromController': props?.fromController, 'check': props?.detail}">
 
 <div class="flex flex-row w-full gap-32 justify-center">
 
@@ -125,7 +125,7 @@ import List from "../List.vue";
 import NewTab from "./NewTab.vue"
 import Detail from "../Detail.vue"
 
-const props = defineProps(['filter', 'detail']);
+const props = defineProps(['filter', 'detail', 'fromController']);
 
 let data1 = 123;
 let data2 = "";
@@ -152,6 +152,8 @@ watch(() => props.detail, _.debounce( (curr, prev) => {
     // if (tabs.value[1].length != 0) {
     //     componentSet.value[1].push(2);
     // }
+
+    // console.log(props.detail);
 
     componentSet.value[1].push(2);
 

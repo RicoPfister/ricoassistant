@@ -154,8 +154,8 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'sourceData.filelist.*.type' => [
+            'filled' => 'File has no extension.',
         ],
     ],
 

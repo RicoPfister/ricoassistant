@@ -1,6 +1,6 @@
 
 <template>
-<Header>
+<Header :toChild="{'page_id': 'Create', 'tagQuickFilterBarOpen': 1, 'fromController': props.fromController}">
 
 <!-- form container -->
 <form aria-label="New Entry Container" class="absolute mb-10">
@@ -58,6 +58,21 @@ let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'da
 // -------------------------
 
 let form = ref({});
+
+// save validation errors
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+
+    form2['errors'] = usePage().props.value.errors;
+}
+});
+
+// console.log(form.value);
+
 let editCheck = ref('');
 
 let dataParent = ref({});
@@ -71,6 +86,7 @@ let activityTimeTotal = 0;
 let activityTimeHourString = 0;
 let activityTimeHourMinute = 0;
 let activityTime = 0;
+// let validationCheck = 0;
 
 let testabc = ref('');
 // let validationErrors = ref();
@@ -144,19 +160,48 @@ function dataChild(data) {
     //------------------------------------------------
     if (data.submit == 1) {
 
+        // console.log(data);
+
         // convert activity timeTo to minutes
         if (form.value.activityData?.activityTo) {
             form.value.activityData.activityTime = [];
 
-            console.log(form.value.activityData.activityTo);
+            // console.log(form.value.activityData.activityTo);
 
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
         };
 
         // console.log(form.value);
         // console.log('ok');
-        Inertia.post('/store/', form.value);
-        // console.log('ok');
+        // Inertia.post('/store', form.value);
+
+        // Validation.validation('basic', data);
+
+        // console.log(Validation.validation('basic', data, form.value));
+        // let validation_response = Validation.validation('basic', data, form.value);
+
+        // console.log(validation_response);
+
+            // send form to server
+            Inertia.visit('store', {
+            method: 'post',
+            data: form.value,
+            replace: false,
+            preserveState: true,
+            preserveScroll: true,
+            only: [],
+            headers: {},
+            errorBag: null,
+            forceFormData: false,
+            onCancelToken: cancelToken => {},
+            onCancel: () => {},
+            onBefore: visit => {},
+            onStart: visit => {},
+            onProgress: progress => {},
+            onSuccess: page => {},
+            onError: errors => {},
+            onFinish: visit => {},
+            })
     };
 
     if (data.update == 1) {
@@ -226,11 +271,12 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
-    if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public' || data.subSection == 'medium') {
+    if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
+     || data.subSection == 'medium') {
 
         // console.log(data);
 
@@ -241,7 +287,6 @@ function fromChild(data) {
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
             // console.log(form.value[data.section][data.subSection][data.index]);
-
         }
 
         // else if (data.form == '') {
@@ -263,7 +308,7 @@ function fromChild(data) {
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        console.log(data);
+        // console.log(data);
 
             // console.log(form.value[data.section][data.subSection]);
 
@@ -282,13 +327,51 @@ function fromChild(data) {
         // }
     }
 
-    transferCreate.value['title'] = form.value.basicData.title;
+    // auto basic title set
+    transferCreate.value['title'] = form.value?.basicData?.title;
+
+    // recheck validation
+    if (data.index == undefined) {
+
+        console.log('ok');
+
+        if (data.subSection == 'activityTo') {
+            // console.log('ok');
+            data.form.forEach((item, index) => {
+                // console.log(index);
+                if (item > 0) delete form2.errors[data.section + '.' + data.subSection + '.' + index];
+            });
+        }
+
+        else if (data.subSection == 'filelist') {
+            console.log('ok');
+            // data.form.forEach((item, index) => {
+            //     console.log(index);
+            //     if (item.type != undefined) delete form2.errors[data.section + '.' + data.subSection + '.' + index + '.type'];
+            // });
+            delete form2.errors[data.section + '.' + data.subSection + '.' + data.index_change + '.type']
+        }
+
+        else {
+            delete form2.errors[data.section + '.' + data.subSection]
+        }
+
+    }
+
+    else {
+
+        console.log('ok');
+        delete form2.errors[data.section + '.' + data.subSection];
+        delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
+    };
 }
 
 onMounted(() => {
 //    console.log(props.edit);
 
    if (props?.edit) {
+
+        console.log('ok');
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);
@@ -307,6 +390,23 @@ onMounted(() => {
 //     validationErrors: null,
 // })
 
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+console.log(usePage().props.value.errors);
+// console.log(Object.keys(usePage()?.props.value?.errors).length);
+// console.log(Object.keys(form2['errors']).length);
+
+if (Object.keys(usePage()?.props.value?.errors).length) {
+
+        console.log('ok');
+        form2['errors'] = usePage().props.value.errors;
+}
+
+// else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+//         console.log('ok');
+//         form2['errors'] = '';
+//     }
+});
 
 
 </script>

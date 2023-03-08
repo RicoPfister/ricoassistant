@@ -6,9 +6,9 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities'; */
 
-body {
+html {
     overflow: scroll; /* Show scrollbars */
-  }
+}
 
 @font-face {
     font-family: Michroma-Regular;

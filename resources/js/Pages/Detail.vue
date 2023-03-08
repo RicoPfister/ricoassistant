@@ -3,16 +3,16 @@
 <!-- title -->
 <div class="flex flex-col mb-3">
     <div class="flex flex-row justify-between">
-        <h1 class="text-2xl border-b border-black grow flex justify-center">{{ detailData.basicData?.title }}</h1>
+        <h1 class="text-2xl border-b border-black grow flex justify-center">{{ detailData?.basicData?.title }}</h1>
         <div class="w-6 border-b border-black "></div>
     </div>
     <div class="flex flex-row justify-between text-gray-400 text-sm">
         <div class="flex justify-center flex-row grow">
-            <div class="">{{ detailData.basicData?.medium_name }}</div>
+            <div class="">{{ detailData?.basicData?.medium_name }}</div>
             <div>&nbsp;|&nbsp;</div>
-            <div class="">{{ detailData.basicData?.ref_date }}</div>
+            <div class="">{{ detailData?.basicData?.ref_date }}</div>
             <div>&nbsp;| By:&nbsp;</div>
-            <div class="">{{ detailData.basicData?.user_name }}</div>
+            <div class="">{{ detailData?.basicData?.user_name }}</div>
         </div>
 
         <button @click.prevent="edit" type="button" class="w-6 flex justify-end">
