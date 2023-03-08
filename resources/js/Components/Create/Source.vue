@@ -18,7 +18,7 @@
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row">
                     <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
+                    <label :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
                     <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
                 </div>
 
@@ -45,7 +45,7 @@
 
                     <div class="py-1">
                         <div  v-for="(item, index) in InputData" :class="{'border-b border-gray-300': index != InputData.length-1}" class="flex flex-col w-full">
-                            <div v-if="typeof item != 'undefined'" :class="{'border border-red-500 bg-red-200': form2?.errors?.['sourceData.filelist.'+ index +'.type']}" class="flex justify-between w-full">
+                            <div v-if="typeof item != 'undefined'" :class="{'border-4 border-red-500 bg-red-200': form2?.errors?.['sourceData.filelist.'+ index +'.type']}" class="flex justify-between w-full">
 
                                 <!-- index/file name -->
                                 <div class="truncate grow"><span class="bg-black text-white px-1 font-bold">{{ item.key }}</span> {{ item.filename }}</div>
@@ -334,7 +334,7 @@ function deleteFile(data) {
         // console.log(tag_db_data.value);
         // emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'index': data, 'form': ''});
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist', 'index': data, 'form': ''});
-        emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value, 'index_change': data});
+        emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value, 'change': data});
     }
 }
 

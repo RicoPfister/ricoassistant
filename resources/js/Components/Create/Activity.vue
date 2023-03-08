@@ -22,9 +22,15 @@
                 <div class="flex flex-row lg:h-8 w-[722px]">
                     <!-- input time -->
                     <input
-                    :class="{'border-red-500 bg-red-200 focus:border-red-500 border': form2?.errors?.['activityData.activityTo'] || form2?.errors?.['activityData.activityTo.' + index]}"
-                    class="w-[41px] lg:w-[61px] text-sm lg:text-base text-center placeholder:text-black focus:placeholder-white leading-none outline-0 focus:ring-0 focus:border-black focus:placeholder-transparent"
-                    :id="'activityToRowNumber'+[n-1]" maxlength="4" @keypress="onlyNumbers($event)" pattern="^[0-9]{4}$" type="text" placeholder="To"
+                    :class="{'border-red-500 bg-red-200 focus:border-red-500 border-4': form2?.errors?.['activityData.activityTo'] || form2?.errors?.['activityData.activityTo.' + index]}"
+                    class="w-[41px] lg:w-[61px] text-sm lg:text-base text-center placeholder:text-black focus:placeholder-white leading-none
+                    outline-0 focus:ring-0 focus:border-black focus:placeholder-transparent pointer-events-none"
+                    :id="'activityToRowNumber'+[n-1]"
+                    maxlength="4"
+                    @keypress="onlyNumbers($event)"
+                    pattern="^[0-9]{4}$"
+                    type="text"
+                    placeholder="To"
                     v-model="form.activityTo[n-1]"
                 >
 
@@ -90,7 +96,7 @@
 
                     <!-- reference box -->
                     <div
-                    :class="{'border-red-500 focus:border-red-500 border': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
+                    :class="{'border-red-500 focus:border-red-500 border-4': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
                         class="w-full h-8 min-w-0 text-sm lg:text-lg border border-black flex flex-row"
                     >
 
@@ -411,7 +417,7 @@ function activitybuttonBar(e, n) {
             if (form.activityTo[n-1] >= 2400) {
 
             form.activityTo[n-1] = 2400; activiteTolimitReached.value = 1;
-}
+            }
         };
     }
 
@@ -432,6 +438,8 @@ function activitybuttonBar(e, n) {
         form.activityReference.splice(-1)
         activiteTolimitReached.value = 0;
     }
+
+    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'change': n, 'form': form.activityTo});
 }
 
 // only number keys allowed
@@ -528,10 +536,14 @@ function activityRowDelete(n) {
         form.activityTo.splice(n-1, 1);
         form.activityReference.splice(n-1, 1);
         activityTotalRow.value--;
-    } else {
+    }
+
+    else {
         form.activityTo.splice(0, 1, '');
         form.activityReference.splice(0, 1, '');
     }
+
+    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'delete': n, 'form': form.activityTo});
 }
 
 // duplicate row
@@ -611,7 +623,6 @@ watch(() => form.activityTo, (curr, prev) => {
         };
     }
 
-    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
 }, {deep: true}, 500);
 
 function tagPopupOpenActive(data) {
@@ -660,7 +671,7 @@ function tagTooltipShow(index, data) {
 
 // send to parent: reference selection
 function fromChild(data) {
-    console.log(data);
+    // console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -668,10 +679,10 @@ function fromChild(data) {
         if (typeof activityDiagramColorTag.value[data.parentIndex] == 'undefined') activityDiagramColorTag.value[data.parentIndex] = ''};
     // console.log(activityDiagramColorTag.value);
 
-    console.log('ok');
+    // console.log('ok');
 
     if (data.component == 'reference' && data.parentId == 4) {
-        console.log('ok');
+        // console.log('ok');
         emit('fromChild', {'section':'activityData', 'subSection':'reference_parents', 'index': data.parentIndex, 'form': data.reference});
     }
 
@@ -764,7 +775,7 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        console.log('ok');
+        // console.log('ok');
         form2['errors'] = usePage().props.value.errors;
 }
 
@@ -773,7 +784,5 @@ if (Object.keys(usePage()?.props.value?.errors).length) {
 //         form2['errors'] = '';
 //     }
 });
-
-
 
 </script>

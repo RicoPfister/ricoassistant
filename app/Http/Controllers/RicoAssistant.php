@@ -834,7 +834,7 @@ class RicoAssistant extends Controller {
         $validation_collection = [
             'basicData.ref_date' => 'required|filled',
             'basicData.medium' => 'required|filled',
-            'basicData.title' => 'required|filled',
+            'basicData.title' => 'required|min:3',
         ];
 
         if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
@@ -842,19 +842,19 @@ class RicoAssistant extends Controller {
         if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
         if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
         // if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'between:0,2400';
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'required|filled';
+        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
         // dd(count($request->activityData['activityTo']));
 
         if (isset($request->activityData['activityTo'])) {
-            if (array_search(5, $request->componentCollection)) {
-                for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
-                    $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
-                }
-            };
+            for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
+                $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
+            }
+
+            $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
+            $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
         }
 
         // dd($validation_collection);
@@ -2619,40 +2619,35 @@ class RicoAssistant extends Controller {
         return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => $user_entries]]);
     }
 
-    public function validation(Request $request) {
+    // public function validation(Request $request) {
 
-        // dd($request);
+    //     $validation_collection = [
+    //         'basicData.ref_date' => 'required|filled',
+    //         'basicData.medium' => 'required|filled',
+    //         'basicData.title' => 'required|filled',
+    //     ];
 
-        $validation_collection = [
-            'basicData.ref_date' => 'required|filled',
-            'basicData.medium' => 'required|filled',
-            'basicData.title' => 'required|filled',
-        ];
+    //     if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
 
-        if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
+    //     if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
+    //     if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
+    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
+    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'required|filled';
 
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
-        // if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'between:0,2400';
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'required|filled';
 
-        // dd(count($request->activityData['activityTo']));
 
-        if (isset($request->activityData['activityTo'])) {
-            if (array_search(5, $request->componentCollection)) {
-                for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
-                    $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
-                }
-            };
-        }
+    //     if (isset($request->activityData['activityTo'])) {
+    //         if (array_search(5, $request->componentCollection)) {
+    //             for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
+    //                 $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
+    //             }
+    //         };
+    //     }
 
-        // dd($validation_collection);
+    //     $validated = $request->validate($validation_collection);
 
-        $validated = $request->validate($validation_collection);
-
-        return to_route('test123');
-    }
+    //     return to_route('test123');
+    // }
 }

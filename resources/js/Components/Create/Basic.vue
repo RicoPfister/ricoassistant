@@ -6,14 +6,14 @@
         <!-- form date input -->
         <div class="flex flex-col">
             <label class="font-bold" aria-label="Referenced Date Input" for="acc_date">Created at:</label>
-            <input :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.ref_date']}" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
+            <input :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['basicData.ref_date']}" class="w-[141px] border border-black outline-0 focus:border-black focus:ring-0 h-10 leading-none" id="acc_date" placeholder="Search" type="date" v-model="form['basicRefDate']">
             <div v-if="form2?.errors?.['basicData.ref_date']" class="text-red-500">{{ form2?.errors?.['basicData.ref_date'] }}</div>
         </div>
 
         <!-- form category selection -->
         <div class="flex flex-col w-36">
             <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
-            <select :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10" id="medium" v-model="form['basicMedium']">
+            <select :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
                 <option value="9">Evaluation</option>
@@ -39,7 +39,7 @@
 
                 <!-- title input -->
                 <div class="flex flex-row">
-                    <input :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
+                    <input :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
                     <div class="form_public_background px-3 border-t border-r border-b border-black h-10 flex items-center">
                         <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.public">
                     </div>
@@ -115,7 +115,7 @@ function emitRefDate() {
 }
 
 function emitPublic() {
-    console.log('ok');
+    // console.log('ok');
     emit('fromChild', {'section':'basicData', 'subSection':'public', 'form': form.basicPublic});
 }
 
@@ -217,13 +217,13 @@ const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
 
-    console.log(usePage().props.value.errors);
+    // console.log(usePage().props.value.errors);
     // console.log(Object.keys(usePage()?.props.value?.errors).length);
     // console.log(Object.keys(form2['errors']).length);
 
     if (Object.keys(usePage()?.props.value?.errors).length) {
 
-            console.log('ok');
+            // console.log('ok');
             form2['errors'] = usePage().props.value.errors;
     }
 

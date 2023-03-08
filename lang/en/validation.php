@@ -97,7 +97,7 @@ return [
         'array' => 'The :attribute must have at least :min items.',
         'file' => 'The :attribute must be at least :min kilobytes.',
         'numeric' => 'The :attribute must be at least :min.',
-        'string' => 'The :attribute must be at least :min characters.',
+        'string' => 'At least :min characters required.',
     ],
     'min_digits' => 'The :attribute must have at least :min digits.',
     'multiple_of' => 'The :attribute must be a multiple of :value.',
@@ -141,6 +141,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute must be a valid URL.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    // 'in:2400' => 'Must be 2400',
 
     /*
     |--------------------------------------------------------------------------
@@ -154,8 +155,17 @@ return [
     */
 
     'custom' => [
+        'basicData.title' => [
+            'required' => 'At least 3 characters required.',
+        ],
         'sourceData.filelist.*.type' => [
             'filled' => 'File has no extension.',
+        ],
+        'activityData.activityTo.*' => [
+            'filled' => 'Required.',
+        ],
+        'activityData.activityTo.*' => [
+            'in' => 'Required. End time must be 2400.',
         ],
     ],
 

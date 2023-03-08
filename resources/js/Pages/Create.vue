@@ -128,7 +128,7 @@ function activityTimeConvert(item, index) {
 
 // process received child data
 function dataChild(data) {
-    // console.log('ok');
+    // console.log(data);
 
     // scroll to top
     if (data.scrollToTop) {
@@ -136,7 +136,7 @@ function dataChild(data) {
     };
 
     // add form data to form collection
-//obsolete. clear and remove.
+    //obsolete. clear and remove.
     if (data.formData) {
 
         form.value = {...form.value, ...data.formData}
@@ -276,13 +276,16 @@ function fromChild(data) {
 
     // if data not undefined and public false-true
     if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
-     || data.subSection == 'medium') {
-
-        // console.log(data);
+    || data.subSection == 'medium' || data.subSection == 'title') {
 
         if (!form.value[data.section]) form.value[data.section] = {};
+
         if (typeof data.index !== 'undefined') {
+
+            // console.log('ok');
+
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+
             form.value[data.section][data.subSection][data.index]  = {};
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
@@ -333,14 +336,31 @@ function fromChild(data) {
     // recheck validation
     if (data.index == undefined) {
 
-        console.log('ok');
+        // console.log('ok');
 
         if (data.subSection == 'activityTo') {
-            // console.log('ok');
-            data.form.forEach((item, index) => {
-                // console.log(index);
-                if (item > 0) delete form2.errors[data.section + '.' + data.subSection + '.' + index];
-            });
+
+            if (data.delete) {
+                // console.log(parseInt(data.delete)-1);
+                let $delete_index = parseInt(data.delete)-1;
+                // console.log(form2.errors['activityData.activityTo.'+ data.delete-1]);
+                console.log(form2.errors);
+                delete form2.errors['activityData.activityTo.' + $delete_index];
+                console.log(form2.errors);
+                delete form2.errors['activityData.reference_parents.' + $delete_index];
+            }
+
+            else {
+
+                // console.log('ok');
+
+                data.form.forEach((item, index) => {
+                    if (item > 0) {
+                        delete form2.errors[data.section + '.' + data.subSection]
+                        delete form2.errors[data.section + '.' + data.subSection + '.' + index]
+                    };
+                });
+            }
         }
 
         else if (data.subSection == 'filelist') {
@@ -349,21 +369,20 @@ function fromChild(data) {
             //     console.log(index);
             //     if (item.type != undefined) delete form2.errors[data.section + '.' + data.subSection + '.' + index + '.type'];
             // });
-            delete form2.errors[data.section + '.' + data.subSection + '.' + data.index_change + '.type']
+            delete form2.errors[data.section + '.' + data.subSection]
+            delete form2.errors[data.section + '.' + data.subSection + '.' + data.change + '.type']
         }
 
         else {
-            delete form2.errors[data.section + '.' + data.subSection]
+            delete form2.errors[data.section + '.' + data.subSection];
         }
-
     }
 
     else {
-
-        console.log('ok');
-        delete form2.errors[data.section + '.' + data.subSection];
-        delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
-    };
+            // console.log('ok');
+            delete form2.errors[data.section + '.' + data.subSection];
+            delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
+    }
 }
 
 onMounted(() => {
@@ -390,23 +409,21 @@ onMounted(() => {
 //     validationErrors: null,
 // })
 
-watch(() => usePage().props.value.errors, (curr, prev) => {
+// watch(() => usePage().props.value.errors, (curr, prev) => {
 
-console.log(usePage().props.value.errors);
-// console.log(Object.keys(usePage()?.props.value?.errors).length);
-// console.log(Object.keys(form2['errors']).length);
 
-if (Object.keys(usePage()?.props.value?.errors).length) {
+// if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        console.log('ok');
-        form2['errors'] = usePage().props.value.errors;
-}
+//         form2['errors'] = usePage().props.value.errors;
+// }
 
-// else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
-//         console.log('ok');
-//         form2['errors'] = '';
-//     }
-});
+// });
+
+// watch(() => form?.value?.activityData?.activityTo, (curr, prev) => {
+
+//     console.log('ok');
+//     delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
+// }, {deep: true});
 
 
 </script>

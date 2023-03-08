@@ -5,7 +5,7 @@
     <div class="flex flex-row justify-between items-center" type="button">
         <MenuEntry @data-child="dataChildMenuEntry"/>
     </div>
-    <textarea @input="InputData" :class="{'border-red-500 focus:border-red-500 border bg-red-200': form2?.errors?.['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+    <textarea @input="InputData" :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
     <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
 </div>
 
