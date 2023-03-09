@@ -271,12 +271,12 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
     if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
-    || data.subSection == 'medium' || data.subSection == 'title') {
+    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date') {
 
         if (!form.value[data.section]) form.value[data.section] = {};
 
@@ -390,7 +390,7 @@ onMounted(() => {
 
    if (props?.edit) {
 
-        console.log('ok');
+        // console.log('ok');
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);

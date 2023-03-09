@@ -131,7 +131,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 2)
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -140,7 +140,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 2)
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -153,7 +153,7 @@ class RicoAssistant extends Controller {
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -162,7 +162,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 5)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -175,7 +175,7 @@ class RicoAssistant extends Controller {
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -184,7 +184,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 8)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -204,7 +204,7 @@ class RicoAssistant extends Controller {
                     })
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -218,7 +218,7 @@ class RicoAssistant extends Controller {
                     })
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -250,7 +250,7 @@ class RicoAssistant extends Controller {
                     })
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -275,7 +275,7 @@ class RicoAssistant extends Controller {
                     })
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
         }
@@ -285,7 +285,7 @@ class RicoAssistant extends Controller {
             ->where('user_id', '=', $user->id)
             ->select('id', 'medium', 'title', 'ref_date', 'view_count')
             ->latest('updated_at')
-            ->paginate(20);
+            ->paginate(20)->withQueryString();;
         }
 
         else if (isset($request->searchData)) {
@@ -297,7 +297,7 @@ class RicoAssistant extends Controller {
                 ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
-                ->paginate(20);
+                ->paginate(20)->withQueryString();;
             }
 
             else {
@@ -306,7 +306,7 @@ class RicoAssistant extends Controller {
                 ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
-                ->paginate(20);
+                ->paginate(20)->withQueryString();;
             }
 
 
@@ -322,7 +322,7 @@ class RicoAssistant extends Controller {
             ->select('id', 'content')
             ->where('content', 'LIKE', '%' . $request->searchData . '%')
             ->orderByDesc('content')
-            ->paginate(20);
+            ->paginate(20)->withQueryString();;
 
             if (count($db_tag_data) > 0) {
                 $tag_0 = $db_basic_data;
@@ -2187,7 +2187,7 @@ class RicoAssistant extends Controller {
             if (count($basicTitleResultCheck)) {
 
                 foreach ($basicTitleResultCheck as $i => $id) {
-                    if ($id->ref_date == $request->basicRefDate && $id->medium == $request->basicMedium && $id->title == $request->basicTitle) {
+                    if ($id->ref_date == $request->basicRefDate && $id->medium == $request->basicMedium && $id->title == $request->basicTitle && $id->id != $request->id) {
                         // dd('ok');
                         $basicResult['basicResult'][0]['title'] = $id->title;
                         $basicResult['basicResult'][0]['refDate'] = $id->ref_date;
@@ -2618,36 +2618,4 @@ class RicoAssistant extends Controller {
 
         return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => $user_entries]]);
     }
-
-    // public function validation(Request $request) {
-
-    //     $validation_collection = [
-    //         'basicData.ref_date' => 'required|filled',
-    //         'basicData.medium' => 'required|filled',
-    //         'basicData.title' => 'required|filled',
-    //     ];
-
-    //     if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
-
-    //     if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
-    //     if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
-
-    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
-    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
-    //     if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'required|filled';
-
-
-
-    //     if (isset($request->activityData['activityTo'])) {
-    //         if (array_search(5, $request->componentCollection)) {
-    //             for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
-    //                 $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
-    //             }
-    //         };
-    //     }
-
-    //     $validated = $request->validate($validation_collection);
-
-    //     return to_route('test123');
-    // }
 }

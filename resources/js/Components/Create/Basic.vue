@@ -97,6 +97,9 @@ import * as Date from "../../Scripts/date.js"
 
 let basicTitelPickerOpen = ref(0);
 let basicTitleWarning = ref(0);
+let title_check = 0;
+let formPublic = 0;
+
 // let test123 = ref(usePage().props?.errors);
 // const test123 = computed(() => usePage().props.value.errors);
 
@@ -169,7 +172,8 @@ function basicTitleChecker() {
 
     if (form?.basicTitle?.length > 2) {
         setTimeout(() => {
-            Inertia.get('/create/titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1},
+            console.log(form);
+            Inertia.get('/create/titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1, id: props?.toChild?.basicData?.id},
             {replace: false, preserveState: true, preserveScroll: true});
         }, 500);
     };
@@ -178,12 +182,15 @@ function basicTitleChecker() {
 // listen if medium/title is auto set
 watch(() => props.toChild, (curr, prev) => {
 
+    // console.log('ok');
+
     if (props?.toChild?.activityData && (form['basicTitle'] == undefined || form['basicTitle'] == '') && (form['basicMedium'] == undefined || form['basicMedium'] == '')) {
         form['basicTitle'] = 'Activity ' +  Date.dateNow();
-        form['basicMedium'] = 2;
+        form['basicMedium'] = 4;
+        // form['titleCheckActive'] = 0;
     }
 
-}, {deep: true}, 500);
+}, {deep: true});
 
 
 
@@ -194,22 +201,54 @@ watch(() => props.toChild, (curr, prev) => {
 //     }
 // }, {deep: true}, 500);
 
-watch(() => usePage().rememberedState?.value?.key1?.data?.test, (curr, prev) => {
-    console.log('ok');
-}, {deep: true}, 500);
+// watch(() => usePage().rememberedState?.value?.key1?.data?.test, (curr, prev) => {
+//     console.log('ok');
+// }, {deep: true}, 500);
+
+// send title check
+
 
 onMounted(() => {
     // console.log(props.dataParent);
 
-    if (props.toChild?.basicData?.medium != undefined) form['basicMedium'] = props.toChild?.basicData?.medium;
-    if (props.toChild?.basicData?.title != undefined) form['basicTitle' ] = props.toChild?.basicData?.title;
+        if (props.toChild?.basicData?.medium != undefined & props.toChild?.basicData?.title != undefined) {
 
-    if (props.toChild?.basicData?.ref_date) form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+        console.log('ok');
+
+        if (props.toChild?.basicData?.restriction == 0) formPublic = 1;
+        else formPublic = 0;
+
+        form['basicMedium'] = props.toChild?.basicData?.medium;
+        form['basicTitle'] = props.toChild?.basicData?.title;
+        form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+        form['basicPublic'] = formPublic;
+
+    } else {
+
+        // console.log('ok');
+        title_check = 2;
+    };
+
+    // if (props.toChild?.basicData?.ref_date) {
+
+    //     form['basicRefDate'] = props.toChild?.basicData?.ref_date;
+    // }
 
     // send form date and public value to create
+
     emitRefDate();
     emitPublic();
 });
+
+watch(() => form, (curr, prev) => {
+    // console.log(curr.basicTitle == prev.basicTitle);
+
+    console.log(title_check);
+    if (form?.basicRefDate && form?.basicMedium && form?.basicTitle && title_check > 1) basicTitleChecker();
+    else title_check++;
+    // console.log(title_check);
+
+}, {deep: true});
 
 // validation error processing
 
