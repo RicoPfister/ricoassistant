@@ -41,7 +41,7 @@
                 <div class="flex flex-row">
                     <input :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['basicData.title']}" class="border border-black focus:placeholder-white first-letter:outline-0 focus:border-black focus:ring-0 leading-none h-10 grow" id="title" type="text" v-model="form['basicTitle']">
                     <div class="form_public_background px-3 border-t border-r border-b border-black h-10 flex items-center">
-                        <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.public">
+                        <input class="outline-0 focus:border-black focus:ring-0 bg-white" type="checkbox" v-model="form.basicPublic">
                     </div>
                 </div>
                 <!-- warnings -->
@@ -110,7 +110,7 @@ const form = useForm({
     'basicPublic': false,
 });
 
-const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild']);
+const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromController2']);
 let emit = defineEmits(['fromChild']);
 
 function emitRefDate() {
@@ -172,7 +172,7 @@ function basicTitleChecker() {
 
     if (form?.basicTitle?.length > 2) {
         setTimeout(() => {
-            console.log(form);
+            // console.log(form);
             Inertia.get('/create/titlecheck', {basicRefDate: form.basicRefDate, basicTitle: form.basicTitle, basicMedium: form.basicMedium, parentId:1, id: props?.toChild?.basicData?.id},
             {replace: false, preserveState: true, preserveScroll: true});
         }, 500);
@@ -213,10 +213,10 @@ onMounted(() => {
 
         if (props.toChild?.basicData?.medium != undefined & props.toChild?.basicData?.title != undefined) {
 
-        console.log('ok');
+        console.log(props.toChild?.basicData?.restriction);
 
-        if (props.toChild?.basicData?.restriction == 0) formPublic = 1;
-        else formPublic = 0;
+        if (props.toChild?.basicData?.restriction == 0) formPublic = true;
+        else formPublic = false;
 
         form['basicMedium'] = props.toChild?.basicData?.medium;
         form['basicTitle'] = props.toChild?.basicData?.title;
@@ -243,7 +243,7 @@ onMounted(() => {
 watch(() => form, (curr, prev) => {
     // console.log(curr.basicTitle == prev.basicTitle);
 
-    console.log(title_check);
+    // console.log(title_check);
     if (form?.basicRefDate && form?.basicMedium && form?.basicTitle && title_check > 1) basicTitleChecker();
     else title_check++;
     // console.log(title_check);

@@ -872,6 +872,8 @@ class RicoAssistant extends Controller {
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
 
+            $user = Auth::user();
+
             // dd($request->$db_name['tag']);
 
             // check if there are any client tag update
@@ -914,6 +916,7 @@ class RicoAssistant extends Controller {
                     }
 
                     $tag_group = new Tag();
+                    $tag_group->user_id = $user->id;
                     $tag_group->basic_id = $basics->id;
                     $tag_group->section = $db_section_id;
                     $tag_group->section_id = $id2;
@@ -1055,8 +1058,6 @@ class RicoAssistant extends Controller {
                     }
                 }
             };
-
-
         }
 
         // create source
@@ -2211,8 +2212,21 @@ class RicoAssistant extends Controller {
 
     public function tag(Request $request) {
 
+        $user = Auth::user();
+
+        $tags_collection_all = DB::table('tags')
+        ->where('user_id', '=', $user->id)
+        ->pluck('tag_0_id');
+
+        // dd($tags_collection_all);
+
+        // foreach ($tags_collection_all as $key2 => $value2) {
+
+        // }
+
         // select all unique categories
         $tag_category_distinct_id = DB::table('tag_0s')
+        ->whereIn('id', $tags_collection_all)
         ->select('id', 'content')
         ->get();
 
@@ -2229,6 +2243,7 @@ class RicoAssistant extends Controller {
 
             // step 2.1: collection db ids from a single category
             $tag_category_id = DB::table('tags')
+            ->where('user_id', '=', $user->id)
             ->where('tag_0_id', '=', $tag_single_category->id)
             ->select('tag_1_id')
             ->distinct()
@@ -2281,7 +2296,7 @@ class RicoAssistant extends Controller {
         $tag_preset_group = DB::table('tag_presets')
         ->where('restriction', '<', 2)
         ->get()
-        ->groupBy('tag_group');
+        ->groupBy('group_id');
 
         // dd($tag_preset_group);
 
@@ -2290,43 +2305,50 @@ class RicoAssistant extends Controller {
         $presetId = 0;
 
         foreach ($tag_preset_group as $key => $value) {
+
             // dd($key, $value);
 
             $tag_preset_name = DB::table('index_tag_presets')
+            ->where('user_id', '=', $user->id)
             ->where('id', '=', $key)
-            ->pluck('preset_name')[0];
+            ->where('restriction', '<', 2)
+            ->pluck('preset_name');
 
-            $tag_preset_context[$presetId] = [$tag_preset_name];
+            // dd($tag_preset_name);
 
-            // $tag_preset_context[$presetId] = [];
+            if (count($tag_preset_name) > 0) {
 
+                // dd($key, $value, $tag_preset_name);
 
-            foreach ($value as $key2 => $value2) {
-                // dd($key2, $value2);
+                $tag_preset_context[$presetId] = [$tag_preset_name[0]];
 
-                $tag_preset_category_name = DB::table('tag_0s')
-                ->where('id', '=', $value2->tag_category)
-                // ->where('restriction', '<', 2)
-                ->pluck('content');
+                // $tag_preset_context[$presetId] = [];
 
-                $tag_preset_context_name = DB::table('tag_1s')
-                ->where('id', '=', $value2->tag_context)
-                // ->where('restriction', '<', 2)
-                ->pluck('content');
+                foreach ($value as $key2 => $value2) {
+                    // dd($key2, $value2);
 
-                // dd($tag_preset_category_name[0]);
+                    $tag_preset_category_name = DB::table('tag_0s')
+                    ->where('id', '=', $value2->tag_category)
+                    // ->where('restriction', '<', 2)
+                    ->pluck('content');
 
-                // $tag_preset_context_name =
+                    $tag_preset_context_name = DB::table('tag_1s')
+                    ->where('id', '=', $value2->tag_context)
+                    // ->where('restriction', '<', 2)
+                    ->pluck('content');
 
-                $tag_preset_context[$presetId][1][$key2][0] = $tag_preset_category_name[0];
-                $tag_preset_context[$presetId][1][$key2][1] = $tag_preset_context_name[0];
-                // dd($tag_preset_name);
+                    // dd($tag_preset_category_name[0]);
 
+                    // dd($tag_preset_context_name);
 
-
+                    $tag_preset_context[$presetId][1][$key2][0] = $tag_preset_category_name[0];
+                    $tag_preset_context[$presetId][1][$key2][1] = $tag_preset_context_name[0];
+                    // dd($tag_preset_name);
+                }
+                $presetId++;
             }
-            // dd($tag_preset_context);
-            $presetId++;
+                // dd($tag_preset_context);
+
         }
 
         // dd($tag_preset_context);
@@ -2349,6 +2371,8 @@ class RicoAssistant extends Controller {
 
     public function preset_store(Request $request) {
 
+        $user = Auth::user();
+
         // dd($request);
         // dd($request->preset_group['preset_name']);
 
@@ -2363,6 +2387,7 @@ class RicoAssistant extends Controller {
             // dd($request->preset_group['preset_name']);
 
             $presetNameCheck = DB::table('index_tag_presets')
+            ->where('user_id', '=', $user->id)
             ->where('preset_name', '=', $request->preset_group['preset_name'])
             ->where('restriction', '<', 2)
             ->get();
@@ -2373,6 +2398,7 @@ class RicoAssistant extends Controller {
             if (count($presetNameCheck) == 0) {
                 // dd('ok');
                 $tag_preset1 = new IndexTagPreset();
+                $tag_preset1->user_id = $user->id;
                 $tag_preset1->preset_name = $request->preset_group['preset_name'];
                 $tag_preset1->tracking = $request->ip();
                 $tag_preset1->save();
@@ -2394,7 +2420,7 @@ class RicoAssistant extends Controller {
 
             // check if preset already exists
             $tag_preset_duplicate_check = DB::table('tag_presets')
-            ->where('tag_group', '=',  $tag_preset1->id)
+            ->where('group_id', '=',  $tag_preset1->id)
             ->where('tag_category', '=',  $request->preset_group['tag_category'])
             ->where('tag_context', '=',  $request->preset_group['tag_context'])
             ->get();
@@ -2407,7 +2433,7 @@ class RicoAssistant extends Controller {
 
                 $tag_preset = new TagPreset();
 
-                $tag_preset->tag_group = $tag_preset1->id;
+                $tag_preset->group_id = $tag_preset1->id;
 
                 // dd($tag_preset);
 
@@ -2453,12 +2479,14 @@ class RicoAssistant extends Controller {
             // ->update(['restriction' => 2]);
             ->get();
 
-            // dd($preset_name_id);
+            // dd($preset_name_id[0]->id);
 
             $preset_group_total = DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_name_id[0]->id)
+            ->where('group_id', '=', $preset_name_id[0]->id)
             ->where('restriction', '<', 2)
             ->get();
+
+            // dd($preset_group_total);
 
             $preset_group_deletion = $preset_group_total[$request->tagPresetGroupDeleteSubindex]->id;
             // dd($preset_group_deletion);
@@ -2469,7 +2497,7 @@ class RicoAssistant extends Controller {
             ->update(['restriction' => 2]);
 
             $preset_group_remaining = DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_name_id[0]->id)
+            ->where('group_id', '=', $preset_name_id[0]->id)
             ->where('restriction', '<', 2)
             ->get();
 
@@ -2489,13 +2517,16 @@ class RicoAssistant extends Controller {
 
         }
 
+        // dd($request->tagPresetDelete);
+
         // set restriction to 2 (delete) for preset name
         if (isset($request->tagPresetDelete)) {
 
-            $preset_delete_id = DB::table('index_tag_presets')
-            ->where('preset_name', '=', $request->tagPresetDelete)
-            // ->update(['restriction' => 2]);
-            ->get();
+            // $preset_delete_id = DB::table('index_tag_presets')
+            // ->where('preset_name', '=', $request->tagPresetDelete)
+            // ->get();
+
+            // dd($preset_delete_id);
 
             DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->tagPresetDelete)
@@ -2506,9 +2537,9 @@ class RicoAssistant extends Controller {
             // $preset_delete_id->update(['restriction' => 22]);
 
             // set restriction to 2 (delete) for preset name
-            DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_delete_id[0]->id)
-            ->update(['restriction' => 2]);
+            // DB::table('tag_presets')
+            // ->where('group_id', '=', $preset_delete_id[0]->id)
+            // ->update(['restriction' => 2]);
         }
 
         // dd($preset_delete_id[0]->id);

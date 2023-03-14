@@ -10,7 +10,7 @@
 </div>
 
 <div :class="{'border-t': $page.props.errors['statementData.statement']}" class="border-r border-b border-l border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController" @fromChild="fromChild"/>
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController2" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
@@ -29,8 +29,8 @@ import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
 import Reference from "./Reference.vue";
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate']);
-let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
 
 // let statement = ref();
 let form = useForm({

@@ -82,7 +82,7 @@
                     <div v-for="(item, index) in tag_db_data">
                         <div v-if="typeof item != 'undefined'" class="border border-black w-full">
                             <div class="w-full">
-                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController2" @fromChild="fromChild"/></div>
                             </div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ import Reference from "./Reference.vue";
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'fromChild', 'fromController', 'transfer', 'toParent', 'toChild', 'transferCreate', 'dataToParent']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'fromChild', 'fromController', 'transfer', 'toParent', 'toChild', 'transferCreate', 'dataToParent', 'fromController2']);
 let emit = defineEmits(['dataChild', 'dataParent', 'fromChild', 'toParent', 'dataToParent']);
 let tagPopupOpen = ref();
 

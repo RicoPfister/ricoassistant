@@ -156,7 +156,7 @@ import MessagePopUp from '../Components/MessagePopUp.vue'
 import AddBox from '../Components/AddPopUp.vue';
 import Home from '../Pages/Home.vue';
 
-let props = defineProps(['toChild']);
+let props = defineProps(['toChild', 'fromController2']);
 
 let menuPopupOpenActive = ref(0);
 let addPopupOpenActive = ref(0);

@@ -107,7 +107,7 @@
                             </div>
                             <div class="w-fit">
                                 <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0,
-                                'formTags': form?.activityTag?.[index]}" :fromController="props.fromController" @fromChild="fromChild"/>
+                                'formTags': form?.activityTag?.[index]}" :fromController="props.fromController2" @fromChild="fromChild"/>
                             </div>
                         </div>
 
@@ -295,7 +295,7 @@ import TagForm from "../TagManager/TagForm.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'dataToParent', 'fromController', 'transfer',
-'toParent', 'toChild', 'fromChild', 'transferCreate']);
+'toParent', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
 let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', 'referenceChecker', 'index', 'transfer', 'fromController',
 'toChild', 'fromChild', 'transferCreate']);
 

@@ -10,7 +10,7 @@
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <!-- add tag dropdown -->
-            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof tagPresetCollection[0] == 'undefined'" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof Object.keys(tagPresetCollection)[0] == 'undefined'" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
                     <div class="flex flex-row">
@@ -135,6 +135,8 @@ let fromController = ref('');
 //? emit tag data to TagContent.vue
 function fromChild(data) {
 
+    console.log(data);
+
     if (data.presetPopupOpen == 1) categoryPopupOpen.value = !categoryPopupOpen.value;
 
         // console.log(data);
@@ -171,13 +173,13 @@ function fromChild(data) {
 
     if (data.presetData?.presetCreate) {
 
-        console.log(data.presetData);
-        console.log(tagPresetCollection.value.includes(data.presetData.presetCreate));
+        // console.log(data.presetData);
+        // console.log(tagPresetCollection.value.includes(data.presetData.presetCreate));
 
         if (data.presetData?.presetCreate) {
             // check if preset group is not alreay crated and create it if so
             let tagPresetCheckDuplicate = [];
-            tagPresetCollection.value.forEach(item => {
+            Object.keys(tagPresetCollection.value).forEach(item => {
                 tagPresetCheckDuplicate.push(item[0]);
                 console.log(item);
             });
@@ -402,7 +404,6 @@ function tagPresetPopupFunction() {
 
 function categoryPopupActive() {
 
-
     if (props.fromController.tagCollection.length > 0) {
         // console.log('ok');
         categoryPopupOpen.value = !categoryPopupOpen.value;
@@ -413,7 +414,6 @@ function categoryPopupActive() {
     }
 
 }
-
 
 </script>
 

@@ -6,7 +6,7 @@
         <div v-for="(item, index) in props.tag" class="flex flex-row flex-wrap">
 
             <!-- index indicator -->
-            <div v-if="itemCheck[index]" class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ parseInt(index)+1 }}
+            <div v-if="itemCheck.length > 1" class="truncate"><span class="bg-black text-white px-1 mr-1 font-bold">{{ parseInt(index)+1 }}
             </span> {{ item.path }}</div>
 
             <div v-for="(item2, index2) in item" class="mb-1 mr-1">

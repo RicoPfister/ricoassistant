@@ -18,7 +18,7 @@
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
                     <component @data-child="dataChild" :is="componentSource[item]" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
-                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
+                    :fromController="props.fromController" :fromController2="usePage().props.value.flash.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -51,8 +51,8 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2']);
 
 // variable collection
 // -------------------------
@@ -271,7 +271,7 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true

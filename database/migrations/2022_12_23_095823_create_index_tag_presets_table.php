@@ -15,9 +15,12 @@ return new class extends Migration
     {
         Schema::create('index_tag_presets', function (Blueprint $table) {
             $table->id();
+
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('preset_name', 50);
-            $table->string('status', 1)->nullable();
             $table->string('tracking', 50);
+            $table->tinyInteger('restriction')->default(1);
             $table->timestamps();
         });
     }
