@@ -2579,7 +2579,8 @@ class RicoAssistant extends Controller {
 
     public function statistic(Request $request) {
 
-        // dd($request);
+        // dd('ok');
+
         $user = Auth::user();
 
         $tag_db_rawdata = DB::table('tags')
@@ -2640,13 +2641,28 @@ class RicoAssistant extends Controller {
 
         // dd($group_tags_count->sortByDesc('count'));
 
-        $user_entries = DB::table('section_basics')
+        $user_entries_all = DB::table('section_basics')
         ->where('user_id', '=', $user->id)
         ->get()
         ->count();
 
-        // dd($user_entries);
+        $user_entries_category = [];
 
-        return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => $user_entries]]);
+        for ($a = 1; $a < 10; $a++) {
+
+            $user_entries_category[$a][0] = DB::table('index_mediums')
+            ->where('id', '=', $a)
+            ->pluck('medium_name')[0];
+
+            $user_entries_category[$a][1] = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->where('medium', '=', $a)
+            ->get()
+            ->count();
+        }
+
+        // dd($user_entries_category);
+
+        return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => ['all' => $user_entries_all, 'category' => $user_entries_category]]]);
     }
 }

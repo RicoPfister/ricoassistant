@@ -179,7 +179,7 @@ function fromChild(data) {
         if (data.presetData?.presetCreate) {
             // check if preset group is not alreay crated and create it if so
             let tagPresetCheckDuplicate = [];
-            Object.keys(tagPresetCollection.value).forEach(item => {
+            tagPresetCollection.value.forEach(item => {
                 tagPresetCheckDuplicate.push(item[0]);
                 console.log(item);
             });

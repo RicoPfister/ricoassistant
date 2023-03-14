@@ -77,7 +77,8 @@ let editCheck = ref('');
 
 let dataParent = ref({});
 
-const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
+// const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
+const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Source];
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
