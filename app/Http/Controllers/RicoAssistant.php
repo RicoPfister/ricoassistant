@@ -37,14 +37,16 @@ use App\Models\Tag_3;
 
 class RicoAssistant extends Controller {
 
-    public function home(Request $request) {
+    public function mainNav(Request $request) {
 
-        // dd($request);
+        // dd($request->page_id);
+
         $user = Auth::user();
 
         if (isset($user)) {
             // dd('ok');
             $db_basic_category_rawData = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
             ->where('restriction', '<', 2)
             ->select('medium')
             ->get()
@@ -107,7 +109,7 @@ class RicoAssistant extends Controller {
 
         // dd($db_basic_category_collection);
 
-        return Inertia::render('Home', ['home' => $db_basic_category_collection]);
+        return Inertia::render($request->page_id, ['fromController' => $db_basic_category_collection]);
     }
 
     // show filter (show default list view)
@@ -129,7 +131,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 2)
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -138,7 +140,7 @@ class RicoAssistant extends Controller {
                     ->where('medium', '=', 2)
                     ->select('id', 'medium', 'title', 'ref_date')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -148,18 +150,19 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 5)
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
                     $listAuth = DB::table('section_basics')
                     ->where('restriction', '=', 0)
                     ->where('medium', '=', 5)
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -169,18 +172,19 @@ class RicoAssistant extends Controller {
                     $listAuth = DB::table('section_basics')
                     ->where('user_id', '=', $user->id)
                     ->where('medium', '=', 8)
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->where('restriction', '<', 2)
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
                     $listAuth = DB::table('section_basics')
                     ->where('restriction', '=', 0)
                     ->where('medium', '=', 8)
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -198,8 +202,9 @@ class RicoAssistant extends Controller {
                             ->where('restriction', '<', 2)
                             ->where('medium', '=', 4);
                     })
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -211,9 +216,9 @@ class RicoAssistant extends Controller {
                         ->where('restriction', '=', 0)
                             ->where('medium', '=', 4);
                     })
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
 
@@ -243,8 +248,9 @@ class RicoAssistant extends Controller {
                             ->where('restriction', '<', 2)
                             ->where('medium', '=', 9);
                     })
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
 
                 else {
@@ -267,11 +273,19 @@ class RicoAssistant extends Controller {
                         ->where('restriction', '=', 0)
                         ->where('medium', '=', 9);
                     })
-                    ->select('id', 'medium', 'title', 'ref_date')
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->latest('updated_at')
-                    ->paginate(20);
+                    ->paginate(20)->withQueryString();;
                 }
             }
+        }
+
+        else if ($request->user == 'all_user_entries') {
+            $listAuth = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+            ->latest('updated_at')
+            ->paginate(20)->withQueryString();;
         }
 
         else if (isset($request->searchData)) {
@@ -280,19 +294,19 @@ class RicoAssistant extends Controller {
                 $db_basic_data = DB::table('section_basics')
                 ->where('user_id', '=', $user->id)
                 ->where('restriction', '<', 2)
-                ->select('id', 'ref_date', 'title', 'medium')
+                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
-                ->paginate(20);
+                ->paginate(20)->withQueryString();;
             }
 
             else {
                 $db_basic_data = DB::table('section_basics')
                 ->where('restriction', '=', 0)
-                ->select('id', 'ref_date', 'title', 'medium')
+                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                 ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
-                ->paginate(20);
+                ->paginate(20)->withQueryString();;
             }
 
 
@@ -308,7 +322,7 @@ class RicoAssistant extends Controller {
             ->select('id', 'content')
             ->where('content', 'LIKE', '%' . $request->searchData . '%')
             ->orderByDesc('content')
-            ->paginate(20);
+            ->paginate(20)->withQueryString();;
 
             if (count($db_tag_data) > 0) {
                 $tag_0 = $db_basic_data;
@@ -625,7 +639,6 @@ class RicoAssistant extends Controller {
         ->find($detail['basicData']['user_id'])
         ->name;
         // ->pluck('name');
-        // ->pluck('name');
 
         // dd($detail);
 
@@ -817,17 +830,49 @@ class RicoAssistant extends Controller {
         // get user data
         $user = Auth::user();
 
-        // validation
-        $validated = $request->validate([
-            'basicData.ref_date' => 'required',
-            'basicData.medium' => 'required',
-            'basicData.title' => 'required',
-        ]);
+        // validation. duplicate: function validation
+        $validation_collection = [
+            'basicData.ref_date' => 'required|filled',
+            'basicData.medium' => 'required|filled',
+            'basicData.title' => 'required|min:3',
+        ];
 
+        if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
+
+        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
+        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
+
+        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+        // if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'between:0,2400';
+        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
+
+        // dd(count($request->activityData['activityTo']));
+
+        if (isset($request->activityData['activityTo'])) {
+            for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
+                $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
+            }
+
+            $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
+            $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
+        }
+
+        // dd($validation_collection);
+
+        $validated = $request->validate($validation_collection);
         // dd($request);
+
+        // dd($validated);
+
+        // $validated = $request->validate([
+
+        // ]);
+
 
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
+
+            $user = Auth::user();
 
             // dd($request->$db_name['tag']);
 
@@ -871,6 +916,7 @@ class RicoAssistant extends Controller {
                     }
 
                     $tag_group = new Tag();
+                    $tag_group->user_id = $user->id;
                     $tag_group->basic_id = $basics->id;
                     $tag_group->section = $db_section_id;
                     $tag_group->section_id = $id2;
@@ -925,12 +971,14 @@ class RicoAssistant extends Controller {
         $basics->tracking = $request->ip();
         $basics->save();
 
-        if ($request->basicData['public'] == 'true') {
+        if ($request->basicData['public'] == true) {
+            // dd('ok');
             $basics->restriction =  0;
             $basics->save();
         }
 
         else {
+            // dd('ok');
             $basics->restriction =  1;
             $basics->save();
         }
@@ -1010,8 +1058,6 @@ class RicoAssistant extends Controller {
                     }
                 }
             };
-
-
         }
 
         // create source
@@ -1106,7 +1152,7 @@ class RicoAssistant extends Controller {
 
                 // dd($request, $section_id, $index);
 
-                // ref section data
+                // get form section data
                 $rererence_db_section_data = DB::table($tag_section)
                 ->where('restriction', '<', 2)
                 ->where('basic_id', '=', $request->basicData['id'])
@@ -2100,7 +2146,20 @@ class RicoAssistant extends Controller {
 
         // dd($result);
 
-        return Inertia::render('Create', ['fromController' => $result]);
+        // $request->session()->put('fromController', $result);
+
+        // dd($result);
+
+        // return redirect()->back()->with([
+        //     'testabc' => 'foobar',
+        // ]);
+
+        // return back()->with('success','Item created successfully!');
+        // with(['error => 'message here'])
+        // return Inertia::render('Create', ['fromController' => $result]);
+        // return Inertia::render('Create')->with(['myVariable' => 'message here']);
+        return to_route('test123')->with('fromController', $result);
+        // return redirect()->back()->with('fromController', 999);
     }
 
     public function titlecheck(Request $request) {
@@ -2129,7 +2188,7 @@ class RicoAssistant extends Controller {
             if (count($basicTitleResultCheck)) {
 
                 foreach ($basicTitleResultCheck as $i => $id) {
-                    if ($id->ref_date == $request->basicRefDate && $id->medium == $request->basicMedium && $id->title == $request->basicTitle) {
+                    if ($id->ref_date == $request->basicRefDate && $id->medium == $request->basicMedium && $id->title == $request->basicTitle && $id->id != $request->id) {
                         // dd('ok');
                         $basicResult['basicResult'][0]['title'] = $id->title;
                         $basicResult['basicResult'][0]['refDate'] = $id->ref_date;
@@ -2143,13 +2202,31 @@ class RicoAssistant extends Controller {
 
         // dd($basicResult);
 
-        return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
+        // request()->fullUrlWithQuery(['token ' => null]);
+        // url('foo', [333, 'bar', 444, 'show']);
+
+        // return Inertia::render('Create', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
+        // return to_route('test123', ['fromController' => ['misc' => ['parentId' => $request->parentId], $basicResult]]);
+        return to_route('test123')->with('fromController', ['misc' => ['parentId' => $request->parentId], $basicResult]);;
     }
 
     public function tag(Request $request) {
 
+        $user = Auth::user();
+
+        $tags_collection_all = DB::table('tags')
+        ->where('user_id', '=', $user->id)
+        ->pluck('tag_0_id');
+
+        // dd($tags_collection_all);
+
+        // foreach ($tags_collection_all as $key2 => $value2) {
+
+        // }
+
         // select all unique categories
         $tag_category_distinct_id = DB::table('tag_0s')
+        ->whereIn('id', $tags_collection_all)
         ->select('id', 'content')
         ->get();
 
@@ -2166,6 +2243,7 @@ class RicoAssistant extends Controller {
 
             // step 2.1: collection db ids from a single category
             $tag_category_id = DB::table('tags')
+            ->where('user_id', '=', $user->id)
             ->where('tag_0_id', '=', $tag_single_category->id)
             ->select('tag_1_id')
             ->distinct()
@@ -2218,7 +2296,7 @@ class RicoAssistant extends Controller {
         $tag_preset_group = DB::table('tag_presets')
         ->where('restriction', '<', 2)
         ->get()
-        ->groupBy('tag_group');
+        ->groupBy('group_id');
 
         // dd($tag_preset_group);
 
@@ -2227,43 +2305,50 @@ class RicoAssistant extends Controller {
         $presetId = 0;
 
         foreach ($tag_preset_group as $key => $value) {
+
             // dd($key, $value);
 
             $tag_preset_name = DB::table('index_tag_presets')
+            ->where('user_id', '=', $user->id)
             ->where('id', '=', $key)
-            ->pluck('preset_name')[0];
+            ->where('restriction', '<', 2)
+            ->pluck('preset_name');
 
-            $tag_preset_context[$presetId] = [$tag_preset_name];
+            // dd($tag_preset_name);
 
-            // $tag_preset_context[$presetId] = [];
+            if (count($tag_preset_name) > 0) {
 
+                // dd($key, $value, $tag_preset_name);
 
-            foreach ($value as $key2 => $value2) {
-                // dd($key2, $value2);
+                $tag_preset_context[$presetId] = [$tag_preset_name[0]];
 
-                $tag_preset_category_name = DB::table('tag_0s')
-                ->where('id', '=', $value2->tag_category)
-                // ->where('restriction', '<', 2)
-                ->pluck('content');
+                // $tag_preset_context[$presetId] = [];
 
-                $tag_preset_context_name = DB::table('tag_1s')
-                ->where('id', '=', $value2->tag_context)
-                // ->where('restriction', '<', 2)
-                ->pluck('content');
+                foreach ($value as $key2 => $value2) {
+                    // dd($key2, $value2);
 
-                // dd($tag_preset_category_name[0]);
+                    $tag_preset_category_name = DB::table('tag_0s')
+                    ->where('id', '=', $value2->tag_category)
+                    // ->where('restriction', '<', 2)
+                    ->pluck('content');
 
-                // $tag_preset_context_name =
+                    $tag_preset_context_name = DB::table('tag_1s')
+                    ->where('id', '=', $value2->tag_context)
+                    // ->where('restriction', '<', 2)
+                    ->pluck('content');
 
-                $tag_preset_context[$presetId][1][$key2][0] = $tag_preset_category_name[0];
-                $tag_preset_context[$presetId][1][$key2][1] = $tag_preset_context_name[0];
-                // dd($tag_preset_name);
+                    // dd($tag_preset_category_name[0]);
 
+                    // dd($tag_preset_context_name);
 
-
+                    $tag_preset_context[$presetId][1][$key2][0] = $tag_preset_category_name[0];
+                    $tag_preset_context[$presetId][1][$key2][1] = $tag_preset_context_name[0];
+                    // dd($tag_preset_name);
+                }
+                $presetId++;
             }
-            // dd($tag_preset_context);
-            $presetId++;
+                // dd($tag_preset_context);
+
         }
 
         // dd($tag_preset_context);
@@ -2280,10 +2365,13 @@ class RicoAssistant extends Controller {
 
         // dd($tagCollectionSelection);
 
-        return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
+        // return Inertia::render('Create', ['fromController' => $tagCollectionSelection]);
+        return to_route('test123')->with('fromController', $tagCollectionSelection);
     }
 
     public function preset_store(Request $request) {
+
+        $user = Auth::user();
 
         // dd($request);
         // dd($request->preset_group['preset_name']);
@@ -2299,6 +2387,7 @@ class RicoAssistant extends Controller {
             // dd($request->preset_group['preset_name']);
 
             $presetNameCheck = DB::table('index_tag_presets')
+            ->where('user_id', '=', $user->id)
             ->where('preset_name', '=', $request->preset_group['preset_name'])
             ->where('restriction', '<', 2)
             ->get();
@@ -2309,6 +2398,7 @@ class RicoAssistant extends Controller {
             if (count($presetNameCheck) == 0) {
                 // dd('ok');
                 $tag_preset1 = new IndexTagPreset();
+                $tag_preset1->user_id = $user->id;
                 $tag_preset1->preset_name = $request->preset_group['preset_name'];
                 $tag_preset1->tracking = $request->ip();
                 $tag_preset1->save();
@@ -2330,7 +2420,7 @@ class RicoAssistant extends Controller {
 
             // check if preset already exists
             $tag_preset_duplicate_check = DB::table('tag_presets')
-            ->where('tag_group', '=',  $tag_preset1->id)
+            ->where('group_id', '=',  $tag_preset1->id)
             ->where('tag_category', '=',  $request->preset_group['tag_category'])
             ->where('tag_context', '=',  $request->preset_group['tag_context'])
             ->get();
@@ -2343,7 +2433,7 @@ class RicoAssistant extends Controller {
 
                 $tag_preset = new TagPreset();
 
-                $tag_preset->tag_group = $tag_preset1->id;
+                $tag_preset->group_id = $tag_preset1->id;
 
                 // dd($tag_preset);
 
@@ -2389,12 +2479,14 @@ class RicoAssistant extends Controller {
             // ->update(['restriction' => 2]);
             ->get();
 
-            // dd($preset_name_id);
+            // dd($preset_name_id[0]->id);
 
             $preset_group_total = DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_name_id[0]->id)
+            ->where('group_id', '=', $preset_name_id[0]->id)
             ->where('restriction', '<', 2)
             ->get();
+
+            // dd($preset_group_total);
 
             $preset_group_deletion = $preset_group_total[$request->tagPresetGroupDeleteSubindex]->id;
             // dd($preset_group_deletion);
@@ -2405,7 +2497,7 @@ class RicoAssistant extends Controller {
             ->update(['restriction' => 2]);
 
             $preset_group_remaining = DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_name_id[0]->id)
+            ->where('group_id', '=', $preset_name_id[0]->id)
             ->where('restriction', '<', 2)
             ->get();
 
@@ -2425,13 +2517,16 @@ class RicoAssistant extends Controller {
 
         }
 
+        // dd($request->tagPresetDelete);
+
         // set restriction to 2 (delete) for preset name
         if (isset($request->tagPresetDelete)) {
 
-            $preset_delete_id = DB::table('index_tag_presets')
-            ->where('preset_name', '=', $request->tagPresetDelete)
-            // ->update(['restriction' => 2]);
-            ->get();
+            // $preset_delete_id = DB::table('index_tag_presets')
+            // ->where('preset_name', '=', $request->tagPresetDelete)
+            // ->get();
+
+            // dd($preset_delete_id);
 
             DB::table('index_tag_presets')
             ->where('preset_name', '=', $request->tagPresetDelete)
@@ -2442,9 +2537,9 @@ class RicoAssistant extends Controller {
             // $preset_delete_id->update(['restriction' => 22]);
 
             // set restriction to 2 (delete) for preset name
-            DB::table('tag_presets')
-            ->where('tag_group', '=', $preset_delete_id[0]->id)
-            ->update(['restriction' => 2]);
+            // DB::table('tag_presets')
+            // ->where('group_id', '=', $preset_delete_id[0]->id)
+            // ->update(['restriction' => 2]);
         }
 
         // dd($preset_delete_id[0]->id);
@@ -2484,7 +2579,9 @@ class RicoAssistant extends Controller {
 
     public function statistic(Request $request) {
 
-        // dd($request);
+        // dd('ok');
+
+        $user = Auth::user();
 
         $tag_db_rawdata = DB::table('tags')
         ->get();
@@ -2544,6 +2641,28 @@ class RicoAssistant extends Controller {
 
         // dd($group_tags_count->sortByDesc('count'));
 
-        return Inertia::render('Dashboard', ['statistic' => $group_tags_count_sorted]);
+        $user_entries_all = DB::table('section_basics')
+        ->where('user_id', '=', $user->id)
+        ->get()
+        ->count();
+
+        $user_entries_category = [];
+
+        for ($a = 1; $a < 10; $a++) {
+
+            $user_entries_category[$a][0] = DB::table('index_mediums')
+            ->where('id', '=', $a)
+            ->pluck('medium_name')[0];
+
+            $user_entries_category[$a][1] = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->where('medium', '=', $a)
+            ->get()
+            ->count();
+        }
+
+        // dd($user_entries_category);
+
+        return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => ['all' => $user_entries_all, 'category' => $user_entries_category]]]);
     }
 }

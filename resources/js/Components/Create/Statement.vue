@@ -1,17 +1,16 @@
 
 <template>
 
-<div>
-    <div class="flex flex-col">
-        <div class="flex flex-row justify-between items-center" type="button">
-            <MenuEntry @data-child="dataChildMenuEntry"/>
-        </div>
-        <textarea @change="InputData" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+<div class="flex flex-col">
+    <div class="flex flex-row justify-between items-center" type="button">
+        <MenuEntry @data-child="dataChildMenuEntry"/>
     </div>
+    <textarea @input="InputData" :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+    <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
 </div>
 
-<div class="border-l border-r border-b border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController" @fromChild="fromChild"/>
+<div :class="{'border-t': $page.props.errors['statementData.statement']}" class="border-r border-b border-l border-black">
+    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController2" @fromChild="fromChild"/>
 </div>
 
 <div class="border-l border-r border-b border-black h-[31px]">
@@ -30,8 +29,8 @@ import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
 import Reference from "./Reference.vue";
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate']);
-let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
 
 // let statement = ref();
 let form = useForm({
@@ -85,6 +84,26 @@ onMounted(() => {
     form['id'] = props.toChild?.statementData?.statement?.id;
 });
 
+// validation error processing
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+// console.log(Object.keys(usePage()?.props.value?.errors).length);
+// console.log(Object.keys(form2['errors']).length);
+
+if (Object.keys(usePage()?.props.value?.errors).length) {
+
+        console.log('ok');
+        form2['errors'] = usePage().props.value.errors;
+}
+
+else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+        console.log('ok');
+        form2['errors'] = '';
+    }
+});
 
 </script>
 

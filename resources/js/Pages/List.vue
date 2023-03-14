@@ -17,7 +17,7 @@
             </th>
 
             <!-- title -->
-            <th class="underline grow">Title 1-20</th>
+            <th class="underline grow">Title</th>
 
             <!-- rating symbol -->
             <!-- <th class="hidden lg:table-cell underline lg:w-[36px]">
@@ -31,7 +31,7 @@
             <th class="hidden lg:table-cell text-right underline lg:w-[90px]">Views</th>
 
             <!-- ref date -->
-            <th class="hidden lg:table-cell text-right underline lg:w-[90px]">Ref. Date</th>
+            <th class="hidden lg:table-cell text-right underline lg:w-[90px]">Date</th>
         </tr>
 
         <!-- table content rows -->

@@ -1,7 +1,7 @@
 <template>
 
     <!-- entry menu -->
-    <div class="flex flex-row">
+    <div v-if="1" class="flex flex-row">
 
         <!-- add -->
         <button @click.prevent="emitData(1)">
@@ -33,8 +33,7 @@ let FormPopupOpen = ref(0);
 let emit = defineEmits(['dataChild']);
 
 function emitData(n) {
-    // alert(componentSelected.value);
-    emit('dataChild', {'formDataEdit': n});
+    // emit('dataChild', {'formDataEdit': n});
 };
 
 </script>

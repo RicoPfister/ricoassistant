@@ -97,7 +97,7 @@ return [
         'array' => 'The :attribute must have at least :min items.',
         'file' => 'The :attribute must be at least :min kilobytes.',
         'numeric' => 'The :attribute must be at least :min.',
-        'string' => 'The :attribute must be at least :min characters.',
+        'string' => 'At least :min characters required.',
     ],
     'min_digits' => 'The :attribute must have at least :min digits.',
     'multiple_of' => 'The :attribute must be a multiple of :value.',
@@ -117,7 +117,8 @@ return [
     'prohibited_unless' => 'The :attribute field is prohibited unless :other is in :values.',
     'prohibits' => 'The :attribute field prohibits :other from being present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
+    // 'required' => 'The :attribute field is required.',
+    'required' => 'Required.',
     'required_array_keys' => 'The :attribute field must contain entries for: :values.',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_if_accepted' => 'The :attribute field is required when :other is accepted.',
@@ -140,6 +141,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute must be a valid URL.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    // 'in:2400' => 'Must be 2400',
 
     /*
     |--------------------------------------------------------------------------
@@ -153,8 +155,17 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'basicData.title' => [
+            'required' => 'At least 3 characters required.',
+        ],
+        'sourceData.filelist.*.type' => [
+            'filled' => 'File has no extension.',
+        ],
+        'activityData.activityTo.*' => [
+            'filled' => 'Required.',
+        ],
+        'activityData.activityTo.*' => [
+            'in' => 'Required. End time must be 2400.',
         ],
     ],
 

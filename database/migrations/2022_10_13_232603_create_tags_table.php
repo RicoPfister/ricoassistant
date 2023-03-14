@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->bigInteger('basic_id');
 
             $table->tinyInteger('section');
@@ -27,7 +30,7 @@ return new class extends Migration
             $table->bigInteger('tag_3_id')->nullable();
 
             $table->string('tracking', 50);
-            $table->tinyInteger('restriction');
+            $table->tinyInteger('restriction')->default(1);
 
             $table->timestamps();
         });

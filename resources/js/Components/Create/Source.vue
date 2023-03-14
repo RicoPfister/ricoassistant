@@ -18,7 +18,7 @@
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row">
                     <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
+                    <label :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
                     <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
                 </div>
 
@@ -30,6 +30,8 @@
                     </svg>
                 </button>
             </div>
+
+            <div v-if="form2?.errors?.['sourceData.filelist']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist'] }}</div>
 
             <!-- hidden file list/preview -->
             <div v-if="InputData[0]" class="flex flex-col my-2">
@@ -43,7 +45,7 @@
 
                     <div class="py-1">
                         <div  v-for="(item, index) in InputData" :class="{'border-b border-gray-300': index != InputData.length-1}" class="flex flex-col w-full">
-                            <div v-if="typeof item != 'undefined'" class="flex justify-between w-full">
+                            <div v-if="typeof item != 'undefined'" :class="{'border-4 border-red-500 bg-red-200': form2?.errors?.['sourceData.filelist.'+ index +'.type']}" class="flex justify-between w-full">
 
                                 <!-- index/file name -->
                                 <div class="truncate grow"><span class="bg-black text-white px-1 font-bold">{{ item.key }}</span> {{ item.filename }}</div>
@@ -68,6 +70,7 @@
                                     </button>
                                 </div>
                             </div>
+                            <div v-if="form2?.errors?.['sourceData.filelist.'+ index +'.type']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist.'+ index +'.type'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -79,7 +82,7 @@
                     <div v-for="(item, index) in tag_db_data">
                         <div v-if="typeof item != 'undefined'" class="border border-black w-full">
                             <div class="w-full">
-                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController" @fromChild="fromChild"/></div>
+                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController2" @fromChild="fromChild"/></div>
                             </div>
                         </div>
                     </div>
@@ -117,6 +120,7 @@
 
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
+import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 
 import MenuEntry from "../Create/MenuEntry.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
@@ -126,7 +130,7 @@ import Reference from "./Reference.vue";
 
 let dataChild = ref({'statement': ''});
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'fromChild', 'fromController', 'transfer', 'toParent', 'toChild', 'transferCreate', 'dataToParent']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'componentId', 'fromChild', 'fromController', 'transfer', 'toParent', 'toChild', 'transferCreate', 'dataToParent', 'fromController2']);
 let emit = defineEmits(['dataChild', 'dataParent', 'fromChild', 'toParent', 'dataToParent']);
 let tagPopupOpen = ref();
 
@@ -330,8 +334,31 @@ function deleteFile(data) {
         // console.log(tag_db_data.value);
         // emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'index': data, 'form': ''});
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist', 'index': data, 'form': ''});
-        emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
+        emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value, 'change': data});
     }
 }
+
+
+// validation error processing
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+// console.log(Object.keys(usePage()?.props.value?.errors).length);
+// console.log(Object.keys(form2['errors']).length);
+
+if (Object.keys(usePage()?.props.value?.errors).length) {
+
+    console.log('ok');
+    form2['errors'] = usePage().props.value.errors;
+}
+
+else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+
+    console.log('ok');
+    // form2['errors'] = '';
+    }
+});
 
 </script>

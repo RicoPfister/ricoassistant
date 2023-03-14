@@ -48,18 +48,25 @@ Route::middleware([
 
 Route::get('/create', function () {
     return Inertia::render('Create', []);
-});
+})->name('create');
 
-Route::get('/home', [RicoAssistant::class, 'home'])->name('home');
+Route::post('/create', function () {
+    // $RicoAssistant = new RicoAssistant();
+    // $RicoAssistant2 = $RicoAssistant->test();
+    return Inertia::render('Create', []);
+})->name('test123');
+
+Route::get('/mainNav', [RicoAssistant::class, 'mainNav'])->name('mainNav');
 Route::post('/store', [RicoAssistant::class, 'store'])->name('store');
 Route::get('/filter', [RicoAssistant::class, 'filter'])->name('filter');
 Route::get('/detail', [RicoAssistant::class, 'detail'])->name('detail');
 Route::post('/update', [RicoAssistant::class, 'update'])->name('update');
 Route::post('/delete', [RicoAssistant::class, 'delete'])->name('delete');
 Route::post('/refcheck', [RicoAssistant::class, 'reference'])->name('refcheck');
-Route::post('/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
+Route::get('/create/titlecheck', [RicoAssistant::class, 'titlecheck'])->name('titlecheck');
 Route::post('/tag', [RicoAssistant::class, 'tag'])->name('tag');
 Route::post('/edit', [RicoAssistant::class, 'edit'])->name('edit');
+Route::post('/validation', [RicoAssistant::class, 'validation'])->name('validation');
 // Route::get('/tag', [RicoAssistant::class, 'tag'])->name('tag');
 
 Route::post('/preset_store', [RicoAssistant::class, 'preset_store'])->name('preset_store');

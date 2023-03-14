@@ -23,7 +23,7 @@ return new class extends Migration
             $table->smallInteger('activityTime');
 
             $table->string('tracking', 50);
-            $table->tinyInteger('restriction');
+            $table->tinyInteger('restriction')->default(1);
             $table->timestamps();
         });
     }

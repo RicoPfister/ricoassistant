@@ -1,6 +1,6 @@
 
 <template>
-<Header>
+<Header :toChild="{'page_id': 'Create', 'tagQuickFilterBarOpen': 1, 'fromController': props.fromController}">
 
 <!-- form container -->
 <form aria-label="New Entry Container" class="absolute mb-10">
@@ -18,7 +18,7 @@
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
                     <component @data-child="dataChild" :is="componentSource[item]" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
-                    :fromController="props.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
+                    :fromController="props.fromController" :fromController2="usePage().props.value.flash.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -34,7 +34,7 @@
 
 <script setup>
 
-import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
+import { useForm, usePage, Link, useRemember } from '@inertiajs/inertia-vue3';
 import { ref, markRaw, shallowRef, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
@@ -51,18 +51,34 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2']);
 
 // variable collection
 // -------------------------
 
 let form = ref({});
+
+// save validation errors
+
+const form2 = useForm('key1', {'test': null});
+
+watch(() => usePage().props.value.errors, (curr, prev) => {
+
+if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+
+    form2['errors'] = usePage().props.value.errors;
+}
+});
+
+// console.log(form.value);
+
 let editCheck = ref('');
 
 let dataParent = ref({});
 
-const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
+// const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Guidance, Source];
+const componentSource = [FormManager, Basic, Tag, Reference, Statement, Activity, Source];
 let componentCollection = [0];
 let componentCollectionUpdate = ref(0);
 let scrollArea = ref();
@@ -71,6 +87,10 @@ let activityTimeTotal = 0;
 let activityTimeHourString = 0;
 let activityTimeHourMinute = 0;
 let activityTime = 0;
+// let validationCheck = 0;
+
+let testabc = ref('');
+// let validationErrors = ref();
 
 // function collection
 // -------------------------
@@ -109,7 +129,7 @@ function activityTimeConvert(item, index) {
 
 // process received child data
 function dataChild(data) {
-    // console.log('ok');
+    // console.log(data);
 
     // scroll to top
     if (data.scrollToTop) {
@@ -117,7 +137,7 @@ function dataChild(data) {
     };
 
     // add form data to form collection
-//obsolete. clear and remove.
+    //obsolete. clear and remove.
     if (data.formData) {
 
         form.value = {...form.value, ...data.formData}
@@ -141,19 +161,48 @@ function dataChild(data) {
     //------------------------------------------------
     if (data.submit == 1) {
 
+        // console.log(data);
+
         // convert activity timeTo to minutes
         if (form.value.activityData?.activityTo) {
             form.value.activityData.activityTime = [];
 
-            console.log(form.value.activityData.activityTo);
+            // console.log(form.value.activityData.activityTo);
 
             form.value.activityData.activityTo.forEach((item, index) => activityTimeConvert(item, index));
         };
 
         // console.log(form.value);
         // console.log('ok');
-        Inertia.post('store', form.value);
-        // console.log('ok');
+        // Inertia.post('/store', form.value);
+
+        // Validation.validation('basic', data);
+
+        // console.log(Validation.validation('basic', data, form.value));
+        // let validation_response = Validation.validation('basic', data, form.value);
+
+        // console.log(validation_response);
+
+            // send form to server
+            Inertia.visit('store', {
+            method: 'post',
+            data: form.value,
+            replace: false,
+            preserveState: true,
+            preserveScroll: true,
+            only: [],
+            headers: {},
+            errorBag: null,
+            forceFormData: false,
+            onCancelToken: cancelToken => {},
+            onCancel: () => {},
+            onBefore: visit => {},
+            onStart: visit => {},
+            onProgress: progress => {},
+            onSuccess: page => {},
+            onError: errors => {},
+            onFinish: visit => {},
+            })
     };
 
     if (data.update == 1) {
@@ -223,25 +272,47 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
+    console.log(data);
+    // console.log(data.form?.statement);
+
     // if data not undefined and public false-true
-    if ((data.form != 'undefined' && data.form != '') || data.subSection == 'public') {
+    if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
+    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date') {
+
         if (!form.value[data.section]) form.value[data.section] = {};
+
         if (typeof data.index !== 'undefined') {
+
+            // console.log('ok');
+
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
+
             form.value[data.section][data.subSection][data.index]  = {};
             form.value[data.section][data.subSection][data.index] = data.form;
             // console.log(data);
             // console.log(form.value[data.section][data.subSection][data.index]);
-        }   else {
+        }
+
+        // else if (data.form == '') {
+        //     delete form.value[data.section]?.[data.subSection];
+        // }
+
+        else {
             // console.log(data);
             form.value[data.section][data.subSection] = data.form;
             }
     }
 
-    else {
+    else if (data.form?.statement == '') {
 
-        console.log(data);
-        if (form?.value?.[data.section]?.[data.subSection]) {
+        // console.log(data);
+
+        delete form.value[data.section][data.subSection];
+    }
+
+    else if (form?.value?.[data.section]?.[data.subSection]){
+
+        // console.log(data);
 
             // console.log(form.value[data.section][data.subSection]);
 
@@ -253,20 +324,74 @@ function fromChild(data) {
             // console.log('ok');
             // delete form.value[data.section][data.subSection][data.index];
             // console.log(data.index);
-        }
+
 
         // if (data.subSection == 'public') {
 
         // }
     }
 
-    transferCreate.value['title'] = form.value.basicData.title;
+    // auto basic title set
+    transferCreate.value['title'] = form.value?.basicData?.title;
+
+    // recheck validation
+    if (data.index == undefined) {
+
+        // console.log('ok');
+
+        if (data.subSection == 'activityTo') {
+
+            if (data.delete) {
+                // console.log(parseInt(data.delete)-1);
+                let $delete_index = parseInt(data.delete)-1;
+                // console.log(form2.errors['activityData.activityTo.'+ data.delete-1]);
+                console.log(form2.errors);
+                delete form2.errors['activityData.activityTo.' + $delete_index];
+                console.log(form2.errors);
+                delete form2.errors['activityData.reference_parents.' + $delete_index];
+            }
+
+            else {
+
+                // console.log('ok');
+
+                data.form.forEach((item, index) => {
+                    if (item > 0) {
+                        delete form2.errors[data.section + '.' + data.subSection]
+                        delete form2.errors[data.section + '.' + data.subSection + '.' + index]
+                    };
+                });
+            }
+        }
+
+        else if (data.subSection == 'filelist') {
+            console.log('ok');
+            // data.form.forEach((item, index) => {
+            //     console.log(index);
+            //     if (item.type != undefined) delete form2.errors[data.section + '.' + data.subSection + '.' + index + '.type'];
+            // });
+            delete form2.errors[data.section + '.' + data.subSection]
+            delete form2.errors[data.section + '.' + data.subSection + '.' + data.change + '.type']
+        }
+
+        else {
+            delete form2.errors[data.section + '.' + data.subSection];
+        }
+    }
+
+    else {
+            // console.log('ok');
+            delete form2.errors[data.section + '.' + data.subSection];
+            delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
+    }
 }
 
 onMounted(() => {
 //    console.log(props.edit);
 
    if (props?.edit) {
+
+        // console.log('ok');
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);
@@ -280,5 +405,26 @@ onMounted(() => {
         componentCollectionUpdate.value = !componentCollectionUpdate.value;
     }
 });
+
+// const form123 = useRemember({
+//     validationErrors: null,
+// })
+
+// watch(() => usePage().props.value.errors, (curr, prev) => {
+
+
+// if (Object.keys(usePage()?.props.value?.errors).length) {
+
+//         form2['errors'] = usePage().props.value.errors;
+// }
+
+// });
+
+// watch(() => form?.value?.activityData?.activityTo, (curr, prev) => {
+
+//     console.log('ok');
+//     delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
+// }, {deep: true});
+
 
 </script>
