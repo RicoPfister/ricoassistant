@@ -837,14 +837,51 @@ class RicoAssistant extends Controller {
             'basicData.title' => 'required|min:3',
         ];
 
+        // dd(isset($request->statementData['tag']));
+
         if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
+        if (array_search(4, $request->componentCollection)) {
+
+            if (isset($request->statementData['tag'])) {
+                foreach ($request->statementData['tag'] as $key => $value) {
+                    foreach ($value as $key2 => $value2) {
+                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                    }
+                }
+            }
+        }
 
         if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
         if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
+        if (isset($request->sourceData['tag'])) {
+            foreach ($request->sourceData['tag'] as $key => $value) {
+                foreach ($value as $key2 => $value2) {
+                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                }
+            }
+        }
+
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
         // if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'between:0,2400';
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
+
+        if (array_search(5, $request->componentCollection)) {
+
+            if (isset($request->activityData['tag'])) {
+                foreach ($request->activityData['tag'] as $key => $value) {
+                    foreach ($value as $key2 => $value2) {
+                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                    }
+                }
+            }
+        }
 
         // dd(count($request->activityData['activityTo']));
 

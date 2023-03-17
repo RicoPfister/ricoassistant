@@ -9,11 +9,24 @@
     <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
 </div>
 
-<div :class="{'border-t': $page.props.errors['statementData.statement']}" class="border-r border-b border-l border-black">
-    <TagForm :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0]}" :fromController="props.fromController2" @fromChild="fromChild"/>
+<div
+    :class="{'border-black': !form2?.errors?.['statementData.tag'], 'border-none': form2?.errors?.['statementData.tag'], 'mt-2': form2?.errors?.['statementData.statement'], 'border-t': form2?.errors?.['statementData.statement']}"
+    class="border-r border-b border-l"
+>
+    <TagForm
+        :class="{'border-t': form2?.errors?.['statementData.statement'], 'border-t-4 border-r-4 border-b-4 border-l-4 border-red-500 bg-red-200': form2?.errors?.['statementData.tag']}"
+        :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0], 'validationError': validationError}"
+        :fromController="props.fromController2"
+        @fromChild="fromChild"
+    />
+    <!-- <div v-if="form2.errors['statementData.tag']" class="text-red-500">Required tag format: @Category:Context:Value</div> -->
+        <div v-if="form2.errors['statementData.tag']" class="text-red-500">{{ form2.errors['statementData.tag'] }}</div>
 </div>
 
-<div class="border-l border-r border-b border-black h-[31px]">
+<div
+:class="{'border-t': 0, 'border-t mt-2': form2?.errors?.['statementData.tag']}"
+    class="border-l border-r border-b border-black h-[31px]"
+>
     <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
@@ -31,6 +44,8 @@ import Reference from "./Reference.vue";
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
+
+let validationError = ref(0);
 
 // let statement = ref();
 let form = useForm({
@@ -95,12 +110,22 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        console.log('ok');
+        // console.log('ok');
         form2['errors'] = usePage().props.value.errors;
+
+        for (const [key, value] of Object.entries(form2['errors'])) {
+            // console.log(`${key}: ${value}`);
+            if (key.match(/statementData\.tag./g)) {
+                console.log('ok');
+                form2['errors']['statementData.tag'] = value;
+                validationError.value = 1;
+            }
+        }
 }
 
 else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
-        console.log('ok');
+
+        // console.log('ok');
         form2['errors'] = '';
     }
 });
