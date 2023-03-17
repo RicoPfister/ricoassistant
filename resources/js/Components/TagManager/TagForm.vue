@@ -6,8 +6,9 @@
 
         <!-- add button -->
         <button @click.prevent="tagPopupOpenData"
-            :class="{'border-l': !tagInputShow, 'border-r': tagInputShow}"
-            class="relative w-[37px] flex h-full items-center bg-gray-200 border-gray-300 leading-none pl-1" type="button"
+            :class="{'border-l': !tagInputShow, 'border-r': tagInputShow, 'bg-red-300': props?.toChild?.validationError}"
+            class="relative w-[37px] flex h-full items-center bg-gray-200 border-gray-300 leading-none pl-1"
+            type="button"
         >
 
             <!-- item counter -->
@@ -29,8 +30,14 @@
 
         <!-- tag input -->
         <div v-if="tagInputShow" class="grow">
-            <input class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent bg-stone-50 pl-2 h-7 leading-none text-sm
-            text-gray-500 w-full" type="text" placeholder="Insert tags: @Category:Context:Value(Detail)" v-model="tagCollectionInputFormat[0]">
+            <input
+                :class="{'bg-red-200': props?.toChild?.validationError}"
+                class="outline-0 focus:ring-0 focus:border-black border-none focus:placeholder-transparent pl-2 h-7
+                leading-none text-sm text-gray-500 w-full"
+                type="text"
+                placeholder="Insert tags: @Category:Context:Value(Detail)"
+                v-model="tagCollectionInputFormat[0]"
+            >
         </div>
     </div>
 </div>

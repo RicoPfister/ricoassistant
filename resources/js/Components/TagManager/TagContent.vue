@@ -12,13 +12,16 @@
     </div>
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
-    <div class="h-auto flex flex-row leading-none">
+    <div class="relative h-auto flex flex-row leading-none">
         <input class="px-1 flex items-center border-r border-b border-gray-400 w-[180px]" placeholder="Category" v-model="tagArray[index][0]">
         <input class="px-1 flex items-center border-r border-b border-gray-400 w-[140px]" placeholder="Content" v-model="tagArray[index][1]">
-        <input class="px-1 flex items-center border-r border-b border-gray-400 w-[120px]" placeholder="Value" v-model="tagArray[index][2]">
+        <input :input="tagValueSuggestions(index)" class="px-1 flex items-center border-r border-b border-gray-400 w-[120px]" placeholder="Value" v-model="tagArray[index][2]">
+
+        <!-- value tag popup -->
+        <!-- <div class="absolute bg-green-100 h-40 w-40 left-[320px] bottom-0 z-50">123</div> -->
 
         <div class="flex flex-row justify-between items-center border-r border-b border-gray-400 w-full grow h-6">
-            <input @input="detailCheck(index)" class="grow pl-1 truncate h-full" placeholder="Details (optional)" v-model="tagArray[index][3]">
+            <input @input="detailCheck(index)" class="grow pl-1 truncate h-full z-50" placeholder="Details (optional)" v-model="tagArray[index][3]">
 
             <!-- edit menu button -->
             <div @mouseover="tagEditMenu[index] = 1" @mouseleave="tagEditMenu[index] = 0" class="relative border-l border-gray-400 h-full w-fit flex flex-row leading-none pr-1">
@@ -194,6 +197,13 @@ function detailCheck(index){
         tagArray.value[index].splice(3, 1);
     }
     // console.log(tagArray.value[index]);
+}
+
+function tagValueSuggestions(index) {
+    if (tagArray.value > 2) {
+
+    }
+    emit('fromChild', {'tagValueSuggestions': tagArray.value});
 }
 
 </script>

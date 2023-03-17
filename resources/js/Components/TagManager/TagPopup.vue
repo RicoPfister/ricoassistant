@@ -96,11 +96,11 @@
         </div>
 
         <!-- content box -->
-        <div class="overflow-y-scroll h-[calc(100%-35px)]">
+        <div class="overflow-y-scroll h-[calc(100%-35px)] z-50">
             <contentBox :toChild="{'tagSelection': {'tagSelection': tagSelection, 'keyid': keyid}, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
         </div>
 
-        <div class="absolute top-[35px] left-0">
+        <div class="absolute top-[35px] left-0 z-10">
             <PresetPopup v-if="popupId == 1 && categoryPopupOpen" :fromController="fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
             <CategoryPopup v-if="popupId == 2 && categoryPopupOpen" :fromController="fromController" :toChild="{'tagPresetCollection': tagPresetCollection}" @fromChild="fromChild"/>
         </div>

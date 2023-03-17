@@ -105,9 +105,16 @@
                                 <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
                                 :toChild="{'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
                             </div>
-                            <div class="w-fit">
-                                <TagForm :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title, 'tagInputShow': 0,
-                                'formTags': form?.activityTag?.[index]}" :fromController="props.fromController2" @fromChild="fromChild"/>
+                            <div
+                                class="w-fit"
+                            >
+
+                                <TagForm
+                                    :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title,
+                                    'tagInputShow': 0, 'formTags': form?.activityTag?.[index], 'validationError': form2?.['errors']?.['activityData.tag.'+[index]]}"
+                                    :fromController="props.fromController2"
+                                    @fromChild="fromChild"
+                                />
                             </div>
                         </div>
 
@@ -180,6 +187,7 @@
                 <div v-if="form2?.errors?.['activityData.activityTo.'+index]" class="text-red-500">{{ form2?.errors?.['activityData.activityTo.'+index] }}</div>
                 <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div>
                 <div v-else-if="form2?.errors?.['activityData.reference_parents.' + index]" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents.' + index] }}</div>
+                <div v-else-if="form2?.errors?.['activityData.tag.' + [index]]" class="text-red-500">{{ form2?.errors?.['activityData.tag.' + [index]] }}</div>
             </div>
             <!-- <div v-if="form2?.errors?.['activityData.activityTo']" class="text-red-500">{{ form2?.errors?.['activityData.activityTo'] }}</div>
             <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div> -->
@@ -327,6 +335,8 @@ let fromController = ref(0);
 
 let convertTimeToTO = '';
 
+// let validationError = ref([0]);
+
 // button functions
 //----------------------------------------
 
@@ -425,6 +435,7 @@ function activitybuttonBar(e, n) {
 
     if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
         activityTotalRow.value++;
+        console.log('ok');
         form2.errors['activityData.activityTo.' + n] = '';
         form2.errors['activityData.activityTo'] = '';
         form.activityTo[n] = '';
@@ -776,7 +787,18 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
         // console.log('ok');
-        form2['errors'] = usePage().props.value.errors;
+        form2.errors = usePage().props.value.errors;
+        // form2.errors['activityData.tag'] = {};
+
+        for (const [key, value] of Object.entries(form2.errors)) {
+            // console.log(`${key}: ${value}`);
+            if (key.match(/activityData\.tag./g)) {
+                // console.log(key.slice(17,18))
+                form2.errors['activityData.tag.' + key.slice(17,18)] = value;
+                // form2.errors['test'] = 123;
+                // validationError.value[key.slice(17,18)] = 1;
+            }
+        }
 }
 
 // else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {

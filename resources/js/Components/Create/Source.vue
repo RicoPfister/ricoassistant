@@ -82,9 +82,10 @@
                     <div v-for="(item, index) in tag_db_data">
                         <div v-if="typeof item != 'undefined'" class="border border-black w-full">
                             <div class="w-full">
-                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag']}" :fromController="props.fromController2" @fromChild="fromChild"/></div>
+                                <div class="truncate flex flex-row w-ful"><span class="bg-black text-white px-1 font-bold flex items-center">{{ item.key }}</span><TagForm :toChild="{'parentId': 3, 'parentIndex': index, 'formTags': tag_db_data[index]['tag'], 'validationError': form2?.['errors']?.['sourceData.tag.' + [index]]}" :fromController="props.fromController2" @fromChild="fromChild"/></div>
                             </div>
                         </div>
+                        <div v-if="form2?.errors?.['sourceData.tag.'+ [index]]" class="text-red-500">{{ form2?.errors?.['sourceData.tag.'+ [index]] }}</div>
                     </div>
                 </div>
 
@@ -341,6 +342,8 @@ function deleteFile(data) {
 
 // validation error processing
 
+console.log('ok');
+
 const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
@@ -352,13 +355,23 @@ if (Object.keys(usePage()?.props.value?.errors).length) {
 
     console.log('ok');
     form2['errors'] = usePage().props.value.errors;
+    form2['errors']['sourceData.tag'] = [];
+
+    for (const [key, value] of Object.entries(form2['errors'])) {
+        // console.log(`${key}: ${value}`);
+        if (key.match(/sourceData\.tag./g)) {
+            console.log(key.slice(15,16))
+            form2['errors']['sourceData.tag.' + [key.slice(15,16)]] = value;
+            // validationError.value[key.slice(17,18)] = 1;
+        }
+    }
 }
 
-else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+// else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
 
-    console.log('ok');
-    // form2['errors'] = '';
-    }
+//     console.log('ok');
+//     form2['errors'] = '';
+//     }
 });
 
 </script>
