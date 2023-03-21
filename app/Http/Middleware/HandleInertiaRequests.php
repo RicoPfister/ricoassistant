@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'flash' => [
                 'fromController' => fn () => $request->session()->get('fromController'),
+                'fromController_validation' => fn () => $request->session()->get('fromController_validation'),
             ],
         ]);
     }

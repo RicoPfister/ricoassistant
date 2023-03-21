@@ -23,9 +23,15 @@
         </button>
 
         <!-- open popup -->
-        <div v-if="tagPopupOpen" class="absolute h-full w-full top-0 left-0 z-50">
-            <TagPopup :fromController="props.fromController" :toChild="{'tagSelectionListString': tagCollectionInputFormat[0], 'basicTitle': props.toChild.basicTitle}"
-            @fromChild="fromChild"/>
+        <div
+            v-if="tagPopupOpen"
+            class="absolute h-full w-full top-0 left-0 z-50"
+        >
+            <TagPopup
+                :fromController = "props.fromController2"
+                :toChild = "{'tagSelectionListString': tagCollectionInputFormat[0], 'basicTitle': props.toChild.basicTitle, 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex}"
+                @fromChild = "fromChild"
+            />
         </div>
 
         <!-- tag input -->
@@ -54,7 +60,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import TagPopup from "../TagManager/TagPopup.vue";
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 
-let props = defineProps(['dataForm', 'dataCommon', 'emitToParent', 'fromParent', 'fromChild', 'toChild', 'fromController']);
+let props = defineProps(['dataForm', 'dataCommon', 'emitToParent', 'fromParent', 'fromChild', 'toChild', 'fromController', 'fromController2']);
 let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fromChild']);
 
 // let form = useForm({
@@ -91,8 +97,8 @@ let tagInputShow = ref(1);
 // });
 
 // listen to controller feedback and opens tag popup
-watch(() => props.fromController, (curr, prev) => {
-    if (props.fromController?.misc?.parentId == props.toChild?.parentId && props.fromController.misc?.parentIndex == props.toChild?.parentIndex) {
+watch(() => props.fromController2, (curr, prev) => {
+    if (props.fromController2?.misc?.parentId == props.toChild?.parentId && props.fromController2.misc?.parentIndex == props.toChild?.parentIndex) {
         // console.log('ok');
         tagPopupOpen.value = 1;
     }
@@ -132,8 +138,8 @@ function fromChild(data) {
 
     else if (typeof data.tagSelectionListString !== 'undefined' && data.tagSelectionListString != 'cancel') {
 
-        console.log(data.tagSelectionListString != '');
-        console.log(tagCollectionInputFormat.value[0]);
+        // console.log(data.tagSelectionListString != '');
+        // console.log(tagCollectionInputFormat.value[0]);
 
         if (fromController.value.misc.parentId == props.toChild?.parentId && fromController.value.misc.parentIndex == props.toChild.parentIndex) {
 
@@ -191,12 +197,12 @@ watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 }, {deep: true}, 500);
 
 // listen to fromController and save it in fromController
-watch(() => props.fromController, (curr, prev) => {
+watch(() => props.fromController2, (curr, prev) => {
     // console.log('ok');
     // console.log(props?.fromController);
-    if (props?.fromController) {
+    if (props?.fromController2) {
         // console.log('ok');
-        fromController.value = props.fromController};
+        fromController.value = props.fromController2};
 }, {deep: true}, 500);
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
@@ -232,8 +238,10 @@ onMounted(() => {
     //     props.toChild.editTag[0].forEach(createTagInputGroup);
     // }
 
+    console.log('ok');
+
     if (props?.fromController) {
-        fromController.value = props.fromController;
+        fromController.value = props.fromController2;
     };
 
     if (typeof props.toChild?.tagInputShow !== 'undefined') {

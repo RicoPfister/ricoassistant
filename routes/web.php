@@ -72,6 +72,7 @@ Route::post('/validation', [RicoAssistant::class, 'validation'])->name('validati
 Route::post('/preset_store', [RicoAssistant::class, 'preset_store'])->name('preset_store');
 Route::post('/preset_update', [RicoAssistant::class, 'preset_update'])->name('preset_update');
 Route::post('/preset_delete', [RicoAssistant::class, 'preset_delete'])->name('preset_delete');
+Route::post('/tag_value_validation', [RicoAssistant::class, 'tag_value_validation'])->name('tag_value_validation');
 
 // get summaries data
 Route::post('/backup_check', [RicoAssistant::class, 'backup'])->name('backup');

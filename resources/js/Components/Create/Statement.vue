@@ -5,7 +5,15 @@
     <div class="flex flex-row justify-between items-center" type="button">
         <MenuEntry @data-child="dataChildMenuEntry"/>
     </div>
-    <textarea @input="InputData" :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['statementData.statement']}" class="border border-black outline-0 focus:border-black focus:ring-0" rows="10" id="statement" type="text" v-model="form.statement"></textarea>
+    <textarea
+        @input="InputData"
+        :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['statementData.statement']}"
+        class="border border-black outline-0 focus:border-black focus:ring-0"
+        rows="10"
+        id="statement"
+        type="text"
+        v-model="form.statement">
+    </textarea>
     <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
 </div>
 
@@ -15,8 +23,9 @@
 >
     <TagForm
         :class="{'border-t': form2?.errors?.['statementData.statement'], 'border-t-4 border-r-4 border-b-4 border-l-4 border-red-500 bg-red-200': form2?.errors?.['statementData.tag']}"
-        :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0], 'validationError': validationError}"
-        :fromController="props.fromController2"
+        :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0], 'validationError': form2?.['errors']?.['statementData.tag']}"
+        :fromController2="props.fromController2"
+        :fromController="props.fromController"
         @fromChild="fromChild"
     />
     <!-- <div v-if="form2.errors['statementData.tag']" class="text-red-500">Required tag format: @Category:Context:Value</div> -->
@@ -42,10 +51,12 @@ import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
 import Reference from "./Reference.vue";
 
-const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
-let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2']);
+const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2', 'fromController_validation']);
+let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2', 'fromController_validation']);
 
-let validationError = ref(0);
+// let validationError = ref(0);
+
+console.log('ok');
 
 // let statement = ref();
 let form = useForm({
@@ -101,6 +112,8 @@ onMounted(() => {
 
 // validation error processing
 
+console.log('ok');
+
 const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
@@ -110,7 +123,8 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        // console.log('ok');
+        console.log('ok');
+
         form2['errors'] = usePage().props.value.errors;
 
         for (const [key, value] of Object.entries(form2['errors'])) {
@@ -118,16 +132,18 @@ if (Object.keys(usePage()?.props.value?.errors).length) {
             if (key.match(/statementData\.tag./g)) {
                 console.log('ok');
                 form2['errors']['statementData.tag'] = value;
-                validationError.value = 1;
+                // validationError.value = 1;
             }
+
+            else form2['errors']['statementData.tag'] = null;
         }
 }
 
-else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
+// else if (Object.keys(usePage()?.props.value?.errors).length == 0 && Object.keys(form2['errors']).length == 1) {
 
-        // console.log('ok');
-        form2['errors'] = '';
-    }
+//         console.log('ok');
+//         form2['errors'] = '';
+//     }
 });
 
 </script>

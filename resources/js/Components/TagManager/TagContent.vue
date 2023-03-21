@@ -13,15 +13,22 @@
 
 <div v-for="(item, index) in tagArray" class="flex flex-col">
     <div class="relative h-auto flex flex-row leading-none">
-        <input class="px-1 flex items-center border-r border-b border-gray-400 w-[180px]" placeholder="Category" v-model="tagArray[index][0]">
-        <input class="px-1 flex items-center border-r border-b border-gray-400 w-[140px]" placeholder="Content" v-model="tagArray[index][1]">
-        <input :input="tagValueSuggestions(index)" class="px-1 flex items-center border-r border-b border-gray-400 w-[120px]" placeholder="Value" v-model="tagArray[index][2]">
+        <input class="px-1 flex items-center border-r border-b border-gray-400 w-[170px]" placeholder="Category" v-model="tagArray[index][0]">
+        <input class="px-1 flex items-center border-r border-b border-gray-400 w-[170px]" placeholder="Content" v-model="tagArray[index][1]">
+        <div class="relative">
+            <input ref="tagArray_dom" @input="tagValueSuggestions(index)" class="px-1 flex items-center border-r border-b border-gray-400 w-[240px] h-full" placeholder="Value" v-model="tagArray[index][2]">
+            <div v-if="tagArrayCheck[index]" class="absolute top-1/2 right-0 transform -translate-y-1/2 pr-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+            </div>
+        </div>
 
         <!-- value tag popup -->
         <!-- <div class="absolute bg-green-100 h-40 w-40 left-[320px] bottom-0 z-50">123</div> -->
 
         <div class="flex flex-row justify-between items-center border-r border-b border-gray-400 w-full grow h-6">
-            <input @input="detailCheck(index)" class="grow pl-1 truncate h-full z-50" placeholder="Details (optional)" v-model="tagArray[index][3]">
+            <input @input="detailCheck(index)" class="w-full pl-1 truncate h-full z-50" placeholder="Details (optional)" v-model="tagArray[index][3]">
 
             <!-- edit menu button -->
             <div @mouseover="tagEditMenu[index] = 1" @mouseleave="tagEditMenu[index] = 0" class="relative border-l border-gray-400 h-full w-fit flex flex-row leading-none pr-1">
@@ -86,6 +93,7 @@
 
 <script setup>
 
+import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 import contentBox from "./TagContent.vue";
@@ -95,8 +103,14 @@ let props = defineProps(['toChild']);
 let emit = defineEmits(['fromChild']);
 
 let tagArray = ref([]);
+let tagArrayOld = ref([]);
+let tagArray_dom = ref();
+let tagArrayCheck = ref([]);
+
 let title = ref('');
 let tagEditMenu = ref([]);
+
+console.log('ok');
 
 // let tagDuplication = ref([]);
 
@@ -189,7 +203,36 @@ onMounted(() => {
 watch(() => tagArray.value, (curr, prev) => {
     // console.log(tagArray.value);
     emit('fromChild', {'tagSelectionListGroup': tagArray.value});
-}, {deep: true}, 500);
+}, {deep: true});
+
+// tag value check answer
+watch(() => usePage().props.value.flash.fromController_validation, (curr, prev) => {
+
+    if (usePage().props?.value.flash?.fromController_validation?.tag_value_collection?.[0]) {
+        async_test();
+    }
+
+    else tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 0;
+
+    async function async_test() {
+        await task1();
+        await task2();
+    }
+
+    async function task1() {
+
+    // console.log(usePage().props.value.flash.fromController_validation);
+        tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex] = tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2];
+        tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2] = usePage().props.value.flash.fromController_validation.tag_value_collection[0];
+    }
+
+    async function task2() {
+        tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].setSelectionRange(tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex].length, usePage().props.value.flash.fromController_validation.tag_value_collection[0].length);
+        // tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].style.color = 'green';
+        tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 1;
+    }
+
+}, {deep: true});
 
 function detailCheck(index){
     // console.log(index);
@@ -199,11 +242,24 @@ function detailCheck(index){
     // console.log(tagArray.value[index]);
 }
 
-function tagValueSuggestions(index) {
-    if (tagArray.value > 2) {
+console.log('ok');
 
+function tagValueSuggestions(index) {
+
+    console.log('ok');
+
+    // console.log(tagArray.value[index][2]);
+
+    // let valueString = tagArray.value[index][2];
+
+    if (tagArray?.value?.[index]?.[2]?.length > 0 && tagArray.value[index][2] != tagArrayOld.value[index]) {
+
+        // console.log('ok');
+
+        Inertia.post('tag_value_validation', {'value': tagArray.value[index], 'parentId': props.toChild.parentId, 'parentIndex': index})
     }
-    emit('fromChild', {'tagValueSuggestions': tagArray.value});
+
+    else tagArrayCheck.value[index] = 0;
 }
 
 </script>

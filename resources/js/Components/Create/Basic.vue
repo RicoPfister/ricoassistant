@@ -110,8 +110,8 @@ const form = useForm({
     'basicPublic': false,
 });
 
-const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromController2']);
-let emit = defineEmits(['fromChild']);
+const props = defineProps(['dataParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromController2', 'fromController_validation']);
+let emit = defineEmits(['fromChild', 'fromController_validation']);
 
 function emitRefDate() {
     emit('fromChild', {'section':'basicData', 'subSection':'ref_date', 'form': form.basicRefDate});

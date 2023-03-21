@@ -853,8 +853,8 @@ class RicoAssistant extends Controller {
             }
         }
 
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
+        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
+        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
         if (isset($request->sourceData['tag'])) {
             foreach ($request->sourceData['tag'] as $key => $value) {
@@ -946,6 +946,7 @@ class RicoAssistant extends Controller {
                             $tag_group_section_name_collection = [New Tag_0(), New Tag_1(), New Tag_2(), New Tag_3()];
 
                             $tag_group_section_name[$value_index] = $tag_group_section_name_collection[$value_index];
+                            $tag_group_section_name[$value_index]->user_id = $user->id;
                             $tag_group_section_name[$value_index]->content = $value_item;
                             $tag_group_section_name[$value_index]->tracking = $request->ip();
                             $tag_group_section_name[$value_index]->save();
@@ -2701,5 +2702,50 @@ class RicoAssistant extends Controller {
         // dd($user_entries_category);
 
         return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => ['all' => $user_entries_all, 'category' => $user_entries_category]]]);
+    }
+
+    public function tag_value_validation(Request $request) {
+
+        // dd($request);
+
+        $user = Auth::user();
+
+        $tag_category_id = DB::table('tag_0s')
+        ->where('user_id', '=', $user->id)
+        ->where('content', '=', $request->value[0])
+        ->pluck('id');
+
+        $tag_context_id = DB::table('tag_1s')
+        ->where('user_id', '=', $user->id)
+        ->where('content', '=', $request->value[1])
+        ->pluck('id');
+
+        // dd($tag_category_id, $tag_context_id);
+
+        if (count($tag_category_id) > 0 && count($tag_context_id) > 0) {
+
+            $tag_value_id = DB::table('tags')
+            ->where('tag_0_id', '=', $tag_category_id[0])
+            ->where('tag_1_id', '=', $tag_context_id[0])
+            ->pluck('tag_2_id');
+
+            // dd($tag_value_id);
+
+            $tag_value_collection = DB::table('tag_2s')
+            ->where('user_id', '=', $user->id)
+            ->whereIn('id', $tag_value_id)
+            ->where('content', 'LIKE', '%' . $request->value[2] . '%')
+            ->orderBy('updated_at', 'desc')
+            ->take(1)
+            ->pluck('content');
+
+        }
+
+        else  $tag_value_collection = '';
+
+        // dd($tag_value_collection);
+
+        // return Inertia::render('Create', ['fromController' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
+        return to_route('test123')->with(['fromController_validation' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
     }
 }

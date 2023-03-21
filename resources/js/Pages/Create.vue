@@ -18,7 +18,16 @@
 
                 <div v-for="(item, index) in componentCollection" :key="componentCollectionUpdate+index" class="">
                     <component @data-child="dataChild" :is="componentSource[item]" :data-parent="dataParent" @to-parent="toParent" :toChild="form"
-                    :fromController="props.fromController" :fromController2="usePage().props.value.flash.fromController" :data-form="form" :component-id="index-1" @dataToParent="dataToParent" :transferCreate="transferCreate" @fromChild="fromChild"/>
+                    :fromController="props.fromController"
+                    :fromController2="usePage().props.value.flash.fromController"
+                    :data-form="form"
+                    :component-id="index-1"
+                    @dataToParent="dataToParent"
+                    :transferCreate="transferCreate"
+                    @fromChild="fromChild"
+                    :fromController_validation="props.fromController_validation"
+                    />
+
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
@@ -51,8 +60,8 @@ import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
-let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2']);
+let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2', 'fromController_validation']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2', 'fromController_validation']);
 
 // variable collection
 // -------------------------
@@ -61,14 +70,20 @@ let form = ref({});
 
 // save validation errors
 
+console.log('ok');
+
 const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
 
-if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+        console.log('ok');
 
-    form2['errors'] = usePage().props.value.errors;
-}
+        if (Object.keys(usePage()?.props.value?.errors).length > 0) {
+
+        console.log(usePage()?.props.value?.errors);
+
+        form2['errors'] = usePage().props.value.errors;
+    }
 });
 
 // console.log(form.value);
@@ -272,18 +287,18 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
-    if ((data.form != 'undefined' && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
+    if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
     || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date') {
 
         if (!form.value[data.section]) form.value[data.section] = {};
 
-        if (typeof data.index !== 'undefined') {
+        if (data.index != undefined && data.index_temp_undefined == undefined) {
 
-            // console.log('ok');
+            console.log('ok');
 
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
 
@@ -298,7 +313,8 @@ function fromChild(data) {
         // }
 
         else {
-            // console.log(data);
+            console.log(data);
+
             form.value[data.section][data.subSection] = data.form;
             }
     }
@@ -337,7 +353,7 @@ function fromChild(data) {
     // recheck validation
     if (data.index == undefined) {
 
-        // console.log('ok');
+        console.log('ok');
 
         if (data.subSection == 'activityTo') {
 
@@ -346,6 +362,7 @@ function fromChild(data) {
                 let $delete_index = parseInt(data.delete)-1;
                 // console.log(form2.errors['activityData.activityTo.'+ data.delete-1]);
                 console.log(form2.errors);
+
                 delete form2.errors['activityData.activityTo.' + $delete_index];
                 console.log(form2.errors);
                 delete form2.errors['activityData.reference_parents.' + $delete_index];
@@ -353,7 +370,7 @@ function fromChild(data) {
 
             else {
 
-                // console.log('ok');
+                console.log('ok');
 
                 data.form.forEach((item, index) => {
                     if (item > 0) {
@@ -365,6 +382,7 @@ function fromChild(data) {
         }
 
         else if (data.subSection == 'filelist') {
+
             console.log('ok');
             // data.form.forEach((item, index) => {
             //     console.log(index);
@@ -375,12 +393,16 @@ function fromChild(data) {
         }
 
         else {
+
+            console.log('ok');
+
             delete form2.errors[data.section + '.' + data.subSection];
         }
     }
 
     else {
-            // console.log('ok');
+            console.log('ok');
+
             delete form2.errors[data.section + '.' + data.subSection];
             delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
     }
