@@ -289,7 +289,22 @@ class RicoAssistant extends Controller {
         }
 
         else if (isset($request->searchData)) {
+
             // dd($request->searchData);
+
+            if (preg_match('/^[!@]/', $request->searchData)) {
+
+                $split_search_data = explode(' ', $request->searchData);
+
+                // dd($split_search_data);
+
+                if (preg_match('/!\d{6}\b/', $split_search_data[0])) {
+                    dd('ok1');
+                }
+
+                dd('ok2');
+            }
+
             if (isset($user)) {
                 $db_basic_data = DB::table('section_basics')
                 ->where('user_id', '=', $user->id)
@@ -339,7 +354,9 @@ class RicoAssistant extends Controller {
 
         // $listAuth->paginate(5);
 
-        return Inertia::render('TabManager/TabManager', ['filter' => $listAuth]);
+        // dd($request->searchData);
+
+        return Inertia::render('TabManager/TabManager', ['filter' => $listAuth, 'search_term' => $request->searchData]);
     }
 
     public function detail(Request $request) {
