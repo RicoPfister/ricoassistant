@@ -116,7 +116,7 @@ class RicoAssistant extends Controller {
     public function filter(Request $request) {
 
         $user = Auth::user();
-
+        $where = [];
         // dd($request);
         // dd($request['category']['story']);
         // dd(isset($user));
@@ -288,47 +288,119 @@ class RicoAssistant extends Controller {
             ->paginate(20)->withQueryString();;
         }
 
+        // search with openssl_get_cert_locations
+        // ************
+
         else if (isset($request->searchData)) {
+
             // dd($request->searchData);
-            if (isset($user)) {
-                $db_basic_data = DB::table('section_basics')
-                ->where('user_id', '=', $user->id)
-                ->where('restriction', '<', 2)
-                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                ->where('title', 'LIKE', '%' . $request->searchData . '%')
-                ->orderByDesc('title')
-                ->paginate(20)->withQueryString();;
+
+            if (preg_match('/^[!@]|\s[!@]/', $request->searchData)) {
+
+                // dd('ok0');
+
+                $split_search_data = explode(' ', $request->searchData);
+
+                // dd($split_search_data[0]);
+                // dd($split_search_data);
+
+                function search_year($split_search_data, $key, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
+                    // dd($where);
+                }
+
+                function search_year_month($split_search_data, $key, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
+                }
+
+                function search_year_month_day($split_search_data, $key, &$where) {
+
+                    array_push($where, ['ref_date', '=', substr($split_search_data[$key], 1)]);
+                }
+
+                function search_title($split_search_data, $key, &$where) {
+
+                    array_push($where, ['title', 'LIKE', '%' . $split_search_data[$key] . '%']);
+                }
+
+                // dd($split_search_data);
+
+                foreach ($split_search_data as $key => $value) {
+
+                    if (preg_match('/^!\d{3,}$/', $value)) {
+                        // dd('ok');
+                        search_year($split_search_data, $key, $where);
+                    }
+                    else if (preg_match('/^!\d{4}-\d{2}$/', $value)) {
+                        search_year_month($split_search_data, $key, $where);
+                    }
+                    else if (preg_match('/^!\d{4}-\d{2}-\d{2}$/', $value)) {
+                        search_year_month_day($split_search_data, $key, $where);
+                    }
+
+                    if (preg_match('/^[^!@]{3,}/', $value)) {
+                        // dd('ok');
+                        // $where_search_term = preg_grep('/^[^!@]/', $split_search_data);
+                        search_title($split_search_data, $key, $where);
+                    }
+                }
+
+
             }
 
             else {
+                // dd('ok');
+                $where = [['title', 'LIKE', '%' . $request->searchData . '%']];
+            }
+
+            // dd($where);
+
+            if (isset($where) && count($where) > 0) {
+
+                // dd('ok');
+
+                if (isset($user)) {
+                    array_push($where, ['restriction', '<', '2'], ['user_id', '=', $user->id]);
+                }
+
+                else {
+                    array_push($where, "restriction', '=', 0");
+                }
+
+                // "'title', 'LIKE', '\'%' . $request->searchData . '%\''"
+
                 $db_basic_data = DB::table('section_basics')
-                ->where('restriction', '=', 0)
+                ->where($where)
                 ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                ->where('title', 'LIKE', '%' . $request->searchData . '%')
                 ->orderByDesc('title')
-                ->paginate(20)->withQueryString();;
+                ->paginate(20)->withQueryString();
+
+                // dd(count($db_basic_data));
+
+                if (count($db_basic_data) > 0) {
+                    $listAuth = $db_basic_data;
+                }
+
+                else $listAuth = ['result' => 0, 'search_string' => $request->searchData];
             }
 
-
-            if (count($db_basic_data) > 0) {
-                $listAuth = $db_basic_data;
-            }
-
-            else $listAuth = ['result' => 0, 'search_string' => $request->searchData];;
+            else $listAuth = ['result' => 0, 'search_string' => $request->searchData];
 
             // dd($db_basic_data);
 
-            $db_tag_data = DB::table('tag_0s')
-            ->select('id', 'content')
-            ->where('content', 'LIKE', '%' . $request->searchData . '%')
-            ->orderByDesc('content')
-            ->paginate(20)->withQueryString();;
+            // $db_tag_data = DB::table('tag_0s')
+            // ->select('id', 'content')
+            // ->where('content', 'LIKE', '%' . $request->searchData . '%')
+            // ->orderByDesc('content')
+            // ->paginate(20)->withQueryString();;
 
-            if (count($db_tag_data) > 0) {
-                $tag_0 = $db_basic_data;
-            }
+            // if (count($db_tag_data) > 0) {
+            //     $tag_0 = $db_basic_data;
+            // }
 
-            else $tag_0 = ['result' => 0, 'search_string' => $request->searchData];
+            // else $tag_0 = ['result' => 0, 'search_string' => $request->searchData];
 
             // dd($db_tag_data);
         }
@@ -339,7 +411,9 @@ class RicoAssistant extends Controller {
 
         // $listAuth->paginate(5);
 
-        return Inertia::render('TabManager/TabManager', ['filter' => $listAuth]);
+        // dd($request->searchData);
+
+        return Inertia::render('TabManager/TabManager', ['filter' => $listAuth, 'search_term' => $request->searchData]);
     }
 
     public function detail(Request $request) {
@@ -831,6 +905,8 @@ class RicoAssistant extends Controller {
         $user = Auth::user();
 
         // validation. duplicate: function validation
+        // title uniqueness is not tested again
+
         $validation_collection = [
             'basicData.ref_date' => 'required|filled',
             'basicData.medium' => 'required|filled',
@@ -853,8 +929,8 @@ class RicoAssistant extends Controller {
             }
         }
 
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
-        if (array_search(7, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
+        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
+        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
         if (isset($request->sourceData['tag'])) {
             foreach ($request->sourceData['tag'] as $key => $value) {
@@ -946,6 +1022,7 @@ class RicoAssistant extends Controller {
                             $tag_group_section_name_collection = [New Tag_0(), New Tag_1(), New Tag_2(), New Tag_3()];
 
                             $tag_group_section_name[$value_index] = $tag_group_section_name_collection[$value_index];
+                            $tag_group_section_name[$value_index]->user_id = $user->id;
                             $tag_group_section_name[$value_index]->content = $value_item;
                             $tag_group_section_name[$value_index]->tracking = $request->ip();
                             $tag_group_section_name[$value_index]->save();
@@ -1349,6 +1426,8 @@ class RicoAssistant extends Controller {
         // step 3: check if client tag group section names must be updated or created
         function update_tag_group_sections($request, $index, $item, $update_tag_db_data, $update_tag_db_group, $section_id, $tag_section, $update_tag_db_section, $tag_id, $update_tag_db_data_indexed) {
 
+            $user = Auth::user();
+
             //  dd($item);
 
             // check if client tag group exists if not set the group to 2 (delete)
@@ -1399,6 +1478,7 @@ class RicoAssistant extends Controller {
                         // if tag name was not found create it
                         if (!isset($tag_name_check[0])) {
                             $tag_category = $tag_table_model;
+                            $tag_category->user_id = $user->id;
                             $tag_category->content = $item3;
                             $tag_category->tracking = $request->ip();
                             $tag_category->save();
@@ -2701,5 +2781,50 @@ class RicoAssistant extends Controller {
         // dd($user_entries_category);
 
         return Inertia::render('Dashboard', ['statistic' => ['tags' => $group_tags_count_sorted, 'user_entries' => ['all' => $user_entries_all, 'category' => $user_entries_category]]]);
+    }
+
+    public function tag_value_validation(Request $request) {
+
+        // dd($request);
+
+        $user = Auth::user();
+
+        $tag_category_id = DB::table('tag_0s')
+        ->where('user_id', '=', $user->id)
+        ->where('content', '=', $request->value[0])
+        ->pluck('id');
+
+        $tag_context_id = DB::table('tag_1s')
+        ->where('user_id', '=', $user->id)
+        ->where('content', '=', $request->value[1])
+        ->pluck('id');
+
+        // dd($tag_category_id, $tag_context_id);
+
+        if (count($tag_category_id) > 0 && count($tag_context_id) > 0) {
+
+            $tag_value_id = DB::table('tags')
+            ->where('tag_0_id', '=', $tag_category_id[0])
+            ->where('tag_1_id', '=', $tag_context_id[0])
+            ->pluck('tag_2_id');
+
+            // dd($tag_value_id);
+
+            $tag_value_collection = DB::table('tag_2s')
+            ->where('user_id', '=', $user->id)
+            ->whereIn('id', $tag_value_id)
+            ->where('content', 'LIKE', '%' . $request->value[2] . '%')
+            ->orderBy('updated_at', 'desc')
+            ->take(1)
+            ->pluck('content');
+
+        }
+
+        else  $tag_value_collection = '';
+
+        // dd($tag_value_collection);
+
+        // return Inertia::render('Create', ['fromController' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
+        return to_route('test123')->with(['fromController_validation' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
     }
 }

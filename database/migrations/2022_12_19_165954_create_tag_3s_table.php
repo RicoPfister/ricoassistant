@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('tag_3s', function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->text('content');
             $table->string('tracking', 50);
             $table->timestamps();

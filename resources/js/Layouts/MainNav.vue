@@ -39,17 +39,29 @@
 
                         </div>
 
-                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-96 w-full p-2 z-50 bg-gray-100">
+                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-[550px] w-full p-2 z-50 bg-gray-100">
 
-                        Search filter coming soon.
+                        replace [...] with your <b>search term.</b><br><br>
+                        A <b>plus</b> sign at the end of a value [value+]: shows all values equal or higher<br>
+                        A <b>minus</b> sign at the end of a value [value-]: shows all values equal or higher<br><br>
 
+                        <b>Title</b> (must be the <b>last</b> part of your search): [title]<br>
+                        <b>Date:</b> ![YYYY-MM-DD*]<br>
+                        <b>Date range:</b> ![YYYY-MM-DD*]-[YYYY-MM-DD*]<br>
+                        *<b>today</b> is possible too<br><br>
+                        <b>Tag:</b> @[Category]:[Context]:[Value]<br><br>
+                        <b>Tag Shortcuts:</b><br>
+                        <b>@Mood:Happiness:</b> !happy:[value]<br>
+                        <b>@Person:Birthdate</b> !birth:[YYYY-MM-DD]<br>
+                        <b>@Wellness:Food</b> !food<br>
+                        <b>@Admin:list</b> !list<br>
+                        <b>@Admin:TradeIn:</b> !tin:[value]<br>
+                        <b>@Admin:TradeOut:</b> !tout:[value]<br>
+                        <b>@Admin:Trader:</b> !trader:[name]<br>
+                        <b>@Manifest:Home:</b> !home<br>
+                        <b>@Manifest:Discipline:</b> !discipline<br>
                         </div>
-
-
                     </div>
-
-
-
                         <div aria-label="Menu Icon and Menu Popup Area" class="flex items-center leading-none  h-full item">
                             <Link v-if="$page.props.user" aria-label="Dashboard button" class="hidden xl:flex items-end xl:ml-1" :href="route('dashboard')">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
@@ -171,6 +183,9 @@ let tagQuickFilterBarData = ref('');
 
 onMounted(() => {
 
+    // console.log(props?.toChild?.search_term);
+    if (props?.toChild?.search_term != undefined) searchData.value = props.toChild.search_term;
+
     // console.log('ok');
 
     if (!props?.toChild?.fromController && props?.toChild?.page_id) Inertia.get('/mainNav', {'page_id': props?.toChild?.page_id}, {replace: false,  preserveState: true, preserveScroll: true});
@@ -248,14 +263,31 @@ if (typeof props?.toChild?.fromController == 'undefined') {
 
 function searchInput() {
 
+    console.log(searchData.value.length);
+
     // check if reference form ***input*** has been and send request to controller
-    if (searchData.value.length > 2) {
+    if (searchData.value.match(/(^[!@][^!@\s]{3,}|^[^!@\s]{3,})(\s[!@][^!@\s]{3,}|\s[^!@\s]{3,}){0,}/)) {
+    // if (searchData.value.length > 2 && (searchData.value.match(/^[^!@ ]{3}|(^[!@][\S]{3,} ([!@]\S{3,} )*[^!@ ]{3})/g))) {
         setTimeout(() => {
+            console.log('ok');
             Inertia.get('filter', {searchData: searchData.value}, {replace: false,
             preserveState: true, preserveScroll: true});
-        }, 500);
+        }, 1500);
     }
 }
+
+watch(() => props.toChild.search_term, (curr, prev) => {
+
+    // console.log(props.toChild.search_term);
+
+    if (props.toChild.search_term != undefined && searchData.value == undefined) {
+
+        console.log(searchData.value);
+        searchData.value = props.toChild.search_term;
+    }
+    // console.log(searchData.value);
+
+}, {deep: true});
 
 </script>
 

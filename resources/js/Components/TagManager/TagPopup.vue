@@ -10,7 +10,7 @@
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <!-- add tag dropdown -->
-            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="typeof Object.keys(tagPresetCollection)[0] == 'undefined'" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
+            <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="!tagPresetCollection?.[0]" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
                     <div class="flex flex-row">
@@ -46,7 +46,7 @@
                             </svg>
                         </div>
 
-                        <div v-if="(props?.fromController?.tagCollection.length > 0)" class="ml-1">Single</div>
+                        <div v-if="(props?.fromController?.tagCollection?.length > 0)" class="ml-1">Single</div>
                         <div v-else class="ml-1">Create</div>
                     </div>
 
@@ -97,7 +97,7 @@
 
         <!-- content box -->
         <div class="overflow-y-scroll h-[calc(100%-35px)] z-50">
-            <contentBox :toChild="{'tagSelection': {'tagSelection': tagSelection, 'keyid': keyid}, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle}" @fromChild="fromChild"/>
+            <contentBox :toChild="{'tagSelection': {'tagSelection': tagSelection, 'keyid': keyid}, 'tagSelectionListString': tagSelectionListString, 'basicTitle': props.toChild.basicTitle, 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex}" @fromChild="fromChild"/>
         </div>
 
         <div class="absolute top-[35px] left-0 z-10">
@@ -279,8 +279,6 @@ function fromChild(data) {
     if (data.tagPreset) {
 
         console.log(data.tagPreset);
-
-
         emit('fromChild', {'tagPreset': data.tagPreset})
     };
 

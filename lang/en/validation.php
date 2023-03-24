@@ -118,7 +118,7 @@ return [
     'prohibits' => 'The :attribute field prohibits :other from being present.',
     'regex' => 'The :attribute format is invalid.',
     // 'required' => 'The :attribute field is required.',
-    'required' => 'Required.',
+    'required' => 'Check input.',
     'required_array_keys' => 'The :attribute field must contain entries for: :values.',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_if_accepted' => 'The :attribute field is required when :other is accepted.',
@@ -162,10 +162,10 @@ return [
             'filled' => 'File has no extension.',
         ],
         'activityData.activityTo.*' => [
-            'filled' => 'Required.',
+            'filled' => 'Check input.',
         ],
         'activityData.activityTo.*' => [
-            'in' => 'Required. End time must be 2400.',
+            'in' => 'Check input. End time must be 2400.',
         ],
     ],
 

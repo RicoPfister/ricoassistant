@@ -112,7 +112,7 @@
                                 <TagForm
                                     :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title,
                                     'tagInputShow': 0, 'formTags': form?.activityTag?.[index], 'validationError': form2?.['errors']?.['activityData.tag.'+[index]]}"
-                                    :fromController="props.fromController2"
+                                    :fromController2="props.fromController2"
                                     @fromChild="fromChild"
                                 />
                             </div>
@@ -435,7 +435,9 @@ function activitybuttonBar(e, n) {
 
     if (form.activityTo[n-1] > 0 && form.activityTo[n-1] < 2400 && !document.getElementById("activityToRowNumber"+(n)) ) {
         activityTotalRow.value++;
+
         console.log('ok');
+
         form2.errors['activityData.activityTo.' + n] = '';
         form2.errors['activityData.activityTo'] = '';
         form.activityTo[n] = '';
@@ -786,7 +788,8 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        // console.log('ok');
+        console.log('ok');
+
         form2.errors = usePage().props.value.errors;
         // form2.errors['activityData.tag'] = {};
 

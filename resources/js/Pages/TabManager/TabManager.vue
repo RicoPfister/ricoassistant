@@ -1,5 +1,5 @@
 <template>
-<Header :toChild="{'page_id': 'TabManager/TabManager', 'tagQuickFilterBarOpen': 1, 'fromController': props?.fromController, 'check': props?.detail}">
+<Header :toChild="{'page_id': 'TabManager/TabManager', 'tagQuickFilterBarOpen': 1, 'fromController': props?.fromController, 'check': props?.detail, 'search_term': props?.search_term}">
 
 <div class="flex flex-row w-full gap-32 justify-center">
 
@@ -124,8 +124,9 @@ import Header from "../../Layouts/MainNav.vue";
 import List from "../List.vue";
 import NewTab from "./NewTab.vue"
 import Detail from "../Detail.vue"
+import { DOMDirectiveTransforms } from "@vue/compiler-dom";
 
-const props = defineProps(['filter', 'detail', 'fromController']);
+const props = defineProps(['filter', 'detail', 'fromController', 'search_term']);
 
 let data1 = 123;
 let data2 = "";
@@ -183,7 +184,15 @@ watch(() => currentTab.value[1], _.debounce( (curr, prev) => {
 
 watch(() => props.filter, (curr, prev) => {
 
+    console.log(props.filter);
+
     if (props?.filter) list.value = props.filter;
+}
+);
+
+watch(() => props.search_term, (curr, prev) => {
+
+    console.log(props.search_term);
 }
 );
 

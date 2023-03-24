@@ -81,7 +81,7 @@ function fromChild(data){
     if (typeof categoryActiveTotal.value[data.index] == 'undefined') categoryActiveTotal.value[data.index] = 1; else categoryActiveTotal.value[data.index]++;
 
     if (data.index == 'new') {
-        emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': 'new'});
+        emit('fromChild', {'tagSelectionCategory': tagCollection.value[data.index][0], 'tagSelectionContext': ''});
     }
 
     if (data.tagContextSelected) {
@@ -105,7 +105,7 @@ onMounted(() => {
 
 function newTag(data) {
     // console.log('ok');
-    emit('fromChild', {'tagSelectionCategory': tagCollection.value[data][0], 'tagSelectionContext': 'new'});
+    emit('fromChild', {'tagSelectionCategory': tagCollection.value[data][0], 'tagSelectionContext': ''});
 }
 
 </script>
