@@ -31,7 +31,7 @@
                 </div>
 
                 <div v-if="componentCollection[0] != FormManager" class="mt-2">
-                    <Footer :editCheck="editCheck" @data-child="dataChild"/>
+                    <Footer :editCheck="editCheck" :blocking="form?.basicData?.blocking" @data-child="dataChild"/>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@ import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
 
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2', 'fromController_validation']);
-let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2', 'fromController_validation']);
+let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2', 'fromController_validation', 'blocking']);
 
 // variable collection
 // -------------------------
@@ -292,7 +292,7 @@ function fromChild(data) {
 
     // if data not undefined and public false-true
     if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
-    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date') {
+    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking') {
 
         if (!form.value[data.section]) form.value[data.section] = {};
 
@@ -313,7 +313,11 @@ function fromChild(data) {
         // }
 
         else {
-            console.log(data);
+            // console.log(data);
+
+            // if (data.subSection == 'ref_date') {
+            //     form.value[data.section][data.subSection] = data.form.slice(0,4)+data.form.slice(5,7)+data.form.slice(8,10);
+            // }
 
             form.value[data.section][data.subSection] = data.form;
             }

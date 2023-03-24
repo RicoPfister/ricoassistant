@@ -12,7 +12,7 @@
 
         <!-- form category selection -->
         <div class="flex flex-col w-36">
-            <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Category:</label>
+            <label class="font-bold" aria-label="Category Input font-bold leading-none text-sm" for="medium">Type:</label>
             <select :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['basicData.medium']}" class="border border-black outline-0 focus:border-black focus:ring-0 h-10" id="medium" v-model="form['basicMedium']">
                 <option value="null" disabled>Select one:</option>
                 <option value=""></option>
@@ -45,9 +45,9 @@
                     </div>
                 </div>
                 <!-- warnings -->
-                <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[29px] right-10 pr-1 flex flex-row items-center">
+                <button v-if="basicTitleWarning" @click="basicTitelPickerOpen = !basicTitelPickerOpen" type="button" class="absolute top-[32px] right-10 pr-1 flex flex-row items-center">
                     <div class="text-xs text-gray-500"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-red-500': usePage().props.value.flash.fromController.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : '', 'text-black': usePage().props.value.flash.fromController.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :class="{'fill-red-500': usePage().props.value.flash.fromController?.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : '', 'text-black': usePage().props.value.flash.fromController?.misc.parentId == 1 ? usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 : ''}" fill="none" color="rgb(107 114 128)" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                     </svg>
                 </button>
@@ -59,7 +59,7 @@
 
                         <div class="text-sm xl:text-base z-50 w-full max-h-52 overflow-y-auto">
 
-                            <div class="text-sm"><b>{{usePage().props.value.flash.fromController[0].basicResult[0].warning == 2 ? 'Duplicate entry found in database. Please change created at, category or title.' : 'Similar titles found in database:'}}</b></div>
+                            <div class="text-sm"><b>{{usePage().props.value.flash.fromController?.[0].basicResult?.[0].warning == 2 ? 'Duplicate entry found in database. Please change created at, type or title.' : 'Similar titles found in database:'}}</b></div>
 
                             <div v-for="(item, index) in usePage().props.value.flash.fromController?.[0]?.basicResult" :key="index" :class="{'bg-gray-100': index % 2 == 0}" class="flex flex-row items-center w-full">
 
@@ -160,6 +160,7 @@ watch(() => usePage().props.value.flash.fromController, (curr, prev) => {
         // console.log(typeof props.dataParent.basicTitleData[0]);
         if (usePage().props.value.flash.fromController[0].basicResult[0].warning > 0) {
             basicTitleWarning.value = 1;
+            emit('fromChild', {'section':'basicData', 'subSection':'blocking', 'form': 1});
             if (usePage().props.value.flash.fromController[0].basicResult[0].warning == 2) basicTitelPickerOpen.value = 1;
         }
     }
@@ -169,6 +170,7 @@ watch(() => usePage().props.value.flash.fromController, (curr, prev) => {
 function basicTitleChecker() {
     basicTitelPickerOpen.value = 0;
     basicTitleWarning.value = 0;
+    emit('fromChild', {'section':'basicData', 'subSection':'blocking', 'form': 0});
 
     if (form?.basicTitle?.length > 2) {
         setTimeout(() => {
