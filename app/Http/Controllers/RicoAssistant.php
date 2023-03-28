@@ -116,7 +116,22 @@ class RicoAssistant extends Controller {
     public function filter(Request $request) {
 
         $user = Auth::user();
+
         $where = [];
+        $where_between = [];
+        $where_tag_1 = [];
+        $where_tag_2 = [];
+        $where_tag_3 = [];
+        $where_tag_operator = '';
+
+        $where_tag_section_collection2 = [];
+
+        $query_check = 0;
+        // $query_check_tag = 0;
+
+        // $db_tag_0 = '';
+        // $db_tag_1 = '';
+        // $db_tag_2 = '';
         // dd($request);
         // dd($request['category']['story']);
         // dd(isset($user));
@@ -304,82 +319,300 @@ class RicoAssistant extends Controller {
                 // dd($split_search_data[0]);
                 // dd($split_search_data);
 
-                function search_year($split_search_data, $key, &$where) {
+                // title
 
-                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
-                    // dd($where);
+                function search_title($value, &$where) {
+
+                    array_push($where, ['title', 'LIKE', '%' . $value . '%']);
                 }
 
-                function search_year_month($split_search_data, $key, &$where) {
+                // tag
 
-                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
+                function search_tag_category($value, &$where_tag_1) {
+
+                    // dd('ok');
+
+                    array_push($where_tag_1, ['content', '=' , substr($value, 1)]);
                 }
 
-                function search_year_month_day($split_search_data, $key, &$where) {
+                function search_tag_category_context($tag_sections, &$where_tag_1, &$where_tag_2) {
 
-                    array_push($where, ['ref_date', '=', substr($split_search_data[$key], 1)]);
+                    array_push($where_tag_1, ['content', '=' , $tag_sections[0]]);
+                    array_push($where_tag_2, ['content', '=' , $tag_sections[1]]);
                 }
 
-                function search_title($split_search_data, $key, &$where) {
+                function search_tag_category_context_value($tag_sections, &$where_tag_1, &$where_tag_2, &$where_tag_3, $where_tag_operator) {
 
-                    array_push($where, ['title', 'LIKE', '%' . $split_search_data[$key] . '%']);
+                    array_push($where_tag_1, ['content', '=' , $tag_sections[0]]);
+                    array_push($where_tag_2, ['content', '=' , $tag_sections[1]]);
+
+                    if ($where_tag_operator == '+') array_push($where_tag_3, ['content', '>=' , $tag_sections[2]]);
+                    if ($where_tag_operator == '-') array_push($where_tag_3, ['content', '<=' , $tag_sections[2]]);
+                    else array_push($where_tag_3, ['content', '=' , $tag_sections[2]]);
                 }
 
-                // dd($split_search_data);
+                // 1 date/today
+
+                function search_year($value, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($value, 1) . '%']);
+                }
+
+                function search_year_month($value, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($value, 1) . '%']);
+                }
+
+                function search_year_month_day($value, &$where) {
+
+                    array_push($where, ['ref_date', '=', substr($value, 1)]);
+                }
+
+                function search_today(&$where) {
+
+                    array_push($where, ['ref_date', '=', date('Y-m-d')]);
+                }
+
+                // check search sections
 
                 foreach ($split_search_data as $key => $value) {
 
-                    if (preg_match('/^!\d{3,}$/', $value)) {
-                        // dd('ok');
-                        search_year($split_search_data, $key, $where);
-                    }
-                    else if (preg_match('/^!\d{4}-\d{2}$/', $value)) {
-                        search_year_month($split_search_data, $key, $where);
-                    }
-                    else if (preg_match('/^!\d{4}-\d{2}-\d{2}$/', $value)) {
-                        search_year_month_day($split_search_data, $key, $where);
-                    }
+                    // dd($value);
+
+                    // title
 
                     if (preg_match('/^[^!@]{3,}/', $value)) {
-                        // dd('ok');
-                        // $where_search_term = preg_grep('/^[^!@]/', $split_search_data);
-                        search_title($split_search_data, $key, $where);
+                        search_title($value, $where);
+                    }
+
+                    // tag
+
+                    else if (preg_match('/^@[^:]{1,}$/', $value)) {
+
+                        // $query_check_tag = 1;
+                        search_tag_category($value, $where_tag_1);
+                    }
+
+                    else if (preg_match('/^@[^:]*:[^:]*$/', $value)) {
+
+                        // $query_check_tag = 2;
+                        $tag_sections = explode(':', $value);
+                        $tag_sections[0] = substr($tag_sections[0], 1);
+                        // dd($tag_sections);
+                        search_tag_category_context($tag_sections, $where_tag_1, $where_tag_2);
+                    }
+
+                    else if (preg_match('/^@[^:]*:[^:]*:[^:]*$/', $value)) {
+
+                        // $query_check_tag = 3;
+                        $tag_sections = explode(':', $value);
+                        $tag_sections[0] = substr($tag_sections[0], 1);
+
+                        // dd($tag_sections);
+
+                        if (preg_match('/.*\+$/', $tag_sections[2])) {
+                            $tag_sections[2] = substr($tag_sections[2], 0, -1);
+                            $where_tag_operator = '+';
+                        }
+
+                        // dd($tag_sections, $where_tag_operator);
+                        search_tag_category_context_value($tag_sections, $where_tag_1, $where_tag_2, $where_tag_3, $where_tag_operator);
+                    }
+
+                    // 1 date/today
+
+                    else if (preg_match('/^!\d{3,}$/', $value)) {
+
+                        search_year($value, $where);
+                    }
+
+                    else if (preg_match('/^!\d{4}-\d{2}$/', $value)) {
+
+                        search_year_month($value, $where);
+                    }
+
+                    else if (preg_match('/^!\d{4}-\d{2}-\d{2}$/', $value)) {
+
+                        search_year_month_day($value, $where);
+                    }
+
+                    else if (preg_match('/!today/', $value)) {
+
+                        search_today($where);
+                    }
+
+                    // 2 dates
+
+                    else if (preg_match('/!\d{4}_\d{4}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01-01';
+                        $where_between[1] = $where_between[1] . '-12-31';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01-01';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1);
+                        $query_check = 'between';
+                    }
+
+                    // 2 dates/today
+
+                    // year-today
+                    else if (preg_match('/!\d{4}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1).'-01-01';
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
+                    }
+
+                    // year/mont-today
+                    else if (preg_match('/!\d{4}-\d{2}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1).'-01';
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
+                    }
+
+                    // year/month/day-today
+                    else if (preg_match('/!\d{4}-\d{2}-\d{2}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1);
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
                     }
                 }
-
-
             }
 
             else {
-                // dd('ok');
+
                 $where = [['title', 'LIKE', '%' . $request->searchData . '%']];
             }
 
-            // dd($where);
-
-            if (isset($where) && count($where) > 0) {
-
-                // dd('ok');
+            if (isset($where) || isset($where_between) && count($where) > 0 || count(isset($where_between) > 0)) {
 
                 if (isset($user)) {
                     array_push($where, ['restriction', '<', '2'], ['user_id', '=', $user->id]);
                 }
 
                 else {
-                    array_push($where, "restriction', '=', 0");
+                    array_push($where, ['restriction', '=', '0']);
                 }
 
-                // "'title', 'LIKE', '\'%' . $request->searchData . '%\''"
+                // dd($where, $where_between, $where_tag_1, $where_tag_2);
 
-                $db_basic_data = DB::table('section_basics')
-                ->where($where)
-                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                ->orderByDesc('title')
-                ->paginate(20)->withQueryString();
+                if (count($where_tag_1) > 0) {
 
-                // dd(count($db_basic_data));
+                    // dd('ok');
 
-                if (count($db_basic_data) > 0) {
+                    $where_tag_section_collection = [];
+
+                    $db_tag_0 = DB::table('tag_0s')
+                    ->where($where_tag_1)
+                    ->select('id')
+                    ->get();
+
+                    // dd($db_tag_0);
+
+                    if (count($db_tag_0) > 0) array_push($where_tag_section_collection, ['tag_0_id', '=', $db_tag_0[0]->id]);
+
+                    if (count($where_tag_2) > 0) {
+                        $db_tag_1 = DB::table('tag_1s')
+                        ->where($where_tag_2)
+                        ->select('id')
+                        ->get();
+
+                        // dd($db_tag_1);
+
+                        if (count($db_tag_1) > 0) array_push($where_tag_section_collection, ['tag_1_id', '=', $db_tag_1[0]->id]);
+                        else $db_tag_0 = [];
+                    }
+
+                    if (count($where_tag_3) > 0) {
+                        $db_tag_2 = DB::table('tag_2s')
+                        ->where($where_tag_3)
+                        ->pluck('id');
+
+                        // dd($db_tag_2);
+
+                        if (count($db_tag_2) > 0 && $where_tag_operator == '+') {
+                            array_push($where_tag_section_collection2, $db_tag_2);
+                            // dd($where_tag_section_collection2);
+                        }
+                        else if (count($db_tag_2) > 0) array_push($where_tag_section_collection, ['tag_2_id', '=', $db_tag_2[0]]);
+                        else $db_tag_0 = [];
+                    }
+
+                    // dd($db_tag_0, $db_tag_1, $db_tag_2, $where_tag_section_collection2);
+
+                    if (count($db_tag_0) > 0) {
+
+                        $db_basic_data = DB::table('tags')
+                        ->where($where_tag_section_collection)
+                        ->whereIn('tag_2_id', $where_tag_section_collection2[0])
+                        ->get()
+                        ->pluck('basic_id');
+
+                        // dd($db_basic_data);
+
+                        if (count($db_basic_data) > 0) {
+                            array_push($where, ['id', '=', $db_basic_data]);
+                        }
+
+                        else {
+                            $query_check = 'tag_category_not_found';
+                        }
+                    }
+
+                    else {
+                        $query_check = 'tag_category_not_found';
+                    }
+                }
+
+                // dd($where, $where_between, $query_check_tag);
+
+                if ($query_check == 0) {
+                    $db_basic_data = DB::table('section_basics')
+                    ->where($where)
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+                    ->orderByDesc('title')
+                    ->paginate(20)->withQueryString();
+                }
+
+                else if ($query_check == 'between') {
+                    $db_basic_data = DB::table('section_basics')
+                    ->where($where)
+                    ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+                    ->orderByDesc('title')
+                    ->paginate(20)->withQueryString();
+                }
+
+                // check if entry contains searched tags
+                // if ($db_tag_0 != '') {
+
+                // }
+
+                if (isset($db_basic_data) && count($db_basic_data) > 0) {
                     $listAuth = $db_basic_data;
                 }
 
@@ -388,30 +621,9 @@ class RicoAssistant extends Controller {
 
             else $listAuth = ['result' => 0, 'search_string' => $request->searchData];
 
-            // dd($db_basic_data);
-
-            // $db_tag_data = DB::table('tag_0s')
-            // ->select('id', 'content')
-            // ->where('content', 'LIKE', '%' . $request->searchData . '%')
-            // ->orderByDesc('content')
-            // ->paginate(20)->withQueryString();;
-
-            // if (count($db_tag_data) > 0) {
-            //     $tag_0 = $db_basic_data;
-            // }
-
-            // else $tag_0 = ['result' => 0, 'search_string' => $request->searchData];
-
-            // dd($db_tag_data);
         }
 
         else $listAuth = '0_result';
-
-        // dd($listAuth);
-
-        // $listAuth->paginate(5);
-
-        // dd($request->searchData);
 
         return Inertia::render('TabManager/TabManager', ['filter' => $listAuth, 'search_term' => $request->searchData]);
     }

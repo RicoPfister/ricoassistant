@@ -28,27 +28,35 @@
                         </div>
                         <div class="flex items-center w-full h-full">
 
-                            <input @input="searchInput" aria-label="Search Field" placeholder="Search" type="search" class="w-full h-full min-w-0 border-none focus:ring-0 focus:border-black focus:placeholder-white" v-model="searchData">
+                            <input @keyup.enter="searchTerm" @input="searchInput" aria-label="Search Field" placeholder="Search" type="search" class="w-full h-full min-w-0 border-none focus:ring-0 focus:border-black focus:placeholder-white" v-model="searchData">
 
-
-                            <div class="px-1 xl:px-2 h-full flex items-center bg-lime-500">
+                            <button @click="searchTerm" :disabled="autoSearchActive" :class="{'bg-lime-500': !autoSearchActive, 'bg-gray-300 opacity-20': autoSearchActive}" class="px-1 xl:px-2 h-full flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                                 </svg>
-                            </div>
+                            </button>
 
                         </div>
 
-                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-[550px] w-full p-2 z-50 bg-gray-100">
+                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-[590px] w-full p-2 z-50 bg-gray-100">
 
-                        replace [...] with your <b>search term.</b><br><br>
-                        A <b>plus</b> sign at the end of a value [value+]: shows all values equal or higher<br>
-                        A <b>minus</b> sign at the end of a value [value-]: shows all values equal or higher<br><br>
+                        replace [...] with your <b>search term</b> which contains at least 3 characters.<br>
+                        <b>Title</b>: [title]<br>
+                        <b>!x</b> (at the beginning): Instant search not used<br><br>
+                        <!-- <b>Title</b>: [title] (must be the <b>last</b> part of your search)<br><br> -->
 
-                        <b>Title</b> (must be the <b>last</b> part of your search): [title]<br>
-                        <b>Date:</b> ![YYYY-MM-DD*]<br>
-                        <b>Date range:</b> ![YYYY-MM-DD*]-[YYYY-MM-DD*]<br>
-                        *<b>today</b> is possible too<br><br>
+                        <!-- A <b>plus</b> sign at the end of a value [value+]: shows all values equal or higher<br>
+                        A <b>minus</b> sign at the end of a value [value-]: shows all values equal or higher<br><br> -->
+
+
+                        <!-- Start with <b>!x</b> to not use instant search at all.<br><br> -->
+
+                        <b>Options:</b><br><br>
+                        (No <b>instant search</b> for options)<br><br>
+
+                        <b>Date:</b> ![YYYY-MM-DD]*<br>
+                        <b>Date range:</b> ![YYYY-MM-DD]*-[YYYY-MM-DD]*<br>
+                        *or <b>[today]</b><br><br>
                         <b>Tag:</b> @[Category]:[Context]:[Value]<br><br>
                         <b>Tag Shortcuts:</b><br>
                         <b>@Mood:Happiness:</b> !happy:[value]<br>
@@ -178,6 +186,7 @@ let data = ref();
 let tagQuickFilterBarOpen = ref(0);
 let searchData = ref('');
 let tagQuickFilterBarData = ref('');
+let autoSearchActive = ref(1);
 
 // console.log('ok');
 
@@ -263,17 +272,43 @@ if (typeof props?.toChild?.fromController == 'undefined') {
 
 function searchInput() {
 
-    console.log(searchData.value.length);
+    // console.log(searchData.value.length);
+
+    if (searchData.value.length > 2) {
+
+        // if (searchData.value.match(/^!x\s[^ \s]{1,}/)) {
+        if (searchData.value.match(/^[^\s!@]{3,}(\s{0,1}([^!@ ]\S{0,}){0,}){0,}$/)) {
+            // if (searchData.value.match(/^[^!@]{0,}$/)) {
+            console.log('ok');
+            autoSearchActive.value = 1;
+
+                setTimeout(() => {
+                        console.log('ok');
+                        Inertia.get('filter', {searchData: searchData.value}, {replace: false,
+                        preserveState: true, preserveScroll: true});
+                    }, 1000);
+        }
+
+        // if (searchData.value.match(/^[^ !@]{3}[^!@]{0,}$|^!x\s?\b/)) {
+
+            else {
+                autoSearchActive.value = 0;
+            }
+
+
+    }
+
+    else {
+
+    autoSearchActive.value = 1;
 
     // check if reference form ***input*** has been and send request to controller
-    if (searchData.value.match(/(^[!@][^!@\s]{3,}|^[^!@\s]{3,})(\s[!@][^!@\s]{3,}|\s[^!@\s]{3,}){0,}/)) {
-    // if (searchData.value.length > 2 && (searchData.value.match(/^[^!@ ]{3}|(^[!@][\S]{3,} ([!@]\S{3,} )*[^!@ ]{3})/g))) {
-        setTimeout(() => {
-            console.log('ok');
-            Inertia.get('filter', {searchData: searchData.value}, {replace: false,
-            preserveState: true, preserveScroll: true});
-        }, 1500);
-    }
+    // if (searchData.value.match(/(^[!@][^!@\s]{3,}|^[^!@\s]{3,})(\s[!@][^!@\s]{3,}|\s[^!@\s]{3,}){0,}/)) {
+
+
+
+    // }
+}
 }
 
 watch(() => props.toChild.search_term, (curr, prev) => {
@@ -288,6 +323,16 @@ watch(() => props.toChild.search_term, (curr, prev) => {
     // console.log(searchData.value);
 
 }, {deep: true});
+
+function searchTerm() {
+
+    setTimeout(() => {
+        // console.log('ok');
+        Inertia.get('filter', {searchData: searchData.value}, {replace: false,
+        preserveState: true, preserveScroll: true});
+    }, 1000);
+
+}
 
 </script>
 
