@@ -232,7 +232,8 @@ function dataChild(data) {
     }
 
     if (data.deleteEntry == 1) {
-        Inertia.post('update', {'delete': 'deleteEntry_@HuZ-345-pLk'});
+        form.value.delete = 1;
+        Inertia.post('update', form.value);
     }
 
     // build form based on selected component
@@ -294,9 +295,11 @@ function fromChild(data) {
     if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
     || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking') {
 
+        console.log(data);
+
         if (!form.value[data.section]) form.value[data.section] = {};
 
-        if (data.index != undefined && data.index_temp_undefined == undefined) {
+        if (data?.index != undefined && data?.index_temp_undefined == undefined) {
 
             console.log('ok');
 
@@ -323,11 +326,19 @@ function fromChild(data) {
             }
     }
 
-    else if (data.form?.statement == '') {
+    else if (data.form?.statement == '' || (data.subSection == 'filelist' && data.form == '')) {
 
-        // console.log(data);
+        console.log(data);
 
-        delete form.value[data.section][data.subSection];
+        if (data.subSection == 'filelist' && data.form == '') {
+
+            console.log(data);
+            form.value['sourceData']['filelist'] = [];
+            form.value['sourceData']['files'] = [];
+            form.value['sourceData']['previewlist'] = [];
+        }
+
+        else delete form.value[data.section][data.subSection];
     }
 
     else if (form?.value?.[data.section]?.[data.subSection]){
@@ -417,15 +428,27 @@ onMounted(() => {
 
    if (props?.edit) {
 
-        // console.log('ok');
+        console.log('ok');
+        form.value['componentCollection'] = [];
 
         componentCollection.splice(0, componentCollection.length);
         componentCollection.push(1);
-        if (props?.edit?.statementData) componentCollection.push(4);
-        if (props?.edit?.activityData) componentCollection.push(5);
-        if (props?.edit?.sourceData) componentCollection.push(7);
+        form.value['componentCollection'].push(1);
+
+        if (props?.edit?.statementData) {
+            componentCollection.push(4);
+        };
+
+        if (props?.edit?.activityData) {
+            componentCollection.push(5)
+        };
+
+        if (props?.edit?.sourceData) {
+            componentCollection.push(6);
+         }
 
         form.value = props.edit;
+        form.value['componentCollection'] = componentCollection;
 
         editCheck.value = 1;
         componentCollectionUpdate.value = !componentCollectionUpdate.value;

@@ -1,42 +1,50 @@
 
 <template>
 
-<div class="flex flex-col">
-    <div class="flex flex-row justify-between items-center" type="button">
-        <MenuEntry @data-child="dataChildMenuEntry"/>
+<div class="flex flex-col border-l border-b border-r border-gray-400 bg-green-50 text-sm w-full pt-4 mt-[12px] pb-3">
+
+    <div class="relative -top-[16px]">
+        <SectionTitle :Id="{'Id': 2, 'title': 'Statement'}"/>
     </div>
+
     <textarea
         @input="InputData"
         :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['statementData.statement']}"
-        class="border border-black outline-0 focus:border-black focus:ring-0"
+        class="border border-black outline-0 focus:border-black focus:ring-0 mx-2"
         rows="10"
         id="statement"
         type="text"
         v-model="form.statement">
     </textarea>
     <div v-if="form2?.errors?.['statementData.statement']" class="text-red-500">{{ form2?.errors?.['statementData.statement'] }}</div>
-</div>
 
-<div
-    :class="{'border-black': !form2?.errors?.['statementData.tag'], 'border-none': form2?.errors?.['statementData.tag'], 'mt-2': form2?.errors?.['statementData.statement'], 'border-t': form2?.errors?.['statementData.statement']}"
-    class="border-r border-b border-l"
->
-    <TagForm
-        :class="{'border-t': form2?.errors?.['statementData.statement'], 'border-t-4 border-r-4 border-b-4 border-l-4 border-red-500 bg-red-200': form2?.errors?.['statementData.tag']}"
-        :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0], 'validationError': form2?.['errors']?.['statementData.tag']}"
-        :fromController2="props.fromController2"
-        :fromController="props.fromController"
-        @fromChild="fromChild"
-    />
-    <!-- <div v-if="form2.errors['statementData.tag']" class="text-red-500">Required tag format: @Category:Context:Value</div> -->
+    <div
+        :class="{'border-black': !form2?.errors?.['statementData.tag'], 'border-none': form2?.errors?.['statementData.tag'], 'mt-2': form2?.errors?.['statementData.statement'], 'border-t': form2?.errors?.['statementData.statement']}"
+        class="border-r border-b border-l mx-2"
+    >
+        <TagForm
+            :class="{'border-t': form2?.errors?.['statementData.statement'], 'border-t-4 border-r-4 border-b-4 border-l-4 border-red-500 bg-red-200': form2?.errors?.['statementData.tag']}"
+            :toChild="{'parentId': 2, 'parentIndex': 0, 'basicTitle': props.toChild?.basicData?.title, 'formTags': props?.toChild?.statementData?.tag?.[0], 'validationError': form2?.['errors']?.['statementData.tag']}"
+            :fromController2="props.fromController2"
+            :fromController="props.fromController"
+            @fromChild="fromChild"
+        />
+
         <div v-if="form2.errors['statementData.tag']" class="text-red-500">{{ form2.errors['statementData.tag'] }}</div>
-</div>
+    </div>
 
-<div
-:class="{'border-t': 0, 'border-t mt-2': form2?.errors?.['statementData.tag']}"
-    class="border-l border-r border-b border-black h-[31px]"
->
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+        <div
+            :class="{'border-t': 0, 'border-t mt-2': form2?.errors?.['statementData.tag']}"
+            class="border-l border-r border-b border-black h-[31px] mx-2"
+        >
+            <Reference
+                :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
+                :toChild="{'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}"
+                :transferCreate="props.transferCreate"
+                :transfer="props.toChild.parentId == 5 ? props.toChild : ''"
+                @fromChild="fromChild"
+            />
+        </div>
 </div>
 
 </template>
@@ -50,6 +58,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import MenuEntry from "../Create/MenuEntry.vue";
 import TagForm from "../TagManager/TagForm.vue";
 import Reference from "./Reference.vue";
+import SectionTitle from "../FormManager/SectionTitle.vue"
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'componentId', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'transfer', 'toChild', 'fromChild', 'transferCreate', 'fromController2', 'fromController_validation']);
 let emit = defineEmits(['dataChild', 'dataCommon', 'dataToParent', 'toParent', 'fromChildRow', 'toChild', 'fromChild', 'transferCreate', 'fromController2', 'fromController_validation']);

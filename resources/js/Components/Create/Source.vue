@@ -1,24 +1,23 @@
 
 <template>
 
-<div>
+<div >
+
+
+
     <!-- source container -->
     <div class="flex flex-col">
 
-        <div class="flex flex-row justify-between items-center" type="button">
-
-            <label class="" aria-label="Statement Input" for="statement">Source*: </label>
-
-            <!-- <MenuEntry @data-child="dataChildMenuEntry"/> -->
-
+        <div class="relative top-[12px] left-[1px] w-[calc(100%-2px)]">
+            <SectionTitle :Id="{'Id': 2, 'title': 'Source'}"/>
         </div>
 
         <!-- upload content box -->
-        <div class="bg-blue-50 border border-black p-3">
-            <div class="flex flex-row justify-between">
+        <div class="border-l border-b border-r border-gray-400 bg-blue-50 text-sm w-full pt-4 gap-2 mt-[12px] p-3">
+            <div class="flex flex-row justify-between pt-1">
                 <div class="flex flex-row">
                     <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
+                    <label :class="[form2?.errors?.['sourceData.filelist'] || form2?.errors?.['sourceData.files'] ? 'border-red-500 focus:border-red-500 border-4 bg-red-200' : '']" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
                     <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
                 </div>
 
@@ -32,6 +31,7 @@
             </div>
 
             <div v-if="form2?.errors?.['sourceData.filelist']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist'] }}</div>
+            <div v-else-if="form2?.errors?.['sourceData.files']" class="text-red-500">{{ form2?.errors?.['sourceData.files'] }}</div>
 
             <!-- hidden file list/preview -->
             <div v-if="InputData[0]" class="flex flex-col my-2">
@@ -128,6 +128,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue"
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 import Reference from "./Reference.vue";
+import SectionTitle from "../FormManager/SectionTitle.vue"
 
 let dataChild = ref({'statement': ''});
 
@@ -208,7 +209,7 @@ onMounted(() => {
             // tag_db_data.value = props?.toChild?.sourceData?.tag;
 
             for (let ii = 0; ii < props?.toChild?.sourceData?.tag.length; ii++) {
-                if (props?.toChild?.sourceData?.tag[ii] != []) {
+                if (props?.toChild?.sourceData?.tag[ii].length > 0) {
                     tag_db_data.value[ii]['tag'] = props?.toChild?.sourceData?.tag[ii];
                 }
             }

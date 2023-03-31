@@ -2,10 +2,10 @@
 
 <!-- activity container -->
 <!-- ------------------------------------------------ -->
-<div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-2 mt-[12px] pb-3">
+<div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-1 mt-[12px] pb-3">
 
     <div class="relative -top-[16px]">
-        <SectionTitle :Id="2"/>
+        <SectionTitle :Id="{'Id': 2, 'title': 'Activity'}"/>
     </div>
 
     <!-- time schedule box-->
@@ -196,7 +196,7 @@
 
     <!-- day overview box -->
     <!-- ------------------------------------------------ -->
-    <div aria-label="Drop Down Activity Day Overview" class="">
+    <div aria-label="Drop Down Activity Day Overview" class="mt-1">
 
         <div class="flex z-10 w-full justify-center whitespace-nowrap overflow-x-auto">
 

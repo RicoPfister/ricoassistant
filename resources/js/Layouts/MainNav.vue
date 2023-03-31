@@ -38,7 +38,7 @@
 
                         </div>
 
-                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-[590px] w-full p-2 z-50 bg-gray-100">
+                        <div v-if="searchEditMenuOpen" aria-label="Search Edit Menu" class="absolute top-0 left-0 mt-10 xl:mt-12 border border-black h-[360px] w-full p-2 z-50 bg-gray-100">
 
                         replace [...] with your <b>search term</b> which contains at least 3 characters.<br>
                         <b>Title</b>: [title]<br>
@@ -58,7 +58,7 @@
                         <b>Date range:</b> ![YYYY-MM-DD]*-[YYYY-MM-DD]*<br>
                         *or <b>[today]</b><br><br>
                         <b>Tag:</b> @[Category]:[Context]:[Value]<br><br>
-                        <b>Tag Shortcuts:</b><br>
+                        <!-- <b>Tag Shortcuts:</b><br>
                         <b>@Mood:Happiness:</b> !happy:[value]<br>
                         <b>@Person:Birthdate</b> !birth:[YYYY-MM-DD]<br>
                         <b>@Wellness:Food</b> !food<br>
@@ -67,7 +67,7 @@
                         <b>@Admin:TradeOut:</b> !tout:[value]<br>
                         <b>@Admin:Trader:</b> !trader:[name]<br>
                         <b>@Manifest:Home:</b> !home<br>
-                        <b>@Manifest:Discipline:</b> !discipline<br>
+                        <b>@Manifest:Discipline:</b> !discipline<br> -->
                         </div>
                     </div>
                         <div aria-label="Menu Icon and Menu Popup Area" class="flex items-center leading-none  h-full item">
