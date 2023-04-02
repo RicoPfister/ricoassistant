@@ -1456,7 +1456,7 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
+            if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.files'] = 'required';
             if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
             // dd($request->sourceData['tag']);
@@ -2159,30 +2159,47 @@ class RicoAssistant extends Controller {
 
                 if ($request->sourceData['filelist'] != []) {
 
+                    // get all related files
+                    $files_collection = DB::table('section_sources')
+                    ->where('restriction', '<', 2)
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->get();
+
                     // dd('ok');
+                    // dd($files_collection);
                     // dd($request->sourceData);
                     // dd($request->sourceData['filelist']);
 
                     // update files
                     foreach ($request->sourceData['filelist'] as $files_index => $files_item) {
 
+                        // dd($files_collection[$files_index]->path);
+
+                        // delete old file
+                        DB::table('section_sources')
+                        // ->where('basic_id', '=', $request->basicData['id'])
+                        ->where('id', '=', $files_collection[$files_index]->id)
+                        ->update(['restriction' => 2]);
+
+                        Storage::disk('local')->delete('public/images/inventory/' . $files_collection[$files_index]->path);
+
                         // dd($files_index, $files_item);
                         // dd($request->$db_name['filelist'][$files_index]);
                         // dd($request->sourceData['filelist'][$files_index]['filename']);
 
                         // link existing file
-                        if (isset($request->sourceData['files'][$files_index])) {
+                        // if (isset($request->sourceData['files'][$files_index])) {
 
-                            DB::table('section_sources')
-                            ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
-                            ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
-                        }
+                        //     DB::table('section_sources')
+                        //     ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
+                        //     ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
+                        // }
 
                         // create new file
-                        else {
+
                             // dd('file', $files_index);
 
-                            // store file meta data
+                            //! !! every file will be stored again in the given order !!
                             $sources = new SectionSource();
                             $sources->basic_id = $request->basicData['id'];
                             $sources->path = $request->sourceData['filelist'][$files_index]['file']->hashName();
@@ -2193,12 +2210,13 @@ class RicoAssistant extends Controller {
 
                             // store file data
                             Storage::disk('local')->put('public/images/inventory/', $request->sourceData['filelist'][$files_index]['file']);
-                        }
+
                     }
 
                     // delete obsolete file data
                     $db_file_collection = DB::table('section_sources')
                     ->where('basic_id', '=', $request->basicData['id'])
+                    ->where('restriction', '<', '2')
                     ->get();
 
                     if (count($db_file_collection) > 0) {
@@ -2210,6 +2228,8 @@ class RicoAssistant extends Controller {
                             // dd($db_file_index, $db_file_item);
 
                             if (!isset($request->sourceData['filelist'][$db_file_index])) {
+
+                                // dd('ok');
 
                                 DB::table('section_sources')
                                 ->where('id', '=', $db_file_item->id)
@@ -2319,7 +2339,17 @@ class RicoAssistant extends Controller {
 
     public function delete(Request $request) {
 
-        DB::table('basics')->where('id', '=', $request->id)->delete();
+        // dd($request->id);
+
+        // !! only sets basic restriction to 2 !!
+        // ****************************************
+
+        DB::table('section_basics')
+        ->where('id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        // DB::table('basics')->where('id', '=', $request->id)->delete();
+        // return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
 
         return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
     }
@@ -2333,7 +2363,6 @@ class RicoAssistant extends Controller {
             // dd($id, $i, $user);
 
             $counter = 1;
-
             $parent_list = [];
 
             // check if there are children
@@ -2397,7 +2426,7 @@ class RicoAssistant extends Controller {
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->orderByDesc('updated_at')
-                ->take(10)
+                ->limit(10)
                 ->get();
 
             // dd($referencedIds);
@@ -2448,7 +2477,6 @@ class RicoAssistant extends Controller {
                         // dd($result);
                     } else {};
 
-
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
 
                 $result['referencesResult'][$i]['inheritance'] = reference_inheritance_list($id, $i, $user);
@@ -2465,6 +2493,8 @@ class RicoAssistant extends Controller {
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
+                ->orderBy('updated_at', 'desc')
+                ->limit(10)
                 ->get();
 
                 // dd($referencesResultCheck);
@@ -2550,10 +2580,36 @@ class RicoAssistant extends Controller {
 
                 $result['misc']['row'] = $request->row;
 
-            } else {
-                $result['misc']['row'] = 0;
+                $referencesResultCheckExact = DB::table('section_basics')
+                ->where('restriction', '<', 2)
+                ->where('user_id', '=', $user->id)
+                ->where('title', '=', $request->reference)
+                ->get();
 
-            };
+                // dd(array_search($referencesResultCheckExact[0]->title, array_column($result['referencesResult'],  'title')), $referencesResultCheckExact[0]->title, array_column($result['referencesResult'], 'title'));
+
+                if (count($referencesResultCheckExact) > 0) {
+
+                    $array_shifting = array_search($referencesResultCheckExact[0]->title, array_column($result['referencesResult'], 'title'));
+
+                    if ($array_shifting !== false) {
+
+                        // dd($array_shifting);
+                        array_splice($result['referencesResult'], $array_shifting, $array_shifting);
+                        array_unshift($result['referencesResult'], $referencesResultCheckExact[0]);
+                        array_pop($result['referencesResult']);
+                    }
+
+                    else {
+                        array_unshift($result['referencesResult'], $referencesResultCheckExact[0]);
+                        array_pop($result['referencesResult']);
+                    }
+                }
+            }
+
+            else {
+                $result['misc']['row'] = 0;
+            }
         }
 
         $result['misc']['parentId'] = $request->parentId;

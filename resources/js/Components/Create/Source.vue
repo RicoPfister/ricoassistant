@@ -3,8 +3,6 @@
 
 <div >
 
-
-
     <!-- source container -->
     <div class="flex flex-col">
 
@@ -91,11 +89,14 @@
 
                 <!-- source preview-->
                 <div v-if="1" class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
-                <div v-if="1" class="flex flex-wrap mt-1 gap-x-2">
+                <div class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
-                        <div v-if="typeof item != 'undefined'" class="py-1">
+                        <div v-if="item.type != '' & item.type.slice(0, 5) == 'image' | item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'  | item.type == 'application/pdf' | item.type == 'text/plain'" class="py-1">
                             <div class="relative border-2 border-black h-36">
-                                <img :src="preview[index]" class="w-[214px] max-h-full">
+                                <img v-if="item.type.slice(0, 5) == 'image'" :src="preview[index]" class="w-[214px] max-h-full">
+                                <!-- <div v-else-if="item.type == undefined"></div> -->
+                                <video v-else-if="item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></video>
+                                <iframe v-else-if="item.type == 'application/pdf' | item.type == 'text/plain'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></iframe>
                                 <div class="absolute bottom-0 px-1 bg-black text-white font-bold">{{ item.key }}</div>
                             </div>
                         </div>
@@ -141,6 +142,7 @@ let InputData = ref([]);
 let previewPath = '';
 let tag_db_data = ref([]);
 let reference_db_data = ref({});
+// let previewCheck = ref(0);
 
 let tagListForDB = [];
 

@@ -233,7 +233,7 @@ function dataChild(data) {
 
     if (data.deleteEntry == 1) {
         form.value.delete = 1;
-        Inertia.post('update', form.value);
+        Inertia.post('delete', {'id': form.value.basicData.id});
     }
 
     // build form based on selected component

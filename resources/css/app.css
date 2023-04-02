@@ -68,6 +68,11 @@ html {
     user-select: none; /* Standard syntax */
 }
 
+/* inactive: interferes with php dd log window */
+/* iframe {
+    pointer-events: none;
+  } */
+
 /* form check box*/
 
 .form_public_background {
