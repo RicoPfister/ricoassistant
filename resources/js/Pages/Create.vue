@@ -30,7 +30,7 @@
 
                 </div>
 
-                <div v-if="componentCollection[0] != FormManager" class="mt-2">
+                <div v-if="componentCollection[0] != 0" class="mt-2">
                     <Footer :editCheck="editCheck" :blocking="form?.basicData?.blocking" @data-child="dataChild"/>
                 </div>
             </div>

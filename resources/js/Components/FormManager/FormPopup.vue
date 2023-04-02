@@ -4,14 +4,14 @@
 <div class="bg-white h-full w-full flex flex-col">
 
     <!-- ??? -->
-    <div class="relative border-r border-gray-400 h-full w-full">
+    <div class="relative border border-gray-400 h-full w-full">
 
         <!-- header -->
         <div class="flex flex-row border-b border-gray-400 justify-between">
 
             <div class="px-2 flex flex-row items-center justify-left border-r border-gray-400 grow">
 
-                <div class="text-xl font-bold flex ml-1">New Entry Manager</div>
+                <div class="text-xl font-bold flex ml-1">FormManager</div>
 
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="blue" class="w-5 h-5 ml-1">
@@ -36,9 +36,9 @@
             </div>
         </div>
 
-        <div class="flex justify-center mt-5 mb-10">
+        <div class="flex justify-center mt-5 mb-7">
             <div class="flex flex-col gap-y-3">
-                <div class="font-bold ml-4">Choose at least one subject and continue:</div>
+                <div class="font-bold ml-4">Choose at least one subject:</div>
                 <div class="flex flex-row items-center" v-for="(item, index) in FormSectionIcons.FormSections" >
 
                     <!-- checked icon -->
