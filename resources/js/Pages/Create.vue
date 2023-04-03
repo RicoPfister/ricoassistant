@@ -198,26 +198,26 @@ function dataChild(data) {
 
         // console.log(validation_response);
 
-            // send form to server
-            Inertia.visit('store', {
-            method: 'post',
-            data: form.value,
-            replace: false,
-            preserveState: true,
-            preserveScroll: true,
-            only: [],
-            headers: {},
-            errorBag: null,
-            forceFormData: false,
-            onCancelToken: cancelToken => {},
-            onCancel: () => {},
-            onBefore: visit => {},
-            onStart: visit => {},
-            onProgress: progress => {},
-            onSuccess: page => {},
-            onError: errors => {},
-            onFinish: visit => {},
-            })
+        // send form to server
+        Inertia.visit('store', {
+        method: 'post',
+        data: form.value,
+        replace: false,
+        preserveState: true,
+        preserveScroll: true,
+        only: [],
+        headers: {},
+        errorBag: null,
+        forceFormData: false,
+        onCancelToken: cancelToken => {},
+        onCancel: () => {},
+        onBefore: visit => {},
+        onStart: visit => {},
+        onProgress: progress => {},
+        onSuccess: page => {},
+        onError: errors => {},
+        onFinish: visit => {},
+        })
     };
 
     if (data.update == 1) {

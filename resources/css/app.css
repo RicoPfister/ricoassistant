@@ -7,7 +7,17 @@
 @import 'tailwindcss/utilities'; */
 
 html {
-    overflow: scroll; /* Show scrollbars */
+    overflow-y: scroll; /* Show scrollbars */
+}
+
+.document {
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll;
+}
+
+.document::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
 }
 
 @font-face {

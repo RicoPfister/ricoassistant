@@ -71,7 +71,7 @@
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue';
+// import IndexSubHeading1 from './DocManager/IndexSubHeading1.vue';
 import SourceMediaList from '../Components/Detail/Source/MediaList.vue';
 import ReferenceChildrenList from '../Components/Detail/ReferenceChildrenList.vue';
 import ReferenceParentsList from '../Components/Detail/ReferenceParentsList.vue';

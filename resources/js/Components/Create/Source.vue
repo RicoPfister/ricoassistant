@@ -298,23 +298,24 @@ function deleteFile(data) {
     if (data == 'all') {
 
         // console.log(props.fromChild);
-        // console.log('ok');
+        console.log('ok');
 
-        preview.value.splice(0, InputData.value.length);
-        tag_db_data.value.splice(0, InputData.value.length);
-        InputData.value.splice(0, InputData.value.length);
-        uniqueKey.value = 1
-
+        // emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'form': []});
         emit('fromChild', {'section':'sourceData', 'subSection':'delete', 'form': 'entries'})
 
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
 
         tag_db_data.value.forEach((element, index) => {
-            // console.log(element);
-            // console.log(index);
+            console.log(element);
+            console.log(index);
             uniqueKey.value = 1;
             emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': index, 'form': ''});
         });
+
+        tag_db_data.value.splice(0, InputData.value.length);
+        preview.value.splice(0, InputData.value.length);
+        InputData.value.splice(0, InputData.value.length);
+        uniqueKey.value = 1;
 
         // array.forEach(element => {
 

@@ -3253,6 +3253,6 @@ class RicoAssistant extends Controller {
         // dd($chapter_id[0], $entry_id, $value_detail_id, $value_detail, $value_detail_cotent_collection);
 
         // return Inertia::render('Create', ['edit' => $request]);
-        return Inertia::render('Document', ['fromController' => $value_detail_cotent_collection]);
+        return Inertia::render('DocManager/Document', ['fromController' => $value_detail_cotent_collection]);
     }
 }

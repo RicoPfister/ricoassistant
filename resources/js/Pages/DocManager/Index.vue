@@ -101,7 +101,7 @@
 <script setup>
 
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
-import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue'
+import IndexSubHeading1 from './IndexSubHeading1.vue'
 
 const props = defineProps(['fromController']);
 
