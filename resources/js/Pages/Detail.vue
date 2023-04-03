@@ -32,6 +32,7 @@
     <TagList v-if="props.detail.statementData.tag" :tag="props.detail.statementData.tag"/>
     <ReferenceParentsList :reference="detailData.statementData"/>
     <ReferenceChildrenList :reference="detailData.statementData"/>
+    <Document :id="props.detail.basicData.id" class="mt-2"/>
 </div>
 
 <!-- *****section activity***** -->
@@ -76,6 +77,7 @@ import ReferenceChildrenList from '../Components/Detail/ReferenceChildrenList.vu
 import ReferenceParentsList from '../Components/Detail/ReferenceParentsList.vue';
 import TagList from '../Components/Detail/TagList.vue';
 import ActivityList from '../Components/Detail/ActivityList.vue';
+import Document from '../Components/Detail/Document.vue';
 
 const props = defineProps(['detail']);
 

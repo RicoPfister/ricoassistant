@@ -1456,7 +1456,7 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.files'] = 'required';
+            if (array_search(6, $request->componentCollection) && isset($request->sourceData['delete'])) $validation_collection['sourceData.filelist'] = 'required';
             if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
 
             // dd($request->sourceData['tag']);
@@ -2171,35 +2171,48 @@ class RicoAssistant extends Controller {
                     // dd($request->sourceData['filelist']);
 
                     // update files
+
+                    // dd($request->sourceData['delete']);
+
+                    if (isset($request->sourceData['delete']) && $request->sourceData['delete'] == 'entries') {
+                        foreach ($files_collection as $files_index => $files_item) {
+
+                            // dd($files_collection[$files_index]->path);
+
+                            // delete old file
+                            DB::table('section_sources')
+                            // ->where('basic_id', '=', $request->basicData['id'])
+                            ->where('id', '=', $files_collection[$files_index]->id)
+                            ->update(['restriction' => 2]);
+
+                            Storage::disk('local')->delete('public/images/inventory/' . $files_collection[$files_index]->path);
+
+                            // dd($files_index, $files_item);
+                            // dd($request->$db_name['filelist'][$files_index]);
+                            // dd($request->sourceData['filelist'][$files_index]['filename']);
+
+                            // link existing file
+                            // if (isset($request->sourceData['files'][$files_index])) {
+
+                            //     DB::table('section_sources')
+                            //     ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
+                            //     ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
+                            // }
+
+                            // create new file
+
+                                // dd('file', $files_index);
+
+                                //! !! every file will be stored again in the given order !!
+                        }
+                    }
+
+                    // dd($request->sourceData['filelist']);
+
                     foreach ($request->sourceData['filelist'] as $files_index => $files_item) {
 
-                        // dd($files_collection[$files_index]->path);
+                        if (isset($request->sourceData['filelist'][$files_index]['file'])) {
 
-                        // delete old file
-                        DB::table('section_sources')
-                        // ->where('basic_id', '=', $request->basicData['id'])
-                        ->where('id', '=', $files_collection[$files_index]->id)
-                        ->update(['restriction' => 2]);
-
-                        Storage::disk('local')->delete('public/images/inventory/' . $files_collection[$files_index]->path);
-
-                        // dd($files_index, $files_item);
-                        // dd($request->$db_name['filelist'][$files_index]);
-                        // dd($request->sourceData['filelist'][$files_index]['filename']);
-
-                        // link existing file
-                        // if (isset($request->sourceData['files'][$files_index])) {
-
-                        //     DB::table('section_sources')
-                        //     ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
-                        //     ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
-                        // }
-
-                        // create new file
-
-                            // dd('file', $files_index);
-
-                            //! !! every file will be stored again in the given order !!
                             $sources = new SectionSource();
                             $sources->basic_id = $request->basicData['id'];
                             $sources->path = $request->sourceData['filelist'][$files_index]['file']->hashName();
@@ -2211,7 +2224,12 @@ class RicoAssistant extends Controller {
                             // store file data
                             Storage::disk('local')->put('public/images/inventory/', $request->sourceData['filelist'][$files_index]['file']);
 
+                        }
+
                     }
+
+
+
 
                     // delete obsolete file data
                     $db_file_collection = DB::table('section_sources')
@@ -3179,5 +3197,62 @@ class RicoAssistant extends Controller {
 
         // return Inertia::render('Create', ['fromController' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
         return to_route('test123')->with(['fromController_validation' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
+    }
+
+    public function document(Request $request) {
+
+        // dd($request);
+
+        $chapter_id = DB::table('tag_0s')
+        ->where('content', '=', 'Chapter')
+        ->pluck('id');
+
+        $entry_id = DB::table('tag_2s')
+        ->where('content', '=', $request->id)
+        ->pluck('id');
+
+        $value_detail = DB::table('tags')
+        ->where('tag_0_id', '=', $chapter_id[0])
+        ->whereIn('tag_0_id', $entry_id)
+        ->select('basic_id', 'tag_3_id')
+        ->get()
+        ->toArray();
+
+        $value_detail_id = array_column($value_detail, 'tag_3_id');
+
+        // $value_detail_content = DB::table('tag_3s')
+        // ->whereIn('id', $value_detail_id)
+        // ->pluck('content');
+
+        // dd($value_detail_content);
+        // dd($value_detail[0]->basic_id);
+
+        $value_detail_cotent_collection = [];
+
+        foreach ($value_detail as $key => $value) {
+            // array_push($value_detail[$key], $value_detail_content[$key]);
+            $value_detail_cotent = DB::table('tag_3s')
+            ->where('id', '=', $value->tag_3_id)
+            ->pluck('content');
+
+            $title = DB::table('section_basics')
+            ->where('id', '=', $value->basic_id)
+            ->pluck('title');
+
+            $statement = DB::table('section_statements')
+            ->where('id', '=', $value->basic_id)
+            ->pluck('statement');
+
+            // dd($title);
+
+            // $value_detail->push($value_detail_content[$key]);
+            if (count($value_detail_cotent) > 0) $value_detail_cotent_collection[$key] = [$value_detail_cotent[0], $title[0], $statement[0]];
+            else $value_detail_cotent_collection[$key] = '';
+        }
+
+        // dd($chapter_id[0], $entry_id, $value_detail_id, $value_detail, $value_detail_cotent_collection);
+
+        // return Inertia::render('Create', ['edit' => $request]);
+        return Inertia::render('Document', ['fromController' => $value_detail_cotent_collection]);
     }
 }

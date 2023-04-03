@@ -61,11 +61,11 @@
                                         </button> -->
 
                                     <!-- remove button -->
-                                    <button class="" @click="deleteFile(index)" type="button">
+                                    <!-- <button class="" @click="deleteFile(index)" type="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" color="darkred" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-red-400">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                             <div v-if="form2?.errors?.['sourceData.filelist.'+ index +'.type']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist.'+ index +'.type'] }}</div>
@@ -151,10 +151,12 @@ let preview = ref([]);
 
 function FileChange(event, index) {
 
+    console.log('ok');
+
     [...event.target.files].forEach((item, index) => InputDataArray(item, index))
 
     function InputDataArray(item, index) {
-        // console.log('ok');
+        console.log('ok');
         InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value});
         preview.value.push(URL.createObjectURL(item));
         tag_db_data.value.push({['tag']: '', 'key': uniqueKey.value});
@@ -296,10 +298,14 @@ function deleteFile(data) {
     if (data == 'all') {
 
         // console.log(props.fromChild);
+        // console.log('ok');
 
-        InputData.value.splice(0, InputData.value.length);
         preview.value.splice(0, InputData.value.length);
-        uniqueKey = 1
+        tag_db_data.value.splice(0, InputData.value.length);
+        InputData.value.splice(0, InputData.value.length);
+        uniqueKey.value = 1
+
+        emit('fromChild', {'section':'sourceData', 'subSection':'delete', 'form': 'entries'})
 
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
 
