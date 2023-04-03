@@ -224,25 +224,24 @@ function createHeadings() {
 
         console.log(element);
 
-        const heading_level = (element[0].match(/\./g) || []).length
-        console.log(heading_level);
+        // const heading_level = (element[0].match(/\./g) || []).length
+        const heading_level = element[0].split('.');
+        console.log((heading_level || []).length);
 
-        switch (heading_level) {
-            case 0:
-                headings.value.push([element[1]]);
+        switch ((heading_level || []).length) {
+            case 1:
+                headings.value[heading_level[0]-1] = [element[1]];
                 break;
 
-            case 1:
+            case 2:
                 // headings.value[0] = [];
-                headings.value[0][1] = [];
-                headings.value[0][1].push([element[1]]);
+                if (headings.value[heading_level[0]-1][1] == undefined) headings.value[heading_level[0]-1][1] = [];
+                headings.value[heading_level[0]-1][1].push([element[1]]);
                 break;
 
             default:
                 break;
         }
-
-
 
     });
 }

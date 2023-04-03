@@ -3218,20 +3218,22 @@ class RicoAssistant extends Controller {
         ->get()
         ->toArray();
 
+        // dd($chapter_id, $entry_id, $value_detail);
+
         $value_detail_id = array_column($value_detail, 'tag_3_id');
 
         // $value_detail_content = DB::table('tag_3s')
         // ->whereIn('id', $value_detail_id)
         // ->pluck('content');
 
-        // dd($value_detail_content);
+        // dd($value_detail);
         // dd($value_detail[0]->basic_id);
 
-        $value_detail_cotent_collection = [];
+        $value_detail_content_collection = [];
 
         foreach ($value_detail as $key => $value) {
             // array_push($value_detail[$key], $value_detail_content[$key]);
-            $value_detail_cotent = DB::table('tag_3s')
+            $value_detail_content = DB::table('tag_3s')
             ->where('id', '=', $value->tag_3_id)
             ->pluck('content');
 
@@ -3240,19 +3242,98 @@ class RicoAssistant extends Controller {
             ->pluck('title');
 
             $statement = DB::table('section_statements')
-            ->where('id', '=', $value->basic_id)
+            ->where('basic_id', '=', $value->basic_id)
             ->pluck('statement');
 
-            // dd($title);
+            // dd($value_detail_content);
 
+            // if (!count($value_detail_content) > 0 | !count($title) > 0 | !count($statement) > 0 ) dd($value_detail_content, $title, $statement, $value->basic_id);
+
+            // dd($title, $title);
             // $value_detail->push($value_detail_content[$key]);
-            if (count($value_detail_cotent) > 0) $value_detail_cotent_collection[$key] = [$value_detail_cotent[0], $title[0], $statement[0]];
-            else $value_detail_cotent_collection[$key] = '';
+            // dd($value_detail_content, $title, $statement);
+
+            if (count($value_detail_content) > 0) $value_detail_content_collection[$key] = [$value_detail_content[0], $title[0], $statement[0]];
+            else $value_detail_content_collection[$key] = '';
         }
 
-        // dd($chapter_id[0], $entry_id, $value_detail_id, $value_detail, $value_detail_cotent_collection);
+        // dd($value_detail_content_collection);
+
+        $chapter_extraction = array_column($value_detail_content_collection, 0);
+        // dd($chapter_extraction);
+
+        // $test = arry_unique(array_column($value_detail_content_collection, 0));
+
+        // check chapter duplicates
+        if(count($chapter_extraction) != count(array_unique($chapter_extraction))) dd('ok');
+
+        // $chapter_group_collection = [];
+
+        // check chapter continous order
+        foreach ($chapter_extraction as $key => $value) {
+
+            $chapter_split = explode('.', $value);
+
+            // dd($chapter_split);
+
+            switch (count($chapter_split)) {
+                case 1:
+                    // dd('ok1');
+                    if (!isset($chapter_group_collection[0])) $chapter_group_collection[0] = [];
+                    array_push($chapter_group_collection[0], $chapter_split[0]);
+                    break;
+
+                case 2:
+                    // dd('ok2');
+                    if (!isset($chapter_group_collection[1][$chapter_split[0]-1])) $chapter_group_collection[1][$chapter_split[0]-1] = [];
+                    array_push($chapter_group_collection[1][$chapter_split[0]-1], $chapter_split[1]);
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+        // dd($chapter_group_collection);
+        for ($i=1; $i <= count($chapter_group_collection[0]); $i++) {
+            // dd(array_search($ii, $sub_subchapter_group));
+            if (array_search($i, $chapter_group_collection[0]) === false) dd('false');
+        }
+
+        for ($i=1; $i < count($chapter_group_collection); $i++) {
+            foreach ($chapter_group_collection[$i] as $sub_subchapter_group_key => $sub_subchapter_group) {
+                // foreach ($sub_subchapter_group as $sub_subchapter_group_content_key => $sub_subchapter_group_content) {
+                    // dd($sub_subchapter_group);
+                    // dd($sub_subchapter_group_content);
+                    // dd(count($sub_subchapter_group_content));
+                    // dd($chapter_group_collection);
+
+                    for ($ii=1; $ii <= count($sub_subchapter_group); $ii++) {
+                        // dd(array_search($ii, $sub_subchapter_group));
+                        if (array_search($ii, $sub_subchapter_group) === false) dd('false', $sub_subchapter_group);
+                    }
+                // }
+            }
+        }
+        // dd($chapter_group_collection);
+
+        // foreach ($chapter_group_collection as $key => $value) {
+
+        //     foreach ($variable as $key => $value) {
+        //         # code...
+        //     }
+        // }
+
+
+        // if (array_column($value_detail_content_collection, 0))
+
+        // dd($chapter_id[0], $entry_id, $value_detail_id, $value_detail, $value_detail_content_collection);
 
         // return Inertia::render('Create', ['edit' => $request]);
-        return Inertia::render('DocManager/Document', ['fromController' => $value_detail_cotent_collection]);
+
+        // dd($value_detail_content_collection);
+
+        return Inertia::render('DocManager/Document', ['fromController' => $value_detail_content_collection]);
     }
 }
