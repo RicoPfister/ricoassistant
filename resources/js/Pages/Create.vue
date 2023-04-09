@@ -316,7 +316,7 @@ function fromChild(data) {
         // }
 
         else {
-            // console.log(data);
+            console.log(data);
 
             // if (data.subSection == 'ref_date') {
             //     form.value[data.section][data.subSection] = data.form.slice(0,4)+data.form.slice(5,7)+data.form.slice(8,10);
@@ -343,18 +343,27 @@ function fromChild(data) {
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        // console.log(data);
+        console.log(data);
 
-            // console.log(form.value[data.section][data.subSection]);
+        // delete array key
+        if(data.subSection == 'tag') {
+            console.log(data);
+            form.value[data.section][data.subSection].splice(data.index, 1);
+        }
 
-            // do not delete key, set value to 0
+        // console.log(form.value[data.section][data.subSection]);
+
+        // do not delete key, set value to 0
+        else {
             delete form.value[data.section]?.[data.subSection][data.index];
+        }
 
-            // delete key and value
 
-            // console.log('ok');
-            // delete form.value[data.section][data.subSection][data.index];
-            // console.log(data.index);
+        // delete key and value
+
+        // console.log('ok');
+        // delete form.value[data.section][data.subSection][data.index];
+        // console.log(data.index);
 
 
         // if (data.subSection == 'public') {

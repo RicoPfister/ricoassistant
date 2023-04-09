@@ -32,7 +32,7 @@
     <TagList v-if="props.detail.statementData.tag" :tag="props.detail.statementData.tag"/>
     <ReferenceParentsList :reference="detailData.statementData"/>
     <ReferenceChildrenList :reference="detailData.statementData"/>
-    <Document :id="props.detail.basicData.id" class="mt-2"/>
+    <Document v-if="props?.detail?.basicData?.document" :toChild="{'id': props.detail.basicData.id, 'title': props.detail.basicData.title}" class="mt-2"/>
 </div>
 
 <!-- *****section activity***** -->
@@ -62,6 +62,15 @@
     <TagList v-if="props.detail.sourceData.tag" :tag="props.detail.sourceData.tag" />
     <ReferenceParentsList v-if="props?.detail?.sourceData && !props?.detail?.statementData" :reference="detailData.sourceData"/>
     <ReferenceChildrenList :reference="detailData.sourceData"/>
+</div>
+
+<!-- *****Admin***** -->
+<div class="mt-2">
+    <div class="font-bold mt-2 w-full">Admin</div>
+    <div>Visibility: {{ props?.detail?.basicData?.restriction == 0 ? 'Public' : 'Private' }}</div>
+    <div>Created at: {{ props?.detail?.basicData?.created_at.slice(0, 10) }}</div>
+    <div>Updated at: {{ props?.detail?.basicData?.updated_at.slice(0, 10) }}</div>
+    <div>Entry ID: {{ props?.detail?.basicData?.id }}</div>
 </div>
 
 </template>

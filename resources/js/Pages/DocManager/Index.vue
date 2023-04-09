@@ -1,17 +1,10 @@
 <template>
 
-<!-- title -->
-<div class="text-center">
-    <!-- <h1 class="text-2xl border-b border-black">{{ detailData.title }}</h1> -->
-    <h1 class="text-2xl border-b border-black">Test</h1>
-    <div class="text-gray-400 text-sm">Video Game | 1986</div>
-</div>
-
 <!-- index container -->
 <div class="">
 
     <!-- index -->
-    <div @mouseover="indexMenuOpen = 1" @mouseleave="indexMenuOpen = 0" class="flex flex-row gap-1 items-center">
+    <div class="flex flex-row gap-1 items-center">
 
         <!-- title -->
         <button @click="IndexCollapsState('switch')" class="flex flex-row items-center gap-1 hover:text-lime-600">
@@ -45,32 +38,52 @@
     </div>
 
     <!-- heading -->
-    <div v-if="IndexShowOpen" v-for="(item, index) in headings" class="mb-1 flex flex-col">
+    <div v-if="IndexShowOpen" v-for="(item, index) in headings[0]" class="mb-[10px] flex flex-col">
         <div class="flex flex-row">
 
             <!-- main heading number -->
-            <div class="justify-end h-[16px] w-[18px] flex items-center">{{ index + 1}}</div>
-            <div class="h-[16px] w-[35px] flex items-center"></div>
+            <button
+                class="flex flex-row hover:text-blue-600"
+                @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]"
+            >
+                <div v-if="IndexSubHeadingOpen[index] == 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+                <div v-else>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </div>
 
-            <div @mouseover="indexLink[index] = 1" @mouseleave="indexLink[index] = 0"
+                <!-- main chapter title -->
+                <div class="justify-end h-[16px] w-[15px] flex items-center mr-[33px]">{{index+1}}</div>
+                <!-- <div class="h-[16px] w-[35px] flex items-center border"></div> -->
+            </button>
+
+            <div
             class="flex flex-row h-[16px]">
 
                 <!-- heading text button -->
-                <button v-if="typeof item[1] != 'undefined'" @click.prevent="IndexSubHeadingOpen[index] = !IndexSubHeadingOpen[index]" class="h-[16px] flex items-center font-bold hover:text-lime-600" type="button">
-                    {{ item[0] }}
+                <button
+                    @click.prevent="$emit('fromChild', {'jumpToChapter': index+1})"
+                    class="h-[16px] flex items-center font-bold hover:text-lime-600"
+                    type="button">
+                    {{ item[1] }}
                 </button>
 
                 <!-- heading text button -->
-                <div v-else class="h-[16px] flex items-center font-bold cursor-default">
+                <!-- <div v-else class="h-[16px] flex items-center font-bold cursor-default">
                     {{ item[0] }}
-                </div>
+                </div> -->
 
                 <!-- link button -->
-                <button v-show="indexLink[index]">
+                <!-- <button v-show="indexLink[index]">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 hover:stroke-lime-600">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
-                </button>
+                </button> -->
             </div>
 
             <!-- ending part -->
@@ -78,21 +91,21 @@
 
                 <!-- leading dots -->
                 <div class="relative grow mx-1 h-[16px] flex items-center" >
-                    <div class="absolute -top-[3px] border-b border-black h-[16px] w-full"></div>
+                    <!-- <div class="absolute -top-[3px] border-b border-black h-[16px] w-full"></div> -->
                 </div>
 
                 <!-- infos / collaps icon -->
-                <div class="w-fit h-[16px] flex items-center">
+                <!-- <div class="w-fit h-[16px] flex items-center">
                     <div class="">
                         {{ item[1].length }}</div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                     </svg>
-                </div>
+                </div> -->
             </div>
         </div>
 
-        <IndexSubHeading1 v-if="IndexSubHeadingOpen[index]" :data="headings" :index="index"/>
+        <IndexSubHeading1 v-if="IndexSubHeadingOpen[index]" :data="headings" :index="index" @fromChild="fromChild"/>
     </div>
 </div>
 
@@ -104,6 +117,7 @@ import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted
 import IndexSubHeading1 from './IndexSubHeading1.vue'
 
 const props = defineProps(['fromController']);
+let emit = defineEmits(['fromChild']);
 
 let detailData = ref(['']);
 
@@ -112,6 +126,7 @@ let indexMenuOpen = ref(0);
 let indexMenuOpenSwitcher = ref('open');
 let IndexShowOpen = ref(1);
 let indexLink = ref([0]);
+// let window_scroll = ref('');
 
 let headings = ref([]);
 // headings.value[0] = ['Arrangement'];
@@ -218,37 +233,42 @@ function IndexCollapsState(n) {
 }
 
 function createHeadings() {
-    console.log(props.fromController);
 
-    props.fromController.forEach(element => {
+    headings.value = props.fromController;
 
-        console.log(element);
+    // console.log(props.fromController);
 
-        // const heading_level = (element[0].match(/\./g) || []).length
-        const heading_level = element[0].split('.');
-        console.log((heading_level || []).length);
+    // props.fromController.forEach(element => {
 
-        switch ((heading_level || []).length) {
-            case 1:
-                headings.value[heading_level[0]-1] = [element[1]];
-                break;
+    //     console.log(element);
 
-            case 2:
-                // headings.value[0] = [];
-                if (headings.value[heading_level[0]-1][1] == undefined) headings.value[heading_level[0]-1][1] = [];
-                headings.value[heading_level[0]-1][1].push([element[1]]);
-                break;
+    //     const heading_level = element[0].split('.');
+    //     console.log((heading_level || []).length);
 
-            default:
-                break;
-        }
+    //     switch ((heading_level || []).length) {
+    //         case 1:
+    //             headings.value[heading_level[0]-1] = [element[1]];
+    //             break;
 
-    });
+    //         case 2:
+    //             if (headings.value[heading_level[0]-1][1] == undefined) headings.value[heading_level[0]-1][1] = [];
+    //             headings.value[heading_level[0]-1][1].push([element[1]]);
+    //             break;
+
+    //         default:
+    //             break;
+    //     }
+
+    // });
 }
 
 onMounted(() => {
 
     createHeadings();
 });
+
+function fromChild(data) {
+    emit('fromChild', data);
+}
 
 </script>

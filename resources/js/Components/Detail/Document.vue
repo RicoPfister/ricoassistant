@@ -13,7 +13,7 @@ import { Head, Link, useForm, useRemember } from '@inertiajs/inertia-vue3'
 import { ref, onMounted, computed, watch  } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-const props = defineProps(['id']);
+const props = defineProps(['toChild']);
 
 function buttonDocument() {
 
@@ -21,9 +21,7 @@ function buttonDocument() {
 
     Inertia.visit('document', {
     method: 'post',
-    data: {
-        id: props.id,
-    },
+    data: props.toChild
     })
 }
 

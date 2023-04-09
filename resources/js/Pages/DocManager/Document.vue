@@ -6,19 +6,29 @@
         <img src="/storage/home/table.jpg" class="w-full">
 
         <!-- frame -->
-        <div class="absolute w-[700px] top-0 my-[50px]">
-            <div class="document bg-[#FFFFED] h-[calc(100vh-100px)] shadow-2xl overflow-y-scroll p-14">
+        <div :class="'top-['+marginTop+'px]'" class="absolute w-[700px] border">
+            <div class="py-7 bg-[#FFFFED] px-12 shadow-2xl">
+                <div ref="documentWindow" :class="'h-[calc(100vh-100px-' + marginTop + 'px)]'" class="document overflow-y-scroll border border-gray-100">
 
-                <!-- index -->
-                <div>
-                    <Index :fromController="props.fromController" />
+                    <!-- title -->
+                    <div class="text-center">
+                        <!-- <h1 class="text-2xl border-b border-black">{{ detailData.title }}</h1> -->
+                        <h1 class="text-2xl border-b border-black">Test</h1>
+                        <div class="text-gray-400 text-sm">Video Game | 1986</div>
+                    </div>
+
+                    <!-- <button @click="fromChild"></button> -->
+
+                    <!-- index -->
+                    <div class="">
+                        <Index :fromController="props.fromController" @fromChild="fromChild" />
+                    </div>
+
+                    <!-- content -->
+                    <div class="mt-3">
+                        <Content :fromController="props.fromController" @fromChild="fromChild"/>
+                    </div>
                 </div>
-
-                <!-- content -->
-                <div class="mt-3">
-                    <Content :fromController="props.fromController" />
-                </div>
-
             </div>
         </div>
     </div>
@@ -31,6 +41,35 @@ import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted
 import Index from './Index.vue'
 import Content from './Content.vue'
 
-const props = defineProps(['fromController']);
+const props = defineProps(['fromController', 'fromChild']);
+
+let documentWindow = ref('');
+let chapterRef = ref();
+let marginTop = ref(40);
+
+function fromChild(data) {
+    // console.log(data?.chapterRef);
+    // console.log(data?.jumpToChapter);
+
+    if (data?.jumpToChapter != undefined) {
+        console.log(chapterRef.value);
+        // console.log(chapterRef.value.value[0]);
+        // console.log(chapterRef.value.value[data?.jumpToChapter].getBoundingClientRect().top);
+        documentWindow.value.scrollTo({left: 0, top: chapterRef.value.value[data.jumpToChapter].getBoundingClientRect().top-24-marginTop.value, behavior: "smooth"});
+    }
+
+    if (data?.chapterRef != undefined) {
+        chapterRef.value = data.chapterRef;
+    }
+
+    // chapterRef =
+
+
+}
+
+// watch(() => props?.fromChild, _.debounce( (curr, prev) => {
+
+//     }, 500)
+// );
 
 </script>
