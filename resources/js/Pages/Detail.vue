@@ -32,6 +32,7 @@
     <TagList v-if="props.detail.statementData.tag" :tag="props.detail.statementData.tag"/>
     <ReferenceParentsList :reference="detailData.statementData"/>
     <ReferenceChildrenList :reference="detailData.statementData"/>
+    <Document v-if="props?.detail?.basicData?.document" :toChild="{'id': props.detail.basicData.id, 'title': props.detail.basicData.title}" class="mt-2"/>
 </div>
 
 <!-- *****section activity***** -->
@@ -63,6 +64,15 @@
     <ReferenceChildrenList :reference="detailData.sourceData"/>
 </div>
 
+<!-- *****Admin***** -->
+<div class="mt-2">
+    <div class="font-bold mt-2 w-full">Admin</div>
+    <div>Visibility: {{ props?.detail?.basicData?.restriction == 0 ? 'Public' : 'Private' }}</div>
+    <div>Created at: {{ props?.detail?.basicData?.created_at.slice(0, 10) }}</div>
+    <div>Updated at: {{ props?.detail?.basicData?.updated_at.slice(0, 10) }}</div>
+    <div>Entry ID: {{ props?.detail?.basicData?.id }}</div>
+</div>
+
 </template>
 
 <script setup>
@@ -70,12 +80,13 @@
 import { ref, onMounted, computed, watch, onBeforeUnmount, reactive, onUnmounted } from 'vue';
 import { Inertia, Method } from "@inertiajs/inertia";
 
-import IndexSubHeading1 from '../Components/Detail/IndexSubHeading1.vue';
+// import IndexSubHeading1 from './DocManager/IndexSubHeading1.vue';
 import SourceMediaList from '../Components/Detail/Source/MediaList.vue';
 import ReferenceChildrenList from '../Components/Detail/ReferenceChildrenList.vue';
 import ReferenceParentsList from '../Components/Detail/ReferenceParentsList.vue';
 import TagList from '../Components/Detail/TagList.vue';
 import ActivityList from '../Components/Detail/ActivityList.vue';
+import Document from '../Components/Detail/Document.vue';
 
 const props = defineProps(['detail']);
 

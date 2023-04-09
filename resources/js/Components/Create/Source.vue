@@ -1,24 +1,21 @@
 
 <template>
 
-<div>
+<div >
+
     <!-- source container -->
     <div class="flex flex-col">
 
-        <div class="flex flex-row justify-between items-center" type="button">
-
-            <label class="" aria-label="Statement Input" for="statement">Source*: </label>
-
-            <!-- <MenuEntry @data-child="dataChildMenuEntry"/> -->
-
+        <div class="relative top-[12px] left-[1px] w-[calc(100%-2px)]">
+            <SectionTitle :Id="{'Id': 2, 'title': 'Source'}"/>
         </div>
 
         <!-- upload content box -->
-        <div class="bg-blue-50 border border-black p-3">
-            <div class="flex flex-row justify-between">
+        <div class="border-l border-b border-r border-gray-400 bg-blue-50 text-sm w-full pt-4 gap-2 mt-[12px] p-3">
+            <div class="flex flex-row justify-between pt-1">
                 <div class="flex flex-row">
                     <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label :class="{'border-red-500 focus:border-red-500 border-4 bg-red-200': form2?.errors?.['sourceData.filelist']}" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
+                    <label :class="[form2?.errors?.['sourceData.filelist'] || form2?.errors?.['sourceData.files'] ? 'border-red-500 focus:border-red-500 border-4 bg-red-200' : '']" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
                     <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
                 </div>
 
@@ -32,6 +29,7 @@
             </div>
 
             <div v-if="form2?.errors?.['sourceData.filelist']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist'] }}</div>
+            <div v-else-if="form2?.errors?.['sourceData.files']" class="text-red-500">{{ form2?.errors?.['sourceData.files'] }}</div>
 
             <!-- hidden file list/preview -->
             <div v-if="InputData[0]" class="flex flex-col my-2">
@@ -63,11 +61,11 @@
                                         </button> -->
 
                                     <!-- remove button -->
-                                    <button class="" @click="deleteFile(index)" type="button">
+                                    <!-- <button class="" @click="deleteFile(index)" type="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" color="darkred" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hover:stroke-red-400">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                             <div v-if="form2?.errors?.['sourceData.filelist.'+ index +'.type']" class="text-red-500">{{ form2?.errors?.['sourceData.filelist.'+ index +'.type'] }}</div>
@@ -91,11 +89,14 @@
 
                 <!-- source preview-->
                 <div v-if="1" class="border-black border-b-2 font-bold mt-1">Source Preview (if available)</div>
-                <div v-if="1" class="flex flex-wrap mt-1 gap-x-2">
+                <div class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
-                        <div v-if="typeof item != 'undefined'" class="py-1">
+                        <div v-if="item.type != '' & item.type.slice(0, 5) == 'image' | item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'  | item.type == 'application/pdf' | item.type == 'text/plain'" class="py-1">
                             <div class="relative border-2 border-black h-36">
-                                <img :src="preview[index]" class="w-[214px] max-h-full">
+                                <img v-if="item.type.slice(0, 5) == 'image'" :src="preview[index]" class="w-[214px] max-h-full">
+                                <!-- <div v-else-if="item.type == undefined"></div> -->
+                                <video v-else-if="item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></video>
+                                <iframe v-else-if="item.type == 'application/pdf' | item.type == 'text/plain'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></iframe>
                                 <div class="absolute bottom-0 px-1 bg-black text-white font-bold">{{ item.key }}</div>
                             </div>
                         </div>
@@ -128,6 +129,7 @@ import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue"
 import * as TagFromStringToGroup from "../../Scripts/tagFromStringToGroup.js"
 import Reference from "./Reference.vue";
+import SectionTitle from "../FormManager/SectionTitle.vue"
 
 let dataChild = ref({'statement': ''});
 
@@ -140,6 +142,7 @@ let InputData = ref([]);
 let previewPath = '';
 let tag_db_data = ref([]);
 let reference_db_data = ref({});
+// let previewCheck = ref(0);
 
 let tagListForDB = [];
 
@@ -148,10 +151,12 @@ let preview = ref([]);
 
 function FileChange(event, index) {
 
+    console.log('ok');
+
     [...event.target.files].forEach((item, index) => InputDataArray(item, index))
 
     function InputDataArray(item, index) {
-        // console.log('ok');
+        console.log('ok');
         InputData.value.push({'file': item, 'filename': item.name, 'size': item.size, 'type': item.type, 'key': uniqueKey.value});
         preview.value.push(URL.createObjectURL(item));
         tag_db_data.value.push({['tag']: '', 'key': uniqueKey.value});
@@ -208,7 +213,7 @@ onMounted(() => {
             // tag_db_data.value = props?.toChild?.sourceData?.tag;
 
             for (let ii = 0; ii < props?.toChild?.sourceData?.tag.length; ii++) {
-                if (props?.toChild?.sourceData?.tag[ii] != []) {
+                if (props?.toChild?.sourceData?.tag[ii].length > 0) {
                     tag_db_data.value[ii]['tag'] = props?.toChild?.sourceData?.tag[ii];
                 }
             }
@@ -293,19 +298,24 @@ function deleteFile(data) {
     if (data == 'all') {
 
         // console.log(props.fromChild);
+        console.log('ok');
 
-        InputData.value.splice(0, InputData.value.length);
-        preview.value.splice(0, InputData.value.length);
-        uniqueKey = 1
+        // emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'form': []});
+        emit('fromChild', {'section':'sourceData', 'subSection':'delete', 'form': 'entries'})
 
         // emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
 
         tag_db_data.value.forEach((element, index) => {
-            // console.log(element);
-            // console.log(index);
+            console.log(element);
+            console.log(index);
             uniqueKey.value = 1;
             emit('fromChild', {'section':'sourceData', 'subSection':'tag', 'index': index, 'form': ''});
         });
+
+        tag_db_data.value.splice(0, InputData.value.length);
+        preview.value.splice(0, InputData.value.length);
+        InputData.value.splice(0, InputData.value.length);
+        uniqueKey.value = 1;
 
         // array.forEach(element => {
 

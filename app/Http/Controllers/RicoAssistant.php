@@ -116,7 +116,23 @@ class RicoAssistant extends Controller {
     public function filter(Request $request) {
 
         $user = Auth::user();
+
         $where = [];
+        $whereIn = [];
+        $where_between = [];
+        $where_tag_1 = [];
+        $where_tag_2 = [];
+        $where_tag_3 = [];
+        $where_tag_operator = '';
+
+        $where_tag_section_collection2 = [];
+
+        $query_check = 0;
+        // $query_check_tag = 0;
+
+        // $db_tag_0 = '';
+        // $db_tag_1 = '';
+        // $db_tag_2 = '';
         // dd($request);
         // dd($request['category']['story']);
         // dd(isset($user));
@@ -301,85 +317,332 @@ class RicoAssistant extends Controller {
 
                 $split_search_data = explode(' ', $request->searchData);
 
-                // dd($split_search_data[0]);
                 // dd($split_search_data);
 
-                function search_year($split_search_data, $key, &$where) {
+                // title
 
-                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
-                    // dd($where);
+                function search_title($value, &$where) {
+
+                    array_push($where, ['title', 'LIKE', '%' . $value . '%']);
                 }
 
-                function search_year_month($split_search_data, $key, &$where) {
+                // tag
 
-                    array_push($where, ['ref_date', 'LIKE', '%' . substr($split_search_data[$key], 1) . '%']);
+                function search_tag_category($value, &$where_tag_1) {
+
+                    // dd('ok');
+
+                    array_push($where_tag_1, ['content', '=' , substr($value, 1)]);
                 }
 
-                function search_year_month_day($split_search_data, $key, &$where) {
+                function search_tag_category_context($tag_sections, &$where_tag_1, &$where_tag_2) {
 
-                    array_push($where, ['ref_date', '=', substr($split_search_data[$key], 1)]);
+                    array_push($where_tag_1, ['content', '=' , $tag_sections[0]]);
+                    array_push($where_tag_2, ['content', '=' , $tag_sections[1]]);
                 }
 
-                function search_title($split_search_data, $key, &$where) {
+                function search_tag_category_context_value($tag_sections, &$where_tag_1, &$where_tag_2, &$where_tag_3, $where_tag_operator) {
 
-                    array_push($where, ['title', 'LIKE', '%' . $split_search_data[$key] . '%']);
+                    array_push($where_tag_1, ['content', '=' , $tag_sections[0]]);
+                    array_push($where_tag_2, ['content', '=' , $tag_sections[1]]);
+
+                    if ($where_tag_operator == '+') array_push($where_tag_3, ['content', '>=' , $tag_sections[2]]);
+                    if ($where_tag_operator == '-') array_push($where_tag_3, ['content', '<=' , $tag_sections[2]]);
+                    else array_push($where_tag_3, ['content', '=' , $tag_sections[2]]);
                 }
 
-                // dd($split_search_data);
+                // 1 date/today
+
+                function search_year($value, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($value, 1) . '%']);
+                }
+
+                function search_year_month($value, &$where) {
+
+                    array_push($where, ['ref_date', 'LIKE', '%' . substr($value, 1) . '%']);
+                }
+
+                function search_year_month_day($value, &$where) {
+
+                    array_push($where, ['ref_date', '=', substr($value, 1)]);
+                }
+
+                function search_today(&$where) {
+
+                    array_push($where, ['ref_date', '=', date('Y-m-d')]);
+                }
+
+                // check search sections
 
                 foreach ($split_search_data as $key => $value) {
 
-                    if (preg_match('/^!\d{3,}$/', $value)) {
-                        // dd('ok');
-                        search_year($split_search_data, $key, $where);
-                    }
-                    else if (preg_match('/^!\d{4}-\d{2}$/', $value)) {
-                        search_year_month($split_search_data, $key, $where);
-                    }
-                    else if (preg_match('/^!\d{4}-\d{2}-\d{2}$/', $value)) {
-                        search_year_month_day($split_search_data, $key, $where);
+                    // dd($value);
+
+                    // title
+                    if (preg_match('/^[^!@]{3,}/', $value)) {
+                        search_title($value, $where);
                     }
 
-                    if (preg_match('/^[^!@]{3,}/', $value)) {
-                        // dd('ok');
-                        // $where_search_term = preg_grep('/^[^!@]/', $split_search_data);
-                        search_title($split_search_data, $key, $where);
+                    // tag
+
+                    // category only
+                    else if (preg_match('/^@[^:]{1,}$/', $value)) {
+
+                        // $query_check_tag = 1;
+                        search_tag_category($value, $where_tag_1);
+                    }
+
+                    else if (preg_match('/^@[^:]*:[^:]*$/', $value)) {
+
+                        // $query_check_tag = 2;
+                        $tag_sections = explode(':', $value);
+                        $tag_sections[0] = substr($tag_sections[0], 1);
+                        // dd($tag_sections);
+                        search_tag_category_context($tag_sections, $where_tag_1, $where_tag_2);
+                    }
+
+                    else if (preg_match('/^@[^:]*:[^:]*:[^:]*$/', $value)) {
+
+                        // $query_check_tag = 3;
+                        $tag_sections = explode(':', $value);
+                        $tag_sections[0] = substr($tag_sections[0], 1);
+
+                        // dd($tag_sections);
+
+                        if (preg_match('/.*\+$/', $tag_sections[2])) {
+                            $tag_sections[2] = substr($tag_sections[2], 0, -1);
+                            $where_tag_operator = '+';
+                        }
+
+                        // dd($tag_sections, $where_tag_operator);
+                        search_tag_category_context_value($tag_sections, $where_tag_1, $where_tag_2, $where_tag_3, $where_tag_operator);
+                    }
+
+                    // 1 date/today
+
+                    else if (preg_match('/^!\d{3,}$/', $value)) {
+
+                        search_year($value, $where);
+                    }
+
+                    else if (preg_match('/^!\d{4}-\d{2}$/', $value)) {
+
+                        search_year_month($value, $where);
+                    }
+
+                    else if (preg_match('/^!\d{4}-\d{2}-\d{2}$/', $value)) {
+
+                        search_year_month_day($value, $where);
+                    }
+
+                    else if (preg_match('/!today/', $value)) {
+
+                        search_today($where);
+                    }
+
+                    // 2 dates
+
+                    else if (preg_match('/!\d{4}_\d{4}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01-01';
+                        $where_between[1] = $where_between[1] . '-12-31';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01-01';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1) . '-01';
+                        $query_check = 'between';
+                    }
+
+                    else if (preg_match('/!\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1);
+                        $query_check = 'between';
+                    }
+
+                    // 2 dates/today
+
+                    // year-today
+                    else if (preg_match('/!\d{4}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1).'-01-01';
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
+                    }
+
+                    // year/mont-today
+                    else if (preg_match('/!\d{4}-\d{2}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1).'-01';
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
+                    }
+
+                    // year/month/day-today
+                    else if (preg_match('/!\d{4}-\d{2}-\d{2}_today/', $value, $result_term)) {
+
+                        $where_between = explode('_', $result_term[0]);
+                        $where_between[0] = substr($where_between[0], 1);
+                        $where_between[1] = date('Y-m-d');
+                        $query_check = 'between';
                     }
                 }
-
-
             }
 
             else {
-                // dd('ok');
+
                 $where = [['title', 'LIKE', '%' . $request->searchData . '%']];
             }
 
-            // dd($where);
-
-            if (isset($where) && count($where) > 0) {
-
-                // dd('ok');
+            if (isset($where) || isset($where_between) && count($where) > 0 || count(isset($where_between) > 0)) {
 
                 if (isset($user)) {
                     array_push($where, ['restriction', '<', '2'], ['user_id', '=', $user->id]);
                 }
 
                 else {
-                    array_push($where, "restriction', '=', 0");
+                    array_push($where, ['restriction', '=', '0']);
                 }
 
-                // "'title', 'LIKE', '\'%' . $request->searchData . '%\''"
+                // dd($where, $where_between, $where_tag_1, $where_tag_2);
 
-                $db_basic_data = DB::table('section_basics')
-                ->where($where)
-                ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                ->orderByDesc('title')
-                ->paginate(20)->withQueryString();
+                if (count($where_tag_1) > 0) {
 
-                // dd(count($db_basic_data));
+                    // dd('ok');
 
-                if (count($db_basic_data) > 0) {
+                    $where_tag_section_collection = [];
+
+                    // search for tag section id
+                    // *************************
+
+                    $db_tag_0 = DB::table('tag_0s')
+                    ->where($where_tag_1)
+                    ->select('id')
+                    ->get();
+
+                    // dd($db_tag_0);
+
+                    if (count($db_tag_0) > 0) array_push($where_tag_section_collection, ['tag_0_id', '=', $db_tag_0[0]->id]);
+
+                    if (count($where_tag_2) > 0) {
+                        $db_tag_1 = DB::table('tag_1s')
+                        ->where($where_tag_2)
+                        ->select('id')
+                        ->get();
+
+                        // dd($db_tag_1);
+
+                        if (count($db_tag_1) > 0) array_push($where_tag_section_collection, ['tag_1_id', '=', $db_tag_1[0]->id]);
+                        else $db_tag_0 = [];
+                    }
+
+                    if (count($where_tag_3) > 0) {
+                        $db_tag_2 = DB::table('tag_2s')
+                        ->where($where_tag_3)
+                        ->pluck('id');
+
+                        // dd($db_tag_2);
+
+                        if (count($db_tag_2) > 0 && $where_tag_operator == '+') {
+                            array_push($where_tag_section_collection2, $db_tag_2);
+                            // dd($where_tag_section_collection2);
+                        }
+                        else if (count($db_tag_2) > 0) array_push($where_tag_section_collection, ['tag_2_id', '=', $db_tag_2[0]]);
+                        else $db_tag_0 = [];
+                    }
+
+                    // dd($where_tag_section_collection, $where_tag_section_collection2);
+                    // dd($db_tag_0, $db_tag_1, $db_tag_2, $where_tag_section_collection2);
+
+                    // get basic id out of tag ids
+
+                    if (count($db_tag_0) > 0) {
+
+                        if (count($where_tag_section_collection2) > 0) {
+
+                            $db_basic_data = DB::table('tags')
+                            ->where($where_tag_section_collection)
+                            ->whereIn('tag_2_id', $where_tag_section_collection2[0])
+                            ->get()
+                            ->pluck('basic_id');
+                        }
+
+                        else {
+                            // dd('ok');
+
+                            $db_basic_data = DB::table('tags')
+                            ->where($where_tag_section_collection)
+                            ->get()
+                            ->pluck('basic_id');
+                        }
+
+                        // dd($db_basic_data);
+
+                        if (count($db_basic_data) > 0) {
+                            array_push($whereIn, $db_basic_data);
+                        }
+
+                        else {
+                            $query_check = 'tag_category_not_found';
+                        }
+                    }
+
+                    else {
+                        $query_check = 'tag_category_not_found';
+                    }
+                }
+
+                // dd($where, $whereIn, $where_between, $query_check);
+
+                if (count($whereIn) == 0) {
+                    $db_basic_data = DB::table('section_basics')
+                    ->where($where)
+                    // ->whereIn('id', $whereIn[0])
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+                    ->orderByDesc('title')
+                    ->paginate(20)->withQueryString();
+                }
+
+                else if ($query_check == 0) {
+                    $db_basic_data = DB::table('section_basics')
+                    // ->where($where)
+                    ->whereIn('id', $whereIn[0])
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+                    ->orderByDesc('title')
+                    ->paginate(20)->withQueryString();
+                }
+
+                else if ($query_check == 'between') {
+                    $db_basic_data = DB::table('section_basics')
+                    ->where($where)
+                    ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
+                    ->select('id', 'medium', 'title', 'ref_date', 'view_count')
+                    ->orderByDesc('title')
+                    ->paginate(20)->withQueryString();
+                }
+
+                // dd($db_basic_data);
+
+                // check if entry contains searched tags
+                // if ($db_tag_0 != '') {
+
+                // }
+
+                if (isset($db_basic_data) && count($db_basic_data) > 0) {
                     $listAuth = $db_basic_data;
                 }
 
@@ -388,30 +651,9 @@ class RicoAssistant extends Controller {
 
             else $listAuth = ['result' => 0, 'search_string' => $request->searchData];
 
-            // dd($db_basic_data);
-
-            // $db_tag_data = DB::table('tag_0s')
-            // ->select('id', 'content')
-            // ->where('content', 'LIKE', '%' . $request->searchData . '%')
-            // ->orderByDesc('content')
-            // ->paginate(20)->withQueryString();;
-
-            // if (count($db_tag_data) > 0) {
-            //     $tag_0 = $db_basic_data;
-            // }
-
-            // else $tag_0 = ['result' => 0, 'search_string' => $request->searchData];
-
-            // dd($db_tag_data);
         }
 
         else $listAuth = '0_result';
-
-        // dd($listAuth);
-
-        // $listAuth->paginate(5);
-
-        // dd($request->searchData);
 
         return Inertia::render('TabManager/TabManager', ['filter' => $listAuth, 'search_term' => $request->searchData]);
     }
@@ -886,6 +1128,34 @@ class RicoAssistant extends Controller {
             }
         }
 
+        //! check if a Document is available (duplicated code. See function 'Document')
+        // ********************
+
+        $category_id = DB::table('tag_0s')
+        ->where('content', '=', 'Chapter')
+        ->get();
+
+        $value_id = DB::table('tag_2s')
+        ->where('content', '=', $request->basic_id)
+        ->get();
+
+        // dd($category_id, $value_id);
+
+        $entry_collection = [];
+
+        if (count($category_id) > 0 && count($value_id) > 0) {
+            $entry_collection = DB::table('tags')
+            ->where('restriction', '<', 2)
+            ->where('tag_0_id', '=', $category_id[0]->id)
+            ->where('tag_2_id', '=',  $value_id[0]->id)
+            ->get();
+        }
+
+        // dd($entry_collection);
+
+        if (count($entry_collection) > 0) $detail['basicData']['document'] = 1;
+        else $detail['basicData']['document'] = 0;
+
         // dd($section_raw);
 
         // $section_collection = array_slice($section_raw, 3);
@@ -904,7 +1174,7 @@ class RicoAssistant extends Controller {
         // get user data
         $user = Auth::user();
 
-        // validation. duplicate: function validation
+        // validation is a duplicate from 'function update'
         // title uniqueness is not tested again
 
         $validation_collection = [
@@ -912,8 +1182,6 @@ class RicoAssistant extends Controller {
             'basicData.medium' => 'required|filled',
             'basicData.title' => 'required|min:3',
         ];
-
-        // dd(isset($request->statementData['tag']));
 
         if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
         if (array_search(4, $request->componentCollection)) {
@@ -943,7 +1211,6 @@ class RicoAssistant extends Controller {
         }
 
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
-        // if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo.*'] = 'between:0,2400';
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
         if (array_search(5, $request->componentCollection)) {
@@ -959,8 +1226,6 @@ class RicoAssistant extends Controller {
             }
         }
 
-        // dd(count($request->activityData['activityTo']));
-
         if (isset($request->activityData['activityTo'])) {
             for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
                 $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
@@ -970,16 +1235,7 @@ class RicoAssistant extends Controller {
             $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
         }
 
-        // dd($validation_collection);
-
-        $validated = $request->validate($validation_collection);
-        // dd($request);
-
-        // dd($validated);
-
-        // $validated = $request->validate([
-
-        // ]);
+         $validated = $request->validate($validation_collection);
 
 
         // create tag function
@@ -1234,6 +1490,80 @@ class RicoAssistant extends Controller {
 
         // dd($request);
 
+        if (!isset($request->delete)) {
+
+            // validation is a duplicate from store
+
+            $validation_collection = [
+                'basicData.ref_date' => 'required|filled',
+                'basicData.medium' => 'required|filled',
+                'basicData.title' => 'required|min:3',
+            ];
+
+            if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
+            if (array_search(4, $request->componentCollection)) {
+
+                if (isset($request->statementData['tag'])) {
+                    foreach ($request->statementData['tag'] as $key => $value) {
+                        foreach ($value as $key2 => $value2) {
+                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                        }
+                    }
+                }
+            }
+
+            if (array_search(6, $request->componentCollection) && isset($request->sourceData['delete'])) $validation_collection['sourceData.filelist'] = 'required';
+            if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
+
+            // dd($request->sourceData['tag']);
+
+            if (isset($request->sourceData['tag'])) {
+                foreach ($request->sourceData['tag'] as $key => $value) {
+
+                    // dd($value != '');
+
+                    if ($value != '') {
+                        foreach ($value as $key2 => $value2) {
+                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                        }
+                    }
+                }
+            }
+
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
+
+            if (array_search(5, $request->componentCollection)) {
+
+                if (isset($request->activityData['tag'])) {
+                    foreach ($request->activityData['tag'] as $key => $value) {
+                        foreach ($value as $key2 => $value2) {
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                        }
+                    }
+                }
+            }
+
+            if (isset($request->activityData['activityTo'])) {
+                for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
+                    $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
+                }
+
+                $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
+                $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
+            }
+
+            $validated = $request->validate($validation_collection);
+        }
+
+        // dd($request);
+
         // update parent reference data
         function update_reference($request, $section_id) {
 
@@ -1388,6 +1718,8 @@ class RicoAssistant extends Controller {
 
             // dd($request, $section_id, $index, $index2, $item, $item2, $tag_name_check_array, $tag_group_section_id_string, $tag_table, $update_tag_db_group, $update_tag_db_data_indexed);
 
+            $user = Auth::user();
+
             $tag_name_check = [];
 
             for ($aa = 0; $aa < 3; $aa++) {
@@ -1408,6 +1740,7 @@ class RicoAssistant extends Controller {
             }
 
             $tag = New Tag();
+            $tag->user_id = $user->id;
             $tag->basic_id = $request->basicData['id'];
             $tag->section = $section_id;
             $tag->section_id =$update_tag_db_data_indexed[$index][0]->id;
@@ -1728,13 +2061,13 @@ class RicoAssistant extends Controller {
 
             if ($request->statementData['statement']['statement'] != []) {
 
-            $section_id = 2;
+                $section_id = 2;
 
-            $update_statement_db_data = DB::table('section_statements')
-            ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['statement' => $request->statementData['statement']['statement']]);
-            update_tag2($request, $section_id);
-            update_reference($request, $section_id);
+                $update_statement_db_data = DB::table('section_statements')
+                ->where('basic_id', '=', $request->basicData['id'])
+                ->update(['statement' => $request->statementData['statement']['statement']]);
+                update_tag2($request, $section_id);
+                update_reference($request, $section_id);
 
             }
 
@@ -1884,29 +2217,60 @@ class RicoAssistant extends Controller {
 
                 if ($request->sourceData['filelist'] != []) {
 
+                    // get all related files
+                    $files_collection = DB::table('section_sources')
+                    ->where('restriction', '<', 2)
+                    ->where('basic_id', '=', $request->basicData['id'])
+                    ->get();
+
                     // dd('ok');
+                    // dd($files_collection);
                     // dd($request->sourceData);
+                    // dd($request->sourceData['filelist']);
 
                     // update files
+
+                    // dd($request->sourceData['delete']);
+
+                    if (isset($request->sourceData['delete']) && $request->sourceData['delete'] == 'entries') {
+                        foreach ($files_collection as $files_index => $files_item) {
+
+                            // dd($files_collection[$files_index]->path);
+
+                            // delete old file
+                            DB::table('section_sources')
+                            // ->where('basic_id', '=', $request->basicData['id'])
+                            ->where('id', '=', $files_collection[$files_index]->id)
+                            ->update(['restriction' => 2]);
+
+                            Storage::disk('local')->delete('public/images/inventory/' . $files_collection[$files_index]->path);
+
+                            // dd($files_index, $files_item);
+                            // dd($request->$db_name['filelist'][$files_index]);
+                            // dd($request->sourceData['filelist'][$files_index]['filename']);
+
+                            // link existing file
+                            // if (isset($request->sourceData['files'][$files_index])) {
+
+                            //     DB::table('section_sources')
+                            //     ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
+                            //     ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
+                            // }
+
+                            // create new file
+
+                                // dd('file', $files_index);
+
+                                //! !! every file will be stored again in the given order !!
+                        }
+                    }
+
+                    // dd($request->sourceData['filelist']);
+
                     foreach ($request->sourceData['filelist'] as $files_index => $files_item) {
 
-                        // dd($files_index, $files_item);
-                        // dd($request->$db_name['filelist'][$files_index]);
-                        // dd($request->sourceData['filelist'][$files_index]['filename']);
+                        if (isset($request->sourceData['filelist'][$files_index]['file'])) {
 
-                        // link existing file
-                        if (isset($request->sourceData['files'][$files_index])) {
-
-                            DB::table('section_sources')
-                            ->where('id', '=', $request->sourceData['files'][$files_index]['id'])
-                            ->update(['path' => $request->sourceData['filelist'][$files_index]['filename']]);
-                        }
-
-                        // create new file
-                        else {
-                            // dd('file', $files_index);
-
-                            // store file meta data
                             $sources = new SectionSource();
                             $sources->basic_id = $request->basicData['id'];
                             $sources->path = $request->sourceData['filelist'][$files_index]['file']->hashName();
@@ -1917,12 +2281,18 @@ class RicoAssistant extends Controller {
 
                             // store file data
                             Storage::disk('local')->put('public/images/inventory/', $request->sourceData['filelist'][$files_index]['file']);
+
                         }
+
                     }
+
+
+
 
                     // delete obsolete file data
                     $db_file_collection = DB::table('section_sources')
                     ->where('basic_id', '=', $request->basicData['id'])
+                    ->where('restriction', '<', '2')
                     ->get();
 
                     if (count($db_file_collection) > 0) {
@@ -1934,6 +2304,8 @@ class RicoAssistant extends Controller {
                             // dd($db_file_index, $db_file_item);
 
                             if (!isset($request->sourceData['filelist'][$db_file_index])) {
+
+                                // dd('ok');
 
                                 DB::table('section_sources')
                                 ->where('id', '=', $db_file_item->id)
@@ -1975,29 +2347,12 @@ class RicoAssistant extends Controller {
 
         }
 
-        $delete_check = 0;
-        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] == []) $delete_check = 1;
-        if (isset($request->activityData['activityTo']) && $request->activityData['activityTo'][0] == '') $delete_check = 1;
-        if (isset($request->statementData['statement']) && $request->statementData['statement']['statement'] == []) $delete_check = 1;
+        $delete_basic_tag_ref = 0;
 
-        // delete entry or update basic
-        if ($delete_check == 1) {
-            // dd('delete basic');
-            // delete entry in section basics
+        function delete_basic_tag_ref() {
+
             DB::table('section_basics')
             ->where('id', '=', $request->basicData['id'])
-            ->update(['restriction' => 2]);
-
-            DB::table('section_statements')
-            ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['restriction' => 2]);
-
-            DB::table('section_activities')
-            ->where('basic_id', '=', $request->basicData['id'])
-            ->update(['restriction' => 2]);
-
-            DB::table('section_sources')
-            ->where('basic_id', '=', $request->basicData['id'])
             ->update(['restriction' => 2]);
 
             DB::table('refs')
@@ -2007,7 +2362,45 @@ class RicoAssistant extends Controller {
             DB::table('tags')
             ->where('basic_id', '=', $request->basicData['id'])
             ->update(['restriction' => 2]);
+
         }
+
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'] == []) {
+
+            DB::table('section_statements')
+            ->where('basic_id', '=', $request->basicData['id'])
+            ->update(['restriction' => 2]);
+
+            if ($delete_basic_tag_ref == 0) {
+                $delete_basic_tag_ref = 1;
+                delete_basic_tag_ref();
+            }
+        };
+
+        if (isset($request->activityData['activityTo']) && $request->activityData['activityTo'][0] == '') {
+
+            DB::table('section_basics')
+            ->where('id', '=', $request->basicData['id'])
+            ->update(['restriction' => 2]);
+
+            if ($delete_basic_tag_ref == 0) {
+                $delete_basic_tag_ref = 1;
+                delete_basic_tag_ref();
+            }
+        }
+        if (isset($request->statementData['statement']) && $request->statementData['statement']['statement'] == []) {
+
+            DB::table('section_basics')
+            ->where('id', '=', $request->basicData['id'])
+            ->update(['restriction' => 2]);
+
+            if ($delete_basic_tag_ref == 0) {
+                $delete_basic_tag_ref = 1;
+                delete_basic_tag_ref();
+            }
+        }
+
+
 
         else {
                 // *****update basic data*****
@@ -2017,12 +2410,22 @@ class RicoAssistant extends Controller {
                 'medium' => $request->basicData['medium']]);
         }
 
-        return Inertia::render('Create', []);
+        return Inertia::render('Home', []);
     }
 
     public function delete(Request $request) {
 
-        DB::table('basics')->where('id', '=', $request->id)->delete();
+        // dd($request->id);
+
+        // !! only sets basic restriction to 2 !!
+        // ****************************************
+
+        DB::table('section_basics')
+        ->where('id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        // DB::table('basics')->where('id', '=', $request->id)->delete();
+        // return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
 
         return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
     }
@@ -2036,7 +2439,6 @@ class RicoAssistant extends Controller {
             // dd($id, $i, $user);
 
             $counter = 1;
-
             $parent_list = [];
 
             // check if there are children
@@ -2100,7 +2502,7 @@ class RicoAssistant extends Controller {
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->orderByDesc('updated_at')
-                ->take(10)
+                ->limit(10)
                 ->get();
 
             // dd($referencedIds);
@@ -2151,7 +2553,6 @@ class RicoAssistant extends Controller {
                         // dd($result);
                     } else {};
 
-
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
 
                 $result['referencesResult'][$i]['inheritance'] = reference_inheritance_list($id, $i, $user);
@@ -2168,6 +2569,8 @@ class RicoAssistant extends Controller {
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
+                ->orderBy('updated_at', 'desc')
+                ->limit(10)
                 ->get();
 
                 // dd($referencesResultCheck);
@@ -2253,10 +2656,36 @@ class RicoAssistant extends Controller {
 
                 $result['misc']['row'] = $request->row;
 
-            } else {
-                $result['misc']['row'] = 0;
+                $referencesResultCheckExact = DB::table('section_basics')
+                ->where('restriction', '<', 2)
+                ->where('user_id', '=', $user->id)
+                ->where('title', '=', $request->reference)
+                ->get();
 
-            };
+                // dd(array_search($referencesResultCheckExact[0]->title, array_column($result['referencesResult'],  'title')), $referencesResultCheckExact[0]->title, array_column($result['referencesResult'], 'title'));
+
+                if (count($referencesResultCheckExact) > 0) {
+
+                    $array_shifting = array_search($referencesResultCheckExact[0]->title, array_column($result['referencesResult'], 'title'));
+
+                    if ($array_shifting !== false) {
+
+                        // dd($array_shifting);
+                        array_splice($result['referencesResult'], $array_shifting, $array_shifting);
+                        array_unshift($result['referencesResult'], $referencesResultCheckExact[0]);
+                        array_pop($result['referencesResult']);
+                    }
+
+                    else {
+                        array_unshift($result['referencesResult'], $referencesResultCheckExact[0]);
+                        array_pop($result['referencesResult']);
+                    }
+                }
+            }
+
+            else {
+                $result['misc']['row'] = 0;
+            }
         }
 
         $result['misc']['parentId'] = $request->parentId;
@@ -2826,5 +3255,431 @@ class RicoAssistant extends Controller {
 
         // return Inertia::render('Create', ['fromController' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
         return to_route('test123')->with(['fromController_validation' => ['tag_value_collection' => $tag_value_collection, 'parentId' => $request->parentId, 'parentIndex' => $request->parentIndex]]);
+    }
+
+    public function document(Request $request) {
+
+        // dd($request);
+
+        $value_detail_content_collection = [];
+        $heading_collection = [];
+
+        function document_date_check($request, $chapter_id, $entry_id, $detail_date_id, &$value_detail_content_collection, &$heading_collection) {
+
+            $user = Auth::user();
+
+            // dd($request, $chapter_id, $entry_id, $detail_date_id, $value_detail_content_collection);
+
+            $date_correlation = DB::table('tags')
+            ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
+            ->where('tag_0_id', '=', $chapter_id[0])
+            ->where('tag_2_id', '=', $entry_id[0])
+            ->where('tag_3_id', '=', $detail_date_id[0])
+            ->select('basic_id')
+            ->get()
+            ->toArray();
+
+            // dd($date_correlation);
+
+            if (count($date_correlation) > 0) document_date_found($request, $value_detail_content_collection, $heading_collection);
+            else document_custom_check($chapter_id, $entry_id, $value_detail_content_collection, $heading_collection);
+        }
+
+        function document_date_found($request, &$value_detail_content_collection, &$heading_collection) {
+
+            // dd($request);
+
+            $user = Auth::user();
+
+            // dd($request, $value_detail_content_collection);
+
+            $title_collection = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
+            ->where('title', 'LIKE', $request->title . '-%')
+            ->get();
+
+            $title_collection = DB::table('section_basics')
+            ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
+            ->where('title', 'LIKE', $request->title . '-%')
+            ->orderByDesc('ref_date')
+            ->get();
+
+            // dd($title_collection);
+
+            $heading_collection_raw = [];
+
+            $statement = '';
+
+            foreach ($title_collection as $key => $value) {
+
+                // dd($key, $value);
+
+                // fill in entry content
+                $statement_get = DB::table('section_statements')
+                ->where('restriction', '<', 2)
+                ->where('id', '=', $value->id)
+                ->get();
+
+                // dd($statement_get);
+                if (count($statement_get) > 0) $statement = $statement_get[0]->statement;
+
+                $substr_year = substr($value->ref_date, 0, 4);
+                $substr_month = intval(substr($value->ref_date, 5, 2));
+                $substr_day = intval(substr($value->ref_date, 9, 2));
+
+                if (!isset($heading_collection_raw[0])) $heading_collection_raw[0] = [];
+
+                // fill in year - main chapter
+                if (!array_key_exists($substr_year, $heading_collection_raw[0])) $heading_collection_raw[0][$substr_year] = [];
+                $heading_collection_raw[0][$substr_year] = [count($heading_collection_raw[0]), $request->title, $statement];
+                // array_push($heading_collection_raw[0][$substr_year], [$count_year+1, $request->title, $statement]);
+                // array_push($heading_collection_raw[0][$substr_year], [$count_year+1, $request->title, $statement]);
+                // $count_year++;
+
+                // create month index
+                if (!isset($heading_collection_raw[$substr_year])) $heading_collection_raw[$substr_year] = [];
+
+                // fill in month - main chapter
+                if (!array_key_exists($substr_month, $heading_collection_raw[$substr_year])) {
+                    $heading_collection_raw[$substr_year][$substr_month] = [];
+                    $heading_collection_raw[$substr_year][$substr_month][0] = [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]), $substr_year . '-' . $substr_month, ''];
+
+                    // array_push($heading_collection_raw[$substr_year], [month+1, $request->title, $statement]);
+                    // $count_month++;
+                }
+
+                // dd($heading_collection_raw);
+
+                // fill in day - main chapter
+                if (!isset($heading_collection_raw[$substr_year][$substr_month][1])) $heading_collection_raw[$substr_year][$substr_month][1] = [];
+                if (!array_key_exists($substr_day, $heading_collection_raw[$substr_year][$substr_month][1])) {
+                    // $heading_collection_raw[$substr_year][$substr_month][1] = [];
+                    array_push($heading_collection_raw[$substr_year][$substr_month][1], [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]) . '.' . count($heading_collection_raw[$substr_year][$substr_month][1])+1, $substr_year . '-' . $substr_month . '-' . $substr_day, $statement_get[0]->statement]);
+                    // $count_chapter_level_1++;
+                    // $count_day++;
+                }
+
+                // dd($heading_collection);
+
+                // dd($substr_year, $substr_month);
+
+                // if (!isset($month_group[$substr_year])) $month_group[$substr_year] = [];
+                // if (!isset($month_group[$substr_year][$substr_month])) $month_group[$substr_year][$substr_month] = [];
+
+                // $statement_content = null;
+
+                // if (count($statement_get) > 0) $statement_content = $statement_get[0]->statement;
+
+                // array_push($month_group[$substr_year][$substr_month], [$substr_day, $value->title, $statement_content]);
+
+                // $date_collection = $month_group->sortKeys();
+
+                // dd($month_group);
+
+                // dd(substr($value->ref_date, 0, 7));
+
+                // create month array if not found
+                // if (!isset($month_group[0][1])) $month_group[0][1] = [];
+                // if (!isset($month_group[0][1][substr($value->ref_date, 0, 7)])) $month_group[0][1][substr($value->ref_date, 0, 7)] = [];
+
+                // dd($month_group);
+                // dd($month_group[0][1][intval(substr($value->ref_date, 5, 2))]);
+
+                // $month_group[intval(substr($value->ref_date, 0, 4))] [intval(substr($value->ref_date, 5, 2)) => $value->title];
+                // array_push($month_group[0][1][substr($value->ref_date, 0, 7)], $value->title);
+                // $month_group[intval(substr($value->ref_date, 0, 4))][intval(substr($value->ref_date, 5, 2))] = $value->title;
+                // dd($month_group);
+                // dd($value);
+
+                // $date_slice = [];
+                // $date_slice[0] = intval(substr($value->ref_date, 0, 4));
+                // $date_slice[1] = intval(substr($value->ref_date, 5, 2));
+                // dd($date_slice);
+                // dd($month_group);
+                // $count_chapter_level_1++;
+            }
+
+
+
+            // dd($heading_collection_raw);
+
+            $count_year = 0;
+
+            // form main chapter
+            foreach ($heading_collection_raw as $key => $value) {
+
+                // dd($key, $value);
+                if (!isset($heading_collection[$count_year])) $heading_collection[$count_year] = [];
+                // array_push($heading_collection[0], $value);
+
+                // form chapter level 1
+
+                $count_month = 0;
+
+                foreach ($value as $key2 => $value2) {
+
+                    // dd($key2, $value2);
+
+                    if (!is_array($value2[0])) array_push($heading_collection[$count_year], $value2);
+                    else {
+                        array_push($heading_collection[$count_year], []);
+
+
+                        $count_day = 0;
+
+                        // form chapter level 2
+                        foreach ($value2 as $key3 => $value3) {
+
+                            // dd($key3, $value3);
+
+                            if (is_array($value3)) {
+
+                                if (!isset($heading_collection[$count_year][$count_month])) $heading_collection[$count_year][$count_month] = [];
+                                array_push($heading_collection[$count_year][$count_month], $value3);
+                                $count_day++;
+                            }
+
+                        }
+                        $count_month++;
+                    }
+
+
+                }
+                // dd($heading_collection_raw, $heading_collection);
+                $count_year++;
+            }
+
+            // dd($heading_collection_raw, $heading_collection);
+            // dd('ok');
+
+            // dd($heading_collection);
+
+            // dd(array_values($heading_collection));
+
+            // date collecton sorting
+            // krsort($month_group);
+
+            // $date_collection = [];
+            // dd($month_group);
+            // $index_year = 0;
+
+            // create month
+            // foreach ($month_group as $key => $value) {
+
+            //     create year
+            //     if(!isset($date_collection[0][$index_year])) $date_collection[0] = [];
+            //     $date_collection[$index_year] = [$index_year+1, 123, $key];
+            //     array_key_exists($date_collection[0)]
+            //     $index_year++;
+
+            //     krsort($value);
+
+            //     foreach ($value as $key2 => $value2) {
+
+            //     }
+            // }
+
+            // dd($array);
+            // dd($title_collection, $month_group, $date_collection);
+        }
+
+        function document_custom_check($chapter_id, $entry_id, &$value_detail_content_collection, &$heading_collection) {
+
+            $user = Auth::user();
+
+            // dd($value_detail_content_collection);
+
+            // global $value_detail_content_collection;
+
+            // dd($chapter_id, $entry_id, $value_detail_content_collection);
+
+            // search for custom detail correlation
+            $value_detail = DB::table('tags')
+            ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
+            ->where('tag_2_id', '=', $chapter_id[0])
+            ->whereIn('tag_0_id', [$entry_id])
+            ->select('basic_id', 'tag_3_id')
+            ->get()
+            ->toArray();
+
+            // dd($chapter_id, $entry_id, $value_detail);
+
+            $value_detail_id = array_column($value_detail, 'tag_3_id');
+
+            foreach ($value_detail as $key => $value) {
+                $value_detail_content = DB::table('tag_3s')
+                ->where('id', '=', $value->tag_3_id)
+                ->pluck('content');
+
+                $title = DB::table('section_basics')
+                ->where('restriction', '<', 2)
+                ->where('id', '=', $value->basic_id)
+                ->pluck('title');
+
+                $statement = DB::table('section_statements')
+                ->where('restriction', '<', 2)
+                ->where('basic_id', '=', $value->basic_id)
+                ->pluck('statement');
+
+                if (count($value_detail_content) > 0) $value_detail_content_collection[$key] = [$value_detail_content[0], $title[0], $statement[0]];
+                else $value_detail_content_collection[$key] = '';
+            }
+
+            // dd($value_detail_content_collection);
+
+            $chapter_extraction = array_column($value_detail_content_collection, 0);
+
+            // dd($chapter_extraction);
+
+            // valdiate chapter duplicates
+            if(count($chapter_extraction) != count(array_unique($chapter_extraction))) dd('ok');
+
+            // build chapter structure
+            foreach ($chapter_extraction as $key => $value) {
+
+                $chapter_split = explode('.', $value);
+
+                // dd($chapter_group_collection);
+
+                switch (count($chapter_split)) {
+                    case 1:
+                        // dd('ok1');
+                        if (!isset($chapter_group_collection[0])) $chapter_group_collection[0] = [];
+                        array_push($chapter_group_collection[0], $chapter_split[0]);
+
+                        if (!isset($heading_collection[0])) $heading_collection[0] = [];
+                        array_push($heading_collection[0], $value_detail_content_collection[$key]);
+                        break;
+
+                    case 2:
+                        if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
+                            $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                        }
+                        array_push($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1], $chapter_split[1]);
+
+                        if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
+                            $heading_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                        }
+                        array_push($heading_collection[$chapter_split[0]][$chapter_split[1]-1], $value_detail_content_collection[$key]);
+
+                        break;
+
+                    case 3:
+
+                        if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
+                            $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                        }
+                        $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = $chapter_split[2];
+
+                        if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
+                            $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                        }
+                        $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] =  $value_detail_content_collection[$key];
+
+                        break;
+                }
+            }
+
+            // dd($chapter_group_collection);
+
+            // validate continous order
+            for ($i=1; $i <= count($chapter_group_collection[0]); $i++) {
+                if (array_search($i, $chapter_group_collection[0]) === false) dd('false');
+            }
+
+            // dd($chapter_group_collection);
+
+            // separate into main chapters
+            for ($i=1; $i < count($chapter_group_collection); $i++) {
+
+                // dd($chapter_group_collection[$i]);
+
+                // separate into level 1 chapters
+                foreach ($chapter_group_collection[$i] as $chapterLevel1_index => $chapterLevel1_item) {
+
+                    // dd($chapter_group_collection, $chapterLevel1_item, $i);
+
+                    // dd($chapter_group_collection, $chapterLevel1_item, $chapterLevel1_item[1], count($chapterLevel1_item[1]));
+
+                    // if (isset($chapterLevel1_item))
+
+                    // dd($chapterLevel1_item);
+
+                    // if (!isset($chapterLevel1_item[1])) dd($i, $chapterLevel1_item);
+
+                    // separate into level 2 chapters
+                    if(isset($chapterLevel1_item[1])) {
+
+                        for ($ii=1; $ii <= count($chapterLevel1_item[1]); $ii++) {
+
+                            // dd('ok');
+
+                            // if (isset($chapterLevel1_item[1][$ii])) {
+
+                            //     for ($iii=1; $iii <= count($chapterLevel1_item[1][$ii]); $iii++) {
+                            //         if (array_search($iii, $chapterLevel1_item[$ii-1]) === false) dd('false', $chapterLevel1_item);
+                            //     }
+                            // }
+
+                            // if (array_search($ii, $chapterLevel1_item) === false) dd('false', $chapterLevel1_item);
+                        }
+                    }
+
+                    // dd('ok');
+                }
+            }
+
+            // foreach ($value_detail_content_collection as $key => $value) {
+
+            //     $heading_level = explode('.', $value[0]);
+
+            //     switch (count($heading_level)) {
+            //         case 1:
+            //             $heading_collection[$heading_level[0]-1][0] = [$value[0], $value[1], $value[2]];
+            //             break;
+
+            //         case 2:
+            //             if (!isset($heading_collection[$heading_level[0]-1][1])) $heading_collection[$heading_level[0]-1][1] = [];
+            //             array_push($heading_collection[$heading_level[0]-1][1], [$value[0], $value[1], $value[2]]);
+            //             break;
+            //     }
+            // }
+
+            // dd($heading_collection);
+            // dd($value_detail_content_collection);
+            // return $value_detail_content_collection;
+        }
+
+        // get chapter id
+        $chapter_id = DB::table('tag_0s')
+        ->where('content', '=', 'Chapter')
+        ->pluck('id');
+
+        // get value tag id
+        $entry_id = DB::table('tag_2s')
+        ->where('content', '=', $request->id)
+        ->pluck('id');
+
+        // check for detail date correlation
+        $detail_date_id = DB::table('tag_3s')
+        ->where('content', '=', 'date')
+        ->pluck('id');
+
+        // dd($detail_date_id);
+        // dd($value_detail_content_collection);
+
+        // $value_detail_content_collection = [1];
+
+        if (count($detail_date_id) > 0) document_date_check($request, $chapter_id, $entry_id, $detail_date_id, $value_detail_content_collection, $heading_collection);
+
+        array_values($heading_collection);
+
+        // dd($value_detail_content_collection, $heading_collection);
+
+        return Inertia::render('DocManager/Document', ['fromController' => $heading_collection]);
     }
 }

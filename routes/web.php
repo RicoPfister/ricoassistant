@@ -77,6 +77,7 @@ Route::post('/tag_value_validation', [RicoAssistant::class, 'tag_value_validatio
 // get summaries data
 Route::post('/backup_check', [RicoAssistant::class, 'backup'])->name('backup');
 Route::post('/statistic', [RicoAssistant::class, 'statistic'])->name('statistic');
+Route::post('/document', [RicoAssistant::class, 'document'])->name('document');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
