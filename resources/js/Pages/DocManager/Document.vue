@@ -6,9 +6,9 @@
         <img src="/storage/home/table.jpg" class="w-full">
 
         <!-- frame -->
-        <div :class="'top-['+marginTop+'px]'" class="absolute w-[700px] border">
-            <div class="py-7 bg-[#FFFFED] px-12 shadow-2xl">
-                <div ref="documentWindow" :class="'h-[calc(100vh-100px-' + marginTop + 'px)]'" class="document overflow-y-scroll border border-gray-100">
+        <div :class="'top-['+marginTop+'px]'" class="absolute w-[700px]">
+            <div class="py-7 bg-[#FFFFFF] px-12 shadow-2xl">
+                <div ref="documentWindow" :class="'h-[calc(100vh-100px-' + marginTop + 'px)]'" class="document overflow-y-scroll">
 
                     <!-- title -->
                     <div class="text-center">

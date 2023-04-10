@@ -16,7 +16,7 @@
         </button>
 
         <!-- title menu -->
-        <div v-show="indexMenuOpen" class="flex flex-row border">
+        <div v-show="indexMenuOpen" class="flex flex-row">
             <button @click="IndexCollapsState(1)" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 leading-none hover:stroke-lime-600">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- main chapter title -->
-                <div class="justify-end h-[16px] w-[15px] flex items-center mr-[33px]">{{index+1}}</div>
+                <div class="justify-end h-[16px] w-[15px] flex items-center mr-[33px]">{{index}}</div>
                 <!-- <div class="h-[16px] w-[35px] flex items-center border"></div> -->
             </button>
 
@@ -67,10 +67,10 @@
 
                 <!-- heading text button -->
                 <button
-                    @click.prevent="$emit('fromChild', {'jumpToChapter': index+1})"
+                    @click.prevent="$emit('fromChild', {'jumpToChapter': index})"
                     class="h-[16px] flex items-center font-bold hover:text-lime-600"
                     type="button">
-                    {{ item[1] }}
+                    {{ item[0][1] }}
                 </button>
 
                 <!-- heading text button -->

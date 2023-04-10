@@ -4,10 +4,28 @@
 
     <div v-for="(item, index) in props.fromController.slice(1)">
 
-        <!-- separate main chapter (x) -->
-        <div :class="{'mb-[0px]': !props.fromController[0][index][2]}" :ref="el => { chapterRef[index+1] = el }" class="flex flex-col mb-[10px]">
-            <b class="text-2xl mb-[10px]">{{ index+1 + ' ' + props.fromController[0][index][1]}}</b>
-            {{ props.fromController[0][index][2] }}
+        <!-- separate main chapter (1.0) -->
+        <div :class="{'mb-[0px]': !props.fromController[0][index+1][0][2]}" :ref="el => { chapterRef[index+1] = el }" class="flex flex-col mb-[10px]">
+            <b class="text-2xl mb-[10px]">{{ index+1 + ' ' + props.fromController[0][index+1][0][1]}}</b>
+            {{ props.fromController[0][index+1][0][2] }}
+
+            <div
+                v-if="props.fromController[0][index+1][1]"
+                class="mt-[10px] gap-2 flex justify-center"
+            >
+
+                <div v-for="(item, index) in props.fromController[0][index+1][1]">
+
+                    <div class="w-fit flex flex-col justify-center">
+                        <img
+                            class="h-72 w-fit"
+                            :src="'/storage/inventory/' + item[2]"
+                            alt="Media Gallery"
+                        >
+                        <div class="flex justify-center">{{ index+1 }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="space-y-2">
@@ -15,19 +33,55 @@
                 <div v-for="(item2, index2) in item">
                 <!-- {{ item2 }} -->
 
-                <!-- separate level 1 chapter (x.x) -->
+                <!-- separate level 1 chapter (1.1) -->
                 <div :ref="el => { chapterRef[index+1+'.'+(index2+1)] = el }" class="">
-                    <div :class="{'mb-[0px]': !item2[0][2]}" class="mb-[10px] flex flex-col">
-                        <b class="text-xl mb-[10px]">{{ item2[0][0] + ' ' + item2[0][1]}}</b>
-                        {{ item2[0][2] }}
+                    <div :class="{'mb-[0px]': !item2[0][0][2]}" class="mb-[10px] flex flex-col">
+                        <b class="text-xl mb-[10px]">{{ item2[0][0][0] + ' ' + item2[0][0][1]}}</b>
+                        {{ item2[0][0][2] }}
+
+                        <div
+                            v-if="item2[0][1]"
+                            class="mt-[10px] gap-2 flex justify-center"
+                        >
+
+                            <div v-for="(item, index) in item2[0][1]">
+
+                                <div class="w-fit flex flex-col justify-center">
+                                    <img
+                                        class="h-72 w-fit"
+                                        :src="'/storage/inventory/' + item[2]"
+                                        alt="Media Gallery"
+                                    >
+                                    <div class="flex justify-center">{{ index+1 }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div v-for="(item3, index3) in item2[1]">
 
-                        <!-- separte 2 level chapter (x.x.x) -->
-                        <div :class="{'mb-[0px]': !item3[2]}" :ref="el => { chapterRef[index+1+'.'+(index2+1)+'.'+(index3+1)] = el }" class="mb-[10px] flex flex-col">
-                            <b class="mb-[10px]">{{ item3[0] + ' ' + item3[1]}}</b>
-                            {{ item3[2] }}
+                        <!-- separte 2 level chapter (1.1.1) -->
+                        <div :class="{'mb-[0px]': !item3[0][2]}" :ref="el => { chapterRef[index+1+'.'+(index2+1)+'.'+(index3+1)] = el }" class="mb-[10px] flex flex-col">
+                            <b class="mb-[10px]">{{ item3[0][0] + ' ' + item3[0][1]}}</b>
+                            {{ item3[0][2] }}
+
+                            <div
+                                v-if="item3?.[1]"
+                                class="mt-[10px] gap-2 flex justify-center"
+                            >
+
+                                <div v-for="(item, index) in item3[1]">
+
+                                    <div class="w-fit flex flex-col justify-center">
+                                        <img
+                                            class="h-72 w-fit"
+                                            :src="'/storage/inventory/' + item[2]"
+                                            alt="Media Gallery"
+                                        >
+                                        <div class="flex justify-center">{{ index+1 }}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

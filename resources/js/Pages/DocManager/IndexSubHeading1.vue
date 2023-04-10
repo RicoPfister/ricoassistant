@@ -3,7 +3,7 @@
 <!-- heading loop-->
 <div class="space-y-[4px]">
     <div
-        v-for="(item, index1) in props.data[props.index+1]"
+        v-for="(item, index1) in props.data[props.index]"
         class="flex flex-col"
         :style="{ 'margin-top': index1 == 0 ? '4px' : '', 'margin-bottom': index1+1 == props?.data[props?.index+1]?.length ? '0px' : ''}"
     >
@@ -25,7 +25,7 @@
                         </svg>
                     </div>
 
-                    <div class="justify-end h-[16px] w-[15px] flex items-center">{{ props.index+1 }}</div>
+                    <div class="justify-end h-[16px] w-[15px] flex items-center">{{ props.index }}</div>
                     <div class="h-[16px] w-[35px] flex items-center">{{ '.'+(index1 + 1 ) }}</div>
                     <div
                         class="flex flex-row h-[16px]"
@@ -41,11 +41,11 @@
 
                 <!-- heading text button -->
                 <button
-                    @click.prevent="$emit('fromChild', {'jumpToChapter': (props.index+1)+'.'+(index1+1)})"
+                    @click.prevent="$emit('fromChild', {'jumpToChapter': (props.index)+'.'+(index1+1)})"
                     class="h-[16px] flex items-center font-bold ml-1 hover:text-lime-600"
                     type="button"
                     >
-                    {{ item[0][1] }}
+                    {{ item[0][0][1] }}
                 </button>
 
                 <!-- link button -->

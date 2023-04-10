@@ -3525,9 +3525,23 @@ class RicoAssistant extends Controller {
                 ->where('basic_id', '=', $value->basic_id)
                 ->pluck('statement');
 
-                if (count($value_detail_content) > 0) $value_detail_content_collection[$key] = [$value_detail_content[0], $title[0], $statement[0]];
-                else $value_detail_content_collection[$key] = '';
-            }
+                if (count($statement) > 0) {
+                    if (count($value_detail_content) > 0) $value_detail_content_collection[$key] = [$value_detail_content[0], $title[0], $statement[0]];
+                    else $value_detail_content_collection[$key] = '';
+                }
+
+                else {
+
+                    $statement = DB::table('section_sources')
+                    ->where('restriction', '<', 2)
+                    ->where('basic_id', '=', $value->basic_id)
+                    ->pluck('path');
+
+                    if (count($statement) > 0) {
+                        if (count($value_detail_content) > 0) $value_detail_content_collection[$key] = ['m'.$value_detail_content[0], $title[0], $statement[0]];
+                        else $value_detail_content_collection[$key] = '';
+                    }
+                }            }
 
             // dd($value_detail_content_collection);
 
@@ -3545,40 +3559,113 @@ class RicoAssistant extends Controller {
 
                 // dd($chapter_group_collection);
 
+                // fill in forValidation and collection array
+
                 switch (count($chapter_split)) {
                     case 1:
-                        // dd('ok1');
-                        if (!isset($chapter_group_collection[0])) $chapter_group_collection[0] = [];
-                        array_push($chapter_group_collection[0], $chapter_split[0]);
+                        // dd($chapter_split[0]);
 
-                        if (!isset($heading_collection[0])) $heading_collection[0] = [];
-                        array_push($heading_collection[0], $value_detail_content_collection[$key]);
+                        if (preg_match('/^m/', $chapter_split[0]) != 0) {
+
+                            // dd('ok');
+
+                            $chapter_split[0] = substr($chapter_split[0], 1);
+                            // dd($chapter_split);
+
+                            if (!isset($heading_collection[0])) $heading_collection[0] = [];
+                            if (!isset($heading_collection[0][$chapter_split[0]])) $heading_collection[0][$chapter_split[0]] = [];
+
+                            array_push($heading_collection[0][1], [$value_detail_content_collection[$key]]);
+                        }
+
+                        else {
+
+                            if (!isset($chapter_group_collection[0])) $chapter_group_collection[0] = [];
+                            array_push($chapter_group_collection[0], $chapter_split[0]);
+
+                            if (!isset($heading_collection[0])) $heading_collection[0] = [];
+                            if (!isset($heading_collection[0][$chapter_split[0]])) $heading_collection[0][$chapter_split[0]] = [];
+
+                            $heading_collection[0][$chapter_split[0]][0] = $value_detail_content_collection[$key];
+                        }
+
                         break;
 
                     case 2:
-                        if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
-                            $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
-                        }
-                        array_push($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1], $chapter_split[1]);
+                        // if ($chapter_split[0].search('/^m/')) dd('ok1');
+                        if (preg_match('/^m/', $chapter_split[0]) != 0) {
+                            // dd($chapter_split[0]);
 
-                        if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
-                            $heading_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                            $chapter_split[0] = substr($chapter_split[0], 1);
+                            // dd($chapter_split);
+
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                            }
+
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][0][1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][0][1] = [];
+                            }
+
+                            // dd($heading_collection[$chapter_split[0]][$chapter_split[1]-1][0]);
+                            // dd($value_detail_content_collection[$key]);
+
+                            array_push($heading_collection[$chapter_split[0]][$chapter_split[1]-1][0][1], $value_detail_content_collection[$key]);
+                            // dd($heading_collection);
                         }
-                        array_push($heading_collection[$chapter_split[0]][$chapter_split[1]-1], $value_detail_content_collection[$key]);
+
+                        else {
+                            if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
+                                $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                            }
+                            array_push($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1], $chapter_split[1]);
+
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1] = [];
+                            }
+
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][0]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][0] = [];
+                            }
+
+                            array_push($heading_collection[$chapter_split[0]][$chapter_split[1]-1][0], $value_detail_content_collection[$key]);
+                        }
 
                         break;
 
                     case 3:
+                        if (preg_match('/^m/', $chapter_split[0]) != 0) {
+                            // dd($chapter_split[0]);
 
-                        if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
-                            $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
-                        }
-                        $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = $chapter_split[2];
+                            $chapter_split[0] = substr($chapter_split[0], 1);
+                            // dd($chapter_split);
 
-                        if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
-                            $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                            }
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][1] = [];
+                            }
+
+                            array_push($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][1], $value_detail_content_collection[$key]);
                         }
-                        $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] =  $value_detail_content_collection[$key];
+
+                        else {
+
+                            if (!isset(($chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
+                                $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                            }
+                            $chapter_group_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = $chapter_split[2];
+
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1] = [];
+                            }
+                            if (!isset(($heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][0]))) {
+                                $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][0] = [];
+                            }
+
+                            $heading_collection[$chapter_split[0]][$chapter_split[1]-1][1][$chapter_split[2]-1][0] =  $value_detail_content_collection[$key];
+                        }
 
                         break;
                 }
@@ -3597,6 +3684,7 @@ class RicoAssistant extends Controller {
             for ($i=1; $i < count($chapter_group_collection); $i++) {
 
                 // dd($chapter_group_collection[$i]);
+                // dd($chapter_group_collection);
 
                 // separate into level 1 chapters
                 foreach ($chapter_group_collection[$i] as $chapterLevel1_index => $chapterLevel1_item) {

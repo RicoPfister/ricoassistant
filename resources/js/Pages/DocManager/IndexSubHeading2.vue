@@ -2,8 +2,8 @@
 
     <!-- heading loop-->
     <div
-        v-for="(item, index2) in props.data[props.index+1][props.index1][1]" class="flex flex-col mt-[2px]"
-        :style="{ 'margin-top': index2 == 0 ? '3px' : '', 'margin-bottom': index2+1 == props?.data[props.index+1][props.index1][1]?.length ? 'px' : ''}"
+        v-for="(item, index2) in props.data[props.index][props.index1][1]" class="flex flex-col mt-[2px]"
+        :style="{ 'margin-top': index2 == 0 ? '3px' : '', 'margin-bottom': index2+1 == props?.data[props.index][props.index1][1]?.length ? 'px' : ''}"
     >
 
         <!-- {{ item[0] }} -->
@@ -22,14 +22,14 @@
             </div>
 
             <!-- heading number -->
-            <div class="justify-end w-[15px] h-[16px] flex items-center">{{ index + 1}}</div>
+            <div class="justify-end w-[15px] h-[16px] flex items-center">{{ index }}</div>
             <div class="h-[16px] w-[35px] flex items-center">{{ '.' + (props.index1 + 1) + '.' + (index2 + 1) }}</div>
 
             <!-- heading text -->
             <button
-                @click.prevent="$emit('fromChild', {'jumpToChapter': (props.index+1)+'.'+(props.index1+1)+'.'+(index2+1)})"
+                @click.prevent="$emit('fromChild', {'jumpToChapter': (props.index)+'.'+(props.index1+1)+'.'+(index2+1)})"
                 class="h-[16px] flex items-center hover:text-lime-600s ml-1 hover:text-lime-600"
-                type="button">{{ item[1] }}
+                type="button">{{ item[0][1] }}
             </button>
 
         </div>
