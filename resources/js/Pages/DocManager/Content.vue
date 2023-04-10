@@ -5,16 +5,16 @@
     <div v-for="(item, index) in props.fromController.slice(1)">
 
         <!-- separate main chapter (1.0) -->
-        <div :class="{'mb-[0px]': !props.fromController[0][index+1][0][2]}" :ref="el => { chapterRef[index+1] = el }" class="flex flex-col mb-[10px]">
-            <b class="text-2xl mb-[10px]">{{ index+1 + ' ' + props.fromController[0][index+1][0][1]}}</b>
-            {{ props.fromController[0][index+1][0][2] }}
+        <div :class="{'mb-[0px]': !props.fromController[0][index][0][2]}" :ref="el => { chapterRef[index+1] = el }" class="flex flex-col mb-[10px]">
+            <b class="text-2xl mb-[10px]">{{ index+1 + ' ' + props.fromController[0][index][0][1]}}</b>
+            {{ props.fromController[0][index][0][2] }}
 
             <div
-                v-if="props.fromController[0][index+1][1]"
+                v-if="props.fromController[0][index][1]"
                 class="mt-[10px] gap-2 flex justify-center"
             >
 
-                <div v-for="(item, index) in props.fromController[0][index+1][1]">
+                <div v-for="(item, index) in props.fromController[0][index][1]">
 
                     <div class="w-fit flex flex-col justify-center">
                         <img

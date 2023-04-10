@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- main chapter title -->
-                <div class="justify-end h-[16px] w-[15px] flex items-center mr-[33px]">{{index}}</div>
+                <div class="justify-end h-[16px] w-[15px] flex items-center mr-[33px]">{{index+1}}</div>
                 <!-- <div class="h-[16px] w-[35px] flex items-center border"></div> -->
             </button>
 
@@ -67,7 +67,7 @@
 
                 <!-- heading text button -->
                 <button
-                    @click.prevent="$emit('fromChild', {'jumpToChapter': index})"
+                    @click.prevent="$emit('fromChild', {'jumpToChapter': index+1})"
                     class="h-[16px] flex items-center font-bold hover:text-lime-600"
                     type="button">
                     {{ item[0][1] }}

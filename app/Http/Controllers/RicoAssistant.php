@@ -3334,7 +3334,7 @@ class RicoAssistant extends Controller {
 
                 // fill in year - main chapter
                 if (!array_key_exists($substr_year, $heading_collection_raw[0])) $heading_collection_raw[0][$substr_year] = [];
-                $heading_collection_raw[0][$substr_year] = [count($heading_collection_raw[0]), $request->title, $statement];
+                $heading_collection_raw[0][$substr_year][0] = [count($heading_collection_raw[0]), $request->title, $statement];
                 // array_push($heading_collection_raw[0][$substr_year], [$count_year+1, $request->title, $statement]);
                 // array_push($heading_collection_raw[0][$substr_year], [$count_year+1, $request->title, $statement]);
                 // $count_year++;
@@ -3345,7 +3345,9 @@ class RicoAssistant extends Controller {
                 // fill in month - main chapter
                 if (!array_key_exists($substr_month, $heading_collection_raw[$substr_year])) {
                     $heading_collection_raw[$substr_year][$substr_month] = [];
-                    $heading_collection_raw[$substr_year][$substr_month][0] = [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]), $substr_year . '-' . $substr_month, ''];
+                    if(!isset($heading_collection_raw[$substr_year][$substr_month][0])) $heading_collection_raw[$substr_year][$substr_month][0] = [];
+
+                    $heading_collection_raw[$substr_year][$substr_month][0][0] = [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]), $substr_year . '-' . $substr_month, ''];
 
                     // array_push($heading_collection_raw[$substr_year], [month+1, $request->title, $statement]);
                     // $count_month++;
@@ -3355,9 +3357,11 @@ class RicoAssistant extends Controller {
 
                 // fill in day - main chapter
                 if (!isset($heading_collection_raw[$substr_year][$substr_month][1])) $heading_collection_raw[$substr_year][$substr_month][1] = [];
-                if (!array_key_exists($substr_day, $heading_collection_raw[$substr_year][$substr_month][1])) {
+                if (!isset($heading_collection_raw[$substr_year][$substr_month][1][$substr_day])) $heading_collection_raw[$substr_year][$substr_month][1][$substr_day] = [];
+                // if (!isset($heading_collection_raw[$substr_year][$substr_month][1][0])) $heading_collection_raw[$substr_year][$substr_month][1][0] = [];
+                if (!array_key_exists($substr_day, $heading_collection_raw[$substr_year][$substr_month][1][$substr_day])) {
                     // $heading_collection_raw[$substr_year][$substr_month][1] = [];
-                    array_push($heading_collection_raw[$substr_year][$substr_month][1], [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]) . '.' . count($heading_collection_raw[$substr_year][$substr_month][1])+1, $substr_year . '-' . $substr_month . '-' . $substr_day, $statement_get[0]->statement]);
+                    array_push($heading_collection_raw[$substr_year][$substr_month][1][$substr_day], [count($heading_collection_raw)-1 . '.' . count($heading_collection_raw[$substr_year]) . '.' . count($heading_collection_raw[$substr_year][$substr_month][1])+1, $substr_year . '-' . $substr_month . '-' . $substr_day, $statement_get[0]->statement]);
                     // $count_chapter_level_1++;
                     // $count_day++;
                 }
@@ -3402,8 +3406,6 @@ class RicoAssistant extends Controller {
                 // $count_chapter_level_1++;
             }
 
-
-
             // dd($heading_collection_raw);
 
             $count_year = 0;
@@ -3426,7 +3428,6 @@ class RicoAssistant extends Controller {
                     if (!is_array($value2[0])) array_push($heading_collection[$count_year], $value2);
                     else {
                         array_push($heading_collection[$count_year], []);
-
 
                         $count_day = 0;
 
@@ -3573,9 +3574,9 @@ class RicoAssistant extends Controller {
                             // dd($chapter_split);
 
                             if (!isset($heading_collection[0])) $heading_collection[0] = [];
-                            if (!isset($heading_collection[0][$chapter_split[0]])) $heading_collection[0][$chapter_split[0]] = [];
+                            if (!isset($heading_collection[0][$chapter_split[0]-1])) $heading_collection[0][$chapter_split[0]-1] = [];
 
-                            array_push($heading_collection[0][1], [$value_detail_content_collection[$key]]);
+                            array_push($heading_collection[0][$chapter_split[0]-1], [$value_detail_content_collection[$key]]);
                         }
 
                         else {
@@ -3584,9 +3585,11 @@ class RicoAssistant extends Controller {
                             array_push($chapter_group_collection[0], $chapter_split[0]);
 
                             if (!isset($heading_collection[0])) $heading_collection[0] = [];
-                            if (!isset($heading_collection[0][$chapter_split[0]])) $heading_collection[0][$chapter_split[0]] = [];
+                            if (!isset($heading_collection[0][$chapter_split[0]-1])) $heading_collection[0][$chapter_split[0]-1] = [];
 
-                            $heading_collection[0][$chapter_split[0]][0] = $value_detail_content_collection[$key];
+                            // dd($chapter_split[0]);
+
+                            $heading_collection[0][$chapter_split[0]-1][0] = $value_detail_content_collection[$key];
                         }
 
                         break;
