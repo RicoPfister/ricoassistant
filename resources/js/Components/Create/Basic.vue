@@ -215,7 +215,7 @@ onMounted(() => {
 
         if (props.toChild?.basicData?.medium != undefined & props.toChild?.basicData?.title != undefined) {
 
-        console.log(props.toChild?.basicData?.restriction);
+        // console.log(props.toChild?.basicData?.restriction);
 
         if (props.toChild?.basicData?.restriction == 0) formPublic = true;
         else formPublic = false;

@@ -39,7 +39,7 @@
         >
             <Reference
                 :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
-                :toChild="{'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}"
+                :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 2, 'parentIndex': 0, 'formParentReference': props?.toChild?.statementData?.reference_parents}"
                 :transferCreate="props.transferCreate"
                 :transfer="props.toChild.parentId == 5 ? props.toChild : ''"
                 @fromChild="fromChild"

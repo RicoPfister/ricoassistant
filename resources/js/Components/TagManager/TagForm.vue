@@ -238,7 +238,7 @@ onMounted(() => {
     //     props.toChild.editTag[0].forEach(createTagInputGroup);
     // }
 
-    console.log('ok');
+    // console.log('ok');
 
     if (props?.fromController) {
         fromController.value = props.fromController2;

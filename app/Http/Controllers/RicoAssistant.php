@@ -51,6 +51,8 @@ class RicoAssistant extends Controller {
             ->select('medium')
             ->get()
             ->groupBy('medium');
+
+            // dd($db_basic_category_rawData);
         }
 
         else {
@@ -114,6 +116,8 @@ class RicoAssistant extends Controller {
 
     // show filter (show default list view)
     public function filter(Request $request) {
+
+        // dd($request);
 
         $user = Auth::user();
 
@@ -299,6 +303,7 @@ class RicoAssistant extends Controller {
         else if ($request->user == 'all_user_entries') {
             $listAuth = DB::table('section_basics')
             ->where('user_id', '=', $user->id)
+            ->where('restriction', '<', 2)
             ->select('id', 'medium', 'title', 'ref_date', 'view_count')
             ->latest('updated_at')
             ->paginate(20)->withQueryString();;
@@ -577,6 +582,7 @@ class RicoAssistant extends Controller {
                             $db_basic_data = DB::table('tags')
                             ->where($where_tag_section_collection)
                             ->whereIn('tag_2_id', $where_tag_section_collection2[0])
+                            ->where('restriction', '<', 2)
                             ->get()
                             ->pluck('basic_id');
                         }
@@ -586,6 +592,7 @@ class RicoAssistant extends Controller {
 
                             $db_basic_data = DB::table('tags')
                             ->where($where_tag_section_collection)
+                            ->where('restriction', '<', 2)
                             ->get()
                             ->pluck('basic_id');
                         }
@@ -611,6 +618,7 @@ class RicoAssistant extends Controller {
                 if (count($whereIn) == 0) {
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
+                    ->where('restriction', '<', 2)
                     // ->whereIn('id', $whereIn[0])
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->orderByDesc('title')
@@ -621,6 +629,7 @@ class RicoAssistant extends Controller {
                     $db_basic_data = DB::table('section_basics')
                     // ->where($where)
                     ->whereIn('id', $whereIn[0])
+                    ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->orderByDesc('title')
                     ->paginate(20)->withQueryString();
@@ -630,6 +639,7 @@ class RicoAssistant extends Controller {
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
                     ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
+                    ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
                     ->orderByDesc('title')
                     ->paginate(20)->withQueryString();
@@ -675,6 +685,8 @@ class RicoAssistant extends Controller {
             ->pluck('db_name');
             $db_name = $form_section_name[0].'Data';
 
+            // dd($form_section_name);
+
             switch($db_name) {
                 case 'statementData':
                     $tag_section = 'section_statements';
@@ -691,6 +703,8 @@ class RicoAssistant extends Controller {
                     $tag_section_request = 'filelist';
                     break;
             }
+
+            // dd($tag_section);
 
             // tag section group collection
             $tag_section_id_collection = DB::table($tag_section)
@@ -878,6 +892,7 @@ class RicoAssistant extends Controller {
 
             // get reference children data
             $reference_children_id = DB::table('refs')
+            ->where('restriction', '<', 2)
             ->where('basic_ref', '=', $request->basic_id)
             ->get();
 
@@ -1592,7 +1607,7 @@ class RicoAssistant extends Controller {
             }
 
             // check if client reference is found if not delete reference
-            if (isset($request->$db_name['reference_parents'])) {
+            if (isset($request->$db_name['reference_parents']) && $request->$db_name['reference_parents'][0] != null) {
 
                 // dd($request, $section_id, $index);
 
@@ -1635,6 +1650,8 @@ class RicoAssistant extends Controller {
                     $reference_basic_db_data = DB::table('section_basics')
                     ->where('id', '=', $rererence_db_data[$index]->basic_ref)
                     ->get();
+
+                    // dd($reference_basic_db_data);
 
                     // dd('ok');
 
@@ -1684,8 +1701,10 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            else if (isset($request->$db_name['reference_parents']) && $request->$db_name['reference_parents'] == '') {
+            else if (isset($request->$db_name['reference_parents']) && $request->$db_name['reference_parents'][0] == null) {
                 // delete obsolete ref
+
+                // dd('ok');
 
                     // dd($tag_section_request);
                     // dd($request->$db_name[]);
@@ -2424,6 +2443,26 @@ class RicoAssistant extends Controller {
         ->where('id', '=', $request->id)
         ->update(['restriction' => 2]);
 
+        DB::table('section_statements')
+        ->where('basic_id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        DB::table('section_sources')
+        ->where('basic_id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        DB::table('section_activities')
+        ->where('basic_id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        DB::table('refs')
+        ->where('basic_id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
+        DB::table('tags')
+        ->where('basic_id', '=', $request->id)
+        ->update(['restriction' => 2]);
+
         // DB::table('basics')->where('id', '=', $request->id)->delete();
         // return redirect()->route('/')->with('message', 'Entry Successfully Deleted');
 
@@ -2434,55 +2473,97 @@ class RicoAssistant extends Controller {
 
         // dd($request);
 
-        function reference_inheritance_list($id, $i, $user) {
+        function reference_inheritance_list($id, $i, $user, $request) {
 
             // dd($id, $i, $user);
 
             $counter = 1;
             $parent_list = [];
 
-            // check if there are children
-            $parent_ref = DB::table('refs')
+            // check if there are children // check if there is a back reference
+            $ref_back = DB::table('refs')
+            ->where('basic_ref', '=', $request->entryId)
             ->where('restriction', '<', 2)
             ->where('basic_id', '=', $id->id)
             ->first();
 
-            // dd($parent_ref);
+            // dump($ref_back);
 
-            if (isset($parent_ref->basic_ref)) {
-                // dd($parent_ref->basic_ref);
-                $parent_checker_next_value = $parent_ref->basic_ref;
+            if (!isset($ref_back)) {
 
-                do  {
-                    if ($parent_ref->basic_id != $parent_ref->basic_ref) {
-                        // get corresponding basic db entry data
-                        $parent_basic = DB::table('section_basics')
-                        ->where('restriction', '<', 2)
-                        ->where('user_id', '=', $user->id)
-                        ->where('id', '=', $parent_checker_next_value)
-                        ->first();
+                $parent_ref = DB::table('refs')
+                ->where('restriction', '<', 2)
+                ->where('basic_id', '=', $id->id)
+                ->first();
 
-                        // dd($parent_basic);
-                        // dd($parent_checker_next_value);
+                // check if there are children
+                // $parent_ref = DB::table('refs')
+                // ->where('restriction', '<', 2)
+                // ->where('basic_id', '=', $id->id)
+                // ->first();
 
-                        // check next ref db entry
-                        $parent_ref = DB::table('refs')
-                        ->where('restriction', '<', 2)
-                        ->where('basic_id', '=', $parent_checker_next_value)
-                        ->first();
+                // dd($parent_ref);
 
-                        // dd($parent_ref);
+                if (isset($parent_ref->basic_ref)) {
+                    // dd($parent_ref->basic_ref);
+                    $parent_checker_next_value = $parent_ref->basic_ref;
 
-                        array_push($parent_list, $parent_basic);
-                        if (isset($parent_ref->basic_ref)) {
-                        $parent_checker_next_value = $parent_ref->basic_ref;
+                    do  {
+                        if ($parent_ref->basic_id != $parent_ref->basic_ref) {
 
-                        $parent_checker = 1;
-                        $counter++;
-                        } else $parent_checker = 0;
-                    }
-                    else $parent_checker = 0;
-                } while ($parent_checker || $counter > 10);
+                            // get corresponding basic db entry data
+                            $parent_basic = DB::table('section_basics')
+                            ->where('restriction', '<', 2)
+                            ->where('user_id', '=', $user->id)
+                            ->where('id', '=', $parent_checker_next_value)
+                            ->first();
+
+                            // dd($parent_basic);
+                            // dd($parent_checker_next_value);
+
+                            // check if there are children // check if there is a back reference
+                            $ref_back_next = DB::table('refs')
+                            ->where('basic_ref', '=', $request->entryId)
+                            ->where('restriction', '<', 2)
+                            ->where('basic_id', '=', $parent_checker_next_value)
+                            ->first();
+
+                            // dd($ref_back_next);
+
+                            if (!isset($ref_back_next)) {
+                                // check next ref db entry
+                                $parent_ref = DB::table('refs')
+                                ->where('restriction', '<', 2)
+                                ->where('basic_id', '=', $parent_checker_next_value)
+                                ->first();
+
+                                // dd($parent_ref);
+
+                                array_push($parent_list, $parent_basic);
+                                if (isset($parent_ref->basic_ref)) {
+                                $parent_checker_next_value = $parent_ref->basic_ref;
+
+                                $parent_checker = 1;
+                                $counter++;
+                            }
+
+                            else $parent_checker = 0;
+
+                            }
+
+                            else {
+                                $parent_checker = 0;
+                                $parent_list = 'back';
+                            }
+                        }
+                        else $parent_checker = 0;
+                    } while ($parent_checker || $counter > 10);
+                }
+            }
+
+            else {
+                // dd('ok');
+                $parent_list = 'back';
             }
 
             return $parent_list;
@@ -2501,6 +2582,7 @@ class RicoAssistant extends Controller {
             $referencedIds = DB::table('section_basics')
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
+                ->where('id', '!=', $request->entryId)
                 ->orderByDesc('updated_at')
                 ->limit(10)
                 ->get();
@@ -2555,7 +2637,17 @@ class RicoAssistant extends Controller {
 
                 $result['referencesResult'][$i]['basic_id'] = $id->id;
 
-                $result['referencesResult'][$i]['inheritance'] = reference_inheritance_list($id, $i, $user);
+                $ineritance_value = reference_inheritance_list($id, $i, $user, $request);
+
+                // dump($ineritance_value);
+
+                if ($ineritance_value == 'back')  {
+                    unset($result['referencesResult'][$i]);
+                }
+
+                else {
+                    $result['referencesResult'][$i]['inheritance'] =  $ineritance_value;
+                }
             };
 
             $result['misc']['row'] = $request->row;
@@ -2565,7 +2657,10 @@ class RicoAssistant extends Controller {
         //-------------------------------------
         else {
 
+            // dd($request->entryId);
+
             $referencesResultCheck = DB::table('section_basics')
+                ->where('id', '!=', $request->entryId)
                 ->where('restriction', '<', 2)
                 ->where('user_id', '=', $user->id)
                 ->where('title', 'LIKE', '%'.$request->reference.'%')
@@ -2581,7 +2676,9 @@ class RicoAssistant extends Controller {
 
                 foreach ($referencesResultCheck as $i=>$id) {
 
-                    if (count($referencesResultCheck) == 0) {} else {
+                    if (count($referencesResultCheck) == 0) {}
+
+                    else {
                         $result['referencesResult'][$i]['title'] = $id->title;
 
                         // ActivityDiagramColor
@@ -2652,6 +2749,18 @@ class RicoAssistant extends Controller {
                         $result['referencesResult'][$i]['id'] = $id->id;
                     }
                     $result['referencesResult'][$i]['basic_id'] = $id->id;
+
+                    $ineritance_value = reference_inheritance_list($id, $i, $user, $request);
+
+                    // dump($ineritance_value);
+
+                    if ($ineritance_value == 'back')  {
+                        unset($result['referencesResult'][$i]);
+                    }
+
+                    else {
+                        $result['referencesResult'][$i]['inheritance'] =  $ineritance_value;
+                    }
                 }
 
                 $result['misc']['row'] = $request->row;

@@ -113,7 +113,7 @@
 </div> -->
 
 <div v-if="!props?.toChild?.componentCollection?.find(element => element == 4) && !props?.toChild?.statementData" class="border-l border-r border-b border-black h-[31px]">
-    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'parentId': 3, 'parentIndex': 0, 'parents_reference': reference_db_data?.[0]?.[0]?.title, 'formTags': tag_db_data.value?.[index]}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+    <Reference :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''" :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 3, 'parentIndex': 0, 'parents_reference': reference_db_data?.[0]?.[0]?.title, 'formTags': tag_db_data.value?.[index]}" :transferCreate="props.transferCreate" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
 </div>
 
 </template>

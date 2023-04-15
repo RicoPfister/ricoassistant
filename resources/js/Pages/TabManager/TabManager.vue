@@ -184,7 +184,7 @@ watch(() => currentTab.value[1], _.debounce( (curr, prev) => {
 
 watch(() => props.filter, (curr, prev) => {
 
-    console.log(props.filter);
+    // console.log(props.filter);
 
     if (props?.filter) list.value = props.filter;
 }
@@ -192,7 +192,7 @@ watch(() => props.filter, (curr, prev) => {
 
 watch(() => props.search_term, (curr, prev) => {
 
-    console.log(props.search_term);
+    // console.log(props.search_term);
 }
 );
 

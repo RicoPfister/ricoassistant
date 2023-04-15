@@ -103,7 +103,7 @@
                         <div class="w-full flex flex-row">
                             <div class="grow">
                                 <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
-                                :toChild="{'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+                                :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
                             </div>
                             <div
                                 class="w-fit"
@@ -308,7 +308,7 @@ let emit = defineEmits(['dataChild', 'dataParent', 'dataToParent', 'toParent', '
 'toChild', 'fromChild', 'transferCreate']);
 
 const form = useForm({
-    activityTo: [''],
+    activityTo: [],
     activityReference: [''],
     activityTag: {},
     referenceChecker: {'rowIndex': '', 'check': '', 'id': 1},
@@ -704,7 +704,7 @@ function fromChild(data) {
     // }
 
     if (data.component == 'tag' && data.parentId == 4) {
-        console.log('ok');
+        // console.log('ok');
         emit('fromChild', {'section':'activityData', 'subSection':'tag', 'index': data.parentIndex, 'form': data.tagList});
     }
 }
@@ -788,7 +788,7 @@ watch(() => usePage().props.value.errors, (curr, prev) => {
 
 if (Object.keys(usePage()?.props.value?.errors).length) {
 
-        console.log('ok');
+        // console.log('ok');
 
         form2.errors = usePage().props.value.errors;
         // form2.errors['activityData.tag'] = {};

@@ -98,14 +98,14 @@ function referenceCheckerFunction(index, id, check) {
         // check if reference popup ***selection*** has been fired and send request to controller
         if (check == 'lastUsed' && ( form.referencePickerOpen.value == 0 || typeof form.referencePickerOpen.value == 'undefined')) {
             // console.log('ok');
-            Inertia.post('refcheck', { reference: check, row: index, parentId: id});
+            Inertia.post('refcheck', {entryId: props?.toChild?.entryId, reference: check, row: index, parentId: id});
         }
 
         // check if reference form ***input*** has been and send request to controller
         else if (check == 'inputCheck' && form.reference.value[0].title.length > 2) {
             // console.log('ok');
             setTimeout(() => {
-                Inertia.post('refcheck', { reference: form.reference.value[0].title, row: index, parentId: id});
+                Inertia.post('refcheck', {entryId: props?.toChild?.entryId, reference: form.reference.value[0].title, row: index, parentId: id});
             }, 500);
         }
 
