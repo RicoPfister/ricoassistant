@@ -437,6 +437,8 @@ onMounted(() => {
 
    if (props?.edit) {
 
+        console.log(props?.edit);
+
         // console.log('ok');
         form.value['componentCollection'] = [];
 

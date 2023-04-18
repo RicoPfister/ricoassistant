@@ -1556,10 +1556,15 @@ class RicoAssistant extends Controller {
 
                 if (isset($request->activityData['tag'])) {
                     foreach ($request->activityData['tag'] as $key => $value) {
-                        foreach ($value as $key2 => $value2) {
-                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+
+                        // dd($key, $value);
+
+                        if (isset($value) && count($value) > 0) {
+                            foreach ($value as $key2 => $value2) {
+                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                            }
                         }
                     }
                 }
@@ -2793,7 +2798,7 @@ class RicoAssistant extends Controller {
             }
 
             else {
-                $result['misc']['row'] = 0;
+                $result['misc']['row'] = $request->row;
             }
         }
 
@@ -2801,20 +2806,8 @@ class RicoAssistant extends Controller {
 
         // dd($result);
 
-        // $request->session()->put('fromController', $result);
-
-        // dd($result);
-
-        // return redirect()->back()->with([
-        //     'testabc' => 'foobar',
-        // ]);
-
-        // return back()->with('success','Item created successfully!');
-        // with(['error => 'message here'])
-        // return Inertia::render('Create', ['fromController' => $result]);
-        // return Inertia::render('Create')->with(['myVariable' => 'message here']);
         return to_route('test123')->with('fromController', $result);
-        // return redirect()->back()->with('fromController', 999);
+
     }
 
     public function titlecheck(Request $request) {
@@ -3205,6 +3198,7 @@ class RicoAssistant extends Controller {
 
     public function edit(Request $request) {
         // dd($request);
+
         return Inertia::render('Create', ['edit' => $request]);
     }
 

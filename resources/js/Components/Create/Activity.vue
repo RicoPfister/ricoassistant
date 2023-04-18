@@ -102,8 +102,12 @@
 
                         <div class="w-full flex flex-row">
                             <div class="grow">
-                                <ReferenceActivity :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
-                                :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}" :transfer="props.toChild.parentId == 5 ? props.toChild : ''" @fromChild="fromChild"/>
+                                <ReferenceActivity
+                                    :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
+                                    :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
+                                    :transfer="props.toChild.parentId == 5 ? props.toChild : ''"
+                                    @fromChild="fromChild"
+                                />
                             </div>
                             <div
                                 class="w-fit"
@@ -579,6 +583,8 @@ function activityRowDuplicate(n) {
 //! watch for diagram width adjustments and add title/medium in basics.vue
 watch(() => form.activityTo, (curr, prev) => {
 
+    console.log(form.activityTo);
+
     //?? set basic title and medium
     // emit('fromChild', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
 
@@ -592,7 +598,9 @@ watch(() => form.activityTo, (curr, prev) => {
 
     if (typeof form.activityTo[form.activityTo.length-1] == 'number') {
         forLoop = form.activityTo.length;
-    } else {
+    }
+
+    else {
         forLoop = form.activityTo.length-1;
     }
 
@@ -635,6 +643,8 @@ watch(() => form.activityTo, (curr, prev) => {
             l = 1;
         };
     }
+
+    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
 
 }, {deep: true}, 500);
 
@@ -684,7 +694,8 @@ function tagTooltipShow(index, data) {
 
 // send to parent: reference selection
 function fromChild(data) {
-    // console.log(data);
+
+    console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -724,6 +735,7 @@ function dataChildMenuEntry(n) {
 onMounted(() => {
 
     // console.log(props.toChild.activityData);
+    // console.log(props.toChild.activityData['tag']);
 
     if (props?.toChild?.activityData) {
         props.toChild.activityData['activityTo'].forEach((item, index) => edittimeToTo(item, index));
@@ -773,7 +785,7 @@ function editParentReference(item, index) {
 }
 
 function editTag(item) {
-    // console.log(item);
+    console.log(item);
     // console.log(item[0]['title']);
     // form.activityReference[index] = item[0]['title'];
     form.activityTag = item;
