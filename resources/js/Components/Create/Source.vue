@@ -92,8 +92,8 @@
                 <div class="flex flex-wrap mt-1 gap-x-2">
                     <div v-for="(item, index) in InputData" class="">
                         <div v-if="item.type != '' & item.type.slice(0, 5) == 'image' | item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'  | item.type == 'application/pdf' | item.type == 'text/plain'" class="py-1">
-                            <div class="relative border-2 border-black h-36">
-                                <img v-if="item.type.slice(0, 5) == 'image'" :src="preview[index]" class="w-[214px] max-h-full">
+                            <div class="relative border-2 border-black h-fit">
+                                <img v-if="item.type.slice(0, 5) == 'image'" :src="preview[index]" class="w-max-full h-fit">
                                 <!-- <div v-else-if="item.type == undefined"></div> -->
                                 <video v-else-if="item.type.slice(0, 5) == 'video' | item.type.slice(0, 5) == 'audio'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></video>
                                 <iframe v-else-if="item.type == 'application/pdf' | item.type == 'text/plain'" :src="preview[index]" class="w-[214px] max-h-full" controls muted></iframe>
