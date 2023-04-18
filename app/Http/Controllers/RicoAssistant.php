@@ -3429,10 +3429,11 @@ class RicoAssistant extends Controller {
                 // fill in entry content
                 $statement_get = DB::table('section_statements')
                 ->where('restriction', '<', 2)
-                ->where('id', '=', $value->id)
+                ->where('basic_id', '=', $value->id)
                 ->get();
 
                 // dd($statement_get);
+
                 if (count($statement_get) > 0) $statement = $statement_get[0]->statement;
 
                 $substr_year = substr($value->ref_date, 0, 4);
@@ -3463,6 +3464,7 @@ class RicoAssistant extends Controller {
                 }
 
                 // dd($heading_collection_raw);
+                // dd($substr_day);
 
                 // fill in day - main chapter
                 if (!isset($heading_collection_raw[$substr_year][$substr_month][1])) $heading_collection_raw[$substr_year][$substr_month][1] = [];
