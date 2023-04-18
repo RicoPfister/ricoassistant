@@ -70,17 +70,17 @@ let form = ref({});
 
 // save validation errors
 
-console.log('ok');
+// console.log('ok');
 
 const form2 = useForm('key1', {'test': null});
 
 watch(() => usePage().props.value.errors, (curr, prev) => {
 
-        console.log('ok');
+        // console.log('ok');
 
         if (Object.keys(usePage()?.props.value?.errors).length > 0) {
 
-        console.log(usePage()?.props.value?.errors);
+        // console.log(usePage()?.props.value?.errors);
 
         form2['errors'] = usePage().props.value.errors;
     }
@@ -288,20 +288,20 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
     if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
     || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking') {
 
-        console.log(data);
+        // console.log(data);
 
         if (!form.value[data.section]) form.value[data.section] = {};
 
         if (data?.index != undefined && data?.index_temp_undefined == undefined) {
 
-            console.log('ok');
+            // console.log('ok');
 
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
 
@@ -316,7 +316,7 @@ function fromChild(data) {
         // }
 
         else {
-            console.log(data);
+            // console.log(data);
 
             // if (data.subSection == 'ref_date') {
             //     form.value[data.section][data.subSection] = data.form.slice(0,4)+data.form.slice(5,7)+data.form.slice(8,10);
@@ -328,11 +328,11 @@ function fromChild(data) {
 
     else if (data.form?.statement == '' || (data.subSection == 'filelist' && data.form == '')) {
 
-        console.log(data);
+        // console.log(data);
 
         if (data.subSection == 'filelist' && data.form == '') {
 
-            console.log(data);
+            // console.log(data);
             form.value['sourceData']['filelist'] = [];
             form.value['sourceData']['files'] = [];
             form.value['sourceData']['previewlist'] = [];
@@ -343,11 +343,11 @@ function fromChild(data) {
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        console.log(data);
+        // console.log(data);
 
         // delete array key
         if(data.subSection == 'tag') {
-            console.log(data);
+            // console.log(data);
             form.value[data.section][data.subSection].splice(data.index, 1);
         }
 
@@ -377,7 +377,7 @@ function fromChild(data) {
     // recheck validation
     if (data.index == undefined) {
 
-        console.log('ok');
+        // console.log('ok');
 
         if (data.subSection == 'activityTo') {
 
@@ -385,16 +385,16 @@ function fromChild(data) {
                 // console.log(parseInt(data.delete)-1);
                 let $delete_index = parseInt(data.delete)-1;
                 // console.log(form2.errors['activityData.activityTo.'+ data.delete-1]);
-                console.log(form2.errors);
+                // console.log(form2.errors);
 
                 delete form2.errors['activityData.activityTo.' + $delete_index];
-                console.log(form2.errors);
+                // console.log(form2.errors);
                 delete form2.errors['activityData.reference_parents.' + $delete_index];
             }
 
             else {
 
-                console.log('ok');
+                // console.log('ok');
 
                 data.form.forEach((item, index) => {
                     if (item > 0) {
@@ -407,7 +407,7 @@ function fromChild(data) {
 
         else if (data.subSection == 'filelist') {
 
-            console.log('ok');
+            // console.log('ok');
             // data.form.forEach((item, index) => {
             //     console.log(index);
             //     if (item.type != undefined) delete form2.errors[data.section + '.' + data.subSection + '.' + index + '.type'];
@@ -418,14 +418,14 @@ function fromChild(data) {
 
         else {
 
-            console.log('ok');
+            // console.log('ok');
 
             delete form2.errors[data.section + '.' + data.subSection];
         }
     }
 
     else {
-            console.log('ok');
+            // console.log('ok');
 
             delete form2.errors[data.section + '.' + data.subSection];
             delete form2.errors[data.section + '.' + data.subSection + '.' + data.index];
@@ -437,7 +437,9 @@ onMounted(() => {
 
    if (props?.edit) {
 
-        console.log('ok');
+        console.log(props?.edit);
+
+        // console.log('ok');
         form.value['componentCollection'] = [];
 
         componentCollection.splice(0, componentCollection.length);

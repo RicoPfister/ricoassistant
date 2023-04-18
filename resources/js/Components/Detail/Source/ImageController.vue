@@ -4,9 +4,9 @@
 <div class="flex flex-wrap mt-1 gap-1">
     <div v-for="(item, index) in props.image" class="">
 
-        <div @mouseover="overlayIsOpen[index] = 1" @mouseleave="overlayIsOpen[index] = 0" class="relative border-2 h-36">
+        <div @mouseover="overlayIsOpen[index] = 1" @mouseleave="overlayIsOpen[index] = 0" class="relative border-2 h-fit">
 
-            <img class="w-[214px] max-h-full" ref="fullscreen" :src="'/storage/inventory/' + item.item.path" />
+            <img class="w-max-full h-fit" ref="fullscreen" :src="'/storage/inventory/' + item.item.path" />
 
             <!-- overlay menu -->
             <div v-if="overlayIsOpen[index]">

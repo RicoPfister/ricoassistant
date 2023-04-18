@@ -208,28 +208,31 @@ watch(() => tagArray.value, (curr, prev) => {
 // tag value check answer
 watch(() => usePage().props.value.flash.fromController_validation, (curr, prev) => {
 
-    if (usePage().props?.value.flash?.fromController_validation?.tag_value_collection?.[0]) {
-        async_test();
-    }
+    if(usePage().props?.value.flash?.fromController_validation != undefined) {
 
-    else tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 0;
+        if (usePage().props?.value.flash?.fromController_validation?.tag_value_collection?.[0]) {
+            async_test();
+        }
 
-    async function async_test() {
-        await task1();
-        await task2();
-    }
+        else tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 0;
 
-    async function task1() {
+        async function async_test() {
+            await task1();
+            await task2();
+        }
 
-    // console.log(usePage().props.value.flash.fromController_validation);
-        tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex] = tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2];
-        tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2] = usePage().props.value.flash.fromController_validation.tag_value_collection[0];
-    }
+        async function task1() {
 
-    async function task2() {
-        tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].setSelectionRange(tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex].length, usePage().props.value.flash.fromController_validation.tag_value_collection[0].length);
-        // tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].style.color = 'green';
-        tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 1;
+        // console.log(usePage().props.value.flash.fromController_validation);
+            tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex] = tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2];
+            tagArray.value[usePage().props.value.flash.fromController_validation.parentIndex][2] = usePage().props.value.flash.fromController_validation.tag_value_collection[0];
+        }
+
+        async function task2() {
+            tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].setSelectionRange(tagArrayOld.value[usePage().props.value.flash.fromController_validation.parentIndex].length, usePage().props.value.flash.fromController_validation.tag_value_collection[0].length);
+            // tagArray_dom.value[usePage().props.value.flash.fromController_validation.parentIndex].style.color = 'green';
+            tagArrayCheck.value[usePage().props.value.flash.fromController_validation.parentIndex] = 1;
+        }
     }
 
 }, {deep: true});

@@ -3,7 +3,7 @@
 <div v-if="typeof props?.index == 'undefined'">
 
 <!-- get reference parents list -->
-<div class="font-bold mt-1">Reference Parents:</div>
+<div class="font-bold mt-1">Reference Parents</div>
 <div v-if="typeof props?.reference?.reference_parents !== 'undefined'" class="flex flex-col">
 
     <!-- reference group -->

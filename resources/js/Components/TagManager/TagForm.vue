@@ -207,36 +207,27 @@ watch(() => props.fromController2, (curr, prev) => {
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
 
-    // console.log(props?.toChild?.parentId);
-    // console.log('ok');
-    // console.log(props?.toChild?.formTags);
+    if (props?.toChild?.formTags != undefined && props?.toChild?.formTags != '') {
 
-    if (typeof props?.toChild?.formTags == 'undefined') {
-        // console.log('empty');
-        // tagCollectionInputFormat.value = [''];
-    }
+        console.log(props?.toChild?.formTags);
 
-    else if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
-        // console.log(props?.toChild?.formTags);
-        tagCollectionInputFormat.value = [''];
-        // props.toChild.formTags.forEach(createTagInputGroup);
-        if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
-    }
+        if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
 
-    else if (props?.toChild?.parentId == 3) {
-        // console.log('ok');
-        tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
+            // commented out because of errors
+            tagCollectionInputFormat.value = [''];
+
+            if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+            }
+
+            else if (props?.toChild?.parentId == 3) {
+
+            tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
+        }
     }
 
 }, {deep: true}, 500);
 
 onMounted(() => {
-    // console.log(props.toChild);
-
-    // if (props?.toChild?.editTag) {
-    //     console.log(props.toChild.editTag);
-    //     props.toChild.editTag[0].forEach(createTagInputGroup);
-    // }
 
     console.log('ok');
 
@@ -245,33 +236,18 @@ onMounted(() => {
     };
 
     if (typeof props.toChild?.tagInputShow !== 'undefined') {
-        // console.log(data);
         tagInputShow.value = props.toChild.tagInputShow;
     }
-    // tagCollection.value.push(['Preset', ['Admin123', 'Movie Rating']]);
 
     if (props?.toChild?.formTags) {
 
-// console.log(props.toChild.formTags);
-// console.log(tagCollectionInputFormat.value );
+        if (props?.toChild?.formTags) {
 
-// tagCollectionInputFormat.value= [];
-// console.log(tagCollectionInputFormat.value);
+            tagCollectionInputFormat.value = [''];
 
-// if (!props?.toChild?.formTags?.[1]) props.toChild.formTags[0].forEach(createTagInputGroup);
-if (props?.toChild?.formTags) {
-    // console.log(props.toChild.formTags);
-    tagCollectionInputFormat.value = [''];
-    // console.log(props.toChild.formTags);
-    if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
-    if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
-};
-
-// console.log(tagCollectionInputFormat.value);
-
-// tagCollectionInputFormat.value = [];
-// tagCollectionInputFormat.value[0] = tagCollectionInputFormat.value;
-
+            if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+            if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
+        };
     }
 })
 

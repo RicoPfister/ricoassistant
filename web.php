@@ -88,7 +88,7 @@ Route::get('/migrate', function () {
 });
 
 Route::get('/backup', function () {
-    Artisan::call('database:backup');
+    Artisan::call('database:backup_manual');
     return Inertia::render('Backup');
 });
 

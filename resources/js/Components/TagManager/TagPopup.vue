@@ -13,7 +13,7 @@
             <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 1}" :disabled="!tagPresetCollection?.[0]" @click="tagPresetPopupFunction" class="group w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between group-disabled:opacity-30">
 
-                    <div class="flex flex-row">
+                    <div class="flex flex-row items-center">
                         <!-- info button -->
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -37,7 +37,7 @@
             <button :class="{'bg-gray-400': categoryPopupOpen && popupId == 2}" @click="categoryPopupActive" class="w-fit px-2 bg-gray-200 h-[34px] border-r border-gray-400" type="button">
                 <div class="flex flex-row items-center justify-between">
 
-                    <div class="flex flex-row">
+                    <div class="flex flex-row items-center">
                         <!-- info button -->
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" color="blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -46,7 +46,7 @@
                             </svg>
                         </div>
 
-                        <div v-if="(props?.fromController?.tagCollection?.length > 0)" class="ml-1">Single</div>
+                        <div v-if="(fromController?.tagCollection?.length > 0)" class="ml-1">Single</div>
                         <div v-else class="ml-1">Create</div>
                     </div>
 
@@ -402,11 +402,16 @@ function tagPresetPopupFunction() {
 
 function categoryPopupActive() {
 
-    if (props.fromController.tagCollection.length > 0) {
-        // console.log('ok');
+    // console.log();
+
+    if (fromController.value?.tagCollection?.length > 0) {
+        console.log('ok123');
         categoryPopupOpen.value = !categoryPopupOpen.value;
         popupId.value = 2;
-    } else {
+    }
+
+    else {
+        console.log('okabc');
         tagSelection.value = [['', '']];
         keyid.value++;
     }
