@@ -2207,7 +2207,7 @@ class RicoAssistant extends Controller {
                         ->update(['restriction' => 2]);
 
                         DB::table('tags')
-                        ->where('section_table_id', '=', $client_activityto_data_item->id)
+                        ->where('section_id', '=', $client_activityto_data_item->id)
                         ->update(['restriction' => 2]);
 
                     }

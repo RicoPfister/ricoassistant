@@ -288,7 +288,7 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
@@ -343,12 +343,14 @@ function fromChild(data) {
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        // console.log(data);
+        console.log(data);
+        console.log(form.value[data.section][data.subSection]);
+        console.log(data.index);
 
         // delete array key
         if(data.subSection == 'tag') {
-            // console.log(data);
-            form.value[data.section][data.subSection].splice(data.index, 1);
+            console.log(data);
+            delete form.value[data.section][data.subSection][data.index];
         }
 
         // console.log(form.value[data.section][data.subSection]);

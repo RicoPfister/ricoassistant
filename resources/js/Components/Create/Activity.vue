@@ -303,6 +303,7 @@ import ReferenceActivity from "./Reference.vue";
 import TagPopup from "../TagManager/TagPopup.vue";
 import TagForm from "../TagManager/TagForm.vue";
 
+
 // import Tooltip_Rating from "../Components/Tooltips/Rating.vue";
 
 // const props = defineProps(['user', 'referencesResult', 'misc', 'basicResult']);
@@ -655,10 +656,10 @@ function tagPopupOpenActive(data) {
 
 function dataToParent(data) {
 
-if (data.tagCollection) {
-    form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
-    tagPopupOpen.value = 0;
-}
+    if (data.tagCollection) {
+        form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
+        tagPopupOpen.value = 0;
+    }
 }
 
 // show tag tool tip
