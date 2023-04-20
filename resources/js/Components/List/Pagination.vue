@@ -13,7 +13,7 @@
         </Link>
         <div
             v-if="item.url == null && index == 0"
-            class="text-gray-200 border-l border-r px-1"
+            class="text-gray-300 border-l border-r px-1"
             >First (1)
         ></div>
         <Link
@@ -26,7 +26,7 @@
         <div
             v-if="(item.url == null && index == 0) || (index == props.data.links.length-1 && props.data.current_page == props.data.last_page)"
             v-html="item.label"
-            class="text-gray-200 border-r px-1"
+            class="text-gray-300 border-r px-1"
         />
         <Link
         v-if="index == props.data.links.length-1 && props.data.current_page != props.data.last_page"
@@ -37,7 +37,7 @@
         </Link>
         <div
             v-if="index == props.data.links.length-1 && props.data.current_page == props.data.last_page"
-            class="text-gray-200 border-r px-1"
+            class="text-gray-300 border-r px-1"
             >Last ({{ props.data.last_page }})
         </div>
     </div>

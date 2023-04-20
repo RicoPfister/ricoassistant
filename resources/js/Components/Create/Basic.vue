@@ -106,7 +106,7 @@ let formPublic = 0;
 const form = useForm({
     'basicMedium': '',
     'basicTitle': '',
-    'basicRefDate': Date.dateNow(),
+    'basicRefDate': '',
     'basicPublic': false,
 });
 
