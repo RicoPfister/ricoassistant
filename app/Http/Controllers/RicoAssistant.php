@@ -1056,13 +1056,9 @@ class RicoAssistant extends Controller {
                     // dd($key);
                     // dd($value);
 
-
-
-                        if (array_key_exists($value->id, $detail_tag_collection)) {
-                            $detail['activityData']['tag'][$key] = $detail_tag_collection[$value->id];
-                        }
-
-
+                    if (array_key_exists($value->id, $detail_tag_collection)) {
+                        $detail['activityData']['tag'][$key] = $detail_tag_collection[$value->id];
+                    }
                 }
             }
 
@@ -1225,7 +1221,7 @@ class RicoAssistant extends Controller {
             }
         }
 
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'required|filled';
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
         if (array_search(5, $request->componentCollection)) {
@@ -1250,8 +1246,9 @@ class RicoAssistant extends Controller {
             $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
         }
 
-         $validated = $request->validate($validation_collection);
+        // dd($validation_collection);
 
+        $validated = $request->validate($validation_collection);
 
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
@@ -1417,8 +1414,7 @@ class RicoAssistant extends Controller {
 
             foreach ($request->activityData['activityTime'] as $i => $activity) {
 
-                // dd($i);
-                // dd($activity);
+                // dd($i, $activity);
 
                 if (is_numeric($request->activityData['activityTime'][$i])) {
 
@@ -1436,10 +1432,8 @@ class RicoAssistant extends Controller {
 
                     // fire tag function
                     if (isset($request->activityData['tag'][$i])) {
-                        // dd($db_name);
-                        tagData($request, $i, $basics, $activites->id, $db_section_id, $db_name);
 
-                        // $request, $index, $basics, $id2, $db_name, $db_section_id
+                        tagData($request, $i, $basics, $activites->id, $db_section_id, $db_name);
                     }
                 }
             };
@@ -1549,7 +1543,8 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'filled';
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.id'] = 'filled';
             if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
             if (array_search(5, $request->componentCollection)) {
@@ -2103,6 +2098,8 @@ class RicoAssistant extends Controller {
         // update activity data
 
         if (isset($request->activityData)) {
+
+            // dd($request->activityData);
             // dd($request->activityData['activityTo'][0] == '');
 
             // check if time index 0 was found
@@ -2110,6 +2107,7 @@ class RicoAssistant extends Controller {
 
                 $update_activity_db_data = DB::table('section_activities')
                 ->where('basic_id', '=', $request->basicData['id'])
+                ->where('restriction', '<', 2)
                 ->get();
 
                 // dd($update_activity_db_data);
@@ -2131,7 +2129,6 @@ class RicoAssistant extends Controller {
                         $ref->tracking = $request->ip();
                         $ref->save();
 
-
                     // dd(['ref_id' => $ref->id]);
 
                     return $ref->id;
@@ -2151,12 +2148,9 @@ class RicoAssistant extends Controller {
                     // create missing activity entry
                     else {
 
-                        // dd('activity not found. code under construction');
-
+                        // dd('ok');
 
                         // create reference function
-
-
                         $section_activity = new SectionActivity();
                         $section_activity->basic_id = $request->basicData['id'];
                         $section_activity->activityTime = $request->activityData['activityTime'][$index];
@@ -2165,15 +2159,8 @@ class RicoAssistant extends Controller {
                         $section_activity->updated_at = now();
                         $section_activity->save();
 
-                        // dd($section_activity);
-
                         $section_activity->ref_id = reference($index, $section_activity, $request);
                         $section_activity->save();
-
-
-
-
-
                     }
                 }
 
@@ -2182,21 +2169,21 @@ class RicoAssistant extends Controller {
                 // data from db
                 $update_activity_db_data = DB::table('section_activities')
                 ->where('basic_id', '=', $request->basicData['id'])
+                ->where('restriction', '<', 2)
                 ->get();
 
                 // data from client
                 $update_activity_db_tag_data = DB::table('tags')
                 ->where('basic_id', '=', $request->basicData['id'])
+                ->where('restriction', '<', 2)
                 ->get()
                 ->groupBy('section_table_id');
 
-                // dd($request->activityData['activityTo'], $update_activity_db_data, $update_activity_db_tag_data);
+                // dd($update_activity_db_data, $update_activity_db_tag_data);
 
                 foreach ($update_activity_db_data as $client_activityto_data_index => $client_activityto_data_item) {
-                    if (!isset($request->activityData['activityTo'][$client_activityto_data_index])) {
-                        // dd($client_activityto_data_index);
 
-                        // dd($client_activityto_data_item->ref_id);
+                    if (!isset($request->activityData['activityTo'][$client_activityto_data_index])) {
 
                         $update_activity_db_data = DB::table('section_activities')
                         ->where('id', '=', $client_activityto_data_item->id)
@@ -2207,12 +2194,10 @@ class RicoAssistant extends Controller {
                         ->update(['restriction' => 2]);
 
                         DB::table('tags')
-                        ->where('section_table_id', '=', $client_activityto_data_item->id)
+                        ->where('section_id', '=', $client_activityto_data_item->id)
                         ->update(['restriction' => 2]);
-
                     }
                 }
-                // dd('negativ');
 
                 // update tag and ref
 
@@ -2222,10 +2207,6 @@ class RicoAssistant extends Controller {
                 update_reference($request, $section_id);
 
             }
-
-            // else {
-            //     $delete_basic_check = 1;
-            // }
         };
 
         // update source data
@@ -3345,7 +3326,7 @@ class RicoAssistant extends Controller {
             $tag_value_collection = DB::table('tag_2s')
             ->where('user_id', '=', $user->id)
             ->whereIn('id', $tag_value_id)
-            ->where('content', 'LIKE', '%' . $request->value[2] . '%')
+            ->where('content', 'LIKE', $request->value[2] . '%')
             ->orderBy('updated_at', 'desc')
             ->take(1)
             ->pluck('content');

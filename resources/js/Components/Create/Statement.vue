@@ -4,7 +4,7 @@
 <div class="flex flex-col border-l border-b border-r border-gray-400 bg-green-50 text-sm w-full pt-4 mt-[12px] pb-3">
 
     <div class="relative -top-[16px]">
-        <SectionTitle :Id="{'Id': 2, 'title': 'Statement'}"/>
+        <SectionTitle :Id="{'Id': 0, 'title': 'Statement'}"/>
     </div>
 
     <textarea

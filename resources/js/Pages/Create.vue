@@ -288,20 +288,25 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
     if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
-    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking') {
+    || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking' || (data.form == '' && data.subSection == 'activityTo')) {
 
-        // console.log(data);
+        console.log(data);
 
-        if (!form.value[data.section]) form.value[data.section] = {};
+        if (!form.value[data.section]) {
+
+            console.log('ok');
+
+            form.value[data.section] = {};
+        }
 
         if (data?.index != undefined && data?.index_temp_undefined == undefined) {
 
-            // console.log('ok');
+            console.log('ok');
 
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
 
@@ -316,13 +321,70 @@ function fromChild(data) {
         // }
 
         else {
-            // console.log(data);
+            console.log(data);
+            // console.log(data.subSection);
 
             // if (data.subSection == 'ref_date') {
             //     form.value[data.section][data.subSection] = data.form.slice(0,4)+data.form.slice(5,7)+data.form.slice(8,10);
             // }
 
-            form.value[data.section][data.subSection] = data.form;
+            // delete activity reference and tag
+            if (data?.subSection == 'activityTo' && data?.delete) {
+
+                console.log(data);
+
+                // activity: delete corresponding reference
+                if (form?.value?.activityData?.reference_parents) {
+
+                    delete form.value.activityData.reference_parents[data.delete-1]
+
+                    let reference_prev = form.value.activityData.reference_parents;
+
+                    form.value.activityData.reference_parents = [];
+
+                    let reference_object = Object.keys(reference_prev);
+
+                    for (let i=0; i<reference_object.length; i++) {
+                        form.value.activityData.reference_parents.push(reference_prev[reference_object[i]]);
+                    }
+                };
+
+                // activity: delete corresponding tag
+                if (form?.value?.activityData?.tag) {
+
+                    console.log(data);
+
+                    let tag_object_prev = Object.keys(form?.value?.activityData?.tag);
+
+                    let array_tag_max = Math.max(...tag_object_prev);
+
+                    // array.forEach(element => {
+
+                    // });
+
+                    let tag_array = [];
+
+                    for(let i = 0; i<=array_tag_max ; i++) {
+                        tag_array.push(form?.value?.activityData?.tag?.[i]);
+                    }
+
+                    form.value.activityData.tag = tag_array;
+
+                    form.value.activityData.tag.splice(data.delete-1, 1);
+
+                };
+
+                // everything else
+                // if (form?.value?.activityData?.tag) delete form.value.activityData.tag[data.delete-1];
+
+                form.value[data.section][data.subSection] = data.form;
+            }
+
+            else {
+                form.value[data.section][data.subSection] = data.form;
+            }
+
+
             }
     }
 
@@ -338,17 +400,23 @@ function fromChild(data) {
             form.value['sourceData']['previewlist'] = [];
         }
 
-        else delete form.value[data.section][data.subSection];
+        else {
+            console.log(data);
+
+            delete form.value[data.section][data.subSection]
+        };
     }
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        // console.log(data);
+        console.log(data);
+        console.log(form.value[data.section][data.subSection]);
+        console.log(data.index);
 
         // delete array key
         if(data.subSection == 'tag') {
-            // console.log(data);
-            form.value[data.section][data.subSection].splice(data.index, 1);
+            console.log(data);
+            delete form.value[data.section][data.subSection][data.index];
         }
 
         // console.log(form.value[data.section][data.subSection]);

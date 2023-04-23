@@ -16,12 +16,12 @@
                 >
                     <!-- item counter -->
                     <div
-                        class="absolute text-[10px] top-0 right-0 pt-[0px] pr-[6px] flex justify-center w-2 break-all items-center h-full min-h-0">0
+                        :class="{'text-black': form?.reference?.value?.[0]?.['title']}" class="absolute text-[10px] top-0 right-0 pt-[0px] pr-[6px] flex justify-center w-2 break-all items-center h-full min-h-0 text-gray-500">{{ form?.reference?.value?.[0]?.['title'] ? 1 :0 }}
                     </div>
 
                     <!-- tag icon -->
                     <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 min-h-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-blue-700': form?.reference?.value?.[0]?.['title']}" class="w-5 h-5 min-h-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25
                             2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                         </svg>
@@ -195,10 +195,11 @@ watch(() => usePage().props.value.fromController, (curr, prev) => {
 
 
 watch(() => props.toChild, (curr, prev) => {
-    if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
+    // if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
+        if (props?.toChild?.parents_reference?.[0]?.title) {
         // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
-        form.reference.value[0].title = props.toChild.parents_reference
+        form.reference.value[0].title = props.toChild.parents_reference[0].title
         form.key.value++;
         // console.log(form.reference.value[0].title);
     };

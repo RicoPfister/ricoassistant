@@ -5,7 +5,7 @@
 <div aria-label="Activity" class="flex flex-col border-l border-b border-r border-gray-400 bg-yellow-50 text-sm w-full pt-4 gap-1 mt-[12px] pb-3">
 
     <div class="relative -top-[16px]">
-        <SectionTitle :Id="{'Id': 2, 'title': 'Activity'}"/>
+        <SectionTitle :Id="{'Id': 1, 'title': 'Activity'}"/>
     </div>
 
     <!-- time schedule box-->
@@ -96,7 +96,7 @@
 
                     <!-- reference box -->
                     <div
-                    :class="{'border-red-500 focus:border-red-500 border-4': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
+                    :class="{'border-red-500 focus:border-red-500 border-4': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] || form2?.errors?.['activityData.reference_parents.' + index + '.0.basic_id'] : form2?.errors?.['activityData.reference_parents.' + index] || form2?.errors?.['activityData.reference_parents.' + index + '.0.basic_id']}"
                         class="w-full h-8 min-w-0 text-sm lg:text-lg border border-black flex flex-row"
                     >
 
@@ -104,7 +104,7 @@
                             <div class="grow">
                                 <ReferenceActivity
                                     :fromController="typeof props.fromController !== 'undefined' ? props.fromController : ''"
-                                    :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 4, 'parentIndex': index, 'parents_reference': form.activityReference[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
+                                    :toChild="{'entryId': props?.dataForm?.basicData?.id, 'parentId': 4, 'parentIndex': index, 'parents_reference':  props?.dataForm?.activityData?.reference_parents?.[index], 'warning': index == 0 ? form2?.errors?.['activityData.reference_parents'] || form2?.errors?.['activityData.reference_parents.' + index] : form2?.errors?.['activityData.reference_parents.' + index]}"
                                     :transfer="props.toChild.parentId == 5 ? props.toChild : ''"
                                     @fromChild="fromChild"
                                 />
@@ -115,7 +115,7 @@
 
                                 <TagForm
                                     :toChild="{'parentId': 4, 'parentIndex': index, 'basicTitle': props.toChild?.basicData?.title,
-                                    'tagInputShow': 0, 'formTags': form?.activityTag?.[index], 'validationError': form2?.['errors']?.['activityData.tag.'+[index]]}"
+                                    'tagInputShow': 0, 'formTags': props?.dataForm?.activityData?.tag?.[index], 'validationError': form2?.['errors']?.['activityData.tag.'+[index]]}"
                                     :fromController2="props.fromController2"
                                     @fromChild="fromChild"
                                 />
@@ -192,6 +192,7 @@
                 <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div>
                 <div v-else-if="form2?.errors?.['activityData.reference_parents.' + index]" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents.' + index] }}</div>
                 <div v-else-if="form2?.errors?.['activityData.tag.' + [index]]" class="text-red-500">{{ form2?.errors?.['activityData.tag.' + [index]] }}</div>
+                <div v-else-if="form2?.errors?.['activityData.reference_parents.' + index + '.0.basic_id']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents.' + index + '.0.basic_id'] }}</div>
             </div>
             <!-- <div v-if="form2?.errors?.['activityData.activityTo']" class="text-red-500">{{ form2?.errors?.['activityData.activityTo'] }}</div>
             <div v-else-if="form2?.errors?.['activityData.reference_parents']" class="text-red-500">{{ form2?.errors?.['activityData.reference_parents'] }}</div> -->
@@ -339,6 +340,8 @@ let fromController = ref(0);
 
 let convertTimeToTO = '';
 
+let deleteCheck = 0;
+
 // let validationError = ref([0]);
 
 // button functions
@@ -445,6 +448,7 @@ function activitybuttonBar(e, n) {
         form2.errors['activityData.activityTo.' + n] = '';
         form2.errors['activityData.activityTo'] = '';
         form.activityTo[n] = '';
+        // form.activityTag[n] = '';
         form.activityReference[n] = '';
     }
 
@@ -453,6 +457,7 @@ function activitybuttonBar(e, n) {
         activityTotalRow.value--;
         form.activityTo.splice(-1);
         form.activityReference.splice(-1)
+        // form.activityTag.splice(-1)
         activiteTolimitReached.value = 0;
     }
 
@@ -549,6 +554,8 @@ function activityKeyShDownPressed(check, n) {
 // delete row
 function activityRowDelete(n) {
 
+    deleteCheck = 1;
+
     if(activityTotalRow.value > 1) {
         form.activityTo.splice(n-1, 1);
         form.activityReference.splice(n-1, 1);
@@ -559,6 +566,8 @@ function activityRowDelete(n) {
         form.activityTo.splice(0, 1, '');
         form.activityReference.splice(0, 1, '');
     }
+
+    console.log(n);
 
     emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'delete': n, 'form': form.activityTo});
 }
@@ -583,68 +592,72 @@ function activityRowDuplicate(n) {
 //! watch for diagram width adjustments and add title/medium in basics.vue
 watch(() => form.activityTo, (curr, prev) => {
 
-    console.log(form.activityTo);
+    if (deleteCheck == 0) {
 
-    //?? set basic title and medium
-    // emit('fromChild', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
+        console.log(form.activityTo);
 
-    let minutes = 0;
-    let minuteTotal = 0;
-    let forLoop = 0;
+        //?? set basic title and medium
+        // emit('fromChild', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
 
-    activityDayOverviewDiagram.value = [];
-    activityDayOverviewDiagram1a.value = [];
-    activityDayOverviewDiagram1b.value = [];
+        let minutes = 0;
+        let minuteTotal = 0;
+        let forLoop = 0;
 
-    if (typeof form.activityTo[form.activityTo.length-1] == 'number') {
-        forLoop = form.activityTo.length;
+        activityDayOverviewDiagram.value = [];
+        activityDayOverviewDiagram1a.value = [];
+        activityDayOverviewDiagram1b.value = [];
+
+        if (typeof form.activityTo[form.activityTo.length-1] == 'number') {
+            forLoop = form.activityTo.length;
+        }
+
+        else {
+            forLoop = form.activityTo.length-1;
+        }
+
+        for (let i = 0; i < forLoop; i++) {
+
+            minutes = (((form.activityTo[i] - (form.activityTo[i] % 100)) / 100 * 60) + form.activityTo[i] % 100) - minuteTotal;
+            activityDayOverviewDiagram.value[i] = minutes;
+            minuteTotal += minutes;
+        }
+
+        let k = 0;
+        minuteTotal = 0;
+        let minuteOld = 0;
+        let row = 0;
+        let l = 0;
+
+        for (let j = 0; j < activityDayOverviewDiagram.value.length; j++) {
+
+            minuteTotal += activityDayOverviewDiagram.value[j];
+
+            if (minuteTotal <= 720) {
+                activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
+                minuteOld = minuteTotal;
+                row++;
+            };
+
+            if (minuteTotal > 720 && l == 1) {
+                activityDayOverviewDiagram1b.value[k] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
+                minuteOld = minuteTotal;
+                k++;
+                row++;
+            };
+
+            if (minuteTotal > 720 && l == 0) {
+                activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': 720 - minuteOld};
+                activityDayOverviewDiagram1b.value[k] =  {'row': row, 'minute': minuteTotal - 720};
+                minuteOld = minuteTotal;
+                k++;
+                row++;
+                l = 1;
+            };
+        }
+
+        emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
     }
-
-    else {
-        forLoop = form.activityTo.length-1;
-    }
-
-    for (let i = 0; i < forLoop; i++) {
-
-        minutes = (((form.activityTo[i] - (form.activityTo[i] % 100)) / 100 * 60) + form.activityTo[i] % 100) - minuteTotal;
-        activityDayOverviewDiagram.value[i] = minutes;
-        minuteTotal += minutes;
-    }
-
-    let k = 0;
-    minuteTotal = 0;
-    let minuteOld = 0;
-    let row = 0;
-    let l = 0;
-
-    for (let j = 0; j < activityDayOverviewDiagram.value.length; j++) {
-
-        minuteTotal += activityDayOverviewDiagram.value[j];
-
-        if (minuteTotal <= 720) {
-            activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
-            minuteOld = minuteTotal;
-            row++;
-        };
-
-        if (minuteTotal > 720 && l == 1) {
-            activityDayOverviewDiagram1b.value[k] = {'row': row, 'minute': activityDayOverviewDiagram.value[j]};
-            minuteOld = minuteTotal;
-            k++;
-            row++;
-        };
-
-        if (minuteTotal > 720 && l == 0) {
-            activityDayOverviewDiagram1a.value[j] = {'row': row, 'minute': 720 - minuteOld};
-            activityDayOverviewDiagram1b.value[k] =  {'row': row, 'minute': minuteTotal - 720};
-            minuteOld = minuteTotal;
-            k++;
-            row++;
-            l = 1;
-        };
-    }
-
-    emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'form': form.activityTo});
+    deleteCheck = 0;
 
 }, {deep: true}, 500);
 
@@ -655,10 +668,10 @@ function tagPopupOpenActive(data) {
 
 function dataToParent(data) {
 
-if (data.tagCollection) {
-    form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
-    tagPopupOpen.value = 0;
-}
+    if (data.tagCollection) {
+        form['activityTag'][tagCollectionInputIndex.value] = data.tagCollection;
+        tagPopupOpen.value = 0;
+    }
 }
 
 // show tag tool tip

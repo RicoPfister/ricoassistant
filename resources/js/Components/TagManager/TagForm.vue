@@ -5,21 +5,24 @@
     <div class="flex flex-row items-center h-[30px]">
 
         <!-- add button -->
-        <button @click.prevent="tagPopupOpenData"
+        <button
+            @click.prevent="tagPopupOpenData"
+            @mouseenter="hoverPopUp(1, props.toChild.parentIndex)"
+            @mouseleave="hoverPopUp(0, props.toChild.parentIndex)"
             :class="{'border-l': !tagInputShow, 'border-r': tagInputShow, 'bg-red-300': props?.toChild?.validationError}"
             class="relative w-[37px] flex h-full items-center bg-gray-200 border-gray-300 leading-none pl-1"
             type="button"
         >
-
             <!-- item counter -->
-            <div class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">0</div>
+            <div :class="{'text-black': tagCollectionInputFormat?.[0]}" class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">{{ !tagCollectionInputFormat?.[0] ? 0 : tagCollectionInputFormat?.[0]?.match(/@/g).length < 100 ? tagCollectionInputFormat?.[0]?.match(/@/g).length : 99 }}</div>
 
             <!-- tag icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[18px] h-fit">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-green-500 stroke-2': tagCollectionInputFormat?.[0]}" class="w-[18px] h-fit stroke-gray-500">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699
                 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
             </svg>
+            <div @mouseleave="hoverPopUp(0, props.toChild.parentIndex)" v-if="tagContentBox == 1 && tagCollectionInputFormat[0] && tagInputShow == 0" class="absolute p-1 right-9 text-sm border-2 border-black w-[400px] break-all bg-blue-50 z-50 h-[50px] overflow-y-scroll flex justify-center">{{ tagCollectionInputFormat[0] }} </div>
         </button>
 
         <!-- open popup -->
@@ -74,6 +77,10 @@ let tagCollectionGroupFormat = ref([]);
 let controllerDataArrived = ref(0);
 let fromController = ref('');
 let tagInputShow = ref(1);
+
+let tagContentBox = ref(0);
+let tagContentBoxTimeOut = '';
+// let tagContentBoxTimeOut = ref();
 
 // onMounted(() => {
 //     console.log(props.dataForm.basicTitle);
@@ -132,7 +139,6 @@ function fromChild(data) {
         // console.log('empty');
 
         tagCollectionInputFormat.value[0] = "";
-        tagCollectionGroupFormat.value[0] = "";
         tagPopupOpen.value = 0;
     }
 
@@ -229,7 +235,7 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
 
 onMounted(() => {
 
-    console.log('ok');
+    // console.log('ok');
 
     if (props?.fromController) {
         fromController.value = props.fromController2;
@@ -239,21 +245,26 @@ onMounted(() => {
         tagInputShow.value = props.toChild.tagInputShow;
     }
 
-    if (props?.toChild?.formTags) {
+    // if (props?.toChild?.formTags) {
 
-        if (props?.toChild?.formTags) {
+    //     if (props?.toChild?.formTags) {
 
-            tagCollectionInputFormat.value = [''];
+    //         tagCollectionInputFormat.value = [''];
 
-            if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
-            if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
-        };
-    }
+    //         if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+    //         if (typeof props.toChild.formTags == 'string') tagCollectionInputFormat.value[0] = props.toChild.formTags;
+    //     };
+    // }
+
+    // if (props?.toChild?.formTags?.length > 0) {
+    //     console.log('ok');
+    //     tagCollectionGroupFormat.value = props.toChild.formTags;
+    // }
 })
 
 function createTagInputGroup(item, index1) {
 
-    // console.log(index1);
+    console.log(index1);
     // console.log(item);
 
     item.forEach(createTagInputString);
@@ -299,6 +310,24 @@ function createTagInputGroup(item, index1) {
 }
 
 // console.log(tagCollectionInputFormat.value);
+
+
+
+function hoverPopUp(status, index) {
+    console.log(status, index);
+
+    if (status == 1) {
+        tagContentBoxTimeOut = setTimeout(function() {
+            tagContentBox.value = status;
+        }, 1000);
+    }
+
+    else if (status == 0) {
+        clearTimeout(tagContentBoxTimeOut);
+        tagContentBox.value = status;
+    }
+    // tagContentBox.value = status;
+}
 
 </script>
 
