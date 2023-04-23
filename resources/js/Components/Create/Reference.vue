@@ -195,10 +195,11 @@ watch(() => usePage().props.value.fromController, (curr, prev) => {
 
 
 watch(() => props.toChild, (curr, prev) => {
-    if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
+    // if (props?.toChild?.parents_reference && !form?.reference?.value[0].title) {
+        if (props?.toChild?.parents_reference?.[0]?.title) {
         // console.log(props.toChild.parents_reference);
         form.reference.value = [{}];
-        form.reference.value[0].title = props.toChild.parents_reference
+        form.reference.value[0].title = props.toChild.parents_reference[0].title
         form.key.value++;
         // console.log(form.reference.value[0].title);
     };

@@ -1056,13 +1056,9 @@ class RicoAssistant extends Controller {
                     // dd($key);
                     // dd($value);
 
-
-
-                        if (array_key_exists($value->id, $detail_tag_collection)) {
-                            $detail['activityData']['tag'][$key] = $detail_tag_collection[$value->id];
-                        }
-
-
+                    if (array_key_exists($value->id, $detail_tag_collection)) {
+                        $detail['activityData']['tag'][$key] = $detail_tag_collection[$value->id];
+                    }
                 }
             }
 
@@ -1225,7 +1221,7 @@ class RicoAssistant extends Controller {
             }
         }
 
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'required|filled';
         if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
         if (array_search(5, $request->componentCollection)) {
@@ -1250,8 +1246,9 @@ class RicoAssistant extends Controller {
             $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
         }
 
-         $validated = $request->validate($validation_collection);
+        // dd($validation_collection);
 
+        $validated = $request->validate($validation_collection);
 
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
@@ -1546,7 +1543,8 @@ class RicoAssistant extends Controller {
                 }
             }
 
-            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents'] = 'required';
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'filled';
+            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.id'] = 'filled';
             if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
 
             if (array_search(5, $request->componentCollection)) {

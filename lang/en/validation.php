@@ -167,6 +167,13 @@ return [
         'activityData.activityTo.*' => [
             'in' => 'Check input. End time must be 2400.',
         ],
+
+        'activityData.reference_parents.*.0.basic_id' => [
+            'filled' => 'Data error. Reset Input.',
+        ],
+        'activityData.reference_parents.*.0.id' => [
+            'filled' => 'Data error. Reset Input.',
+        ],
     ],
 
     /*
