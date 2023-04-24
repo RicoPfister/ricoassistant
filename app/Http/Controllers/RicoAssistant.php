@@ -1228,10 +1228,12 @@ class RicoAssistant extends Controller {
 
             if (isset($request->activityData['tag'])) {
                 foreach ($request->activityData['tag'] as $key => $value) {
-                    foreach ($value as $key2 => $value2) {
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                    if ($value) {
+                        foreach ($value as $key2 => $value2) {
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
+                            $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
+                        }
                     }
                 }
             }

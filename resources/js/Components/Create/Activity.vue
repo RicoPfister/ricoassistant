@@ -567,7 +567,7 @@ function activityRowDelete(n) {
         form.activityReference.splice(0, 1, '');
     }
 
-    console.log(n);
+    // console.log(n);
 
     emit('fromChild', {'section':'activityData', 'subSection':'activityTo', 'delete': n, 'form': form.activityTo});
 }
@@ -594,7 +594,7 @@ watch(() => form.activityTo, (curr, prev) => {
 
     if (deleteCheck == 0) {
 
-        console.log(form.activityTo);
+        // console.log(form.activityTo);
 
         //?? set basic title and medium
         // emit('fromChild', {'basicTitle': 'Activity ' + Date.dateNow(), 'basicMedium': 'self_awareness'});
@@ -708,7 +708,7 @@ function tagTooltipShow(index, data) {
 // send to parent: reference selection
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
 
     // set activity diagram color
     if (data?.color) activityDiagramColorTag.value[data.parentIndex] = data.color;
@@ -798,7 +798,7 @@ function editParentReference(item, index) {
 }
 
 function editTag(item) {
-    console.log(item);
+    // console.log(item);
     // console.log(item[0]['title']);
     // form.activityReference[index] = item[0]['title'];
     form.activityTag = item;

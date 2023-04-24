@@ -59,6 +59,7 @@ import Footer from "../Components/Create/Footer.vue";
 import Tag from "../Components/TagManager/TagForm.vue";
 import Reference from "../Components/Create/Reference.vue";
 import FormManager from "../Components/FormManager/FormPopup.vue";
+import { DOMDirectiveTransforms } from '@vue/compiler-dom';
 
 let props = defineProps(['dataChild', 'basicResult', 'dataCommon', 'dataToParent', 'fromController', 'toParent', 'fromChild', 'transferCreate', 'edit', 'tag', 'testing', 'fromController2', 'fromController_validation']);
 let emit = defineEmits(['dataParent', 'dataForm', 'dataCommon', 'dataChild', 'dataToParent','transferCreate', 'fromController2', 'fromController_validation', 'blocking']);
@@ -288,25 +289,25 @@ let transferCreate = ref({});
 // process form data received from components
 function fromChild(data) {
 
-    console.log(data);
+    // console.log(data);
     // console.log(data.form?.statement);
 
     // if data not undefined and public false-true
     if (((data.form != 'undefined' || data.index_temp_undefined == undefined) && data.form != '' &&  data.form?.statement != '') || data.subSection == 'public'
     || data.subSection == 'medium' || data.subSection == 'title' || data.subSection == 'ref_date' || data.subSection == 'blocking' || (data.form == '' && data.subSection == 'activityTo')) {
 
-        console.log(data);
+        // console.log(data);
 
         if (!form.value[data.section]) {
 
-            console.log('ok');
+            // console.log('ok');
 
             form.value[data.section] = {};
         }
 
         if (data?.index != undefined && data?.index_temp_undefined == undefined) {
 
-            console.log('ok');
+            // console.log('ok');
 
             if (!form.value[data.section][data.subSection]) form.value[data.section][data.subSection] = {};
 
@@ -321,7 +322,7 @@ function fromChild(data) {
         // }
 
         else {
-            console.log(data);
+            // console.log(data);
             // console.log(data.subSection);
 
             // if (data.subSection == 'ref_date') {
@@ -331,7 +332,7 @@ function fromChild(data) {
             // delete activity reference and tag
             if (data?.subSection == 'activityTo' && data?.delete) {
 
-                console.log(data);
+                // console.log(data);
 
                 // activity: delete corresponding reference
                 if (form?.value?.activityData?.reference_parents) {
@@ -352,26 +353,29 @@ function fromChild(data) {
                 // activity: delete corresponding tag
                 if (form?.value?.activityData?.tag) {
 
-                    console.log(data);
+                    // console.log(typeof form?.value?.activityData?.tag);
 
-                    let tag_object_prev = Object.keys(form?.value?.activityData?.tag);
+                    if (typeof form?.value?.activityData?.tag == 'object') {
 
-                    let array_tag_max = Math.max(...tag_object_prev);
+                        // console.log('ok');
 
-                    // array.forEach(element => {
+                        let tag_object_prev = Object.keys(form?.value?.activityData?.tag);
 
-                    // });
+                        let array_tag_max = Math.max(...tag_object_prev);
 
-                    let tag_array = [];
+                        let tag_array = [];
 
-                    for(let i = 0; i<=array_tag_max ; i++) {
-                        tag_array.push(form?.value?.activityData?.tag?.[i]);
+                        for(let i = 0; i<=array_tag_max ; i++) {
+                            tag_array.push(form?.value?.activityData?.tag?.[i]);
+                        }
+
+                        form.value.activityData.tag = tag_array;
+
                     }
-
-                    form.value.activityData.tag = tag_array;
 
                     form.value.activityData.tag.splice(data.delete-1, 1);
 
+                    // console.log(form.value.activityData.tag);
                 };
 
                 // everything else
@@ -401,7 +405,7 @@ function fromChild(data) {
         }
 
         else {
-            console.log(data);
+            // console.log(data);
 
             delete form.value[data.section][data.subSection]
         };
@@ -409,13 +413,13 @@ function fromChild(data) {
 
     else if (form?.value?.[data.section]?.[data.subSection]){
 
-        console.log(data);
-        console.log(form.value[data.section][data.subSection]);
-        console.log(data.index);
+        // console.log(data);
+        // console.log(form.value[data.section][data.subSection]);
+        // console.log(data.index);
 
         // delete array key
         if(data.subSection == 'tag') {
-            console.log(data);
+            // console.log(data);
             delete form.value[data.section][data.subSection][data.index];
         }
 
@@ -505,7 +509,7 @@ onMounted(() => {
 
    if (props?.edit) {
 
-        console.log(props?.edit);
+        // console.log(props?.edit);
 
         // console.log('ok');
         form.value['componentCollection'] = [];
