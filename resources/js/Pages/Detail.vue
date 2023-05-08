@@ -26,7 +26,7 @@
 <!-- *****section statement***** -->
 <div v-if="typeof detailData?.statementData !== 'undefined'" class="">
     <!-- textbox -->
-    <pre>{{ detailData?.statementData?.statement?.statement }}</pre>
+    <pre class="whitespace-pre-line break-all">{{ detailData?.statementData?.statement?.statement }}</pre>
 
     <!-- Lists -->
     <TagList v-if="props.detail.statementData.tag" :tag="props.detail.statementData.tag"/>

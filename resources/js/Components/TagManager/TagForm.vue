@@ -75,6 +75,7 @@ let tagPopupOpen = ref(0);
 let tagCollectionInputIndex = ref(0);
 let tagCollectionInputFormat = ref([]);
 let tagCollectionInputFormatNew = ref([]);
+let tagCollectionInputFormatNew2 = [''];
 let tagCollectionGroupFormat = ref([]);
 let controllerDataArrived = ref(0);
 let fromController = ref('');
@@ -83,7 +84,7 @@ let tagInputShow = ref(1);
 let tagContentBox = ref(0);
 let tagContentBoxTimeOut = '';
 
-let tagCheck = 0;
+// let tagCheck = 0;
 // let tagContentBoxTimeOut = ref();
 
 // onMounted(() => {
@@ -191,20 +192,28 @@ function tagPopupOpenData() {
 // send to parent: listen to tag changes
 // console.log(tagCollectionGroupFormat.value);
 watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
-    // console.log(tagCollectionGroupFormat.value[0]);
+    console.log(tagCollectionGroupFormat.value[0]);
     emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'tagString':tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
 // after split group to string send it back to parent as groups
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 
-    // console.log(tagCollectionInputFormat.value);
+    // console.log(tagCollectionInputFormat.value[0]);
+    // console.log(tagCollectionInputFormatNew2);
+
+    // 2 main group: 1 or more 'tag construction (3 parts)' needed
+    let regExTag = /^@([^@:]+:){2}([^@:]+)(\s@([^@:]+:){2}([^@:]+))*[^ @:]$/;
+
+    // console.log(regExTag1.test(tagCollectionInputFormat.value?.[0]));
 
     // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
         // console.log(tagCollectionInputFormat.value[0]);
-        if (tagCheck == 1) {
+        if (regExTag.test(tagCollectionInputFormat.value?.[0]) & tagCollectionInputFormat.value?.[0] != tagCollectionInputFormatNew2?.[0]) {
+            console.log(tagCollectionInputFormat.value);
             emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'tagString': tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
-            tagCheck == 0;
+            // tagCheck == 0;
+            tagCollectionInputFormatNew2[0] = tagCollectionInputFormat.value[0];
         }
 
     // }
@@ -249,6 +258,8 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
 
         else if (props?.toChild?.parentId == 3) {
 
+            console.log('ok');
+
             tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
         }
 
@@ -258,7 +269,8 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
     else {
         console.log(props?.toChild?.formTags);
 
-        tagCollectionInputFormat.value[0] = '';
+        // tempoaray comment out because of display error
+        // tagCollectionInputFormat.value[0] = '';
     }
 
     // else {
@@ -299,7 +311,7 @@ onMounted(() => {
 
 function createTagInputGroup(item, index1) {
 
-    // console.log(index1);
+    console.log(index1);
     // console.log(item);
 
     item.forEach(createTagInputString);

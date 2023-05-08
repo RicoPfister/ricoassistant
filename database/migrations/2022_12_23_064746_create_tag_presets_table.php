@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('tag_presets', function (Blueprint $table) {
             $table->id();
-
             $table->bigInteger('group_id');
             $table->bigInteger('tag_category');
             $table->bigInteger('tag_context');
+            $table->bigInteger('status')->nullable();
             $table->string('tracking', 50);
             $table->tinyInteger('restriction')->default(1);
             $table->timestamps();

@@ -315,11 +315,12 @@ let tagCollectionInputFormat = ref();
 // let tagCollectionGroupFormat = ref();
 
 onMounted(() => {
-    // console.log(props.toChild);
+    console.log(props.toChild);
+
     if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log(props.fromParentTagString);
         // tagCollectionInputFormat.value = props.toChild;
-        // console.log('ok');
+        console.log(props.toChild.tagSelectionListString);
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }
@@ -339,6 +340,8 @@ onMounted(() => {
 
 //transcript tag select to tag input format
 function saveTagPopup() {
+
+    console.log('ok');
 
     tagCollectionInputFormat.value = '';
     tagSelectionListGroup.value.forEach(createTagInputGroup);
@@ -369,7 +372,7 @@ function saveTagPopup() {
         // no space at the end when reaching last entry
         if (index1 != tagSelectionListGroup.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
-        // console.log(tagCollectionInputFormat.value);
+        console.log(tagCollectionInputFormat.value);
         emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value, 'tagSelectionListGroup': tagSelectionListGroup.value});
     }
 

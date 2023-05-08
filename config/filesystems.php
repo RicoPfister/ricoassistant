@@ -33,12 +33,23 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            // 'root' => '/media/DiskStation',
+            'throw' => false,
+        ],
+
+        'DiskStation' => [
+            'driver' => 'local',
+            'root' => '/media/DiskStation',
+            'url' => env('APP_URL').'/DiskStation',
+            // 'root' => '/media/DiskStation',
+            'visibility' => 'public',
             'throw' => false,
         ],
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => 'app/public',
+            // 'root' => '/media/DiskStation',
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
@@ -71,6 +82,8 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public/images'),
+        public_path('DiskStation') => '/media/DiskStation',
+        // public_path('storage') => '/media/DiskStation',
     ],
 
 ];

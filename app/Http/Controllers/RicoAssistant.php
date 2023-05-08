@@ -132,6 +132,8 @@ class RicoAssistant extends Controller {
         $where_tag_section_collection2 = [];
 
         $query_check = 0;
+
+        $orderby = "'ref_date', 'desc'";
         // $query_check_tag = 0;
 
         // $db_tag_0 = '';
@@ -537,7 +539,8 @@ class RicoAssistant extends Controller {
                     $db_tag_0 = DB::table('tag_0s')
                     ->where($where_tag_1)
                     ->select('id')
-                    ->get();
+                    ->get()
+                    ->orderBy('ref_date');
 
                     // dd($db_tag_0);
 
@@ -621,7 +624,7 @@ class RicoAssistant extends Controller {
                     ->where('restriction', '<', 2)
                     // ->whereIn('id', $whereIn[0])
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby)
                     ->paginate(20)->withQueryString();
                 }
 
@@ -631,7 +634,7 @@ class RicoAssistant extends Controller {
                     ->whereIn('id', $whereIn[0])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby)
                     ->paginate(20)->withQueryString();
                 }
 
@@ -641,7 +644,7 @@ class RicoAssistant extends Controller {
                     ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby)
                     ->paginate(20)->withQueryString();
                 }
 
@@ -1099,6 +1102,25 @@ class RicoAssistant extends Controller {
         if (count($detail_source) > 0) {
             $detail['sourceData']['files'] = $detail_source;
 
+            foreach ($detail['sourceData']['files'] as $key => $value) {
+                // dd($value);
+                if ($value->path == 1) {
+                    $detail['sourceData']['files'][$key]->path = 'DiskStation/' . $detail['sourceData']['files'][$key]->id;
+                    $detail['sourceData']['files'][$key]->file = '1.mp4';
+                    $detail['sourceData']['files'][$key]->extension = 'video/unknown';
+
+                    // dd(Storage::disk('DiskStation')->exists('/76/1-1-1.vtt'));
+                    if(Storage::disk('DiskStation')->exists('/76/1-1-1.vtt')) $detail['sourceData']['files'][$key]->subtitle_english = 1;
+                }
+
+                else {
+                    $detail['sourceData']['files'][$key]->file = $detail['sourceData']['files'][$key]->path;
+                    $detail['sourceData']['files'][$key]->path = 'storage/inventory';
+                };
+            }
+
+            // dd($detail['sourceData']['files']);
+
             $db_section_id = 3;
 
             // dd($detail);
@@ -1442,7 +1464,7 @@ class RicoAssistant extends Controller {
         }
 
         // create source
-        if (isset ($request->sourceData['filelist'])) {
+        if (isset($request->sourceData['filelist']) & $request->sourceData['filelist'][0] != 'bigFile') {
 
             // set section id
             $db_section_id = 3;
@@ -1491,6 +1513,36 @@ class RicoAssistant extends Controller {
                 Storage::disk('local')->put('public/images/inventory/', $dataString2['file']);
             }
         }
+
+        if (isset($request->sourceData['filelist']) & $request->sourceData['filelist'][0] == 'bigFile') {
+
+            // set section id
+            $db_section_id = 3;
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $db_section_id)
+            ->pluck('db_name');
+            $db_name =  $form_section_name [0].'Data';
+
+            $sources = new SectionSource();
+            $sources->basic_id = $basics->id;
+            $sources->path = 1;
+            $sources->tracking = $request->ip();
+            $sources->save();
+
+            $sources->save();
+
+            if (isset($request->sourceData['tag'][0])) {
+                // dd($db_name);
+                tagData($request, 0, $basics, $sources->id, $db_section_id, $db_name);
+                // tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);
+            }
+
+            if (isset($request->sourceData['reference_parents'])) {
+                reference($db_section_id, $db_name, $request, $basics, $sources, 0);
+            };
+        };
 
         // dd('ok');
 

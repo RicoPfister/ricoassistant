@@ -4,16 +4,21 @@
         <div v-for="(item, index) in props.video" class="gap-5">
             <div v-if="index == 0" class="my-2"><b>Videos </b>[{{ props.video.length }}]:</div>
 
-                <div ref="fullscreen" class="w-fit max-w-full">
+                <div>
 
                     <!-- video box -->
 
                     <div class="relative border" @mouseover="videoOverlay[index] = 1" @mouseleave="videoOverlay[index] = 0">
-                        <video class="w-full" ref="audioControl" @loadedmetadata="audioControlFunction(index, 'loadedmetadata')" @timeupdate="audioControlFunction(index, 'timeupdate')" disablePictureInPicture >
-                            <source :src="'/storage/inventory/' + item.item.path" type="video/mp4">
-                            <!-- <source src="test.mp4" type="video/mp4"></source> -->
-                            Your browser does not support the video tag.
-                        </video>
+                        <div ref="fullscreen">
+                            <video class="w-full" ref="audioControl" @loadedmetadata="audioControlFunction(index, 'loadedmetadata')" @timeupdate="audioControlFunction(index, 'timeupdate')" disablePictureInPicture >
+                                <source :src="item.item.path + '/' + item.item.file" type="video/mp4">
+                                <track v-if="item?.item?.subtitle_english" :src="item?.item?.path + '/1-1-1.vtt'" label="English" kind="subtitles" srclang="en" default>
+                                <!-- <source :src="'DiskStation/1492 - Conquest of Paradise/1492.Conquest.of.Paradise.1992.720p.BluRay.x264.anoXmous_.mp4'" type="video/mp4"> -->
+                                <!-- <source :src="'storage/inventory/test.mp4'" type="video/mp4"> -->
+                                <!-- <source :src="'/DiskStation/Artist/The.Artist.2011.720p.BluRay.x264.YIFY.mp4'" type="video/mp4"> -->
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
 
                         <!-- video overlay -->
                         <div v-if="videoOverlay[index]" class="absolute top-0 left-0 h-full w-full grid grid-cols-3">
