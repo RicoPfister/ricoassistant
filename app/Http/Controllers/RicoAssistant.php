@@ -133,7 +133,8 @@ class RicoAssistant extends Controller {
 
         $query_check = 0;
 
-        $orderby = "'ref_date', 'desc'";
+        $orderby_column = 'ref_date';
+        $orderby_sort = 'desc';
         // $query_check_tag = 0;
 
         // $db_tag_0 = '';
@@ -311,7 +312,7 @@ class RicoAssistant extends Controller {
             ->paginate(20)->withQueryString();;
         }
 
-        // search with openssl_get_cert_locations
+        // search with search terms
         // ************
 
         else if (isset($request->searchData)) {
@@ -467,8 +468,12 @@ class RicoAssistant extends Controller {
 
                     else if (preg_match('/!\d{4}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
 
+                        // dd('ok');
+
                         $where_between = explode('_', $result_term[0]);
                         $where_between[0] = substr($where_between[0], 1) . '-01';
+
+                        dd($where_between);
                         $query_check = 'between';
                     }
 
@@ -476,6 +481,9 @@ class RicoAssistant extends Controller {
 
                         $where_between = explode('_', $result_term[0]);
                         $where_between[0] = substr($where_between[0], 1);
+
+                        // dd($where_between);
+
                         $query_check = 'between';
                     }
 
@@ -603,6 +611,9 @@ class RicoAssistant extends Controller {
                         // dd($db_basic_data);
 
                         if (count($db_basic_data) > 0) {
+
+                            // dd('ok');
+
                             array_push($whereIn, $db_basic_data);
                         }
 
@@ -618,33 +629,42 @@ class RicoAssistant extends Controller {
 
                 // dd($where, $whereIn, $where_between, $query_check);
 
-                if (count($whereIn) == 0) {
+                if (count($whereIn) == 0 && $query_check != 'between') {
+
+                    // dd($whereIn);
+
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
                     ->where('restriction', '<', 2)
                     // ->whereIn('id', $whereIn[0])
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderBy($orderby)
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
                 else if ($query_check == 0) {
+
+                    // dd('ok');
+
                     $db_basic_data = DB::table('section_basics')
                     // ->where($where)
                     ->whereIn('id', $whereIn[0])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderBy($orderby)
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
                 else if ($query_check == 'between') {
+
+                    // dd('ok');
+
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
                     ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderBy($orderby)
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
@@ -826,7 +846,6 @@ class RicoAssistant extends Controller {
                         $detail['reference_parents'][$key][$i] = $_reference_parents_id[0];
 
                         // add color if exist
-
 
                             $_tag_color_id = DB::table('tags')
                             ->where('basic_id', '=', $value->basic_ref)
@@ -1110,7 +1129,7 @@ class RicoAssistant extends Controller {
                     $detail['sourceData']['files'][$key]->extension = 'video/unknown';
 
                     // dd(Storage::disk('DiskStation')->exists('/76/1-1-1.vtt'));
-                    if(Storage::disk('DiskStation')->exists('/76/1-1-1.vtt')) $detail['sourceData']['files'][$key]->subtitle_english = 1;
+                    if(Storage::disk('DiskStation')->exists('/' . $detail['sourceData']['files'][$key]->id . '/1-1-1.vtt')) $detail['sourceData']['files'][$key]->subtitle_english = 1;
                 }
 
                 else {
@@ -1464,7 +1483,7 @@ class RicoAssistant extends Controller {
         }
 
         // create source
-        if (isset($request->sourceData['filelist']) & $request->sourceData['filelist'][0] != 'bigFile') {
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'][0] != 'bigFile') {
 
             // set section id
             $db_section_id = 3;
@@ -1514,7 +1533,7 @@ class RicoAssistant extends Controller {
             }
         }
 
-        if (isset($request->sourceData['filelist']) & $request->sourceData['filelist'][0] == 'bigFile') {
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'][0] == 'bigFile') {
 
             // set section id
             $db_section_id = 3;

@@ -55,7 +55,7 @@
                             (No <b>instant search</b> for options)<br><br>
 
                             <b>Date:</b> ![YYYY-MM-DD]*<br>
-                            <b>Date range:</b> ![YYYY-MM-DD]*-[YYYY-MM-DD]*<br>
+                            <b>Date range:</b> ![YYYY-MM-DD]*_[YYYY-MM-DD]*<br>
                             *or <b>[today]</b><br><br>
                             <b>Tag:</b> @[Category]:[Context]:[Value]<br><br>
                             <b>Show newest entries first in ascending order: </b>!sort:update<br>
@@ -154,7 +154,7 @@
 
         </div>
 
-        <hr class="">
+        <!-- <hr class=""> -->
 
         <div class="grow xl:px-10 px-2 pb-5">
             <slot />
