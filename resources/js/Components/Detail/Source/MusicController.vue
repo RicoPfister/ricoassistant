@@ -10,7 +10,7 @@
             </div>
 
             <audio controls>
-                <source :src="'/storage/inventory/' + item.item.path" type="audio/mpeg">
+                <source :src="item.item.path + '/' + item.item.file" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
         </div>

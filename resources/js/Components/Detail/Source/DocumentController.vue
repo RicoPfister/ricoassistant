@@ -6,7 +6,7 @@
 
         <div @mouseover="overlayIsOpen[index] = 1" @mouseleave="overlayIsOpen[index]  = 0" class="relative border-2 h-96 w-full">
 
-            <iframe class="w-full h-full" ref="fullscreen" :src="'/storage/inventory/' + item.item.path"></iframe>
+            <iframe class="w-full h-full" ref="fullscreen" :src="item.item.path + '/' + item.item.file"></iframe>
 
             <!-- overlay menu -->
             <div v-if="overlayIsOpen[index] ">
