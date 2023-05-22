@@ -1286,7 +1286,9 @@ class RicoAssistant extends Controller {
             }
 
             $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
-            $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
+
+            // last entry must end with 2400
+            // $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
         }
 
         // dd($validation_collection);
@@ -1644,7 +1646,9 @@ class RicoAssistant extends Controller {
                 }
 
                 $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
-                $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
+
+                // last entry must end with 2400
+                // $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
             }
 
             $validated = $request->validate($validation_collection);
@@ -2194,13 +2198,13 @@ class RicoAssistant extends Controller {
 
                     // duplicated command
 
-                        $ref = new Ref();
-                        $ref->basic_id = $request->basicData['id'];
-                        $ref->basic_ref = $request->activityData['reference_parents'][$index][0]['basic_id'];
-                        $ref->ref_db_id = 4;
-                        $ref->ref_db_index =$section_activity->id;
-                        $ref->tracking = $request->ip();
-                        $ref->save();
+                    $ref = new Ref();
+                    $ref->basic_id = $request->basicData['id'];
+                    $ref->basic_ref = $request->activityData['reference_parents'][$index][0]['basic_id'];
+                    $ref->ref_db_id = 4;
+                    $ref->ref_db_index =$section_activity->id;
+                    $ref->tracking = $request->ip();
+                    $ref->save();
 
                     // dd(['ref_id' => $ref->id]);
 
