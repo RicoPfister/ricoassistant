@@ -155,6 +155,9 @@ return [
     */
 
     'custom' => [
+        'basicData.ref_date' => [
+            'regex' => 'Check Year input.',
+        ],
         'basicData.title' => [
             'required' => 'At least 3 characters required.',
         ],

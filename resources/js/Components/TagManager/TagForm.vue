@@ -230,7 +230,7 @@ watch(() => props.fromController2, (curr, prev) => {
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
 
-    console.log(props?.toChild?.formTags);
+    // console.log(props?.toChild?.formTags);
 
     if (props?.toChild?.formTags != undefined && props?.toChild?.formTags != '' && props?.toChild?.formTags?.length > 0) {
 
@@ -267,7 +267,7 @@ watch(() => props?.toChild?.formTags, (curr, prev) => {
     }
 
     else {
-        console.log(props?.toChild?.formTags);
+        // console.log(props?.toChild?.formTags);
 
         // tempoaray comment out because of display error
         // tagCollectionInputFormat.value[0] = '';

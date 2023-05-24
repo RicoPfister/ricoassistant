@@ -129,7 +129,7 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
-    // console.log('ok');
+    console.log('ok');
     // console.log(data.referenceData);
     // form.reference.value = [];
     // console.log(form.reference.value);
