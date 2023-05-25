@@ -87,6 +87,9 @@
                             </div>
                         </div>
 
+                        <!-- change playback rate -->
+                        <button @click="playbackRateChange(index)" ref="playbackRate" class="ml-1 w-fit flex items-center leading-none h-5">1.00</button>
+
                         <!-- remaining playtime indicator -->
                         <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ Date.humanTime(audioControlData[index]?.duration)}}</div>
 
@@ -171,6 +174,7 @@
     let indexLink = ref([0]);
     let volumeActive = ref([]);
     let videoOverlay = ref([]);
+    let playbackRate = ref();
 
     function videoOverlayFunction(index, command) {
 
@@ -336,7 +340,25 @@
         fullscreen.value[data].requestFullscreen();
     }
 
+    function playbackRateChange(index) {
+        // console.log(playbackRate.value[0].innerText);
 
+        switch (playbackRate.value[index].innerText) {
+            case '1.00':
+                audioControl.value[index].playbackRate = 1.25;
+                playbackRate.value[index].innerText = '1.25';
+                break;
 
+            case '1.25':
+                audioControl.value[index].playbackRate = 1.50;
+                playbackRate.value[index].innerText = '1.50';
+                break;
+
+            case '1.50':
+                audioControl.value[index].playbackRate = 1.00;
+                playbackRate.value[index].innerText = '1.00';
+                break;
+        }
+    }
 
     </script>

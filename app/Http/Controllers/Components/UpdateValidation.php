@@ -1,4 +1,5 @@
-$validation_collection = [
+<?php
+            $validation_collection = [
                 'basicData.ref_date' => 'required|filled',
                 'basicData.medium' => 'required|filled',
                 'basicData.title' => 'required|min:3',
@@ -66,3 +67,5 @@ $validation_collection = [
             }
 
             $validated = $request->validate($validation_collection);
+
+    ?>

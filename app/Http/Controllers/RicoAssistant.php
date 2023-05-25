@@ -1514,8 +1514,7 @@ class RicoAssistant extends Controller {
         if (!isset($request->delete)) {
 
             // validation is a duplicate from store (not anymore)
-            include 'Components/FormValidation.php';
-
+            include 'Components/UpdateValidation.php';
 
         }
 

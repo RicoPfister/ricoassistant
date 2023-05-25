@@ -233,7 +233,7 @@ onMounted(() => {
             tag_db_data.value[index] = {};
             tag_db_data.value[index]['key'] = uniqueKey.value;
             uniqueKey.value++;
-            previewPath = '/storage/inventory/' + item.path;
+            previewPath = item.path + '/' + item.file;
             preview.value.push(previewPath);
         }
 
