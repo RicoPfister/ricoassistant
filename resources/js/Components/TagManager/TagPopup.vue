@@ -46,7 +46,7 @@
                             </svg>
                         </div>
 
-                        <div v-if="(fromController?.tagCollection?.length > 0)" class="ml-1">Single</div>
+                        <div v-if="fromController?.tagCollection?.length > 0" class="ml-1">Single</div>
                         <div v-else class="ml-1">Create</div>
                     </div>
 
@@ -112,6 +112,7 @@
 <script setup>
 
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+import { useForm, usePage, Link, useRemember } from '@inertiajs/inertia-vue3';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import contentBox from "./TagContent.vue";
@@ -386,6 +387,7 @@ function cancelTagPopup() {
 // }
 
 watch(() => props.fromController, (curr, prev) => {
+
     // console.log('ok');
     // console.log(props.fromController);
     if (props?.fromController) {
@@ -394,7 +396,7 @@ watch(() => props.fromController, (curr, prev) => {
         fromController.value = props.fromController;
         tagPresetCollection.value = props.fromController.tagPresetCollection;
     };
-}, {deep: true}, 500);
+}, {deep: true});
 
 function tagPresetPopupFunction() {
     Inertia.post('tag', {'parentId': fromController.value.misc.parentId, 'parentIndex':fromController.value.misc.parentIndex});
@@ -418,8 +420,18 @@ function categoryPopupActive() {
         tagSelection.value = [['', '']];
         keyid.value++;
     }
-
 }
+
+// double request/check, see Create
+// watch(() => usePage().props.value.flash.fromController, (curr, prev) => {
+
+//     fromController.value = props.fromController;
+
+// }, {deep: true});
+
+
+
+
 
 </script>
 

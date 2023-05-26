@@ -2756,6 +2756,7 @@ class RicoAssistant extends Controller {
         $tags_collection_all = DB::table('tags')
         ->where('user_id', '=', $user->id)
         ->pluck('tag_0_id');
+        // ->get();
 
         // dd($tags_collection_all);
 
@@ -2765,11 +2766,11 @@ class RicoAssistant extends Controller {
 
         // select all unique categories
         $tag_category_distinct_id = DB::table('tag_0s')
-        ->whereIn('id', $tags_collection_all)
+        ->whereIntegerInRaw('id', $tags_collection_all)
         ->select('id', 'content')
         ->get();
 
-        // dd($tag_category_distinct_id);
+        // dd($tags_collection_all, $tag_category_distinct_id);
 
         $tag_collection_category_context = [];
         $tag_context_distinct = [];
