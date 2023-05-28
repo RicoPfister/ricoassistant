@@ -17,11 +17,12 @@
             <div :class="{'text-black': tagCollectionInputFormat?.[0]}" class="absolute text-[10px] top-0 right-0 text-gray-500 pt-[0px] pr-[6px] flex justify-center w-2 h-full break-all items-center">{{ !tagCollectionInputFormat?.[0] ? 0 : tagCollectionInputFormat?.[0]?.match(/@/g).length < 100 ? tagCollectionInputFormat?.[0]?.match(/@/g).length : 99 }}</div>
 
             <!-- tag icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-green-500 stroke-2': tagCollectionInputFormat?.[0]}" class="w-[18px] h-fit stroke-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" :color="!tagCollectionInputFormat?.[0]  ? 'gray' : 'green'" :stroke-width="!tagCollectionInputFormat?.[0] ? 1.5 : 2" stroke="currentColor" class="w-[18px] h-fit">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699
                 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                <path stroke-linecap="round" stroke-linejoin="raound" d="M6 6h.008v.008H6V6z" />
             </svg>
+
             <div @mouseleave="hoverPopUp(0, props.toChild.parentIndex)" v-if="tagContentBox == 1 && tagCollectionInputFormat[0] && tagInputShow == 0" class="absolute p-1 right-9 text-sm border-2 border-black w-[400px] break-all bg-blue-50 z-50 h-[50px] overflow-y-scroll flex justify-center">{{ tagCollectionInputFormat[0] }} </div>
         </button>
 
@@ -73,6 +74,8 @@ let emit = defineEmits(['dataForm', 'dataCommon', 'dataToParent', 'toChild', 'fr
 let tagPopupOpen = ref(0);
 let tagCollectionInputIndex = ref(0);
 let tagCollectionInputFormat = ref([]);
+let tagCollectionInputFormatNew = ref([]);
+let tagCollectionInputFormatNew2 = [''];
 let tagCollectionGroupFormat = ref([]);
 let controllerDataArrived = ref(0);
 let fromController = ref('');
@@ -80,6 +83,8 @@ let tagInputShow = ref(1);
 
 let tagContentBox = ref(0);
 let tagContentBoxTimeOut = '';
+
+// let tagCheck = 0;
 // let tagContentBoxTimeOut = ref();
 
 // onMounted(() => {
@@ -187,18 +192,30 @@ function tagPopupOpenData() {
 // send to parent: listen to tag changes
 // console.log(tagCollectionGroupFormat.value);
 watch(() => tagCollectionGroupFormat.value, (curr, prev) => {
-    // console.log(tagCollectionGroupFormat.value[0]);
+    console.log(tagCollectionGroupFormat.value[0]);
     emit('fromChild', {'tagList': tagCollectionGroupFormat.value[0], 'tagString':tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
 }, {deep: true}, 500);
 
 // after split group to string send it back to parent as groups
 watch(() => tagCollectionInputFormat.value[0], (curr, prev) => {
 
-    // console.log(tagCollectionInputFormat.value);
+    // console.log(tagCollectionInputFormat.value[0]);
+    // console.log(tagCollectionInputFormatNew2);
+
+    // 2 main group: 1 or more 'tag construction (3 parts)' needed
+    let regExTag = /^@([^@:]+:){2}([^@:]+)(\s@([^@:]+:){2}([^@:]+))*[^ @:]$/;
+
+    // console.log(regExTag1.test(tagCollectionInputFormat.value?.[0]));
 
     // if (typeof tagCollectionInputFormat.value[0] != 'undefined' && tagCollectionInputFormat.value[0] != '') {
         // console.log(tagCollectionInputFormat.value[0]);
-        emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'tagString': tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+        if (regExTag.test(tagCollectionInputFormat.value?.[0]) & tagCollectionInputFormat.value?.[0] != tagCollectionInputFormatNew2?.[0]) {
+            console.log(tagCollectionInputFormat.value);
+            emit('fromChild', {'tagList': TagFromStringToGroup.tagFromStringToGroup(tagCollectionInputFormat.value[0]), 'tagString': tagCollectionInputFormat.value[0], 'parentId': props.toChild.parentId, 'parentIndex': props.toChild.parentIndex, 'component': 'tag'});
+            // tagCheck == 0;
+            tagCollectionInputFormatNew2[0] = tagCollectionInputFormat.value[0];
+        }
+
     // }
 }, {deep: true}, 500);
 
@@ -213,25 +230,55 @@ watch(() => props.fromController2, (curr, prev) => {
 
 watch(() => props?.toChild?.formTags, (curr, prev) => {
 
-    if (props?.toChild?.formTags != undefined && props?.toChild?.formTags != '') {
+    // console.log(props?.toChild?.formTags);
 
-        console.log(props?.toChild?.formTags);
+    if (props?.toChild?.formTags != undefined && props?.toChild?.formTags != '' && props?.toChild?.formTags?.length > 0) {
 
-        if (props?.toChild?.formTags && !tagCollectionInputFormat.value.length > 0 ) {
+        console.log(props?.toChild?.formTags, tagCollectionInputFormat.value, tagCollectionInputFormat.value.length);
+
+        if (props?.toChild?.formTags) {
+
+            console.log('ok');
 
             // commented out because of errors
-            tagCollectionInputFormat.value = [''];
+            tagCollectionInputFormatNew.value = [''];
 
-            if (typeof props.toChild.formTags != 'string') props.toChild.formTags.forEach(createTagInputGroup)
+            if (typeof props.toChild.formTags != 'string') {
+
+                console.log('ok');
+                props.toChild.formTags.forEach(createTagInputGroup)
             }
+        }
 
-            else if (props?.toChild?.parentId == 3) {
+        // else if (props?.toChild?.parentId == 4 && props?.toChild?.formTags?.length > 0) {
+
+        //     console.log('ok');
+        //     props.toChild.formTags.forEach(createTagInputGroup);
+        // }
+
+        else if (props?.toChild?.parentId == 3) {
+
+            console.log('ok');
 
             tagCollectionInputFormat.value[0] = props?.toChild?.formTags;
         }
+
+        // tagCollectionInputFormat.value[0] = '';
     }
 
-}, {deep: true}, 500);
+    else {
+        // console.log(props?.toChild?.formTags);
+
+        // tempoaray comment out because of display error
+        // tagCollectionInputFormat.value[0] = '';
+    }
+
+    // else {
+    //     console.log('ok');
+    //     tagCollectionInputFormat.value = '';
+    // }
+
+}, {deep: true});
 
 onMounted(() => {
 
@@ -288,33 +335,33 @@ function createTagInputGroup(item, index1) {
                     // console.log(item2Trimmed);
                     // console.log(tagCollectionInputFormat.value);
                     // console.log(item2);
-                    tagCollectionInputFormat.value[0] += '@'+item2Trimmed;
+                    tagCollectionInputFormatNew.value[0] += '@'+item2Trimmed;
                     // console.log(tagCollectionInputFormat.value);
                     break;
 
                 case 3:
-                    tagCollectionInputFormat.value[0] += '('+item2Trimmed+')';
+                tagCollectionInputFormatNew.value[0] += '('+item2Trimmed+')';
                     // console.log(tagCollectionInputFormat.value);
                     break;
 
                 default:
                     // console.log('ok');
-                    if (item2Trimmed) tagCollectionInputFormat.value[0] += ':'+item2Trimmed;
+                    if (item2Trimmed) tagCollectionInputFormatNew.value[0] += ':'+item2Trimmed;
                     // console.log(tagCollectionInputFormat.value);
             }
         }
     }
     // prevent space at the end of the string
     // console.log(props?.toChild?.formTags.length);
-    if (index1 !== props?.toChild?.formTags.length-1) tagCollectionInputFormat.value[0] += ' ';
+    if (index1 !== props?.toChild?.formTags.length-1) tagCollectionInputFormatNew.value[0] += ' ';
+    console.log(tagCollectionInputFormat.value == tagCollectionInputFormatNew.value);
+    if (tagCollectionInputFormat.value != tagCollectionInputFormatNew.value) tagCollectionInputFormat.value = tagCollectionInputFormatNew.value;
 }
 
 // console.log(tagCollectionInputFormat.value);
 
-
-
 function hoverPopUp(status, index) {
-    console.log(status, index);
+    // console.log(status, index);
 
     if (status == 1) {
         tagContentBoxTimeOut = setTimeout(function() {

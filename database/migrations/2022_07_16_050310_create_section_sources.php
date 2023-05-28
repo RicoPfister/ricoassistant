@@ -19,9 +19,10 @@ return new class extends Migration
             $table->bigInteger('basic_id')->unsigned();
             $table->foreign('basic_id')->references('id')->on('section_basics');
 
+            // $table->mediumInteger('location')->nullable();
             $table->string('path', 2048);
-            $table->string('extension');
-            $table->integer('size');
+            $table->string('extension')->nullable();
+            $table->integer('size')->nullable();
             $table->timestamps();
 
             $table->string('tracking', 50);

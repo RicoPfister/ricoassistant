@@ -4,16 +4,21 @@
         <div v-for="(item, index) in props.video" class="gap-5">
             <div v-if="index == 0" class="my-2"><b>Videos </b>[{{ props.video.length }}]:</div>
 
-                <div ref="fullscreen" class="w-fit max-w-full">
+                <div>
 
                     <!-- video box -->
 
                     <div class="relative border" @mouseover="videoOverlay[index] = 1" @mouseleave="videoOverlay[index] = 0">
-                        <video class="w-full" ref="audioControl" @loadedmetadata="audioControlFunction(index, 'loadedmetadata')" @timeupdate="audioControlFunction(index, 'timeupdate')" disablePictureInPicture >
-                            <source :src="'/storage/inventory/' + item.item.path" type="video/mp4">
-                            <!-- <source src="test.mp4" type="video/mp4"></source> -->
-                            Your browser does not support the video tag.
-                        </video>
+                        <div ref="fullscreen">
+                            <video class="w-full" ref="audioControl" @loadedmetadata="audioControlFunction(index, 'loadedmetadata')" @timeupdate="audioControlFunction(index, 'timeupdate')" disablePictureInPicture >
+                                <source :src="item.item.path + '/' + item.item.file" type="video/mp4">
+                                <track v-if="item?.item?.subtitle_english" :src="item?.item?.path + '/1-1-1.vtt'" label="English" kind="subtitles" srclang="en" default>
+                                <!-- <source :src="'DiskStation/1492 - Conquest of Paradise/1492.Conquest.of.Paradise.1992.720p.BluRay.x264.anoXmous_.mp4'" type="video/mp4"> -->
+                                <!-- <source :src="'storage/inventory/test.mp4'" type="video/mp4"> -->
+                                <!-- <source :src="'/DiskStation/Artist/The.Artist.2011.720p.BluRay.x264.YIFY.mp4'" type="video/mp4"> -->
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
 
                         <!-- video overlay -->
                         <div v-if="videoOverlay[index]" class="absolute top-0 left-0 h-full w-full grid grid-cols-3">
@@ -81,6 +86,9 @@
                                 <div class="bg-gray-300 h-[4px] pointer-events-none w-full"></div>
                             </div>
                         </div>
+
+                        <!-- change playback rate -->
+                        <button @click="playbackRateChange(index)" ref="playbackRate" class="ml-1 w-fit flex items-center leading-none h-5">1.00</button>
 
                         <!-- remaining playtime indicator -->
                         <div class="ml-1 w-[60px] flex items-center leading-none h-5">{{ Date.humanTime(audioControlData[index]?.duration)}}</div>
@@ -166,6 +174,7 @@
     let indexLink = ref([0]);
     let volumeActive = ref([]);
     let videoOverlay = ref([]);
+    let playbackRate = ref();
 
     function videoOverlayFunction(index, command) {
 
@@ -331,7 +340,25 @@
         fullscreen.value[data].requestFullscreen();
     }
 
+    function playbackRateChange(index) {
+        // console.log(playbackRate.value[0].innerText);
 
+        switch (playbackRate.value[index].innerText) {
+            case '1.00':
+                audioControl.value[index].playbackRate = 1.25;
+                playbackRate.value[index].innerText = '1.25';
+                break;
 
+            case '1.25':
+                audioControl.value[index].playbackRate = 1.50;
+                playbackRate.value[index].innerText = '1.50';
+                break;
+
+            case '1.50':
+                audioControl.value[index].playbackRate = 1.00;
+                playbackRate.value[index].innerText = '1.00';
+                break;
+        }
+    }
 
     </script>

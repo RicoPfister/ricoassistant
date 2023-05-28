@@ -49,10 +49,10 @@
                     </div>
 
                     <!-- form button -->
-                    <button @click.prevent="componentSelectedEdit(index)" :class="item[4], componentSelected[index] ? item[3] : ''" class="bg-gray-100 border p-1 ml-1 px-2 rounded-xl w-fit flex flew-row items-center" type="button">
+                    <button @click.prevent="componentSelectedEdit(index)" :class="componentSelected[index] ? 'bg-gray-200' : ''" class="bg-gray-100 hover:bg-gray-200 border p-1 ml-1 px-2 rounded-xl w-fit flex flew-row items-center" type="button">
 
                         <!-- subject icon -->
-                        <svg :class="item[2]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1 stroke-gray-400">
                             <path stroke-linecap="round" stroke-linejoin="round" :d="item[5]" />
                         </svg>
                         <div><b>{{ item[0] }}</b> {{ item[1] }}</div>

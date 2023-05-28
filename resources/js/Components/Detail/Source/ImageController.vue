@@ -6,7 +6,7 @@
 
         <div @mouseover="overlayIsOpen[index] = 1" @mouseleave="overlayIsOpen[index] = 0" class="relative border-2 h-fit">
 
-            <img class="w-max-full h-fit" ref="fullscreen" :src="'/storage/inventory/' + item.item.path" />
+            <img class="w-max-full h-fit" ref="fullscreen" :src="item.item.path + '/' + item.item.file" />
 
             <!-- overlay menu -->
             <div v-if="overlayIsOpen[index]">

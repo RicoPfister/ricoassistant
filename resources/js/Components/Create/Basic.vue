@@ -187,6 +187,7 @@ watch(() => props.toChild, (curr, prev) => {
     // console.log('ok');
 
     if (props?.toChild?.activityData && (form['basicTitle'] == undefined || form['basicTitle'] == '') && (form['basicMedium'] == undefined || form['basicMedium'] == '')) {
+        form['basicRefDate'] = Date.dateNow();
         form['basicTitle'] = 'Activity ' +  Date.dateNow();
         form['basicMedium'] = 4;
         // form['titleCheckActive'] = 0;

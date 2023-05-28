@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        '';
+        // $this->app->instance('path.storage', '/media/DiskStation');
+        // $this->app->useStoragePath('/media/DiskStation/');
     }
 
     /**

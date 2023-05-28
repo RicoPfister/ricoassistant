@@ -132,6 +132,9 @@ class RicoAssistant extends Controller {
         $where_tag_section_collection2 = [];
 
         $query_check = 0;
+
+        $orderby_column = 'ref_date';
+        $orderby_sort = 'desc';
         // $query_check_tag = 0;
 
         // $db_tag_0 = '';
@@ -309,7 +312,7 @@ class RicoAssistant extends Controller {
             ->paginate(20)->withQueryString();;
         }
 
-        // search with openssl_get_cert_locations
+        // search with search terms
         // ************
 
         else if (isset($request->searchData)) {
@@ -465,8 +468,12 @@ class RicoAssistant extends Controller {
 
                     else if (preg_match('/!\d{4}-\d{2}_\d{4}-\d{2}-\d{2}/', $value, $result_term)) {
 
+                        // dd('ok');
+
                         $where_between = explode('_', $result_term[0]);
                         $where_between[0] = substr($where_between[0], 1) . '-01';
+
+                        dd($where_between);
                         $query_check = 'between';
                     }
 
@@ -474,6 +481,9 @@ class RicoAssistant extends Controller {
 
                         $where_between = explode('_', $result_term[0]);
                         $where_between[0] = substr($where_between[0], 1);
+
+                        // dd($where_between);
+
                         $query_check = 'between';
                     }
 
@@ -537,7 +547,8 @@ class RicoAssistant extends Controller {
                     $db_tag_0 = DB::table('tag_0s')
                     ->where($where_tag_1)
                     ->select('id')
-                    ->get();
+                    ->get()
+                    ->orderBy('ref_date');
 
                     // dd($db_tag_0);
 
@@ -600,6 +611,9 @@ class RicoAssistant extends Controller {
                         // dd($db_basic_data);
 
                         if (count($db_basic_data) > 0) {
+
+                            // dd('ok');
+
                             array_push($whereIn, $db_basic_data);
                         }
 
@@ -615,33 +629,42 @@ class RicoAssistant extends Controller {
 
                 // dd($where, $whereIn, $where_between, $query_check);
 
-                if (count($whereIn) == 0) {
+                if (count($whereIn) == 0 && $query_check != 'between') {
+
+                    // dd($whereIn);
+
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
                     ->where('restriction', '<', 2)
                     // ->whereIn('id', $whereIn[0])
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
                 else if ($query_check == 0) {
+
+                    // dd('ok');
+
                     $db_basic_data = DB::table('section_basics')
                     // ->where($where)
                     ->whereIn('id', $whereIn[0])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
                 else if ($query_check == 'between') {
+
+                    // dd('ok');
+
                     $db_basic_data = DB::table('section_basics')
                     ->where($where)
                     ->whereBetween('ref_date', [$where_between[0], $where_between[1]])
                     ->where('restriction', '<', 2)
                     ->select('id', 'medium', 'title', 'ref_date', 'view_count')
-                    ->orderByDesc('title')
+                    ->orderBy($orderby_column, $orderby_sort)
                     ->paginate(20)->withQueryString();
                 }
 
@@ -821,9 +844,9 @@ class RicoAssistant extends Controller {
                         }
 
                         $detail['reference_parents'][$key][$i] = $_reference_parents_id[0];
+                        $detail['reference_parents'][$key][$i]->basic_id = $_reference_parents_id[0]->id;
 
                         // add color if exist
-
 
                             $_tag_color_id = DB::table('tags')
                             ->where('basic_id', '=', $value->basic_ref)
@@ -959,6 +982,7 @@ class RicoAssistant extends Controller {
         // create basic collection
         // ++++++++++++++++++++++++++++++++++++
         $detail['basicData'] = SectionBasic::find($request->basic_id);
+        // $detail['basicData']['basic_id'] = SectionBasic::find($request->basic_id)->id;
 
         // dd($detail['basicData']['user_id']);
 
@@ -1099,6 +1123,25 @@ class RicoAssistant extends Controller {
         if (count($detail_source) > 0) {
             $detail['sourceData']['files'] = $detail_source;
 
+            foreach ($detail['sourceData']['files'] as $key => $value) {
+                // dd($value);
+                if ($value->path == 1) {
+                    $detail['sourceData']['files'][$key]->path = 'DiskStation/' . $detail['sourceData']['files'][$key]->id;
+                    $detail['sourceData']['files'][$key]->file = '1.mp4';
+                    $detail['sourceData']['files'][$key]->extension = 'video/unknown';
+
+                    // dd(Storage::disk('DiskStation')->exists('/76/1-1-1.vtt'));
+                    if(Storage::disk('DiskStation')->exists('/' . $detail['sourceData']['files'][$key]->id . '/1-1-1.vtt')) $detail['sourceData']['files'][$key]->subtitle_english = 1;
+                }
+
+                else {
+                    $detail['sourceData']['files'][$key]->file = $detail['sourceData']['files'][$key]->path;
+                    $detail['sourceData']['files'][$key]->path = 'storage/inventory';
+                };
+            }
+
+            // dd($detail['sourceData']['files']);
+
             $db_section_id = 3;
 
             // dd($detail);
@@ -1185,70 +1228,10 @@ class RicoAssistant extends Controller {
         // get user data
         $user = Auth::user();
 
+        include 'Components/FormValidation.php';
+
         // validation is a duplicate from 'function update'
         // title uniqueness is not tested again
-
-        $validation_collection = [
-            'basicData.ref_date' => 'required|filled',
-            'basicData.medium' => 'required|filled',
-            'basicData.title' => 'required|min:3',
-        ];
-
-        if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
-        if (array_search(4, $request->componentCollection)) {
-
-            if (isset($request->statementData['tag'])) {
-                foreach ($request->statementData['tag'] as $key => $value) {
-                    foreach ($value as $key2 => $value2) {
-                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                        $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                    }
-                }
-            }
-        }
-
-        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist'] = 'required';
-        if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
-
-        if (isset($request->sourceData['tag'])) {
-            foreach ($request->sourceData['tag'] as $key => $value) {
-                foreach ($value as $key2 => $value2) {
-                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                    $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                }
-            }
-        }
-
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'required|filled';
-        if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
-
-        if (array_search(5, $request->componentCollection)) {
-
-            if (isset($request->activityData['tag'])) {
-                foreach ($request->activityData['tag'] as $key => $value) {
-                    foreach ($value as $key2 => $value2) {
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                        $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                    }
-                }
-            }
-        }
-
-        if (isset($request->activityData['activityTo'])) {
-            for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
-                $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
-            }
-
-            $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
-            $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
-        }
-
-        // dd($validation_collection);
-
-        $validated = $request->validate($validation_collection);
 
         // create tag function
         function tagData($request, $index, $basics, $id2, $db_section_id, $db_name) {
@@ -1316,7 +1299,6 @@ class RicoAssistant extends Controller {
 
                 // dd( $tag_group_section_name);
                 // dd( $content_check);
-
 
             }
         };
@@ -1440,7 +1422,7 @@ class RicoAssistant extends Controller {
         }
 
         // create source
-        if (isset ($request->sourceData['filelist'])) {
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'][0] != 'bigFile') {
 
             // set section id
             $db_section_id = 3;
@@ -1490,6 +1472,36 @@ class RicoAssistant extends Controller {
             }
         }
 
+        if (isset($request->sourceData['filelist']) && $request->sourceData['filelist'][0] == 'bigFile') {
+
+            // set section id
+            $db_section_id = 3;
+
+            // get database name based on section id
+            $form_section_name  = DB::table('index_databases')
+            ->where('id', '=', $db_section_id)
+            ->pluck('db_name');
+            $db_name =  $form_section_name [0].'Data';
+
+            $sources = new SectionSource();
+            $sources->basic_id = $basics->id;
+            $sources->path = 1;
+            $sources->tracking = $request->ip();
+            $sources->save();
+
+            $sources->save();
+
+            if (isset($request->sourceData['tag'][0])) {
+                // dd($db_name);
+                tagData($request, 0, $basics, $sources->id, $db_section_id, $db_name);
+                // tagData($request, $i, $basics, $activities_id, $db_section_id, $db_name);
+            }
+
+            if (isset($request->sourceData['reference_parents'])) {
+                reference($db_section_id, $db_name, $request, $basics, $sources, 0);
+            };
+        };
+
         // dd('ok');
 
         return redirect()->route('/')->with('message', 'Entry Successfully Created');
@@ -1501,80 +1513,9 @@ class RicoAssistant extends Controller {
 
         if (!isset($request->delete)) {
 
-            // validation is a duplicate from store
+            // validation is a duplicate from store (not anymore)
+            include 'Components/UpdateValidation.php';
 
-            $validation_collection = [
-                'basicData.ref_date' => 'required|filled',
-                'basicData.medium' => 'required|filled',
-                'basicData.title' => 'required|min:3',
-            ];
-
-            if (array_search(4, $request->componentCollection)) $validation_collection['statementData.statement'] = 'required|filled';
-            if (array_search(4, $request->componentCollection)) {
-
-                if (isset($request->statementData['tag'])) {
-                    foreach ($request->statementData['tag'] as $key => $value) {
-                        foreach ($value as $key2 => $value2) {
-                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                            $validation_collection['statementData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                        }
-                    }
-                }
-            }
-
-            if (array_search(6, $request->componentCollection) && isset($request->sourceData['delete'])) $validation_collection['sourceData.filelist'] = 'required';
-            if (array_search(6, $request->componentCollection)) $validation_collection['sourceData.filelist.*.type'] = 'filled';
-
-            // dd($request->sourceData['tag']);
-
-            if (isset($request->sourceData['tag'])) {
-                foreach ($request->sourceData['tag'] as $key => $value) {
-
-                    // dd($value != '');
-
-                    if ($value != '') {
-                        foreach ($value as $key2 => $value2) {
-                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                            $validation_collection['sourceData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                        }
-                    }
-                }
-            }
-
-            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.basic_id'] = 'filled';
-            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.reference_parents.*.0.id'] = 'filled';
-            if (array_search(5, $request->componentCollection)) $validation_collection['activityData.activityTo'] = 'required';
-
-            if (array_search(5, $request->componentCollection)) {
-
-                if (isset($request->activityData['tag'])) {
-                    foreach ($request->activityData['tag'] as $key => $value) {
-
-                        // dd($key, $value);
-
-                        if (isset($value) && count($value) > 0) {
-                            foreach ($value as $key2 => $value2) {
-                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.0'] = 'required|filled';
-                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.1'] = 'required|filled';
-                                $validation_collection['activityData.tag.' . $key . '.' . $key2 . '.2'] = 'required|filled';
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (isset($request->activityData['activityTo'])) {
-                for ($a = 0; $a < count($request->activityData['activityTo']); $a++) {
-                    $validation_collection['activityData.reference_parents.'.$a] = 'required|filled';
-                }
-
-                $validation_collection['activityData.activityTo.*'] = 'filled|between:0,2400';
-                $validation_collection['activityData.activityTo.' . count($request->activityData['activityTo'])-1] = 'in:2400';
-            }
-
-            $validated = $request->validate($validation_collection);
         }
 
         // dd($request);
@@ -2121,13 +2062,13 @@ class RicoAssistant extends Controller {
 
                     // duplicated command
 
-                        $ref = new Ref();
-                        $ref->basic_id = $request->basicData['id'];
-                        $ref->basic_ref = $request->activityData['reference_parents'][$index][0]['basic_id'];
-                        $ref->ref_db_id = 4;
-                        $ref->ref_db_index =$section_activity->id;
-                        $ref->tracking = $request->ip();
-                        $ref->save();
+                    $ref = new Ref();
+                    $ref->basic_id = $request->basicData['id'];
+                    $ref->basic_ref = $request->activityData['reference_parents'][$index][0]['basic_id'];
+                    $ref->ref_db_id = 4;
+                    $ref->ref_db_index =$section_activity->id;
+                    $ref->tracking = $request->ip();
+                    $ref->save();
 
                     // dd(['ref_id' => $ref->id]);
 
@@ -2643,7 +2584,7 @@ class RicoAssistant extends Controller {
         //-------------------------------------
         else {
 
-            // dd($request->entryId);
+            // check if search term is like database results
 
             $referencesResultCheck = DB::table('section_basics')
                 ->where('id', '!=', $request->entryId)
@@ -2670,31 +2611,18 @@ class RicoAssistant extends Controller {
                         // ActivityDiagramColor
                         // --------------------------------
 
-                        // dd($id);
-                        // dd($id->id);
-
                         // set ActivityDiagramColor id
                         $activitydiagramcolor_id = DB::table('tag_1s')
                         ->where('content', '=', 'ActivityDiagramColor')
                         ->get();
 
-                        // dd($id->id, $activitydiagramcolor_id);
-
                         if (count($activitydiagramcolor_id) > 0) {
+
                         // find ActivityDiagramColor id
                         $tag_id = DB::table('tags')
                         ->where('basic_id', '=', $id->id)
                         ->where('tag_1_id', '=', $activitydiagramcolor_id[0]->id)
                         ->get();
-
-                        // dd($tag_id);
-
-                            // $tag_value_id = DB::table('tags')
-                            // ->where('tag_id', '=', $tag_id[0]->tag_id)
-                            // ->where('tag_table', '=', 3)
-                            // ->get();
-
-                            // dd($tag_value_id);
 
                             if (count($tag_id)) {
 
@@ -2705,40 +2633,20 @@ class RicoAssistant extends Controller {
 
                             else $tag_value_content = '';
 
-                            // dd($tag_value_content[0]->content);
-                        } else $tag_value_content = '';
-
-                        // dd($tag_table_id_context);
-
-                        // foreach ($tag_table_id_context as $index=>$item) {
-
-                        //     $tag_context_name = DB::table('tag_contexts')
-                        //     ->where('id', '=', $item)
-                        //     ->pluck('content')[0];
-
-                        //     if ($tag_context_name == ActivityDiagramColor) break;
-                        // }
-
-                        // dd($tag_context_name);
-
-                        // $tag = DB::table('tags')
-                        //     ->where('basic_id', '=', $id->id)
-                        //     ->where('tag_context', '=', 'ActivityDiagramColor')
-                        //     ->get();
+                            } else $tag_value_content = '';
 
                         if (isset($tag_value_content[0]->content)) {
                             $result['referencesResult'][$i]['color'] = $tag_value_content[0]->content;
-                            // dd($result);
+
                         } else {};
 
                         $result['referencesResult'][$i]['medium'] = $id->medium;
                         $result['referencesResult'][$i]['id'] = $id->id;
                     }
-                    $result['referencesResult'][$i]['basic_id'] = $id->id;
+
+                    // $result['referencesResult'][$i]['basic_id'] = $id->id;
 
                     $ineritance_value = reference_inheritance_list($id, $i, $user, $request);
-
-                    // dump($ineritance_value);
 
                     if ($ineritance_value == 'back')  {
                         unset($result['referencesResult'][$i]);
@@ -2750,6 +2658,8 @@ class RicoAssistant extends Controller {
                 }
 
                 $result['misc']['row'] = $request->row;
+
+                // check if search term is exact to database result
 
                 $referencesResultCheckExact = DB::table('section_basics')
                 ->where('restriction', '<', 2)
@@ -2846,6 +2756,7 @@ class RicoAssistant extends Controller {
         $tags_collection_all = DB::table('tags')
         ->where('user_id', '=', $user->id)
         ->pluck('tag_0_id');
+        // ->get();
 
         // dd($tags_collection_all);
 
@@ -2855,11 +2766,11 @@ class RicoAssistant extends Controller {
 
         // select all unique categories
         $tag_category_distinct_id = DB::table('tag_0s')
-        ->whereIn('id', $tags_collection_all)
+        ->whereIntegerInRaw('id', $tags_collection_all)
         ->select('id', 'content')
         ->get();
 
-        // dd($tag_category_distinct_id);
+        // dd($tags_collection_all, $tag_category_distinct_id);
 
         $tag_collection_category_context = [];
         $tag_context_distinct = [];

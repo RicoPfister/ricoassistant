@@ -4,7 +4,7 @@
         <div class="flex flex-col h-full justify-center items-center xl:mt-0 xl:pb-10">
             <div class="h-16 w-full text-center justify-center flex items-center text-xl md:text-3xl text-white bg-red-400 rounded-3xl mb-3 xl:mb-5 flex-col md:flex-row">
                 <div class="whitespace-nowrap">This site is under construction -&nbsp;</div>
-                <div class="whitespace-nowrap">"Proof of Concept" Testing.</div>
+                <div class="whitespace-nowrap">"Proof of Concept" Testing. v1</div>
             </div>
             <div class="w-full flex h-full flex-wrap justify-center 2xl:gap-24 p-7 bg-white rounded-3xl shadow-xl">
                 <img class="order-3 2xl:order-1" src="/storage/home/rico_assistant_home_image.svg">

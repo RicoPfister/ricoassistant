@@ -13,15 +13,28 @@
         <!-- upload content box -->
         <div class="border-l border-b border-r border-gray-400 bg-blue-50 text-sm w-full pt-4 gap-2 mt-[12px] p-3">
             <div class="flex flex-row justify-between pt-1">
-                <div class="flex flex-row">
-                    <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
-                    <label :class="[form2?.errors?.['sourceData.filelist'] || form2?.errors?.['sourceData.files'] ? 'border-red-500 focus:border-red-500 border-4 bg-red-200' : '']" class="cursor-pointer px-2 hover:bg-gray-300 font-bold border border-gray-300 bg-gray-200" for="fileinput">Upload files</label>
-                    <div class="">&nbsp;(max. <b>10 MB</b> in total):</div>
+                <div class="flex flex-row h-6 items-center">
+
+                    <div v-if="!InputDataBigFile" class="flex flex-row items-center h-full">
+                        <input class="hidden" id="fileinput" @change="FileChange($event, index)" type="file" multiple>
+                        <label :class="[form2?.errors?.['sourceData.filelist'] || form2?.errors?.['sourceData.files'] ? 'border-red-500 focus:border-red-500 border-4 bg-red-200' : '']" class="cursor-pointer px-2 hover:bg-gray-300 font-bold bg-gray-200" for="fileinput">Upload small files</label>
+
+                        <div class="">&nbsp;(max. <b>10 MB</b> in total)</div>
+                    </div>
+
+                    <div v-if="!InputDataBigFile && InputData.length == 0" class="">&nbsp;or&nbsp;</div>
+
+                    <div v-if="InputData.length == 0" class="flex flex-row h-6 items-center">
+
+                        <button @click.prevent="bigFile" :class="{'bg-green-200': InputDataBigFile}" class="bg-gray-200 hover:bg-green-200 px-2 font-bold">
+                            Create storage link for large video
+                        </button>
+                    </div>
                 </div>
 
                 <!-- clear list -->
-                <button v-if="InputData != ''" @click.prevent="deleteFile('all')" class="flex flex-row items-center group hover:text-red-500" type="button">
-                    <div class="">Reset List</div>
+                <button v-if="InputData != '' || InputDataBigFile" @click.prevent="deleteFile('all')" class="flex flex-row items-center group hover:text-red-500" type="button">
+                    <div class="">Reset</div>
                     <svg xmlns="http://www.w3.org/2000/svg" color="none" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 group-hover:stroke-red-500">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -32,7 +45,7 @@
             <div v-else-if="form2?.errors?.['sourceData.files']" class="text-red-500">{{ form2?.errors?.['sourceData.files'] }}</div>
 
             <!-- hidden file list/preview -->
-            <div v-if="InputData[0]" class="flex flex-col my-2">
+            <div v-if="InputData[0] && !InputDataBigFile" class="flex flex-col my-2">
 
                 <!-- source list -->
                 <!-- ------------------------------------------------------ -->
@@ -103,6 +116,19 @@
                     </div>
                 </div>
             </div>
+
+            <!-- source tags for bigfile -->
+            <!-- ------------------------------------------------------ -->
+            <div v-if="InputDataBigFile">
+
+                <div v-if="1" class="border-b-2 border-black font-bold">Tags</div>
+                <div v-if="1" class="pt-2 space-y-[2px] w-full">
+
+                <div class="w-full">
+                    <div class="truncate flex flex-row w-ful"><TagForm :toChild="{'parentId': 3, 'parentIndex': 0, 'formTags': tag_db_data[0]['tag'], 'validationError': ''}" :fromController2="props.fromController2" @fromChild="fromChild"/></div>
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 </div>
@@ -139,6 +165,7 @@ let tagPopupOpen = ref();
 
 let uniqueKey = ref(1);
 let InputData = ref([]);
+let InputDataBigFile = ref('');
 let previewPath = '';
 let tag_db_data = ref([]);
 let reference_db_data = ref({});
@@ -174,10 +201,17 @@ function FileChange(event, index) {
 
     //     });
 
-
     emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
     emit('fromChild', {'section':'sourceData', 'subSection':'previewlist','form': preview.value});
     // emit('fromChild', {'section': 'sourceData', 'subSection': 'tagSource', 'form': tag_db_data});
+}
+
+function bigFile() {
+
+    tag_db_data.value[0] = {['tag']: '', 'key': uniqueKey.value};
+    InputDataBigFile.value = 1;
+    InputData.value = ['bigFile'];
+    emit('fromChild', {'section':'sourceData', 'subSection':'filelist', 'form': InputData.value});
 }
 
 // fill in already extisting data
@@ -199,7 +233,7 @@ onMounted(() => {
             tag_db_data.value[index] = {};
             tag_db_data.value[index]['key'] = uniqueKey.value;
             uniqueKey.value++;
-            previewPath = '/storage/inventory/' + item.path;
+            previewPath = item.path + '/' + item.file;
             preview.value.push(previewPath);
         }
 
@@ -234,12 +268,12 @@ onMounted(() => {
 // send to parent: tag data from child
 function fromChild(data) {
 
-    // console.log(data);
+    console.log(data);
     // console.log(data.component);
     // console.log(data?.reference?.reference.referenceTitle);
 
     if (data.component == "tag" && data.parentId == 3) {
-        // console.log(data);
+        console.log(data);
         tag_db_data.value[data.parentIndex]['tag'] = data.tagString;
 
         // console.log(data.tagList);
@@ -316,6 +350,8 @@ function deleteFile(data) {
         preview.value.splice(0, InputData.value.length);
         InputData.value.splice(0, InputData.value.length);
         uniqueKey.value = 1;
+        InputDataBigFile.value = null;
+        // emit('fromChild', {'section':'sourceData', 'subSection':'bigFile', 'form': null});
 
         // array.forEach(element => {
 

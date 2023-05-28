@@ -21,7 +21,7 @@
 
                     <!-- tag icon -->
                     <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-blue-700': form?.reference?.value?.[0]?.['title']}" class="w-5 h-5 min-h-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" color="gray" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="{'stroke-[#1A56DB]': form?.reference?.value?.[0]?.['title']}" class="w-5 h-5 min-h-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25
                             2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                         </svg>
@@ -65,7 +65,7 @@ import { Inertia, Method } from "@inertiajs/inertia";
 import ReferencePopup from "../ReferenceManager/ReferencePopup.vue"
 
 let referenceDOM = ref('');
-let placeholderText = ref("Insert existing title as reference");
+let placeholderText = ref('');
 // let validationCheck = ref();
 
 const props = defineProps(['dataParent', 'dataChild', 'dataForm', 'dataCommon', 'dataToParent', 'transfer', 'toParent', 'toChild',
@@ -129,7 +129,7 @@ function referenceCheckerFunction(index, id, check) {
 
 // save received ReferencePopup.vue data to form
 function fromChild(data) {
-    // console.log('ok');
+    console.log('ok');
     // console.log(data.referenceData);
     // form.reference.value = [];
     // console.log(form.reference.value);
@@ -208,18 +208,22 @@ watch(() => props.toChild, (curr, prev) => {
 
 onMounted(() => {
 
+    // console.log(props?.toChild?.parents_reference);
+
+    if (!props?.toChild?.parents_reference) placeholderText.value = "Insert existing title as reference";
+
     if (props?.toChild?.formParentReference) {
         // console.log(props.toChild.formParentReference);
         // console.log(form.reference.referenceTitle);
-        form.reference.value[0].title = props.toChild.formParentReference[0][0].title;
-        console.log(form.reference.value[0].title);
+        // form.reference.value[0].title = props.toChild.formParentReference[0][0].title;
+        // console.log(form.reference.value[0].title);
     }
 
     if (props?.toChild?.parents_reference) {
         // console.log(props.toChild.parents_reference);
         // console.log(form.reference.referenceTitle);
         // form.reference.referenceTitle = props.toChild.formParentReference[0][0].title;
-        form.reference.value[0].title = props.toChild.parents_reference;
+        // form.reference.value[0].title = props.toChild.parents_reference;
         // console.log(form.reference.value[0].title);
     }
 //  form.parentId = props.toChild.parentId;
@@ -230,6 +234,8 @@ onMounted(() => {
 // function InputData() {
 //     emit('fromChild', {'section':'statementData', 'subSection': 'statement', 'form': form.statement});
 // }
+
+
 
 </script>
 

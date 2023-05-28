@@ -46,7 +46,7 @@
                             </svg>
                         </div>
 
-                        <div v-if="(fromController?.tagCollection?.length > 0)" class="ml-1">Single</div>
+                        <div v-if="fromController?.tagCollection?.length > 0" class="ml-1">Single</div>
                         <div v-else class="ml-1">Create</div>
                     </div>
 
@@ -112,6 +112,7 @@
 <script setup>
 
 import { ref, onMounted, computed, watch, watchEffect, onBeforeUnmount, reactive, onUnmounted } from 'vue';
+import { useForm, usePage, Link, useRemember } from '@inertiajs/inertia-vue3';
 import { Inertia, Method } from "@inertiajs/inertia";
 
 import contentBox from "./TagContent.vue";
@@ -315,11 +316,12 @@ let tagCollectionInputFormat = ref();
 // let tagCollectionGroupFormat = ref();
 
 onMounted(() => {
-    // console.log(props.toChild);
+    console.log(props.toChild);
+
     if (typeof props.toChild.tagSelectionListString !== 'undefined') {
         // console.log(props.fromParentTagString);
         // tagCollectionInputFormat.value = props.toChild;
-        // console.log('ok');
+        console.log(props.toChild.tagSelectionListString);
         tagSelectionListString.value = props.toChild.tagSelectionListString;
         // console.log(tagSelectionList.value);
     }
@@ -339,6 +341,8 @@ onMounted(() => {
 
 //transcript tag select to tag input format
 function saveTagPopup() {
+
+    console.log('ok');
 
     tagCollectionInputFormat.value = '';
     tagSelectionListGroup.value.forEach(createTagInputGroup);
@@ -369,7 +373,7 @@ function saveTagPopup() {
         // no space at the end when reaching last entry
         if (index1 != tagSelectionListGroup.value.length-1) tagCollectionInputFormat.value  += ' ';
     }
-        // console.log(tagCollectionInputFormat.value);
+        console.log(tagCollectionInputFormat.value);
         emit('fromChild', {'tagSelectionListString': tagCollectionInputFormat.value, 'tagSelectionListGroup': tagSelectionListGroup.value});
     }
 
@@ -383,6 +387,7 @@ function cancelTagPopup() {
 // }
 
 watch(() => props.fromController, (curr, prev) => {
+
     // console.log('ok');
     // console.log(props.fromController);
     if (props?.fromController) {
@@ -391,7 +396,7 @@ watch(() => props.fromController, (curr, prev) => {
         fromController.value = props.fromController;
         tagPresetCollection.value = props.fromController.tagPresetCollection;
     };
-}, {deep: true}, 500);
+}, {deep: true});
 
 function tagPresetPopupFunction() {
     Inertia.post('tag', {'parentId': fromController.value.misc.parentId, 'parentIndex':fromController.value.misc.parentIndex});
@@ -415,8 +420,18 @@ function categoryPopupActive() {
         tagSelection.value = [['', '']];
         keyid.value++;
     }
-
 }
+
+// double request/check, see Create
+// watch(() => usePage().props.value.flash.fromController, (curr, prev) => {
+
+//     fromController.value = props.fromController;
+
+// }, {deep: true});
+
+
+
+
 
 </script>
 

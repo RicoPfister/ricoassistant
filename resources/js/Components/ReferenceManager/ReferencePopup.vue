@@ -154,7 +154,7 @@ function referencePopupSelect(rowIndex) {
     // console.log('ok');
     // console.log(props.toChild.fromController.referencesResult[rowIndex].basic_id);
     // console.log(props.fromController.referencesResult[rowIndex].basic_id);
-    emit('fromChild', {'parentIndex': props.fromController.misc.row, 'parentId': props.fromController.misc.parentId, 'color': props.fromController.referencesResult[rowIndex].color, 'referenceData': {'index': props.fromController.misc.row, 'title': props.fromController.referencesResult[rowIndex].title, 'basic_id': props.fromController.referencesResult[rowIndex].basic_id}});
+    emit('fromChild', {'parentIndex': props.fromController.misc.row, 'parentId': props.fromController.misc.parentId, 'color': props.fromController.referencesResult[rowIndex].color, 'referenceData': {'index': props.fromController.misc.row, 'title': props.fromController.referencesResult[rowIndex].title, 'basic_id': props.fromController.referencesResult[rowIndex].id}});
     // emit('fromChild', 'test');
     // referencePickerOpen.value[props.toChild.referenceChecker.rowIndex-1]= 0;
 }
